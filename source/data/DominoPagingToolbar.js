@@ -1,12 +1,8 @@
 
 Ext.nd.DominoPagingToolbar = function(el, ds, config){
     Ext.nd.DominoPagingToolbar.superclass.constructor.call(this, el, ds, config);
-    this.ds = ds;
-    this.cursor = 1;
     this.previousCursor = 1;
     this.previousStart = [];
-    this.render(this.el);
-    this.bind(ds);
 };
 
 Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
