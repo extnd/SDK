@@ -1,10 +1,20 @@
 Ext.nd.DominoUIView = function(config) {
 
-   // default count, to override, pass in the config {count : 60}
+   var sess = Ext.nd.domino.Session; // should we assume that there will always be a session?
+   
+   // default count, to override, pass in the config {i.e. count : 60}
    this.count = 40;
    this.singleSelect = false;
+   this.dbPath = sess.WebDbPath;
+   this.viewName = '';
+   
    // Set any config params passed in to override defaults
    Ext.apply(this,config);
+   
+   // viewUrl is either passed in or built from dbPath and viewName
+   this.viewUrl = (this.viewUrl) ? this.viewUrl : this.dbPath + this.viewName;
+   
+   // init the view, which creates it in the container passed in the config object
    this.init();
 };
 
