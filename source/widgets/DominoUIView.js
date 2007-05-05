@@ -1,3 +1,4 @@
+/* Domino UI for Views */
 Ext.nd.DominoUIView = function(config) {
 
    var sess = Ext.nd.domino.Session; // should we assume that there will always be a session?
