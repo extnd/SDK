@@ -1,6 +1,12 @@
-/* Domino User Interface */
+/* Domino Default User Interface */
 Ext.nd.DominoUI = function(config) {
+
    // set defaults
+   this.viewName = '';
+   this.viewUrl = '';
+   this.outlineName = '';
+   this.outlineUrl = '';
+
    this.west = {
       titlebar : true,
       split : true,
@@ -25,30 +31,14 @@ Ext.nd.DominoUI = function(config) {
       collapsible : false,
       animate : false
    };
+
+   // for later features (allowing developer to pick which regions to include)
    this.includeWest = true;
    this.includeCenter = true;
    this.includeSouth = true;
    
    // Set any config params passed in to override defaults
    Ext.apply(this,config);
-
-   if (typeof this.viewUrl == 'undefined') { 
-      this.viewParams = "";
-      var locHref = location.href;
-      var locSearch = location.search;
-      var iViewParamsLoc = locSearch.indexOf('&');
-      if (iViewParamsLoc > 0) {
-         this.viewParams = locSearch.substring(iViewParamsLoc);
-      }
-      var iQSLoc = (locHref.indexOf('?') > 0) ? locHref.indexOf('?') : locHref.indexOf('!');
-      iQSLoc = (iQSLoc < 0) ? locHref.length : iQSLoc;
-   
-      var iViewStartLoc = locHref.lastIndexOf('/') + 1;
-      this.viewUrl = locHref.substring(iViewStartLoc, iQSLoc);
-   }
-
-   this.viewTitle = (this.viewTitle) ? this.viewTitle : (this.viewUrl) ? this.viewUrl : "";
-   this.outlineUrl = (this.outlineUrl) ? this.outlineUrl : '($Ext.nd.ViewAndFolderList)'; 
 
    // init the DominoUI
    //this.init(); // user calls this -or- should we???
@@ -58,29 +48,36 @@ Ext.nd.DominoUI = function(config) {
 Ext.nd.DominoUI.prototype.init = function() {
       
    // create the UI
+   // creates outlinePanel, viewPanel, statusPanel
    this.createDominoUI();
-               
-   // now create the view
-   this.view = new Ext.nd.DominoUIView({
-      container : this.viewPanel,
-      layout : this.layout,
-      viewUrl : this.viewUrl,
-      viewParams : this.viewParams,
-      statusPanel : this.statusPanel
-   });
    
-   // set the title of the view panel
-   this.viewPanel.setTitle(this.viewTitle);
-
-   // create the outline
-   this.outline = new Ext.nd.DominoUIOutline({
-      layout : this.layout,
-      outlinePanel : this.outlinePanel, 
-      outlineUrl : this.outlineUrl,
-      viewPanel : this.viewPanel,
-      view : this.view
-   });
-         
+   // if we have a viewName or a viewUrl we can create the view
+   if (this.viewName != '' || this.viewUrl != '') {
+      this.view = new Ext.nd.DominoUIView({
+         container : this.viewPanel,
+         layout : this.layout,
+         viewUrl : this.viewUrl,
+         viewName : this.viewName,
+         viewParams : this.viewParams,
+         statusPanel : this.statusPanel
+      });
+      // set the title of the view panel
+      this.viewTitle = (this.viewTitle) ? this.viewTitle : (this.viewName) ? this.viewName : this.viewUrl;
+      this.viewPanel.setTitle(this.viewTitle);
+   }
+   
+   // if we have a outlineName or a outlineUrl we can create the outline
+   if (this.viewName != '' || this.viewUrl != '') {
+      this.outline = new Ext.nd.DominoUIOutline({
+         layout : this.layout,
+         outlinePanel : this.outlinePanel, 
+         outlineUrl : this.outlineUrl,
+         outlineName : this.outlineName,
+         viewPanel : this.viewPanel,
+         view : this.view
+      });
+   }
+   
 }; // end init()
       
 Ext.nd.DominoUI.prototype.createDominoUI = function() {
