@@ -5,7 +5,7 @@ Ext.nd.DominoUIView = function(config) {
    // default count, to override, pass in the config {i.e. count : 60}
    this.count = 40;
    this.singleSelect = false;
-   this.dbPath = sess.WebDbPath;
+   this.dbPath = sess.WebDbNamePath;
    this.viewName = '';
    
    // Set any config params passed in to override defaults
