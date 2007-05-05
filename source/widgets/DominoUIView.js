@@ -424,15 +424,30 @@ Ext.nd.DominoUIView.prototype.preprocessDominoData = function(value) {
 Ext.nd.DominoUIView.prototype.gridHandleKeyDown = function(e) {
    var node, row, rowIndex, unid, target;
    var keyCode = e.browserEvent.keyCode;
+   var charCode = e.charCode;
    
    target = e.getTarget();
    row = this.grid.selModel.getSelected();
    rowIndex = this.grid.dataSource.indexOf(row);
 
-   // for now, we won't worry about the altKey or ctrlKey
-   if (e.altKey || e.ctrlKey) { 
+   // for now, we won't worry about the altKey
+   if (e.altKey) { 
       return;
-   }  
+   }
+
+   // if Ctrl+E
+   if (e.ctrlKey && keyCode == 69) {
+      if(row){
+         this.openDocument(this.grid, rowIndex, e, true);
+      }
+      return;
+   }
+   
+   // for now, we won't worry about all other ctrlKey clicks
+   if (e.ctrlKey) { 
+      return;
+   }
+   
    // we don't worry about the shift key, unless another key is typed
    if (e.shiftKey && keyCode == 16) {
       return;
@@ -640,7 +655,8 @@ Ext.nd.DominoUIView.prototype.showError = function(){
 };
 
          
-Ext.nd.DominoUIView.prototype.openDocument  = function(grid, rowIndex, e){
+Ext.nd.DominoUIView.prototype.openDocument  = function(grid, rowIndex, e, bEditMode){
+   var mode = (bEditMode) ? '?EditDocument' : '?OpenDocument';
    var title = "Opening...";
    var ds = grid.dataSource;
    var row = grid.selModel.getSelected();
@@ -652,9 +668,8 @@ Ext.nd.DominoUIView.prototype.openDocument  = function(grid, rowIndex, e){
    } else {
       unid = unid.value;
    }
-   //var link = '0/' + unid + '?OpenDocument';  
    var viewUrl = this.getViewUrl(grid);   
-   var link = viewUrl + '/' + unid + '?OpenDocument'     
+   var link = viewUrl + '/' + unid + mode     
 
    if (!this.layout) {
       window.open(link)
