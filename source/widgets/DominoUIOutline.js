@@ -1,7 +1,7 @@
 /* Domino UI for Outlines */
 Ext.nd.DominoUIOutline = function(config) {
 
-   var sess = Ext.nd.domino.Session; // should we assume that there will always be a session?
+   var sess = Ext.nd.domino.DominoSession; // should we assume that there will always be a session?
    
    // default count, to override, pass in the config {i.e. count : 60}
    this.dbPath = sess.WebDbNamePath;
