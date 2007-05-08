@@ -536,35 +536,26 @@ Ext.nd.DominoUIView.prototype.gridHandleCellClick = function(grid, rowIndex, col
    //alert('cell clicked')
 };
 
-Ext.nd.DominoUIView.prototype.gridHandleRowContextMenu = function(grid, row, e) {
+Ext.nd.DominoUIView.prototype.gridHandleRowContextMenu = function(grid, rowIndex, e) {
    e.stopEvent();
-   var ds = grid.dataSource;
-   var row = grid.selModel.getSelected();
-   var node = row.node;
-   var unid = node.attributes.getNamedItem('unid');
-   // if a unid does not exist this row is a category so bail
-   if (!unid) { 
-      return;
-   } else {
-      unid = unid.value;
-   }
-   //var link = '0/' + unid + '?OpenDocument';  
-   var viewUrl = this.getViewUrl(grid);   
-   var link = viewUrl + '/' + unid + '?OpenDocument'           
-   //alert("In a future release you will get a context menu to act on this document > " + link) 
-   //this.showDocumentPropertiesDialog(link)
    
    var menu = new Ext.menu.Menu({
-      id : 'domino-context-menu'
+      id : 'xnd-context-menu'
    });
-   menu.add({text : 'Document Properties', handler : this.showDocumentPropertiesDialog})
+   menu.add({text : 'Document Properties', handler : this.gridContextMenuShowDocumentPropertiesDialog, scope: this});
+   menu.addSeparator();
+   menu.add({editMode : false, text : 'Open', handler : this.gridContextMenuOpenDocument, scope: this});
+   menu.add({editMode : true, text : 'Edit', handler : this.gridContextMenuOpenDocument, scope: this});
    
+   // tell menu which row is selected and show menu
+   menu.grid = grid;
+   menu.rowIndex = rowIndex;
    var coords = e.getXY();
    menu.showAt([coords[0], coords[1]]);
    
 };
 
-Ext.nd.DominoUIView.prototype.showDocumentPropertiesDialog = function(){
+Ext.nd.DominoUIView.prototype.gridContextMenuShowDocumentPropertiesDialog = function(){
 
    Ext.MessageBox.alert('Document Properties', 'In a future release, you will see a document properties box.');
    return;
@@ -654,7 +645,13 @@ Ext.nd.DominoUIView.prototype.showError = function(){
    Ext.MessageBox.alert('Error','An error occurred.');
 };
 
-         
+Ext.nd.DominoUIView.prototype.gridContextMenuOpenDocument  = function(action, e){
+   var grid = action.parentMenu.grid;
+   var rowIndex = action.parentMenu.rowIndex;
+   var bEditMode = action.editMode;
+   this.openDocument(grid, rowIndex, e, bEditMode);   
+};
+
 Ext.nd.DominoUIView.prototype.openDocument  = function(grid, rowIndex, e, bEditMode){
    var mode = (bEditMode) ? '?EditDocument' : '?OpenDocument';
    var title = "Opening...";
