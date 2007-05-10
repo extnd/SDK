@@ -546,6 +546,9 @@ Ext.nd.DominoUIView.prototype.gridHandleRowContextMenu = function(grid, rowIndex
    menu.addSeparator();
    menu.add({editMode : false, text : 'Open', handler : this.gridContextMenuOpenDocument, scope: this});
    menu.add({editMode : true, text : 'Edit', handler : this.gridContextMenuOpenDocument, scope: this});
+   menu.addSeparator();
+   menu.add({text : 'Search This View', handler : this.gridContextMenuSearchView, scope: this});
+   
    
    // tell menu which row is selected and show menu
    menu.grid = grid;
@@ -553,6 +556,12 @@ Ext.nd.DominoUIView.prototype.gridHandleRowContextMenu = function(grid, rowIndex
    var coords = e.getXY();
    menu.showAt([coords[0], coords[1]]);
    
+};
+
+Ext.nd.DominoUIView.prototype.gridContextMenuSearchView = function(){
+
+   Ext.MessageBox.alert('Search View', 'In a future release, you will be able to search a view.');
+   return;
 };
 
 Ext.nd.DominoUIView.prototype.gridContextMenuShowDocumentPropertiesDialog = function(){
