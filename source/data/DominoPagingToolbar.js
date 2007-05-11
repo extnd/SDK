@@ -92,6 +92,10 @@ Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
 		} else {
 			activePage = Math.ceil((this.cursor+this.pageSize)/this.pageSize)
 		}
+
+		// reset this.which
+		this.which = "";
+
 		return {
 			total : total,
 			activePage : activePage,
