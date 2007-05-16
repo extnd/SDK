@@ -115,21 +115,36 @@ Ext.nd.DominoUIOutline.prototype.init2 = function(o) {
       }
             
    };
-
+/*
    tree.on('nodedragover', function(e) {
+      console.log('nodedragover - start');
       var type = e.target.attributes.extndType;
+      console.log('type='+type);
       if (type == "20" || type == "0") {
+         console.log('expanding');
          e.target.expand();
       } else {
-         window.status = 'no, this is not a folder you can drop docs onto';
+      console.log('no, this is not a folder you can drop docs onto');
       }
+      console.log('nodedragover - end');
    });
+*/
+
+   tree.on('nodedragover', this.addToFolder);
    
-   tree.on('beforenodedrop', this.addToFolder);
+   tree.on('beforenodedrop', function(e){
+      console.log('beforenodedrop - start');
+      var s = e.data.selections;
+      e.dropNode = s;
+      e.cancel = true; 
+      this.addToFolder(e).createDelegate(this);
+      console.log('beforenodedrop - end')
+   });
 
    tree.on('nodedrop', function(e){
-      this.addToFolder(e);
-   });
+      console.log('nodedrop - start');
+      console.log('nodedrop - end');
+   },this);
 
    // render the tree
    tree.render();
@@ -139,23 +154,42 @@ Ext.nd.DominoUIOutline.prototype.init2 = function(o) {
 };
 
 Ext.nd.DominoUIOutline.prototype.addToFolder = function(e){
+   console.log('nodedragover - start');
+   console.log('addToFolder - start');
+
+   var type = e.target.attributes.extndType;
+   console.log('type='+type);
+
+   if (type == "20" || type == "0") {
+      console.log('expanding');
+      e.target.expand();
+   } else {
+      console.log('no, this is not a folder you can drop docs onto');
+   }
+   
    var unid, sFormula;
    sFormula = '@username';
    var selections = e.data.selections;
    if (selections) {
+      console.log('we have some docs selected!');
       for (var i=0; i<selections.length; i++) {
          var oUNID = selections[i].node.attributes.getNamedItem('unid')
          var unid = (oUNID) ? oUNID.value : null;
          if (unid != null) {
+            console.log('unid='+unid);
             var formula = new Ext.nd.domino.Formula(sFormula,{
                "ExecuteInDocumentContext": true,
                "unid" : unid
             });
             // eval/execute formula 
+            console.log('evaling formula');
             formula.Eval();      
          }
       }
    }
+
+   console.log('addToFolder - end');
+   console.log('nodedragover - end');
 
 };
 
