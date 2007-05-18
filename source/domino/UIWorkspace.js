@@ -1,10 +1,10 @@
 
-Ext.nd.DominoUIWorkspace = function(config) {
+Ext.nd.UIWorkspace = function(config) {
 	Ext.apply(this,config);
 }
 
 
-/*	DominoUIWorkspace.PickList()
+/*	UIWorkspace.PickList()
  *
  *	Modeled after NotesUIWorkspace.PickListStrings and @PickList function
  *
@@ -16,7 +16,7 @@ Ext.nd.DominoUIWorkspace = function(config) {
  *	
  */
 
-Ext.nd.DominoUIWorkspace.prototype.PickList = function(config) {
+Ext.nd.UIWorkspace.prototype.PickList = function(config) {
 	var dialog, cb;
 	
 	this.width = 400;
@@ -133,9 +133,9 @@ Ext.nd.DominoUIWorkspace.prototype.PickList = function(config) {
 	
 };
 
-Ext.nd.DominoUIWorkspace.prototype.PickListStrings = Ext.nd.DominoUIWorkspace.prototype.PickList;
+Ext.nd.UIWorkspace.prototype.PickListStrings = Ext.nd.UIWorkspace.prototype.PickList;
 
-Ext.nd.DominoUIWorkspace.prototype.Prompt = function() {
+Ext.nd.UIWorkspace.prototype.Prompt = function() {
 	var cb;
 	this.type = "ok";
 	

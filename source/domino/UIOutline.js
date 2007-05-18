@@ -1,5 +1,5 @@
 /* Domino UI for Outlines */
-Ext.nd.DominoUIOutline = function(config) {
+Ext.nd.UIOutline = function(config) {
 
    var sess = Ext.nd.domino.DominoSession; // should we assume that there will always be a session?
    
@@ -17,14 +17,18 @@ Ext.nd.DominoUIOutline = function(config) {
    this.init();
 };
 
-Ext.nd.DominoUIOutline.prototype.init = function() {
-   YAHOO.util.Connect.asyncRequest('POST', this.outlineUrl + '?ReadEntries', {
-      success : this.init2.createDelegate(this), 
-      failure : this.init2.createDelegate(this)
-   }, null);
+Ext.nd.UIOutline.prototype.init = function() {
+	var cb = {
+		success : this.init2.createDelegate(this), 
+      		failure : this.init2.createDelegate(this)
+		scope: this
+	};    
+
+	Ext.lib.Ajax.request('POST', this.outlineUrl + '?ReadEntries', cb);
+
 };
       
-Ext.nd.DominoUIOutline.prototype.init2 = function(o) {
+Ext.nd.UIOutline.prototype.init2 = function(o) {
    var response = o.responseXML;
    var arEntries = response.getElementsByTagName('outlineentry');
 
@@ -153,7 +157,7 @@ Ext.nd.DominoUIOutline.prototype.init2 = function(o) {
    root.expand(); 
 };
 
-Ext.nd.DominoUIOutline.prototype.addToFolder = function(e){
+Ext.nd.UIOutline.prototype.addToFolder = function(e){
    console.log('nodedragover - start');
    console.log('addToFolder - start');
 
@@ -194,7 +198,7 @@ Ext.nd.DominoUIOutline.prototype.addToFolder = function(e){
 };
 
 
-Ext.nd.DominoUIOutline.prototype.openEntry = function(node, e){
+Ext.nd.UIOutline.prototype.openEntry = function(node, e){
    var attributes, extndType, extndHref, extndPosition, entryId, title;
    attributes = node.attributes;
    extndHref = attributes.extndHref;

@@ -1,6 +1,6 @@
 // NotesSession Class
-Ext.nd.domino.NotesSession = function(config) {
-	var sPage = 'Ext.nd.NotesSession.json';
+Ext.nd.Session = function(config) {
+	var sPage = 'Ext.nd.Session.json';
 	
 	// Set any config params passed in to override defaults
 	Ext.apply(this,config);
@@ -21,15 +21,11 @@ Ext.nd.domino.NotesSession = function(config) {
 	
 };
 
-// alias to NotesSession Class
-Ext.nd.domino.Session = Ext.nd.domino.NotesSession;
-Ext.nd.domino.DominoSession = Ext.nd.domino.NotesSession;
-
 // onComplete method to call when making async Ajax calls
-Ext.nd.domino.NotesSession.prototype.onComplete = function() {};
+Ext.nd.Session.prototype.onComplete = function() {};
 
 // assignValue method to  NotesDocument class
-Ext.nd.domino.NotesSession.prototype.assignValue = function(req) {
+Ext.nd.Session.prototype.assignValue = function(req) {
 	var sTmp, oTmp;
 	sTmp = req.responseText;
 	oTmp = eval('(' + sTmp + ')');
@@ -42,7 +38,7 @@ Ext.nd.domino.NotesSession.prototype.assignValue = function(req) {
 
 };
 
-Ext.nd.domino.NotesSession.prototype.processException = function(req) {
-	Ext.MessageBox.alert("There was an error in the instantiation of the NotesSession class")
+Ext.nd.Session.prototype.processException = function(req) {
+	Ext.MessageBox.alert("Error","There was an error in the instantiation of the Session class")
 }
 

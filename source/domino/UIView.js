@@ -1,5 +1,5 @@
 /* Domino UI for Views */
-Ext.nd.DominoUIView = function(config) {
+Ext.nd.UIView = function(config) {
 
    var sess = Ext.nd.domino.DominoSession; // should we assume that there will always be a session?
    
@@ -19,14 +19,14 @@ Ext.nd.DominoUIView = function(config) {
    this.init();
 };
 
-Ext.nd.DominoUIView.prototype.init = function() {
+Ext.nd.UIView.prototype.init = function() {
    var viewDesign = YAHOO.util.Connect.asyncRequest('POST', this.viewUrl + '?ReadDesign', {
       success: this.init2.createDelegate(this), 
       failure: this.init2.createDelegate(this)
    }, null);
 };
 
-Ext.nd.DominoUIView.prototype.init2 = function(o) {
+Ext.nd.UIView.prototype.init2 = function(o) {
    var response = o.responseXML;
    var arColumns = response.getElementsByTagName('column');
 
@@ -133,7 +133,7 @@ Ext.nd.DominoUIView.prototype.init2 = function(o) {
    this.createGrid();
 };
 
-Ext.nd.DominoUIView.prototype.createGrid = function() {
+Ext.nd.UIView.prototype.createGrid = function() {
    var sViewParams = (this.viewParams == undefined) ? "" : this.viewParams;
    
    // define the column model
@@ -250,7 +250,7 @@ Ext.nd.DominoUIView.prototype.createGrid = function() {
    
 };
 
-Ext.nd.DominoUIView.prototype.dominoRenderer = function(value, cell, row, rowIndex, colIndex, dataStore) {
+Ext.nd.UIView.prototype.dominoRenderer = function(value, cell, row, rowIndex, colIndex, dataStore) {
    var args = arguments;
    var colConfig = this.cm.config[colIndex];
 
@@ -336,7 +336,7 @@ Ext.nd.DominoUIView.prototype.dominoRenderer = function(value, cell, row, rowInd
    return value;
 };
 
-Ext.nd.DominoUIView.prototype.getValue = function(value, colConfig) {
+Ext.nd.UIView.prototype.getValue = function(value, colConfig) {
 
    /*----------------------------------------*/
    /* handle and return the value    */
@@ -398,7 +398,7 @@ Ext.nd.DominoUIView.prototype.getValue = function(value, colConfig) {
    }
 };
       
-Ext.nd.DominoUIView.prototype.preprocessDominoData = function(value) {
+Ext.nd.UIView.prototype.preprocessDominoData = function(value) {
    return value;
    
    var dataType = value.substring(0,1);
@@ -421,7 +421,7 @@ Ext.nd.DominoUIView.prototype.preprocessDominoData = function(value) {
    return newvalue;
 };
 
-Ext.nd.DominoUIView.prototype.gridHandleKeyDown = function(e) {
+Ext.nd.UIView.prototype.gridHandleKeyDown = function(e) {
    var node, row, rowIndex, unid, target;
    var keyCode = e.browserEvent.keyCode;
    var charCode = e.charCode;
@@ -491,7 +491,7 @@ Ext.nd.DominoUIView.prototype.gridHandleKeyDown = function(e) {
    } 
 };
 
-Ext.nd.DominoUIView.prototype.quickSearch = function(btn, text) {
+Ext.nd.UIView.prototype.quickSearch = function(btn, text) {
    var ds = this.grid.dataSource;
    if (btn == 'ok') {
       // first, remove the start param from the lastOptions.params
@@ -500,14 +500,14 @@ Ext.nd.DominoUIView.prototype.quickSearch = function(btn, text) {
       ds.load({params: Ext.apply(ds.lastOptions.params, {startkey : text})}); // append the startkey param to the existing params (ds.lastOptions)
    }
 }
-Ext.nd.DominoUIView.prototype.quickSearch_EXPERIMENT = function() {
+Ext.nd.UIView.prototype.quickSearch_EXPERIMENT = function() {
    this.showQuickSearchDialog.hide();
    var vsi = Ext.get('extnd-view-search-input').dom;
    var s = vsi.value;
    vsi.value = ""; // reset for next search  
    Ext.MessageBox.alert('Coming Soon','this is where we would make an XHR call to view?readviewentries&startkey=' + s)
 }
-Ext.nd.DominoUIView.prototype.gridHandleHeaderClick = function(grid, colIndex, e) {
+Ext.nd.UIView.prototype.gridHandleHeaderClick = function(grid, colIndex, e) {
    var colConfig = this.cm.config[colIndex];
    if (colConfig.resortviewunid != "") {
       // first, let's stop the propagation of this event so that the sort events don't try and run as well
@@ -521,7 +521,7 @@ Ext.nd.DominoUIView.prototype.gridHandleHeaderClick = function(grid, colIndex, e
          } catch(e) {}
       }
       // now display this new view
-      this.grid = new Ext.nd.DominoUIView({
+      this.grid = new Ext.nd.UIView({
          layout : this.layout,
          viewUrl : colConfig.resortviewunid,
          viewParams : "",
@@ -531,12 +531,12 @@ Ext.nd.DominoUIView.prototype.gridHandleHeaderClick = function(grid, colIndex, e
    } 
 };
 
-Ext.nd.DominoUIView.prototype.gridHandleCellClick = function(grid, rowIndex, colIndex, e) {
+Ext.nd.UIView.prototype.gridHandleCellClick = function(grid, rowIndex, colIndex, e) {
    var node, unid;
    //alert('cell clicked')
 };
 
-Ext.nd.DominoUIView.prototype.gridHandleRowContextMenu = function(grid, rowIndex, e) {
+Ext.nd.UIView.prototype.gridHandleRowContextMenu = function(grid, rowIndex, e) {
    e.stopEvent();
    
    var menu = new Ext.menu.Menu({
@@ -558,13 +558,13 @@ Ext.nd.DominoUIView.prototype.gridHandleRowContextMenu = function(grid, rowIndex
    
 };
 
-Ext.nd.DominoUIView.prototype.gridContextMenuSearchView = function(){
+Ext.nd.UIView.prototype.gridContextMenuSearchView = function(){
 
    Ext.MessageBox.alert('Search View', 'In a future release, you will be able to search a view.');
    return;
 };
 
-Ext.nd.DominoUIView.prototype.gridContextMenuShowDocumentPropertiesDialog = function(){
+Ext.nd.UIView.prototype.gridContextMenuShowDocumentPropertiesDialog = function(){
 
    Ext.MessageBox.alert('Document Properties', 'In a future release, you will see a document properties box.');
    return;
@@ -610,7 +610,7 @@ Ext.nd.DominoUIView.prototype.gridContextMenuShowDocumentPropertiesDialog = func
     dialog.show(showBtn.dom);
 }
       
-Ext.nd.DominoUIView.prototype.gridDeleteDocumentSuccess = function(o) {
+Ext.nd.UIView.prototype.gridDeleteDocumentSuccess = function(o) {
    //alert("The document was successfully deleted.");
    var row = o.argument;
    var ds = this.grid.dataSource;
@@ -624,23 +624,23 @@ Ext.nd.DominoUIView.prototype.gridDeleteDocumentSuccess = function(o) {
    ds.remove(row);
 };
 
-Ext.nd.DominoUIView.prototype.removeRow = function(row) {
+Ext.nd.UIView.prototype.removeRow = function(row) {
    ds.remove(row);
 };
       
-Ext.nd.DominoUIView.prototype.gridDeleteDocumentFailure = function(o) {
+Ext.nd.UIView.prototype.gridDeleteDocumentFailure = function(o) {
    Ext.MessageBox.alert('Delete Error','The document could not be deleted.  Please check your access.')
 };
 
-Ext.nd.DominoUIView.prototype.gridHandleRowsDeleted = function(row) {
+Ext.nd.UIView.prototype.gridHandleRowsDeleted = function(row) {
    // TODO: we should fetch more data as rows are being deleted
 };
 
-Ext.nd.DominoUIView.prototype.gridHandleBeforeLoad = function(dm) {
+Ext.nd.UIView.prototype.gridHandleBeforeLoad = function(dm) {
    //alert('handle before load of the datamodel')
 };
         
-Ext.nd.DominoUIView.prototype.loadView = function(view, dm){
+Ext.nd.UIView.prototype.loadView = function(view, dm){
    if (this.statusPanel) {
       this.viewTitle = (typeof this.viewTitle == 'undefined') ? "" : this.viewTitle;
       this.statusPanel.setContent('Loading view ' + this.viewTitle + '...');
@@ -650,18 +650,18 @@ Ext.nd.DominoUIView.prototype.loadView = function(view, dm){
 };
 
          
-Ext.nd.DominoUIView.prototype.showError = function(){
+Ext.nd.UIView.prototype.showError = function(){
    Ext.MessageBox.alert('Error','An error occurred.');
 };
 
-Ext.nd.DominoUIView.prototype.gridContextMenuOpenDocument  = function(action, e){
+Ext.nd.UIView.prototype.gridContextMenuOpenDocument  = function(action, e){
    var grid = action.parentMenu.grid;
    var rowIndex = action.parentMenu.rowIndex;
    var bEditMode = action.editMode;
    this.openDocument(grid, rowIndex, e, bEditMode);   
 };
 
-Ext.nd.DominoUIView.prototype.openDocument  = function(grid, rowIndex, e, bEditMode){
+Ext.nd.UIView.prototype.openDocument  = function(grid, rowIndex, e, bEditMode){
    var mode = (bEditMode) ? '?EditDocument' : '?OpenDocument';
    var title = "Opening...";
    var ds = grid.dataSource;
@@ -727,9 +727,9 @@ Ext.nd.DominoUIView.prototype.openDocument  = function(grid, rowIndex, e, bEditM
 };
 // set the default rowdblclick to openDocument
 // if you need a view to do something different on a rowdblclick, then you can override this method
-Ext.nd.DominoUIView.prototype.gridHandleRowDblClick = Ext.nd.DominoUIView.prototype.openDocument;
+Ext.nd.UIView.prototype.gridHandleRowDblClick = Ext.nd.UIView.prototype.openDocument;
 
-Ext.nd.DominoUIView.prototype.deleteDocument  = function(grid, rowIndex, e){
+Ext.nd.UIView.prototype.deleteDocument  = function(grid, rowIndex, e){
    var ds = grid.dataSource;
    var row = grid.selModel.getSelected();
    var node = row.node;
@@ -759,7 +759,7 @@ Ext.nd.DominoUIView.prototype.deleteDocument  = function(grid, rowIndex, e){
 
 
 
-Ext.nd.DominoUIView.prototype.getViewUrl  = function(grid){
+Ext.nd.UIView.prototype.getViewUrl  = function(grid){
    var viewUrlTmp = grid.dataSource.proxy.conn.url;
    var iLocReadViewEntries = viewUrlTmp.toLowerCase().indexOf('readviewentries') - 1; // in case ! is used instead of ?
    var viewUrl = viewUrlTmp.substring(0,iLocReadViewEntries)

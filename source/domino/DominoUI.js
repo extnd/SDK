@@ -53,7 +53,7 @@ Ext.nd.DominoUI.prototype.init = function() {
    
    // if we have a viewName or a viewUrl we can create the view
    if (this.viewName != '' || this.viewUrl != '') {
-      this.view = new Ext.nd.DominoUIView({
+      this.view = new Ext.nd.UIView({
          container : this.viewPanel,
          layout : this.layout,
          viewUrl : this.viewUrl,
@@ -68,7 +68,7 @@ Ext.nd.DominoUI.prototype.init = function() {
    
    // if we have a outlineName or a outlineUrl we can create the outline
    if (this.viewName != '' || this.viewUrl != '') {
-      this.outline = new Ext.nd.DominoUIOutline({
+      this.outline = new Ext.nd.UIOutline({
          layout : this.layout,
          outlinePanel : this.outlinePanel, 
          outlineUrl : this.outlineUrl,

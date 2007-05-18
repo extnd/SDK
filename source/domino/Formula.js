@@ -1,5 +1,5 @@
 // Formula Class
-Ext.nd.domino.Formula = function(sFormula, config) {
+Ext.nd.Formula = function(sFormula, config) {
 	var sForm = 'Ext.nd.FormulaEval';
 	
 	// public properties
@@ -35,7 +35,7 @@ Ext.nd.domino.Formula = function(sFormula, config) {
 };
 
 
-Ext.nd.domino.Formula.prototype.Eval = function() {
+Ext.nd.Formula.prototype.Eval = function() {
 	var body = 'formula='+encodeURIComponent(this.text);
 
 	var cb = {
@@ -55,8 +55,8 @@ Ext.nd.domino.Formula.prototype.Eval = function() {
 	}
 };
 
-Ext.nd.domino.Formula.prototype.onComplete = function() {};
-Ext.nd.domino.Formula.prototype.assignValue = function(req) {
+Ext.nd.Formula.prototype.onComplete = function() {};
+Ext.nd.Formula.prototype.assignValue = function(req) {
 
 	var response = req.responseText;
 	

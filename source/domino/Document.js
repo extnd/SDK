@@ -1,6 +1,6 @@
-// NotesDocument Class
-Ext.nd.domino.NotesDocument = function(config) {
-	var sForm = 'Ext.nd.NotesDocument.json';
+// Document Class
+Ext.nd.Document = function(config) {
+	var sForm = 'Ext.nd.Document.json';
 	
 	// Set any config params passed in to override defaults
 	Ext.apply(this,config);
@@ -21,15 +21,12 @@ Ext.nd.domino.NotesDocument = function(config) {
 	
 };
 
-// Document Class alias to NotesDocument Class
-Ext.nd.domino.Document = Ext.nd.domino.NotesDocument;
-Ext.nd.domino.DominoDocument = Ext.nd.domino.NotesDocument;
 
 // onComplete method to call when making async Ajax calls
-Ext.nd.domino.NotesDocument.prototype.onComplete = function() {};
+Ext.nd.Document.prototype.onComplete = function() {};
 
-// assignValue method to  NotesDocument class
-Ext.nd.domino.NotesDocument.prototype.assignValue = function(req) {
+// assignValue method to Document class
+Ext.nd.Document.prototype.assignValue = function(req) {
 	var sTmp, oTmp;
 	sTmp = req.responseText;
 	oTmp = eval('(' + sTmp + ')');
@@ -42,6 +39,6 @@ Ext.nd.domino.NotesDocument.prototype.assignValue = function(req) {
 
 };
 
-Ext.nd.domino.NotesDocument.prototype.processException = function(req) {
-	alert("There was an error in the instantiation of the NotesSession class")
+Ext.nd.Document.prototype.processException = function(req) {
+	Ext.MessageBox.alert("Error","There was an error in the instantiation of the Document class")
 }
