@@ -119,36 +119,11 @@ Ext.nd.UIOutline.prototype.init2 = function(o) {
       }
             
    };
-/*
-   tree.on('nodedragover', function(e) {
-      console.log('nodedragover - start');
-      var type = e.target.attributes.extndType;
-      console.log('type='+type);
-      if (type == "20" || type == "0") {
-         console.log('expanding');
-         e.target.expand();
-      } else {
-      console.log('no, this is not a folder you can drop docs onto');
-      }
-      console.log('nodedragover - end');
-   });
-*/
 
-   tree.on('nodedragover', this.addToFolder);
-   
-   tree.on('beforenodedrop', function(e){
-      console.log('beforenodedrop - start');
-      var s = e.data.selections;
-      e.dropNode = s;
-      e.cancel = true; 
-      this.addToFolder(e).createDelegate(this);
-      console.log('beforenodedrop - end')
-   });
 
-   tree.on('nodedrop', function(e){
-      console.log('nodedrop - start');
-      console.log('nodedrop - end');
-   },this);
+   // handle the drop of the doc on the folder
+   tree.on('beforenodedrop', this.addToFolder);
+
 
    // render the tree
    tree.render();
