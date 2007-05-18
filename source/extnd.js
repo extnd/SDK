@@ -19,10 +19,3 @@ Ext.nd.init = function(config) {
 	Ext.apply(this,config);
 	Ext.BLANK_IMAGE_URL = this.getBlankImageUrl();	
 };
-
-String.prototype.ellipse = function(maxLength){
-	if(this.length > maxLength){
-		return this.substr(0, maxLength-3) + '...';
-	}
-	return this;
-};
