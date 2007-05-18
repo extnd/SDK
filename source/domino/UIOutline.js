@@ -1,7 +1,7 @@
 /* Domino UI for Outlines */
 Ext.nd.UIOutline = function(config) {
 
-   var sess = Ext.nd.domino.DominoSession; // should we assume that there will always be a session?
+   var sess = Ext.nd.Session; // should we assume that there will always be a session?
    
    // default count, to override, pass in the config {i.e. count : 60}
    this.dbPath = sess.WebDbNamePath;
@@ -20,7 +20,7 @@ Ext.nd.UIOutline = function(config) {
 Ext.nd.UIOutline.prototype.init = function() {
 	var cb = {
 		success : this.init2.createDelegate(this), 
-      		failure : this.init2.createDelegate(this)
+      		failure : this.init2.createDelegate(this),
 		scope: this
 	};    
 
