@@ -1,7 +1,7 @@
 /* Domino UI for Views */
 Ext.nd.UIView = function(config) {
 
-   var sess = Ext.nd.domino.DominoSession; // should we assume that there will always be a session?
+   var sess = Ext.nd.Session; // should we assume that there will always be a session?
    
    // default count, to override, pass in the config {i.e. count : 60}
    this.count = 40;
