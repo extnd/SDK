@@ -693,7 +693,7 @@ Ext.nd.UIView.prototype.openDocument  = function(grid, rowIndex, e, bEditMode){
          id : unid
       });
       var panel = new Ext.ContentPanel(iframe, {
-         title: title.ellipse(16), 
+         title: Ext.util.Format.ellipsis(title,16), 
          fitToFrame:true, 
          closable:true
       });
@@ -713,7 +713,7 @@ Ext.nd.UIView.prototype.openDocument  = function(grid, rowIndex, e, bEditMode){
             if (readyState == 'complete') {
                title = oContentDocument.title;
                if (title != "") {
-                  panel.setTitle(title.ellipse(16));
+                  panel.setTitle(Ext.util.Format.ellipsis(title,16));
                } else {
                   panel.setTitle("Untitled");
                }
