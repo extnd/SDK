@@ -181,7 +181,7 @@ Ext.nd.UIOutline.prototype.addToFolder = function(e){
          var unid = (oUNID) ? oUNID.value : null;
          if (unid != null) {
             console.log('unid='+unid);
-            var formula = new Ext.nd.domino.Formula(sFormula,{
+            var formula = new Ext.nd.Formula(sFormula,{
                "ExecuteInDocumentContext": true,
                "unid" : unid
             });
