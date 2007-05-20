@@ -193,8 +193,8 @@ Ext.nd.UIOutline.prototype.openEntry = function(node, e){
       }
       var viewUrl = (extndHref.indexOf('?') > 0) ? extndHref.split('?')[0] : extndHref.split('!')[0];       
       // now create our new view/folder                  
-      //this.DominoUIView(this.viewPanel.getEl(), url);
-      this.view = new Ext.nd.DominoUIView({
+      //this.UIView(this.viewPanel.getEl(), url);
+      this.view = new Ext.nd.UIView({
          layout : this.layout,
          viewUrl : viewUrl,
          viewParams : "",
