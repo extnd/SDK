@@ -3,10 +3,11 @@ Ext.nd.UIOutline = function(config) {
 
    var sess = Ext.nd.Session; // should we assume that there will always be a session?
    var db = sess.CurrentDatabase;
-      
-   // default count, to override, pass in the config {i.e. count : 60}
+
+   // defaults      
    this.dbPath = db.WebFilePath;
    this.outlineName = '';
+   this.useOutlineIcons = false;
 
    // Set any config params passed in to override defaults
    Ext.apply(this,config);
@@ -103,8 +104,8 @@ Ext.nd.UIOutline.prototype.init2 = function(o) {
          extndHref : extndHref,
          extndType : extndType,
          extndExpandable: isExpandable,
-         extndPosition : curPosition/*,
-         icon : extndIcon*/
+         extndPosition : curPosition,
+         icon : (this.useOutlineIcons) ? extndIcon : null
       });
          
       curNode.on('click', this.openEntry.createDelegate(this), this, true);   
@@ -185,16 +186,16 @@ Ext.nd.UIOutline.prototype.openEntry = function(node, e){
          
    if (extndType == "2" || extndType == "20") {
       // delete the current grid
-      if (this.view.grid) {
+      if (this.uiView.grid) {
          this.viewPanel.setContent("");
          try {
-            this.view.grid.destroy();
+            this.uiView.grid.destroy();
          } catch(e) {}
       }
       var viewUrl = (extndHref.indexOf('?') > 0) ? extndHref.split('?')[0] : extndHref.split('!')[0];       
       // now create our new view/folder                  
       //this.UIView(this.viewPanel.getEl(), url);
-      this.view = new Ext.nd.UIView({
+      this.uiView = new Ext.nd.UIView({
          layout : this.layout,
          viewUrl : viewUrl,
          viewParams : "",
