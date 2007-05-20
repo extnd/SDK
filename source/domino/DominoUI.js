@@ -2,10 +2,8 @@
 Ext.nd.DominoUI = function(config) {
 
    // set defaults
-   this.viewName = '';
-   this.viewUrl = '';
-   this.outlineName = '';
-   this.outlineUrl = '';
+   this.uiView = {viewName: '', viewUrl: ''};
+   this.uiOutline = {outlineName: '', outlineUrl: ''};
 
    this.west = {
       titlebar : true,
@@ -52,30 +50,26 @@ Ext.nd.DominoUI.prototype.init = function() {
    this.createDominoUI();
    
    // if we have a viewName or a viewUrl we can create the view
-   if (this.viewName != '' || this.viewUrl != '') {
-      this.view = new Ext.nd.UIView({
+   if (this.uiView.viewName != '' || this.uiView.viewUrl != '') {
+      this.uiView = new Ext.nd.UIView(Ext.apply({
          container : this.viewPanel,
          layout : this.layout,
-         viewUrl : this.viewUrl,
-         viewName : this.viewName,
-         viewParams : this.viewParams,
          statusPanel : this.statusPanel
-      });
+      }, this.uiView));
+
       // set the title of the view panel
-      this.viewTitle = (this.viewTitle) ? this.viewTitle : (this.viewName) ? this.viewName : this.viewUrl;
+      this.viewTitle = (this.viewTitle) ? this.viewTitle : (this.uiView.viewName) ? this.uiView.viewName : this.uiView.viewUrl;
       this.viewPanel.setTitle(this.viewTitle);
    }
    
    // if we have a outlineName or a outlineUrl we can create the outline
-   if (this.viewName != '' || this.viewUrl != '') {
-      this.outline = new Ext.nd.UIOutline({
+   if (this.uiOutline.outlineName != '' || this.uiOutline.outlineUrl != '') {
+      this.uiOutline = new Ext.nd.UIOutline(Ext.apply({
          layout : this.layout,
          outlinePanel : this.outlinePanel, 
-         outlineUrl : this.outlineUrl,
-         outlineName : this.outlineName,
          viewPanel : this.viewPanel,
-         view : this.view
-      });
+         uiView : this.uiView
+      },this.uiOutline));
    }
    
 }; // end init()
