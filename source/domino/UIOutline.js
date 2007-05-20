@@ -2,9 +2,10 @@
 Ext.nd.UIOutline = function(config) {
 
    var sess = Ext.nd.Session; // should we assume that there will always be a session?
-   
+   var db = sess.CurrentDatabase;
+      
    // default count, to override, pass in the config {i.e. count : 60}
-   this.dbPath = sess.WebDbNamePath;
+   this.dbPath = db.WebFilePath;
    this.outlineName = '';
 
    // Set any config params passed in to override defaults
@@ -18,13 +19,13 @@ Ext.nd.UIOutline = function(config) {
 };
 
 Ext.nd.UIOutline.prototype.init = function() {
-	var cb = {
-		success : this.init2.createDelegate(this), 
-      		failure : this.init2.createDelegate(this),
-		scope: this
-	};    
+   var cb = {
+      success : this.init2.createDelegate(this), 
+      failure : this.init2.createDelegate(this),
+      scope: this
+   };    
 
-	Ext.lib.Ajax.request('POST', this.outlineUrl + '?ReadEntries', cb);
+   Ext.lib.Ajax.request('POST', this.outlineUrl + '?ReadEntries', cb);
 
 };
       
