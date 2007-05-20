@@ -1,12 +1,13 @@
 /* Domino UI for Views */
 Ext.nd.UIView = function(config) {
 
-   var sess = Ext.nd.Session; // should we assume that there will always be a session?
+   var sess = Ext.nd.Session; 
+   var db = sess.CurrentDatabase;
    
    // default count, to override, pass in the config {i.e. count : 60}
    this.count = 40;
    this.singleSelect = false;
-   this.dbPath = sess.WebDbNamePath;
+   this.dbPath = db.WebFilePath;
    this.viewName = '';
    
    // Set any config params passed in to override defaults
@@ -20,10 +21,14 @@ Ext.nd.UIView = function(config) {
 };
 
 Ext.nd.UIView.prototype.init = function() {
-   var viewDesign = YAHOO.util.Connect.asyncRequest('POST', this.viewUrl + '?ReadDesign', {
-      success: this.init2.createDelegate(this), 
-      failure: this.init2.createDelegate(this)
-   }, null);
+   var cb = {
+      success : this.init2.createDelegate(this), 
+      failure : this.init2.createDelegate(this),
+      scope: this
+   };    
+
+   Ext.lib.Ajax.request('POST', this.viewUrl + '?ReadDesign', cb);
+
 };
 
 Ext.nd.UIView.prototype.init2 = function(o) {
@@ -748,13 +753,16 @@ Ext.nd.UIView.prototype.deleteDocument  = function(grid, rowIndex, e){
    if (docExists) {
       Ext.MessageBox.alert("Delete Error","You have this document open in another tab.  Please close the document first before deleting.");
    } else {
-      YAHOO.util.Connect.asyncRequest('GET', deleteDocUrl, {
+      var cb = {
          success : this.gridDeleteDocumentSuccess.createDelegate(this), 
          failure : this.gridDeleteDocumentFailure.createDelegate(this), 
-         argument: rowIndex
-      }, null);
+         argument: rowIndex,
+         scope: this
+      };    
+   
+      Ext.lib.Ajax.request('POST', deleteDocUrl, cb);
+
    }
-   //window.status = unid;
 };
 
 
