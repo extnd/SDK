@@ -40,7 +40,7 @@ Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
 			case 'last':
 				var total = ds.getTotalCount();
 				var extra = total % this.pageSize;
-				var lastStart = total - (extra || total-this.pageSize);
+				var lastStart = extra ? (total - extra) : total-this.pageSize
 				ds.load({params: Ext.apply(ds.lastOptions.params, {start: lastStart, count: this.pageSize})});
 				this.activePagePrev = d.activePage;
 				break;
