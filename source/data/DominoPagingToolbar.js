@@ -11,11 +11,9 @@
  * @extends Ext.PagingToolbar
  * A specialized toolbar that is bound to a {@link Ext.nd.DominoViewStore} and provides automatic paging controls geared towards Domino
  * @constructor
- * @param {String/HTMLElement/Ext.Element} container The element into which this grid will be rendered - 
- * The container MUST have some type of size defined for the grid to fill. The container will be 
- * automatically set to position relative if it isn't already.
- * @param {Object} dataSource The data model to bind to
- * @param {Object} colModel The column model with info about this grid's columns
+ * @param {String/HTMLElement/Element} container The id or element that will contain the toolbar
+ * @param {Ext.nd.DominoViewStore} store The underlying data store providing the paged data
+ * @param {Object} config The config object
  */
 Ext.nd.DominoPagingToolbar = function(el, ds, config){
     Ext.nd.DominoPagingToolbar.superclass.constructor.call(this, el, ds, config);
