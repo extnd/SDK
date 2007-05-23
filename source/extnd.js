@@ -1,13 +1,10 @@
 /*
- * Ext.nd JS library 1.0
+ * Ext.nd JS library Alpha 1
  * Copyright (c) 2006-2007, ExtND
  * licensing@extjs.com
  * 
  * http://www.extjs.com/license
  */
-
-// add the Ext.nd namespace
-Ext.namespace("Ext.nd", "Ext.nd.grid", "Ext.nd.data", "Ext.nd.domino");
 
 Ext.nd.extndUrl = "/extnd.nsf/";  // default
 
@@ -19,3 +16,5 @@ Ext.nd.init = function(config) {
 	Ext.apply(this,config);
 	Ext.BLANK_IMAGE_URL = this.getBlankImageUrl();	
 };
+
+Ext.namespace("Ext.nd", "Ext.nd.grid", "Ext.nd.data", "Ext.nd.domino");

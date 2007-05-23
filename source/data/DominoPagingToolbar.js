@@ -1,4 +1,22 @@
+/*
+ * Ext.nd JS library Alpha 1
+ * Copyright (c) 2006-2007, ExtND
+ * licensing@extjs.com
+ * 
+ * http://www.extjs.com/license
+ */
 
+/**
+ * @class Ext.nd.DominoPagingToolbar
+ * @extends Ext.PagingToolbar
+ * A specialized toolbar that is bound to a {@link Ext.nd.DominoViewStore} and provides automatic paging controls geared towards Domino
+ * @constructor
+ * @param {String/HTMLElement/Ext.Element} container The element into which this grid will be rendered - 
+ * The container MUST have some type of size defined for the grid to fill. The container will be 
+ * automatically set to position relative if it isn't already.
+ * @param {Object} dataSource The data model to bind to
+ * @param {Object} colModel The column model with info about this grid's columns
+ */
 Ext.nd.DominoPagingToolbar = function(el, ds, config){
     Ext.nd.DominoPagingToolbar.superclass.constructor.call(this, el, ds, config);
     this.previousCursor = 1;
