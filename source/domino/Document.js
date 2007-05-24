@@ -8,11 +8,9 @@
  
 /**
  * @class Ext.nd.Document
- * @extends Ext.Observable
  * @constructor
  * Makes an AJAX call to retrieve a Domino Document
  * @param {Object} config Configuration options
-
  */
 Ext.nd.Document = function(config) {
 	var sForm = 'Ext.nd.Document.json';
