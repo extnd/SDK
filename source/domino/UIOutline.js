@@ -215,7 +215,7 @@ Ext.nd.UIOutline.prototype.openEntry = function(node, e){
             id : entryId
          });
          var panel = new Ext.ContentPanel(iframe, {
-            title: title.ellipse(16), 
+            title: Ext.util.Format.ellipsis(title,16),
             fitToFrame:true, 
             closable:true
          });
