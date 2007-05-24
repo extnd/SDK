@@ -1,4 +1,19 @@
-// Document Class
+/*
+ * Ext.nd JS library Alpha 1
+ * Copyright (c) 2006-2007, ExtND
+ * licensing@extjs.com
+ * 
+ * http://www.extjs.com/license
+ */
+ 
+/**
+ * @class Ext.nd.Document
+ * @extends Ext.Observable
+ * @constructor
+ * Makes an AJAX call to retrieve a Domino Document
+ * @param {Object} config Configuration options
+
+ */
 Ext.nd.Document = function(config) {
 	var sForm = 'Ext.nd.Document.json';
 	
@@ -21,24 +36,23 @@ Ext.nd.Document = function(config) {
 	
 };
 
-
-// onComplete method to call when making async Ajax calls
-Ext.nd.Document.prototype.onComplete = function() {};
-
-// assignValue method to Document class
-Ext.nd.Document.prototype.assignValue = function(req) {
-	var sTmp, oTmp;
-	sTmp = req.responseText;
-	oTmp = eval('(' + sTmp + ')');
-
-	// Set any config params passed in to override defaults
-	Ext.apply(this,oTmp);
-
-	// now call the user's onComplete function
-	this.onComplete();
-
+Ext.nd.Document.prototype = {
+  onComplete: function() {},
+  
+  assignValue: function(req) {
+  	var sTmp, oTmp;
+    sTmp = req.responseText;
+    oTmp = eval('(' + sTmp + ')');
+  
+    // Set any config params passed in to override defaults
+    Ext.apply(this,oTmp);
+  
+    // now call the user's onComplete function
+    this.onComplete();
+  },
+  
+  processException: function(req) {
+  	Ext.MessageBox.alert("Error","There was an error in the instantiation of the Document class");
+  },
+  
 };
-
-Ext.nd.Document.prototype.processException = function(req) {
-	Ext.MessageBox.alert("Error","There was an error in the instantiation of the Document class")
-}
