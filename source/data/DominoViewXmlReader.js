@@ -1,10 +1,43 @@
+/*
+ * Ext.nd JS library Alpha 1
+ * Copyright (c) 2006-2007, ExtND
+ * licensing@extjs.com
+ * 
+ * http://www.extjs.com/license
+ */
+
+/**
+ * @class Ext.nd.data.DominoViewXmlReader
+ * @extends Ext.data.XmlReader
+ * An expanded version of Ext's XmlReader to deal with Domino's funky ReadViewEntries format
+ * @cfg {String} totalRecords - unused, domino uses toplevelentries
+ * @cfg {String} record The DomQuery path to the repeated element which contains record information.
+ * @cfg {String} success The DomQuery path to the success attribute used by forms.
+ * @cfg {String} id The DomQuery path relative from the record element to the element that contains
+ * a record identifier value.
+ * @constructor
+ * Create a new XmlReader
+ * @param {Object} meta Metadata configuration options
+ * @param {Mixed} recordType The definition of the data record type to produce.  This can be either a valid
+ * Record subclass created with {@link Ext.data.Record#create}, or an array of objects with which to call
+ * Ext.data.Record.create.  See the {@link Ext.data.Record} class for more details.
+ */
 Ext.nd.data.DominoViewXmlReader = function(meta, recordType){
 	Ext.nd.data.DominoViewXmlReader.superclass.constructor.call(this, meta, recordType);
 };
 
 Ext.extend(Ext.nd.data.DominoViewXmlReader, Ext.data.XmlReader, {
-	
+	    /**
+     * Create a data block containing Ext.data.Records from an XML document.
+	 * @param {Object} doc A parsed XML document.
+     * @return {Object} records A data block which is used by an {@link Ext.nd.DominoViewStore} as
+     * a cache of Ext.data.Records.
+     */
 	readRecords : function(doc){
+  /**
+         * After any data loads/reads, the raw XML Document is available for further custom processing.
+         * @type XMLDocument
+         */
 		this.xmlData = doc;
 		var root = doc.documentElement || doc;
 		var q = Ext.DomQuery;
@@ -43,10 +76,13 @@ Ext.extend(Ext.nd.data.DominoViewXmlReader, Ext.data.XmlReader, {
 		alert('this is a test');
 	},
 	        	
-	/*
-	* Domino needs the .getNamedValue method overridden in order
-	* to handle Domino's xml format for view?ReadViewEntries
-	*/
+	/**
+     * Used to parse Domino's ReadViewEntries format
+     * @param {Object} node An XML node
+	* @param {String} name The name attribute to look for within the XML node
+     * @param {String} defaultValue Value to return if name or node are not present
+     * @return {String} nodeValue the value found within the XML node
+     */
 	getNamedValue : function(node, name, defaultValue){
 		if(!node || !name){
 			return defaultValue;
@@ -83,15 +119,6 @@ Ext.extend(Ext.nd.data.DominoViewXmlReader, Ext.data.XmlReader, {
 		} // if-else (attrNode)
 		return nodeValue;
 	}, // end getNamedValue
-
-	getDominoDataValue : function(data){
-		var nodeValue = null;
-		if(data && data.item(0) && data.item(0).firstChild) {
-			nodeValue = data.item(0).firstChild.nodeValue;
-		}
-		return null;
-	},
-
 
 	expand : function(url, params, callback, insertIndex){
 		Ext.MessageBox.alert('Coming Soon','expand')

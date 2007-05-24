@@ -1,9 +1,46 @@
+/*
+ * Ext.nd JS library Alpha 1
+ * Copyright (c) 2006-2007, ExtND
+ * licensing@extjs.com
+ * 
+ * http://www.extjs.com/license
+ */
+ 
+/**
+ * @class Ext.nd.data.DominoViewStore
+ * @extends Ext.data.Store
+ * The Store class encapsulates a client side cache of {@link Ext.data.Record} objects which provide input data
+ * for widgets such as the Ext.grid.Grid, or the Ext.form.ComboBox.
+ * A Store object uses an implementation of {@link Ext.data.DataProxy} to access a data object unless you call loadData() directly and pass in your data. The Store object
+ * has no knowledge of the format of the data returned by the Proxy.
+ * The Store object uses its configured implementation of Ext.data.DataReader to create Ext.data.Record
+ * instances from the data object. These records are cached and made available through accessor functions.
+ * @constructor
+ * Creates a new Store
+ * @param {Object} config A config object containing the objects needed for the Store to access data,
+ * and read the data into Records.
+ */
 Ext.nd.data.DominoViewStore = function(config){
 	Ext.nd.data.DominoViewStore.superclass.constructor.call(this, config);
 };
 
 Ext.extend(Ext.nd.data.DominoViewStore, Ext.data.Store, {
-
+  /**
+     * Loads the Record cache from the configured Proxy using the configured Reader.
+     * <p>
+     * This version is specifically geared towards Domino Views
+     * @param {Object} options An object containing properties which control loading options:
+     * <pre><code>
+ params {Object} An object containing properties to pass as HTTP parameters to a remote data source.
+ callback {Function} A function to be called after the Records have been loaded. The callback is
+ passed the following arguments:
+   r : Ext.data.Record[]
+   options: Options object from the load call
+   success: Boolean success indicator
+ scope {Object} Scope with which to call the callback (defaults to the Store object)
+ append {Boolean} indicator to append loaded records rather than replace the current cache.
+ * </code></pre>
+     */
 	load : function(options){
 		options = options || {};
 		if(this.fireEvent("beforeload", this, options) !== false){
@@ -86,7 +123,13 @@ Ext.extend(Ext.nd.data.DominoViewStore, Ext.data.Store, {
 			this.proxy.load(p, this.reader, this.loadRecords, this, options);
 		}
 	},
-	
+  
+    /**
+     * Sort the Records.
+     * Added mapping for Domino Views
+     * @param {String} fieldName The name of the field to sort by.
+     * @param {String} dir (optional) The sort order, "ASC" or "DESC" (defaults to "ASC")
+     */	
 	sort : function(fieldName, dir){
 		var f = this.fields.get(fieldName);
 		if(!dir){

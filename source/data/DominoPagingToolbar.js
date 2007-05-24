@@ -22,7 +22,7 @@ Ext.nd.DominoPagingToolbar = function(el, ds, config){
 };
 
 Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
- 	
+ 	// private
 	onClick : function(which){
 		var ds = this.ds;
 		var d = this.getPageData();
@@ -66,6 +66,7 @@ Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
 		}
 	},
 
+  // private
 	onLoad : function(ds, r, o){
 		this.cursor = o.params ? (o.params.start ? o.params.start : 1) : 1;
 		var d = this.getPageData(), ap = d.activePage, ps = d.pages;
@@ -96,6 +97,7 @@ Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
 		this.loading.enable();
 	},
 
+  // private
 	getPageData : function(){
 		var total = this.ds.getTotalCount();
 		var activePage;
