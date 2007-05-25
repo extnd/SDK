@@ -731,7 +731,9 @@ Ext.nd.UIView.prototype = {
   
   // set the default rowdblclick to openDocument
   // if you need a view to do something different on a rowdblclick, then you can override this method
-  gridHandleRowDblClick: this.openDocument, 
+  gridHandleRowDblClick: function(grid, rowIndex, e, bEditMode) {
+    this.openDocument(grid, rowIndex, e, bEditMode);
+  },
   
   deleteDocument: function(grid, rowIndex, e) {
    var ds = grid.dataSource;
