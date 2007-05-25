@@ -138,7 +138,7 @@ Ext.nd.UIWorkspace.prototype = {
 	},
 
 	// setup an alias for PickListStrings since it does the same thing as PickList
-	PickListStrings : PickList,
+	PickListStrings : this.PickList,
 
 	Prompt : function() {
 		var cb;
