@@ -1,4 +1,3 @@
-/* Domino Default User Interface */
 /*
  * Ext.nd JS library Alpha 1
  * Copyright (c) 2006-2007, ExtND
@@ -14,7 +13,7 @@ new Ext.nd.DominoUI({
   uiOutline : {outlineName: "mainOL"},
   uiView : {viewName: "Requests", viewTitle: "Requests"}		
 });
-  * @cfg {Object} uiOutline A {@link Ext.nd.UIOutline} config object * @cfg {Object} uiView A {@link Ext.nd.UIView} config object
+ * @cfg {Object} uiOutline A {@link Ext.nd.UIOutline} config object * @cfg {Object} uiView A {@link Ext.nd.UIView} config object
  * @constructor
  * Create an integrated domino interface, with a view and an outline
  * @param {Object} config Configuration options

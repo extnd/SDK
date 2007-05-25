@@ -1,4 +1,18 @@
-/* Domino UI for Outlines */
+/*
+ * Ext.nd JS library Alpha 1
+ * Copyright (c) 2006-2007, ExtND
+ * licensing@extjs.com
+ * 
+ * http://www.extjs.com/license
+ */
+
+/**
+ * @class Ext.nd.DominoUI
+ * Makes an AJAX call to the outline's readentries and translates it into an {@link Ext.Tree}
+ * @constructor
+ * Create a new UIOutline component
+ * @param {Object} config Configuration options
+ */
 Ext.nd.UIOutline = function(config) {
 
    var sess = Ext.nd.Session; // should we assume that there will always be a session?
@@ -19,46 +33,45 @@ Ext.nd.UIOutline = function(config) {
    this.init();
 };
 
-Ext.nd.UIOutline.prototype.init = function() {
-   var cb = {
+Ext.nd.UIOutline.prototype = {
+  init: function() {
+    var cb = {
       success : this.init2.createDelegate(this), 
       failure : this.init2.createDelegate(this),
       scope: this
-   };    
-
-   Ext.lib.Ajax.request('POST', this.outlineUrl + '?ReadEntries', cb);
-
-};
-      
-Ext.nd.UIOutline.prototype.init2 = function(o) {
-   var response = o.responseXML;
-   var arEntries = response.getElementsByTagName('outlineentry');
-
-   var Tree = Ext.tree;
-   //var tree = new Tree.TreePanel(el);
-   var tree = new Tree.TreePanel(this.outlinePanel.getEl(), {
-      animate : true, 
-      enableDD : true,
-      ddGroup: 'TreeDD',
-      containerScroll : true,
-      dropConfig : {appendOnly : true},
-      rootVisible : false
-   });
-   
-   // add a tree sorter in folder mode
-   //new Tree.TreeSorter(tree, {folderSort : true}); // leave the sort order alone for domino outlines
-          
-   // set the root node
-   // var root = new Tree.AsyncTreeNode({
-   var root = new Tree.TreeNode({
-      text : 'domino-folders', 
-      draggable : false, // disable root node dragging
-      id : 'domino-folders'
-   });
-   tree.setRootNode(root);
-   var curNode = null;
-   var arNodes = [];
-   for (var i=0; i<arEntries.length; i++) {
+    };    
+    Ext.lib.Ajax.request('POST', this.outlineUrl + '?ReadEntries', cb);
+  },
+  
+  // Private
+  init2: function(o) {
+    var response = o.responseXML;
+    var arEntries = response.getElementsByTagName('outlineentry');
+  
+    var Tree = Ext.tree;
+    var tree = new Tree.TreePanel(this.outlinePanel.getEl(), {
+        animate : true, 
+        enableDD : true,
+        ddGroup: 'TreeDD',
+        containerScroll : true,
+        dropConfig : {appendOnly : true},
+        rootVisible : false
+    });
+     
+     // add a tree sorter in folder mode
+     //new Tree.TreeSorter(tree, {folderSort : true}); // leave the sort order alone for domino outlines
+            
+     // set the root node
+     // var root = new Tree.AsyncTreeNode({
+    var root = new Tree.TreeNode({
+        text : 'domino-folders', 
+        draggable : false, // disable root node dragging
+        id : 'domino-folders'
+    });
+    tree.setRootNode(root);
+    var curNode = null;
+    var arNodes = [];
+    for (var i=0; i<arEntries.length; i++) {
       var entry = arEntries.item(i);
       var extndType = entry.attributes.getNamedItem('type').value;
       var extndTitle = entry.attributes.getNamedItem('title').value;
@@ -95,17 +108,17 @@ Ext.nd.UIOutline.prototype.init2 = function(o) {
       };
             
       var curNode = new Tree.TreeNode({
-         text : extndTitle, 
-         cls : cls, 
-         allowDrag : true, 
-         allowDrop : (extndType == "20" || extndType == "0") ? true : false,
-         isTarget : true,
-         leaf : false,
-         extndHref : extndHref,
-         extndType : extndType,
-         extndExpandable: isExpandable,
-         extndPosition : curPosition,
-         icon : (this.useOutlineIcons) ? extndIcon : null
+        text : extndTitle, 
+        cls : cls, 
+        allowDrag : true, 
+        allowDrop : (extndType == "20" || extndType == "0") ? true : false,
+        isTarget : true,
+        leaf : false,
+        extndHref : extndHref,
+        extndType : extndType,
+        extndExpandable: isExpandable,
+        extndPosition : curPosition,
+        icon : (this.useOutlineIcons) ? extndIcon : null
       });
          
       curNode.on('click', this.openEntry.createDelegate(this), this, true);   
@@ -114,117 +127,114 @@ Ext.nd.UIOutline.prototype.init2 = function(o) {
       arNodes[curPosition] = curNode;
       
       if (curPosition.indexOf('.') > 0) {
-         var parentPosition = curPosition.substring(0,curPosition.lastIndexOf('.'));
-         arNodes[parentPosition].appendChild(curNode);   
+        var parentPosition = curPosition.substring(0,curPosition.lastIndexOf('.'));
+        arNodes[parentPosition].appendChild(curNode);   
       } else {
-         root.appendChild(curNode);
+        root.appendChild(curNode);
       }
-            
-   };
-
+    }
 
    // handle the drop of the doc on the folder
    tree.on('beforenodedrop', this.addToFolder);
-
 
    // render the tree
    tree.render();
           
    //root.expand(false, /*no anim*/ false);
    root.expand(); 
-};
-
-Ext.nd.UIOutline.prototype.addToFolder = function(e){
-   console.log('nodedragover - start');
-   console.log('addToFolder - start');
-
-   var type = e.target.attributes.extndType;
-   console.log('type='+type);
-
-   if (type == "20" || type == "0") {
+  },
+  
+  // Private
+  addToFolder: function(e) {
+    console.log('nodedragover - start');
+    console.log('addToFolder - start');
+  
+    var type = e.target.attributes.extndType;
+    console.log('type='+type);
+  
+    if (type == "20" || type == "0") {
       console.log('expanding');
       e.target.expand();
-   } else {
+    } else {
       console.log('no, this is not a folder you can drop docs onto');
-   }
-   
-   var unid, sFormula;
-   sFormula = '@username';
-   var selections = e.data.selections;
-   if (selections) {
+    }
+     
+    var unid, sFormula;
+    sFormula = '@username';
+    var selections = e.data.selections;
+    if (selections) {
       console.log('we have some docs selected!');
       for (var i=0; i<selections.length; i++) {
-         var oUNID = selections[i].node.attributes.getNamedItem('unid')
-         var unid = (oUNID) ? oUNID.value : null;
-         if (unid != null) {
-            console.log('unid='+unid);
-            var formula = new Ext.nd.Formula(sFormula,{
-               "ExecuteInDocumentContext": true,
-               "unid" : unid
-            });
-            // eval/execute formula 
-            console.log('evaling formula');
-            formula.Eval();      
-         }
+        var oUNID = selections[i].node.attributes.getNamedItem('unid')
+        var unid = (oUNID) ? oUNID.value : null;
+        if (unid != null) {
+          console.log('unid='+unid);
+          var formula = new Ext.nd.Formula(sFormula,{
+            "ExecuteInDocumentContext": true,
+            "unid" : unid
+          });
+          // eval/execute formula 
+          console.log('evaling formula');
+          formula.eval();      
+        }
       }
-   }
-
-   console.log('addToFolder - end');
-   console.log('nodedragover - end');
-
-};
-
-
-Ext.nd.UIOutline.prototype.openEntry = function(node, e){
-   var attributes, extndType, extndHref, extndPosition, entryId, title;
-   attributes = node.attributes;
-   extndHref = attributes.extndHref;
-   extndType = attributes.extndType;
-   extndPosition = attributes.extndPosition;
-   entryId = "id-" + extndPosition;
-   title = node.text;
-         
-   if (extndType == "2" || extndType == "20") {
+    }
+  
+    console.log('addToFolder - end');
+    console.log('nodedragover - end');
+  },
+  
+  // Private
+  openEntry: function(node, e) {
+    var attributes, extndType, extndHref, extndPosition, entryId, title;
+    attributes = node.attributes;
+    extndHref = attributes.extndHref;
+    extndType = attributes.extndType;
+    extndPosition = attributes.extndPosition;
+    entryId = "id-" + extndPosition;
+    title = node.text;
+   
+    if (extndType == "2" || extndType == "20") {
       // delete the current grid
       if (this.uiView.grid) {
-         this.viewPanel.setContent("");
-         try {
-            this.uiView.grid.destroy();
-         } catch(e) {}
+        this.viewPanel.setContent("");
+        try {
+          this.uiView.grid.destroy();
+        } catch(e) {}
       }
       var viewUrl = (extndHref.indexOf('?') > 0) ? extndHref.split('?')[0] : extndHref.split('!')[0];       
       // now create our new view/folder                  
       //this.UIView(this.viewPanel.getEl(), url);
       this.uiView = new Ext.nd.UIView({
-         layout : this.layout,
-         viewUrl : viewUrl,
-         viewParams : "",
-         container : this.viewPanel,
-         statusPanel : this.statusPanel
+        layout : this.layout,
+        viewUrl : viewUrl,
+        viewParams : "",
+        container : this.viewPanel,
+        statusPanel : this.statusPanel
       });
          
       this.viewPanel.setTitle(title);
       this.layout.showPanel(this.viewPanel);
-   } else if (extndHref != "") {
+    } else if (extndHref != "") {
       var entry = this.layout.getRegion('center').getPanel(entryId);
       if(!entry){ 
-         var iframe = Ext.DomHelper.append(document.body, {
-            tag: 'iframe', 
-            frameBorder: 0, 
-            src: extndHref,
-            id : entryId
-         });
-         var panel = new Ext.ContentPanel(iframe, {
-            title: Ext.util.Format.ellipsis(title,16),
-            fitToFrame:true, 
-            closable:true
-         });
-         this.layout.add('center', panel);
+        var iframe = Ext.DomHelper.append(document.body, {
+          tag: 'iframe', 
+          frameBorder: 0, 
+          src: extndHref,
+          id : entryId
+        });
+        var panel = new Ext.ContentPanel(iframe, {
+          title: Ext.util.Format.ellipsis(title,16),
+          fitToFrame:true, 
+          closable:true
+        });
+        this.layout.add('center', panel);
       } else { // we've already opened this entry
-         this.layout.showPanel(entry);
+        this.layout.showPanel(entry);
       }
-
-   }
+    }
+  }
 };
 
 // TODO: need to create custom DominoNode class that extends Node so that we don't need to override hadChildNodes method of Node

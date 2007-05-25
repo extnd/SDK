@@ -93,6 +93,3 @@ Ext.nd.Formula.prototype = {
     this.onComplete();
   }
 };
-
-// Backwards compatibility
-Ext.nd.Formula.prototype.Eval = Ext.nd.Formula.eval
