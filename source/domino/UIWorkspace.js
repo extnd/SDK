@@ -1,23 +1,33 @@
+/*
+ * Ext.nd JS library Alpha 1
+ * Copyright (c) 2006-2007, ExtND
+ * licensing@extjs.com
+ * 
+ * http://www.extjs.com/license
+ */
 
+/**
+ * @class Ext.nd.UIWorkspace
+ * Currently in-progress and not considered functional
+ * @constructor
+ * Create a new UIWorkspace component
+ * @param {Object} config Configuration options
+ */
 Ext.nd.UIWorkspace = function(config) {
 	Ext.apply(this,config);
 }
 
-
-/*	UIWorkspace.PickList()
- *
- *	Modeled after NotesUIWorkspace.PickListStrings and @PickList function
- *
- *	stringArray = notesUIWorkspace.PickListStrings( type% [, multipleSelection ] )
- *	stringArray = notesUIWorkspace.PickListStrings( type% [, multipleSelection ], server$, databaseFileName$, viewName$, title$, prompt$, column% [, categoryname$ ] )
- *	@PickList( [CUSTOM] : [SINGLE] ; server : file ; view ; title ; prompt ; column ; categoryname  )
- * 
- * 	@param {String/Integer/Object} type or a config object
- *	
- */
-
 Ext.nd.UIWorkspace.prototype = {
 
+  /**
+   *	Modeled after NotesUIWorkspace.PickListStrings and @PickList function
+   *	stringArray = notesUIWorkspace.PickListStrings( type% [, multipleSelection ] )
+   *	stringArray = notesUIWorkspace.PickListStrings( type% [, multipleSelection ], server$, databaseFileName$, viewName$, title$, prompt$, column% [, categoryname$ ] )
+   *	@PickList( [CUSTOM] : [SINGLE] ; server : file ; view ; title ; prompt ; column ; categoryname  )
+   * 
+   * 	@param {String/Integer/Object} type or a config object
+   *	
+   */
 	PickList : function(config) {
 		var dialog, cb;
 	
@@ -170,5 +180,4 @@ Ext.nd.UIWorkspace.prototype = {
 		}
 
 	}
-
 }; 

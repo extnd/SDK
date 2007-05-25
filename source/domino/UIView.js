@@ -1,14 +1,25 @@
-/* Domino UI for Views */
+/*
+ * Ext.nd JS library Alpha 1
+ * Copyright (c) 2006-2007, ExtND
+ * licensing@extjs.com
+ * 
+ * http://www.extjs.com/license
+ */
+ 
+/**
+ * @class Ext.nd.UIView
+  * Makes an AJAX call to readviewentries and translates it into an {@link Ext.nd.grid.DominoGrid}
+ * @constructor
+ * Creates a new UIView component
+ * @param {Object} config Configuration options
+ */
 Ext.nd.UIView = function(config) {
 
    var sess = Ext.nd.Session; 
    var db = sess.CurrentDatabase;
    
    // default count, to override, pass in the config {i.e. count : 60}
-   this.count = 40;
-   this.singleSelect = false;
    this.dbPath = db.WebFilePath;
-   this.viewName = '';
    
    // Set any config params passed in to override defaults
    Ext.apply(this,config);
@@ -19,136 +30,139 @@ Ext.nd.UIView = function(config) {
    // init the view, which creates it in the container passed in the config object
    this.init();
 };
-
-Ext.nd.UIView.prototype.init = function() {
-   var cb = {
+Ext.nd.UIView.prototype = {
+  count: 40,
+  singleSelect: false,
+  viewName: '',
+  
+  init: function() {
+    var cb = {
       success : this.init2.createDelegate(this), 
       failure : this.init2.createDelegate(this),
       scope: this
-   };    
+    };    
 
-   Ext.lib.Ajax.request('POST', this.viewUrl + '?ReadDesign', cb);
+    Ext.lib.Ajax.request('POST', this.viewUrl + '?ReadDesign', cb);
+  },
+  
+  init2: function(o) {
+    var response = o.responseXML;
+    var arColumns = response.getElementsByTagName('column');
+  
+    var arColumnConfig = [];
+    var arRecordConfig = [];
+  
+    for (var i=0; i<arColumns.length; i++) {
+        var col = arColumns.item(i);
+        var name = col.attributes.getNamedItem('name').value;
+        var columnnumber = col.attributes.getNamedItem('columnnumber').value;
+        var title = col.attributes.getNamedItem('title').value;
+        title = (title == "") ? "&nbsp;" : title;
+        var width = col.attributes.getNamedItem('width').value;
+        
+        // response
+        var response = col.attributes.getNamedItem('response');
+        var responseValue = (response) ? true : false;
+  
+        // twistie
+        var twistie = col.attributes.getNamedItem('twistie');
+        var twistieValue = (twistie) ? true : false;
+  
+        // listseparator
+        var listseparator = col.attributes.getNamedItem('listseparator');
+        var listseparatorValue = (listseparator) ? listseparator.value : 'none';      
+        
+        // resize
+        var resize = col.attributes.getNamedItem('resize');
+        var resizeValue = (resize) ? true : false;
+        
+        // sortcategorize (category column)
+        var sortcategorize = col.attributes.getNamedItem('sortcategorize')
+        var sortcategorizeValue = (sortcategorize) ? true : false;
+        
+        // resort asc
+        var resortascending = col.attributes.getNamedItem('resortascending');
+        var resortascendingValue = (resortascending) ? true : false;
+              
+        // resort desc
+        var resortdescending = col.attributes.getNamedItem('resortdescending');
+        var resortdescendingValue = (resortdescending) ? true : false;
+              
+        // jump to view
+        var resorttoview = col.attributes.getNamedItem('resorttoview');
+        var resorttoviewValue = (resorttoview) ? true : false;
+        var resortviewunid = col.attributes.getNamedItem('resortviewunid');
+        var resortviewunidValue = (resortviewunid) ? resortviewunid.value : "";
+           
+        var isSortable = (resortascendingValue || resortdescendingValue || resorttoviewValue) ? true : false;
+  
+        // icon
+        var icon = col.attributes.getNamedItem('icon');
+        var iconValue = (icon) ? true : false;
+  
+        // date formatting
+        var tmpDateTimeFormat   = col.getElementsByTagName('datetimeformat')[0].attributes;
+        var datetimeformat = {};
+        datetimeformat.show  = tmpDateTimeFormat.getNamedItem('show').value;       
+        datetimeformat.date  = tmpDateTimeFormat.getNamedItem('date').value;       
+        datetimeformat.time  = tmpDateTimeFormat.getNamedItem('time').value;       
+        datetimeformat.zone  = tmpDateTimeFormat.getNamedItem('zone').value;       
+     
+        var columnConfig = {
+           header: title, 
+           dataIndex: name,
+           width: width*1.41,
+           renderer: this.dominoRenderer.createDelegate(this), 
+           sortable: isSortable, 
+           resortascending: resortascendingValue,
+           resortdescending: resortdescendingValue,
+           resortviewunid: resortviewunidValue,
+           sortcategorize: sortcategorizeValue,
+           resize: resizeValue,
+           listseparator: listseparatorValue,
+           response: responseValue,
+           twistie: twistieValue,
+           icon: iconValue,
+           datetimeformat: datetimeformat
+        };
+  
+        var recordConfig = {
+           name: name, 
+           mapping: columnnumber
+        };          
+  
+        arColumnConfig.push(columnConfig);
+        arRecordConfig.push(recordConfig);
+        
+    } // end for loop
+  
+    // the dominoView object holds all of the design information for the view
+    this.dominoView = {
+        meta : {
+           root : 'viewentries',
+           record : 'viewentry',
+           totalRecords : '@toplevelentries',
+           id : 'position',
+           columnConfig : arColumnConfig
+        },
+        recordConfig : arRecordConfig
+    };
+  
+    // now that we have all of the design information, we can create the view (grid)
+    this.createGrid();
+  },
 
-};
-
-Ext.nd.UIView.prototype.init2 = function(o) {
-   var response = o.responseXML;
-   var arColumns = response.getElementsByTagName('column');
-
-   var arColumnConfig = [];
-   var arRecordConfig = [];
-
-   for (var i=0; i<arColumns.length; i++) {
-      var col = arColumns.item(i);
-      var name = col.attributes.getNamedItem('name').value;
-      var columnnumber = col.attributes.getNamedItem('columnnumber').value;
-      var title = col.attributes.getNamedItem('title').value;
-      title = (title == "") ? "&nbsp;" : title;
-      var width = col.attributes.getNamedItem('width').value;
-      
-      // response
-      var response = col.attributes.getNamedItem('response');
-      var responseValue = (response) ? true : false;
-
-      // twistie
-      var twistie = col.attributes.getNamedItem('twistie');
-      var twistieValue = (twistie) ? true : false;
-
-      // listseparator
-      var listseparator = col.attributes.getNamedItem('listseparator');
-      var listseparatorValue = (listseparator) ? listseparator.value : 'none';      
-      
-      // resize
-      var resize = col.attributes.getNamedItem('resize');
-      var resizeValue = (resize) ? true : false;
-      
-      // sortcategorize (category column)
-      var sortcategorize = col.attributes.getNamedItem('sortcategorize')
-      var sortcategorizeValue = (sortcategorize) ? true : false;
-      
-      // resort asc
-      var resortascending = col.attributes.getNamedItem('resortascending');
-      var resortascendingValue = (resortascending) ? true : false;
-            
-      // resort desc
-      var resortdescending = col.attributes.getNamedItem('resortdescending');
-      var resortdescendingValue = (resortdescending) ? true : false;
-            
-      // jump to view
-      var resorttoview = col.attributes.getNamedItem('resorttoview');
-      var resorttoviewValue = (resorttoview) ? true : false;
-      var resortviewunid = col.attributes.getNamedItem('resortviewunid');
-      var resortviewunidValue = (resortviewunid) ? resortviewunid.value : "";
-         
-      var isSortable = (resortascendingValue || resortdescendingValue || resorttoviewValue) ? true : false;
-
-      // icon
-      var icon = col.attributes.getNamedItem('icon');
-      var iconValue = (icon) ? true : false;
-
-      // date formatting
-      var tmpDateTimeFormat   = col.getElementsByTagName('datetimeformat')[0].attributes;
-      var datetimeformat = {};
-      datetimeformat.show  = tmpDateTimeFormat.getNamedItem('show').value;       
-      datetimeformat.date  = tmpDateTimeFormat.getNamedItem('date').value;       
-      datetimeformat.time  = tmpDateTimeFormat.getNamedItem('time').value;       
-      datetimeformat.zone  = tmpDateTimeFormat.getNamedItem('zone').value;       
+  createGrid: function() {
+    var sViewParams = (this.viewParams == undefined) ? "" : this.viewParams;
    
-      var columnConfig = {
-         header: title, 
-         dataIndex: name,
-         width: width*1.41,
-         renderer: this.dominoRenderer.createDelegate(this), 
-         sortable: isSortable, 
-         resortascending: resortascendingValue,
-         resortdescending: resortdescendingValue,
-         resortviewunid: resortviewunidValue,
-         sortcategorize: sortcategorizeValue,
-         resize: resizeValue,
-         listseparator: listseparatorValue,
-         response: responseValue,
-         twistie: twistieValue,
-         icon: iconValue,
-         datetimeformat: datetimeformat
-      };
-
-      var recordConfig = {
-         name: name, 
-         mapping: columnnumber
-      };          
-
-      arColumnConfig.push(columnConfig);
-      arRecordConfig.push(recordConfig);
+    // define the column model
+    this.cm = new Ext.grid.DefaultColumnModel(this.dominoView.meta.columnConfig);
       
-   } // end for loop
-
-   // the dominoView object holds all of the design information for the view
-   this.dominoView = {
-      meta : {
-         root : 'viewentries',
-         record : 'viewentry',
-         totalRecords : '@toplevelentries',
-         id : 'position',
-         columnConfig : arColumnConfig
-      },
-      recordConfig : arRecordConfig
-   };
-
-   // now that we have all of the design information, we can create the view (grid)
-   this.createGrid();
-};
-
-Ext.nd.UIView.prototype.createGrid = function() {
-   var sViewParams = (this.viewParams == undefined) ? "" : this.viewParams;
-   
-   // define the column model
-   this.cm = new Ext.grid.DefaultColumnModel(this.dominoView.meta.columnConfig);
-      
-   // define the Domino viewEntry record
+    // define the Domino viewEntry record
     var viewEntry = Ext.data.Record.create(this.dominoView.recordConfig);
 
-   // create reader that reads viewEntry records
-   var viewEntryReader = new Ext.nd.data.DominoViewXmlReader(this.dominoView.meta, viewEntry);
+    // create reader that reads viewEntry records
+    var viewEntryReader = new Ext.nd.data.DominoViewXmlReader(this.dominoView.meta, viewEntry);
 
     // create the Data Store
     var ds = new Ext.nd.data.DominoViewStore({
@@ -160,102 +174,101 @@ Ext.nd.UIView.prototype.createGrid = function() {
         remoteSort: true
     });
 
-   // destroy the old grid since we are creating a new one 
-   if (this.grid) {
+    // destroy the old grid since we are creating a new one 
+    if (this.grid) {
       try {
          this.grid.destroy();
       } catch (e) {}
-   }
+    }
 
-   // create a DominoGrid        
-   // container can be a string id reference or a dom object, or even an Ext panel
-   var dh = Ext.DomHelper;
-   var container = (this.container.getEl) ? this.container.getEl() : this.container;
-   //this.grid = new Ext.nd.grid.DominoGrid(container, {
-   this.grid = new Ext.nd.grid.DominoGrid(dh.append(document.body,{tag: 'div'}), {
+    // create a DominoGrid        
+    // container can be a string id reference or a dom object, or even an Ext panel
+    var dh = Ext.DomHelper;
+    var container = (this.container.getEl) ? this.container.getEl() : this.container;
+    //this.grid = new Ext.nd.grid.DominoGrid(container, {
+    this.grid = new Ext.nd.grid.DominoGrid(dh.append(document.body,{tag: 'div'}), {
       ds: ds,
       cm: this.cm,
       selModel: new Ext.grid.RowSelectionModel({singleSelect : this.singleSelect}),
       enableDragDrop: true,
       ddGroup: 'TreeDD',
       enableColLock: false    
-   });
+    });
 
-   var layout = Ext.BorderLayout.create({
+    var layout = Ext.BorderLayout.create({
       center: {
          panels: [new Ext.GridPanel(this.grid, {fitToFrame : true})] 
       }
-   }, container);
+    }, container);
    
-   // rowdblclick, to open a document
-   //this.grid.addListener('rowdblclick',this.openDocument, this, true);
-   this.grid.addListener('rowdblclick',this.gridHandleRowDblClick, this, true);
+    // rowdblclick, to open a document
+    //this.grid.addListener('rowdblclick',this.openDocument, this, true);
+    this.grid.addListener('rowdblclick',this.gridHandleRowDblClick, this, true);
 
-   // keydown, for things like 'Quick Search', <delete> to delete, <enter> to open a doc
-   this.grid.addListener('keydown',this.gridHandleKeyDown, this, true);
+    // keydown, for things like 'Quick Search', <delete> to delete, <enter> to open a doc
+    this.grid.addListener('keydown',this.gridHandleKeyDown, this, true);
 
-   // rightclick, to give a context menu for things like 'document properties, copy, paste, delete, etc'
-   this.grid.addListener('rowcontextmenu',this.gridHandleRowContextMenu, this, true);
+    // rightclick, to give a context menu for things like 'document properties, copy, paste, delete, etc'
+    this.grid.addListener('rowcontextmenu',this.gridHandleRowContextMenu, this, true);
    
-   // headerclick, to handle switching to another view
-   this.grid.addListener('headerclick',this.gridHandleHeaderClick, this, true);
+    // headerclick, to handle switching to another view
+    this.grid.addListener('headerclick',this.gridHandleHeaderClick, this, true);
       
-   //this.grid.enableDragDrop = true;
-   //this.grid.on('dragdrop',addDocToFolder);
+    //this.grid.enableDragDrop = true;
+    //this.grid.on('dragdrop',addDocToFolder);
          
-   // render our domino view 'grid'
-   this.grid.render();  
+    // render our domino view 'grid'
+    this.grid.render();  
 
-   // setup the paging toolbar   
-   var gridFoot = this.grid.getView().getFooterPanel(true);
+    // setup the paging toolbar   
+    var gridFoot = this.grid.getView().getFooterPanel(true);
 
     // add a paging toolbar to the grid's footer
     var paging = new Ext.nd.DominoPagingToolbar(gridFoot, ds, {pageSize: this.count});
    
-   /* example of adding a button to toolbar
-    paging.add('-', {
-        pressed: true,
-        enableToggle:true,
-        text: 'Detailed View',
-        cls: 'x-btn-text-icon details',
-        toggleHandler: toggleDetails
-    });
-   */
+     /* example of adding a button to toolbar
+         paging.add('-', {
+          pressed: true,
+          enableToggle:true,
+          text: 'Detailed View',
+          cls: 'x-btn-text-icon details',
+          toggleHandler: toggleDetails
+        });
+         */
    
     // trigger the data store load
     ds.load({params:{count : this.count}});
     
     //this.grid.getView().fitColumns();
    
-   /* example for paging toolbar button
-   function toggleDetails(btn, pressed){
-      this.cm.getColumnById('topic').renderer = pressed ? renderTopic : renderTopicPlain;
-      this.cm.getColumnById('last').renderer = pressed ? renderLast : renderLastPlain;
-      this.grid.getView().refresh();
-   }  
-   */
-   
-   /* TODO: work on making the search dialog look just like the Notes version (button text, etc.)
-   this.showQuickSearchDialog = new Ext.LayoutDialog('domino-view-search',{
-      autoCreate: true,
-      title: 'Starts with...', 
-      msg: 'Search Text',
-      width: 380,
-      height: 100,
-      resizable: false
-   });
-   this.showQuickSearchDialog.addButton('Search',this.quickSearch,this);
-   this.showQuickSearchDialog.addButton('Cancel',this.showQuickSearchDialog.hide,this.showQuickSearchDialog);
-   var qsBody = this.showQuickSearchDialog.body;
-   qsBody.createChild({
-      tag: 'div', 
-      html:'<span class="ext-mb-text">Starts with...</span><input type="text" class="ext-mb-input" id="dwt-view-search-input" name="extnd-view-search-input">'
-   });
-   */
-   
-};
+    /* example for paging toolbar button
+       function toggleDetails(btn, pressed){
+          this.cm.getColumnById('topic').renderer = pressed ? renderTopic : renderTopicPlain;
+          this.cm.getColumnById('last').renderer = pressed ? renderLast : renderLastPlain;
+          this.grid.getView().refresh();
+       }  
+       */
+       
+       /* TODO: work on making the search dialog look just like the Notes version (button text, etc.)
+       this.showQuickSearchDialog = new Ext.LayoutDialog('domino-view-search',{
+          autoCreate: true,
+          title: 'Starts with...', 
+          msg: 'Search Text',
+          width: 380,
+          height: 100,
+          resizable: false
+       });
+       this.showQuickSearchDialog.addButton('Search',this.quickSearch,this);
+       this.showQuickSearchDialog.addButton('Cancel',this.showQuickSearchDialog.hide,this.showQuickSearchDialog);
+       var qsBody = this.showQuickSearchDialog.body;
+       qsBody.createChild({
+          tag: 'div', 
+          html:'<span class="ext-mb-text">Starts with...</span><input type="text" class="ext-mb-input" id="dwt-view-search-input" name="extnd-view-search-input">'
+       });
+       */
+  },
 
-Ext.nd.UIView.prototype.dominoRenderer = function(value, cell, row, rowIndex, colIndex, dataStore) {
+  dominoRenderer: function(value, cell, row, rowIndex, colIndex,dataStore) {
    var args = arguments;
    var colConfig = this.cm.config[colIndex];
 
@@ -339,14 +352,9 @@ Ext.nd.UIView.prototype.dominoRenderer = function(value, cell, row, rowIndex, co
       value = this.getValue(value, colConfig);
    }
    return value;
-};
+  },
 
-Ext.nd.UIView.prototype.getValue = function(value, colConfig) {
-
-   /*----------------------------------------*/
-   /* handle and return the value    */
-   /*----------------------------------------*/
-
+  getValue: function(value, colConfig) {
    var dataType = value.substring(0,1); // set in the DominoViewXmlReader.getNamedValue method
    var newvalue = value.substring(1);
    var tmpDate, tmpDateFmt
@@ -401,9 +409,9 @@ Ext.nd.UIView.prototype.getValue = function(value, colConfig) {
       }
       return newvalue;
    }
-};
-      
-Ext.nd.UIView.prototype.preprocessDominoData = function(value) {
+  },
+  
+  preprocessDominoData: function(value) {
    return value;
    
    var dataType = value.substring(0,1);
@@ -424,9 +432,9 @@ Ext.nd.UIView.prototype.preprocessDominoData = function(value) {
          newvalue = newvalue;
    }
    return newvalue;
-};
-
-Ext.nd.UIView.prototype.gridHandleKeyDown = function(e) {
+  },
+  
+  gridHandleKeyDown: function(e) {
    var node, row, rowIndex, unid, target;
    var keyCode = e.browserEvent.keyCode;
    var charCode = e.charCode;
@@ -494,9 +502,9 @@ Ext.nd.UIView.prototype.gridHandleKeyDown = function(e) {
 
          }
    } 
-};
+  },
 
-Ext.nd.UIView.prototype.quickSearch = function(btn, text) {
+  quickSearch: function(btn, text) {
    var ds = this.grid.dataSource;
    if (btn == 'ok') {
       // first, remove the start param from the lastOptions.params
@@ -504,15 +512,17 @@ Ext.nd.UIView.prototype.quickSearch = function(btn, text) {
       // next, load dataSrource, passing the startkey param
       ds.load({params: Ext.apply(ds.lastOptions.params, {startkey : text})}); // append the startkey param to the existing params (ds.lastOptions)
    }
-}
-Ext.nd.UIView.prototype.quickSearch_EXPERIMENT = function() {
+  },
+  
+  quickSearch_EXPERIMENT: function() {
    this.showQuickSearchDialog.hide();
    var vsi = Ext.get('extnd-view-search-input').dom;
    var s = vsi.value;
    vsi.value = ""; // reset for next search  
    Ext.MessageBox.alert('Coming Soon','this is where we would make an XHR call to view?readviewentries&startkey=' + s)
-}
-Ext.nd.UIView.prototype.gridHandleHeaderClick = function(grid, colIndex, e) {
+  },
+  
+  gridHandleHeaderClick: function(grid, colIndex, e) {
    var colConfig = this.cm.config[colIndex];
    if (colConfig.resortviewunid != "") {
       // first, let's stop the propagation of this event so that the sort events don't try and run as well
@@ -534,14 +544,14 @@ Ext.nd.UIView.prototype.gridHandleHeaderClick = function(grid, colIndex, e) {
          statusPanel : this.statusPanel
       });
    } 
-};
+  },
 
-Ext.nd.UIView.prototype.gridHandleCellClick = function(grid, rowIndex, colIndex, e) {
+  gridHandleCellClick: function(grid, rowIndex, colIndex, e) {
    var node, unid;
    //alert('cell clicked')
-};
-
-Ext.nd.UIView.prototype.gridHandleRowContextMenu = function(grid, rowIndex, e) {
+  },
+  
+  gridHandleRowContextMenu: function(grid, rowIndex, e) {
    e.stopEvent();
    
    var menu = new Ext.menu.Menu({
@@ -560,17 +570,14 @@ Ext.nd.UIView.prototype.gridHandleRowContextMenu = function(grid, rowIndex, e) {
    menu.rowIndex = rowIndex;
    var coords = e.getXY();
    menu.showAt([coords[0], coords[1]]);
-   
-};
+  },
 
-Ext.nd.UIView.prototype.gridContextMenuSearchView = function(){
-
+  gridContextMenuSearchView: function() {
    Ext.MessageBox.alert('Search View', 'In a future release, you will be able to search a view.');
    return;
-};
+  },
 
-Ext.nd.UIView.prototype.gridContextMenuShowDocumentPropertiesDialog = function(){
-
+  gridContextMenuShowDocumentPropertiesDialog: function() {
    Ext.MessageBox.alert('Document Properties', 'In a future release, you will see a document properties box.');
    return;
     if(!this.dialog){ // lazy initialize the dialog and only create it once
@@ -613,9 +620,9 @@ Ext.nd.UIView.prototype.gridContextMenuShowDocumentPropertiesDialog = function()
    layout.endUpdate();
     }
     dialog.show(showBtn.dom);
-}
-      
-Ext.nd.UIView.prototype.gridDeleteDocumentSuccess = function(o) {
+  },
+  
+  gridDeleteDocumentSuccess: function(o) {
    //alert("The document was successfully deleted.");
    var row = o.argument;
    var ds = this.grid.dataSource;
@@ -627,46 +634,45 @@ Ext.nd.UIView.prototype.gridDeleteDocumentSuccess = function(o) {
       sm.selectRow(rowIndex+1);
    }
    ds.remove(row);
-};
-
-Ext.nd.UIView.prototype.removeRow = function(row) {
+  },
+  
+  removeRow: function(row) {
    ds.remove(row);
-};
-      
-Ext.nd.UIView.prototype.gridDeleteDocumentFailure = function(o) {
+  },
+  
+  gridDeleteDocumentFailure: function(o) {
    Ext.MessageBox.alert('Delete Error','The document could not be deleted.  Please check your access.')
-};
-
-Ext.nd.UIView.prototype.gridHandleRowsDeleted = function(row) {
+  },
+  
+  gridHandleRowsDeleted: function(row) {
    // TODO: we should fetch more data as rows are being deleted
-};
+  },
 
-Ext.nd.UIView.prototype.gridHandleBeforeLoad = function(dm) {
+  gridHandleBeforeLoad: function(dm) {
    //alert('handle before load of the datamodel')
-};
-        
-Ext.nd.UIView.prototype.loadView = function(view, dm){
+  },
+  
+  loadView: function(view, dm) {
    if (this.statusPanel) {
       this.viewTitle = (typeof this.viewTitle == 'undefined') ? "" : this.viewTitle;
       this.statusPanel.setContent('Loading view ' + this.viewTitle + '...');
       this.statusPanel.getEl().removeClass('done');
    }
    ds.loadPage(1);
-};
-
-         
-Ext.nd.UIView.prototype.showError = function(){
+  },
+  
+  showError: function() {
    Ext.MessageBox.alert('Error','An error occurred.');
-};
+  },
 
-Ext.nd.UIView.prototype.gridContextMenuOpenDocument  = function(action, e){
+  gridContextMenuOpenDocument: function(action, e) {
    var grid = action.parentMenu.grid;
    var rowIndex = action.parentMenu.rowIndex;
    var bEditMode = action.editMode;
    this.openDocument(grid, rowIndex, e, bEditMode);   
-};
-
-Ext.nd.UIView.prototype.openDocument  = function(grid, rowIndex, e, bEditMode){
+  },
+  
+  openDocument: function(grid, rowIndex, e, bEditMode) {
    var mode = (bEditMode) ? '?EditDocument' : '?OpenDocument';
    var title = "Opening...";
    var ds = grid.dataSource;
@@ -729,12 +735,13 @@ Ext.nd.UIView.prototype.openDocument  = function(grid, rowIndex, e, bEditMode){
    } else { // we've already opened this document
       this.layout.showPanel(entry);
    }
-};
-// set the default rowdblclick to openDocument
-// if you need a view to do something different on a rowdblclick, then you can override this method
-Ext.nd.UIView.prototype.gridHandleRowDblClick = Ext.nd.UIView.prototype.openDocument;
-
-Ext.nd.UIView.prototype.deleteDocument  = function(grid, rowIndex, e){
+  },
+  
+  // set the default rowdblclick to openDocument
+  // if you need a view to do something different on a rowdblclick, then you can override this method
+  gridHandleRowDblClick: this.openDocument, 
+  
+  deleteDocument: function(grid, rowIndex, e) {
    var ds = grid.dataSource;
    var row = grid.selModel.getSelected();
    var node = row.node;
@@ -763,13 +770,12 @@ Ext.nd.UIView.prototype.deleteDocument  = function(grid, rowIndex, e){
       Ext.lib.Ajax.request('POST', deleteDocUrl, cb);
 
    }
-};
-
-
-
-Ext.nd.UIView.prototype.getViewUrl  = function(grid){
+  },
+  
+  getViewUrl: function(grid) {
    var viewUrlTmp = grid.dataSource.proxy.conn.url;
    var iLocReadViewEntries = viewUrlTmp.toLowerCase().indexOf('readviewentries') - 1; // in case ! is used instead of ?
    var viewUrl = viewUrlTmp.substring(0,iLocReadViewEntries)
    return viewUrl;
+  }
 };
