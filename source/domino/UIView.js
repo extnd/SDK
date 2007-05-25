@@ -1,11 +1,3 @@
-/*
- * Ext.nd JS library Alpha 1
- * Copyright (c) 2006-2007, ExtND
- * licensing@extjs.com
- * 
- * http://www.extjs.com/license
- */
- 
 /**
  * @class Ext.nd.UIView
   * Makes an AJAX call to readviewentries and translates it into an {@link Ext.nd.grid.DominoGrid}

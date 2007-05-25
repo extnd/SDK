@@ -1,11 +1,3 @@
-/*
- * Ext.nd JS library Alpha 1
- * Copyright (c) 2006-2007, ExtND
- * licensing@extjs.com
- * 
- * http://www.extjs.com/license
- */
- 
 /**
  * @class Ext.nd.DominoUI
   * <p>Here's an example showing the creation of a typical DominoUI:</p> * <pre><code>

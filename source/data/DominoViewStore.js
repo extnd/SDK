@@ -1,11 +1,4 @@
-/*
- * Ext.nd JS library Alpha 1
- * Copyright (c) 2006-2007, ExtND
- * licensing@extjs.com
- * 
- * http://www.extjs.com/license
- */
- 
+
 /**
  * @class Ext.nd.data.DominoViewStore
  * @extends Ext.data.Store
