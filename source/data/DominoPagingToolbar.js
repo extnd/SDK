@@ -1,7 +1,7 @@
 /**
  * @class Ext.nd.DominoPagingToolbar
  * @extends Ext.PagingToolbar
- * A specialized toolbar that is bound to a {@link Ext.nd.DominoViewStore} and provides automatic paging controls geared towards Domino
+ * A specialized toolbar that is bound to a {@link Ext.nd.data.DominoViewStore} and provides automatic paging controls geared towards Domino
  * @constructor
  * @param {String/HTMLElement/Element} container The id or element that will contain the toolbar
  * @param {Ext.nd.DominoViewStore} store The underlying data store providing the paged data
