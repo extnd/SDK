@@ -3,7 +3,7 @@
   * <p>Here's an example showing the creation of a typical DominoUI:</p> * <pre><code>
 new Ext.nd.DominoUI({
   uiOutline : {outlineName: "mainOL"},
-  uiView : {viewName: "Requests", viewTitle: "Requests"}		
+  uiView : {viewName: "Requests", viewTitle: "Requests"}    
 });
  * @cfg {Object} uiOutline A {@link Ext.nd.UIOutline} config object * @cfg {Object} uiView A {@link Ext.nd.UIView} config object
  * @constructor
@@ -77,7 +77,7 @@ Ext.nd.DominoUI.prototype = {
     if (this.uiOutline.outlineName != '' || this.uiOutline.outlineUrl != '') {
       this.uiOutline = new Ext.nd.UIOutline(Ext.apply({
         layout : this.layout,
-        outlinePanel : this.outlinePanel, 
+        container : this.outlinePanel, 
         viewPanel : this.viewPanel,
         uiView : this.uiView
       },this.uiOutline));

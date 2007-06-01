@@ -40,8 +40,12 @@ Ext.nd.UIOutline.prototype = {
     var response = o.responseXML;
     var arEntries = response.getElementsByTagName('outlineentry');
   
+    // container can be a string id reference or a dom object, or even an Ext panel
+    var dh = Ext.DomHelper;
+    var container = (this.container.getEl) ? this.container.getEl() : this.container;
+    
     var Tree = Ext.tree;
-    var tree = new Tree.TreePanel(this.outlinePanel.getEl(), {
+    var tree = new Tree.TreePanel(container, {
         animate : true, 
         enableDD : true,
         ddGroup: 'TreeDD',
