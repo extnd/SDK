@@ -49,7 +49,7 @@ Ext.nd.UIView.prototype = {
         var name = col.attributes.getNamedItem('name').value;
         var columnnumber = col.attributes.getNamedItem('columnnumber').value;
         // if name is blank, give it a new unique name
-        name = (name == '') ? 'columnnumber_' + columnnumber;
+        name = (name == '') ? 'columnnumber_' + columnnumber : name;
 
         var title = col.attributes.getNamedItem('title').value;
         title = (title == "") ? "&nbsp;" : title;
