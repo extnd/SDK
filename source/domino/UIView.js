@@ -48,9 +48,12 @@ Ext.nd.UIView.prototype = {
         var col = arColumns.item(i);
         var name = col.attributes.getNamedItem('name').value;
         var columnnumber = col.attributes.getNamedItem('columnnumber').value;
+        // if name is blank, give it a new unique name
+        name = (name == '') ? 'columnnumber_' + columnnumber;
+
         var title = col.attributes.getNamedItem('title').value;
         title = (title == "") ? "&nbsp;" : title;
-        var width = col.attributes.getNamedItem('width').value;
+        var width = col.attributes.getNamedItem('width').value * 1.41; // multiplying by 1.41 converts the width to pixels
         
         // response
         var response = col.attributes.getNamedItem('response');
@@ -92,6 +95,14 @@ Ext.nd.UIView.prototype = {
         var icon = col.attributes.getNamedItem('icon');
         var iconValue = (icon) ? true : false;
   
+        // align (1=right, 2=center, null=left)
+        var align = col.attributes.getNamedItem('align');
+        var alignValue = (align) ? ((align.value == "2") ? 'center' : 'right') : 'left';
+
+        // headerAlign (1=right, 2=center, null=left) - TODO - need to figure out how to update the header with this
+        var headerAlign = col.attributes.getNamedItem('headeralign');
+        var headerAlignValue = (headerAlign) ? ((headerAlign.value == "2") ? 'center' : 'right') : 'left';
+
         // date formatting
         var tmpDateTimeFormat   = col.getElementsByTagName('datetimeformat')[0].attributes;
         var datetimeformat = {};
@@ -101,9 +112,10 @@ Ext.nd.UIView.prototype = {
         datetimeformat.zone  = tmpDateTimeFormat.getNamedItem('zone').value;       
      
         var columnConfig = {
-           header: title, 
+           header: title,
+           align: alignValue,
            dataIndex: name,
-           width: width*1.41,
+           width: width,
            renderer: this.dominoRenderer.createDelegate(this), 
            sortable: isSortable, 
            resortascending: resortascendingValue,
@@ -134,7 +146,7 @@ Ext.nd.UIView.prototype = {
            root : 'viewentries',
            record : 'viewentry',
            totalRecords : '@toplevelentries',
-           id : 'position',
+           id : '@position',
            columnConfig : arColumnConfig
         },
         recordConfig : arRecordConfig
@@ -343,64 +355,105 @@ Ext.nd.UIView.prototype = {
    else {
       value = this.getValue(value, colConfig);
    }
+  
    return value;
+  
   },
 
+  
   getValue: function(value, colConfig) {
-   var dataType = value.substring(0,1); // set in the DominoViewXmlReader.getNamedValue method
-   var newvalue = value.substring(1);
-   var tmpDate, tmpDateFmt
-      
-   // handle columns set to show an icon a little differently
-   if (colConfig.icon) {
-      if (isNaN(parseInt(newvalue,10)) || newvalue == 0) {
-         return "";
-      } else {
-         // I believe the domino only has view icon images from 1 to 186
-         newvalue = (newvalue < 10) ? "00" + newvalue : (newvalue < 100) ? "0" + newvalue : (newvalue > 186) ? "186" : newvalue;
-         return '<img src="/icons/vwicn' + newvalue + '.gif"/>';
-      }
-   } else {
+  
+   var dataType, newValue, tmpDate, tmpDateFmt, separator;
    
-      switch (dataType) {
-
-         // dates
-         case 'd':
-            var dtf = colConfig.datetimeformat;
-            if (newvalue.indexOf('T') > 0) {
-               tmpDate = newvalue.split(',')[0].replace('T','.');
-               tmpDateFmt = "Ymd.His";
-            } else {
-               tmpDate = newvalue;
-               tmpDateFmt = "Ymd";
-            }
-            var d = new Date(Date.parseDate(tmpDate,tmpDateFmt));
-            switch (dtf.show) {
-               case 'date':
-                  newvalue = d ? d.dateFormat("m/d/Y") : '';
-                  break;
-               case 'datetime':
-                  newvalue = d ? d.dateFormat("m/d/Y h:i:s A") : '';
-                  break;
-               }
-            break;
-
-         // text
-         case 't':
-            newvalue = newvalue;
-            break;
-
-         // numbers
-         case 'n':
-            newvalue = newvalue;
-            break;
-
-         // default
-         default:
-            newvalue = newvalue;
-      }
-      return newvalue;
+   switch (colConfig.listseparator) {
+      
+      case "none" :
+         separator = '';
+         break;
+         
+      case "space" :
+         separator = ' ';
+         break;
+         
+      case "comma" :
+         separator = ',';
+         break;
+         
+      case "newline" :
+         separator = '<br/>';
+         break;
+         
+      case "semicolon" :
+         separator = ';';
+         break;
+         
+      default : 
+         separator = '';
+     
    }
+   
+   newValue = '';
+   for (var i=0, len=value.length; i<len; i++) {
+      var sep = (i+1 < len) ? separator : '';
+      dataType = value[i].substring(0,1); // set in the DominoViewXmlReader.getNamedValue method
+      var tmpValue = value[i].substring(1);
+      
+      // handle columns set to show an icon a little differently
+      if (colConfig.icon) {
+         if (isNaN(parseInt(tmpValue,10)) || tmpValue == 0) {
+            return "";
+         } else {
+            // I believe the domino only has view icon images from 1 to 186
+            newValue = (tmpValue < 10) ? "00" + tmpValue : (tmpValue < 100) ? "0" + tmpValue : (tmpValue > 186) ? "186" : tmpValue;
+            return '<img src="/icons/vwicn' + newValue + '.gif"/>';
+         }
+      } else {
+   
+         switch (dataType) {
+
+            // dates
+            case 'd':
+               var dtf = colConfig.datetimeformat;
+               if (tmpValue.indexOf('T') > 0) {
+                  tmpDate = tmpValue.split(',')[0].replace('T','.');
+                  tmpDateFmt = "Ymd.His";
+               } else {
+                  tmpDate = tmpValue;
+                  tmpDateFmt = "Ymd";
+               }
+               var d = new Date(Date.parseDate(tmpDate,tmpDateFmt));
+               switch (dtf.show) {
+                  case 'date':
+                     tmpValue = d ? d.dateFormat("m/d/Y") : '';
+                     break;
+                  case 'datetime':
+                     tmpValue = d ? d.dateFormat("m/d/Y h:i:s A") : '';
+                     break;
+                  }
+               break;
+   
+            // text
+            case 't':
+               tmpValue = tmpValue;
+               break;
+   
+            // numbers
+            case 'n':
+               tmpValue = tmpValue;
+               break;
+
+            // default
+            default:
+               tmpValue = tmpValue;
+         } // end switch
+         
+         newValue = newValue + tmpValue + sep;
+         
+      } // end if (colConfig.icon)
+  
+   } // end for
+   
+      return newValue;
   },
   
   preprocessDominoData: function(value) {
