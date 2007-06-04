@@ -48,7 +48,8 @@ Ext.extend(Ext.nd.data.DominoViewXmlReader, Ext.data.XmlReader, {
          for(var j = 0, jlen = fields.length; j < jlen; j++){
             var f = fields.items[j];
             //var v = q.selectValue(f.mapping || f.name, n, f.defaultValue);
-            var v = this.getNamedValue(n, f.name, f.defaultValue);
+            // we use '.mapping' since it is the columnnumber and '.name' may not have a value
+            var v = this.getNamedValue(n, f.mapping, f.defaultValue);
             v = f.convert(v);
             values[f.name] = v;
          }
@@ -74,43 +75,31 @@ Ext.extend(Ext.nd.data.DominoViewXmlReader, Ext.data.XmlReader, {
      * @param {String} defaultValue Value to return if name or node are not present
      * @return {String} nodeValue the value found within the XML node
      */
-   getNamedValue : function(node, name, defaultValue){
-      if(!node || !name){
-         return defaultValue;
-      }
-      var nodeValue = defaultValue;
+   getNamedValue : function(node, colNbr, defaultValue){
+      var nodeValue = [];
+      var entryDataNodes = node.getElementsByTagName('entrydata');
+      for (var i = 0; i<entryDataNodes.length; i++) {
+         // have to use 'columnnumber' since we can not be guaranteed that the 'name' attribute will have a value
+         var attrNode = entryDataNodes[i].attributes.getNamedItem('columnnumber');
+         
+         if(attrNode.value == colNbr) {
 
-      // .getNamedItem will not work with a name that has a '$' in it
-      // since domino will auto create columns in the format of name="$10", 
-      // we have to skip any names starting with a '$' and use the else logic
-      var isValidAttributeName = (name.indexOf('$') == 0) ? false : true;
-      var attrNode = (isValidAttributeName) ? node.attributes.getNamedItem(name) : false;
-      
-      if(attrNode) {
-         nodeValue = attrNode.value;
-      } else { // gotta fine the nodeValue the hard way
-         var entryDataNodes = node.getElementsByTagName('entrydata');
-         for (var i = 0; i<entryDataNodes.length; i++) {
-            attrNode = entryDataNodes[i].attributes.getNamedItem('name');
-            if(attrNode.value == name) {
-               
-               // try text
-               nodeValue = this.getValue(entryDataNodes[i], 'text', 't');
-               
-               // try date
-               if (nodeValue == '') {
-                  nodeValue = this.getValue(entryDataNodes[i], 'datetime', 'd');
-               }
-               
-               // try number
-               if (nodeValue == '') {
-                  nodeValue = this.getValue(entryDataNodes[i], 'number', 'n');
-               }
-               
-            } // end if(attrNode.value == name)
-         } // end for
-      } // if-else (attrNode)
-      
+            // try text
+            nodeValue = this.getValue(entryDataNodes[i], 'text', 't');
+
+            // try date
+            if (nodeValue.length == 0) {
+               nodeValue = this.getValue(entryDataNodes[i], 'datetime', 'd');
+            }
+
+            // try number
+            if (nodeValue.length == 0) {
+               nodeValue = this.getValue(entryDataNodes[i], 'number', 'n');
+            }
+
+         } // end if(attrNode.value == colNbr)
+      } // end for
+
       return nodeValue;
       
    }, // end getNamedValue
