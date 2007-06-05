@@ -393,10 +393,10 @@ Ext.nd.UIView.prototype = {
    }
    
    newValue = '';
-   for (var i=0, len=value.length; i<len; i++) {
+   for (var i=0, len=value.data.length; i<len; i++) {
       var sep = (i+1 < len) ? separator : '';
-      dataType = value[i].substring(0,1); // set in the DominoViewXmlReader.getNamedValue method
-      var tmpValue = value[i].substring(1);
+      dataType = value.type; // set in the DominoViewXmlReader.getNamedValue method
+      var tmpValue = value.data[i];
       
       // handle columns set to show an icon a little differently
       if (colConfig.icon) {
@@ -412,7 +412,7 @@ Ext.nd.UIView.prototype = {
          switch (dataType) {
 
             // dates
-            case 'd':
+            case 'datetime':
                var dtf = colConfig.datetimeformat;
                if (tmpValue.indexOf('T') > 0) {
                   tmpDate = tmpValue.split(',')[0].replace('T','.');
@@ -433,12 +433,12 @@ Ext.nd.UIView.prototype = {
                break;
    
             // text
-            case 't':
+            case 'text':
                tmpValue = tmpValue;
                break;
    
             // numbers
-            case 'n':
+            case 'number':
                tmpValue = tmpValue;
                break;
 

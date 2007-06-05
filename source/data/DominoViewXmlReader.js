@@ -49,7 +49,7 @@ Ext.extend(Ext.nd.data.DominoViewXmlReader, Ext.data.XmlReader, {
             var f = fields.items[j];
             //var v = q.selectValue(f.mapping || f.name, n, f.defaultValue);
             // we use '.mapping' since it is the columnnumber and '.name' may not have a value
-            var v = this.getNamedValue(n, f.mapping, f.defaultValue);
+            var v = this.getViewColumnValue(n, f.mapping, f.defaultValue);
             v = f.convert(v);
             values[f.name] = v;
          }
@@ -75,8 +75,8 @@ Ext.extend(Ext.nd.data.DominoViewXmlReader, Ext.data.XmlReader, {
      * @param {String} defaultValue Value to return if name or node are not present
      * @return {String} nodeValue the value found within the XML node
      */
-   getNamedValue : function(node, colNbr, defaultValue){
-      var nodeValue = [];
+   getViewColumnValue : function(node, colNbr, defaultValue){
+      var oValue = {type:'text',data:[defaultValue]};
       var entryDataNodes = node.getElementsByTagName('entrydata');
       for (var i = 0; i<entryDataNodes.length; i++) {
          // have to use 'columnnumber' since we can not be guaranteed that the 'name' attribute will have a value
@@ -85,36 +85,36 @@ Ext.extend(Ext.nd.data.DominoViewXmlReader, Ext.data.XmlReader, {
          if(attrNode.value == colNbr) {
 
             // try text
-            nodeValue = this.getValue(entryDataNodes[i], 'text', 't');
+            oValue = this.getValue(entryDataNodes[i], 'text');
 
             // try date
-            if (nodeValue.length == 0) {
-               nodeValue = this.getValue(entryDataNodes[i], 'datetime', 'd');
+            if (oValue.length == 0) {
+               oValue = this.getValue(entryDataNodes[i], 'datetime');
             }
 
             // try number
-            if (nodeValue.length == 0) {
-               nodeValue = this.getValue(entryDataNodes[i], 'number', 'n');
+            if (oValue.length == 0) {
+               oValue = this.getValue(entryDataNodes[i], 'number');
             }
 
          } // end if(attrNode.value == colNbr)
       } // end for
 
-      return nodeValue;
+      return oValue;
       
-   }, // end getNamedValue
+   }, // end getViewColumnValue
 
    getValue : function(entryDataNode, type, suffix) {
-      var nodeValue = [];
+      var oValue = {type:type, data:[]};
       var data = entryDataNode.getElementsByTagName(type);               
       
       if(data && data.item(0) && data.item(0).firstChild) {
          for (var i=0; i<data.length; i++) {
-            nodeValue[i] = suffix + data.item(i).firstChild.nodeValue;
+            oValue.data[i] = data.item(i).firstChild.nodeValue;
          }
       }
       
-      return nodeValue;
+      return oValue;
       
    }, // end getValue
    
