@@ -27,6 +27,7 @@ Ext.nd.UIView.prototype = {
   singleSelect: false,
   viewName: '',
   
+  
   init: function() {
     var cb = {
       success : this.init2.createDelegate(this), 
@@ -34,10 +35,22 @@ Ext.nd.UIView.prototype = {
       scope: this
     };    
 
+    Ext.lib.Ajax.request('POST', this.dbPath + '($Ext.nd.NotesDxlExporter)?OpenAgent&useDisk=true&type=view&value=' + this.viewName, cb);
+  },
+
+
+  init2: function() {
+  
+    var cb = {
+      success : this.init3.createDelegate(this), 
+      failure : this.init3.createDelegate(this),
+      scope: this
+    };    
+
     Ext.lib.Ajax.request('POST', this.viewUrl + '?ReadDesign', cb);
   },
   
-  init2: function(o) {
+  init3: function(o) {
     var response = o.responseXML;
     var arColumns = response.getElementsByTagName('column');
   
