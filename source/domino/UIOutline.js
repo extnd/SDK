@@ -76,7 +76,7 @@ Ext.nd.UIOutline.prototype = {
       
       // is expandable?
       // if the attribute 'expandable' exists, then it is expandable
-      // don't be execused by expandable='true' or expandable='false'
+      // don't be confused by expandable='true' or expandable='false'
       // the true and false just tells you their initial state (either already expanded or already collapsed)
       var expandable = entry.attributes.getNamedItem('expandable');
       var isExpandable = (expandable) ? true : false;

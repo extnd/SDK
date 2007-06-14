@@ -301,12 +301,16 @@ Ext.nd.UIView.prototype = {
     var response = o.responseXML;
     var arActions = response.getElementsByTagName('action');
     var arJSONActions = [];
-
+    var curLevelTitle = '';
+    var isFirst = false;
+    
     for (var i=0; i<arActions.length; i++) {
       var show = true;
       var action = arActions.item(i);
       var title = action.attributes.getNamedItem('title').value;   
       var hide = action.attributes.getNamedItem('hide');   
+      var imageref = action.getElementsByTagName('imageref');
+      var icon = (imageref.length>0) ? imageref.item(0).attributes.getNamedItem('name').value : '';
 
       if (hide) {
          var arHide = hide.value.split(' ');
@@ -315,23 +319,81 @@ Ext.nd.UIView.prototype = {
                show = false;
             }
          }
-      } else {
-         show = false;
-      }
+      } 
 
       if (show) {
+               
+         var slashLoc = title.indexOf('\\');
+         if (slashLoc > 0) { // we have a subaction
+            isSubAction = true;
+            var arLevels = title.split('\\');
+            var iLevels = arLevels.length;
+            
+            var tmpCurLevelTitle = title.substring(0,slashLoc);
+            title = title.substring(slashLoc+1);
+            
+            if (tmpCurLevelTitle != curLevelTitle) {
+               curLevelTitle = tmpCurLevelTitle
+               isFirst = true;
+            } else {
+               isFirst = false;
+            }               
+         } else {
+            isSubAction = false;
+            curLevelTitle = '';
+         }
+         
+         
+         var tmp = "return false;";
          var arJS = action.getElementsByTagName("javascript");
          if (arJS.length > 0) {
-            arJSONActions.push ({
-               text: title, 
-               handler: function() { 
-                  eval(arJS[0].firstChild.nodeValue); 
-               }
-               /*handler: function() {alert('here')}*/
-            }); 
-         } else {
-            arJSONActions.push ({text: title}); // not sure yet how to handle non-javascript code
+            //tmp = "test('here3')";
+            tmp = Ext.DomQuery.selectValue('javascript',action,null);
+            //tmp = "ntNewDoc('Person', '[UserCreator]', 'People', '&OldForm=(46Person)')"
          }
+         
+         
+                     
+         if (isSubAction) {
+            if (isFirst) {
+               arJSONActions.push({
+                  text: curLevelTitle,
+                  menu: {
+                     items: [{
+                        text: title,
+                        cls: 'x-btn-text-icon',
+                        icon: icon,
+                        //handler: function() { Ext.DomQuery.selectValue('javascript',action,null);}
+                        handler: function() { eval(tmp);}
+                     }]
+                  }
+               }); 
+               // add separator
+               arJSONActions.push('-');
+
+            } else {
+               // length-2 so we can get back past the separator and to the top level of the dropdown
+               arJSONActions[arJSONActions.length-2].menu.items.push({
+                  text: title,
+                  cls: 'x-btn-text-icon',
+                  icon: icon,
+                  //handler: function() { Ext.DomQuery.selectValue('javascript',action,null);}
+                  handler: function() { eval(tmp);}
+               });            
+            }
+         } else {
+            arJSONActions.push({
+               text: title,
+               cls: 'x-btn-text-icon',
+               icon: icon,
+               //handler: function() { Ext.DomQuery.selectValue('javascript',action,null);}
+               handler: function() { eval(tmp);}
+            }); 
+
+            // add separator
+            arJSONActions.push('-');
+         }
+       
       }
 
     }
