@@ -10,8 +10,11 @@ Ext.nd.UIView = function(config) {
    var sess = Ext.nd.Session; 
    var db = sess.CurrentDatabase;
    
-   // default count, to override, pass in the config {i.e. count : 60}
+   // defaults
    this.dbPath = db.WebFilePath;
+   this.count = 40,
+   this.singleSelect = false,
+   this.viewName = '';
    
    // Set any config params passed in to override defaults
    Ext.apply(this,config);
@@ -19,15 +22,19 @@ Ext.nd.UIView = function(config) {
    // viewUrl is either passed in or built from dbPath and viewName
    this.viewUrl = (this.viewUrl) ? this.viewUrl : this.dbPath + this.viewName;
    
+   // make sure we have a viewName
+   if (this.viewName == '') {
+      var vni = this.viewUrl.lastIndexOf('/')+1;
+      this.dbPath = this.viewUrl.substring(0,vni);
+      this.viewName = this.viewUrl.substring(vni);
+   }
+   
    // init the view, which creates it in the container passed in the config object
    this.init();
 };
+
 Ext.nd.UIView.prototype = {
-  count: 40,
-  singleSelect: false,
-  viewName: '',
-  
-  
+
   init: function() {
     var cb = {
       success : this.init2.createDelegate(this), 
@@ -35,22 +42,10 @@ Ext.nd.UIView.prototype = {
       scope: this
     };    
 
-    Ext.lib.Ajax.request('POST', this.dbPath + '($Ext.nd.NotesDxlExporter)?OpenAgent&useDisk=true&type=view&value=' + this.viewName, cb);
-  },
-
-
-  init2: function() {
-  
-    var cb = {
-      success : this.init3.createDelegate(this), 
-      failure : this.init3.createDelegate(this),
-      scope: this
-    };    
-
     Ext.lib.Ajax.request('POST', this.viewUrl + '?ReadDesign', cb);
   },
   
-  init3: function(o) {
+  init2: function(o) {
     var response = o.responseXML;
     var arColumns = response.getElementsByTagName('column');
   
@@ -213,11 +208,27 @@ Ext.nd.UIView.prototype = {
     });
 
     var layout = Ext.BorderLayout.create({
+      north: {
+         initialSize: 30,
+         panels: [new Ext.ContentPanel('extnd-toolbar',{autoCreate:true})]
+      },
       center: {
          panels: [new Ext.GridPanel(this.grid, {fitToFrame : true})] 
       }
     }, container);
    
+
+
+    var cb = {
+      success : this.createToolbar.createDelegate(this), 
+      failure : this.createToolbar.createDelegate(this),
+      scope: this
+    };    
+
+    Ext.lib.Ajax.request('POST', this.dbPath + '($Ext.nd.NotesDxlExporter)?OpenAgent&useDisk=true&type=view&value=' + this.viewName, cb);
+
+
+
     // rowdblclick, to open a document
     //this.grid.addListener('rowdblclick',this.openDocument, this, true);
     this.grid.addListener('rowdblclick',this.gridHandleRowDblClick, this, true);
@@ -283,6 +294,50 @@ Ext.nd.UIView.prototype = {
           html:'<span class="ext-mb-text">Starts with...</span><input type="text" class="ext-mb-input" id="dwt-view-search-input" name="extnd-view-search-input">'
        });
        */
+  },
+
+  createToolbar: function(o) {
+   
+    var response = o.responseXML;
+    var arActions = response.getElementsByTagName('action');
+    var arJSONActions = [];
+
+    for (var i=0; i<arActions.length; i++) {
+      var show = true;
+      var action = arActions.item(i);
+      var title = action.attributes.getNamedItem('title').value;   
+      var hide = action.attributes.getNamedItem('hide');   
+
+      if (hide) {
+         var arHide = hide.value.split(' ');
+         for (var h=0; h<arHide.length; h++) {
+            if (arHide[h] == 'web') {
+               show = false;
+            }
+         }
+      } else {
+         show = false;
+      }
+
+      if (show) {
+         var arJS = action.getElementsByTagName("javascript");
+         if (arJS.length > 0) {
+            arJSONActions.push ({
+               text: title, 
+               handler: function() { 
+                  eval(arJS[0].firstChild.nodeValue); 
+               }
+               /*handler: function() {alert('here')}*/
+            }); 
+         } else {
+            arJSONActions.push ({text: title}); // not sure yet how to handle non-javascript code
+         }
+      }
+
+    }
+    
+    var tb = new Ext.Toolbar('extnd-toolbar', arJSONActions);
+
   },
 
   dominoRenderer: function(value, cell, row, rowIndex, colIndex,dataStore) {
