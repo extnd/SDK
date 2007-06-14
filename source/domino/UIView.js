@@ -348,7 +348,7 @@ Ext.nd.UIView.prototype = {
          var arJS = action.getElementsByTagName("javascript");
          if (arJS.length > 0) {
             //tmp = "test('here3')";
-            tmp = Ext.DomQuery.selectValue('javascript',action,null);
+            tmp = Ext.DomQuery.selectValue('code/javascript',action,null);
             //tmp = "ntNewDoc('Person', '[UserCreator]', 'People', '&OldForm=(46Person)')"
          }
          
@@ -363,8 +363,8 @@ Ext.nd.UIView.prototype = {
                         text: title,
                         cls: 'x-btn-text-icon',
                         icon: icon,
-                        //handler: function() { Ext.DomQuery.selectValue('javascript',action,null);}
-                        handler: function() { eval(tmp);}
+                        handler: function() { Ext.DomQuery.selectValue('javascript',action,null);}
+                        //handler: function() { eval(tmp);}
                      }]
                   }
                }); 
@@ -377,8 +377,8 @@ Ext.nd.UIView.prototype = {
                   text: title,
                   cls: 'x-btn-text-icon',
                   icon: icon,
-                  //handler: function() { Ext.DomQuery.selectValue('javascript',action,null);}
-                  handler: function() { eval(tmp);}
+                  handler: function() { Ext.DomQuery.selectValue('javascript',action,null);}
+                  //handler: function() { eval(tmp);}
                });            
             }
          } else {
@@ -386,8 +386,8 @@ Ext.nd.UIView.prototype = {
                text: title,
                cls: 'x-btn-text-icon',
                icon: icon,
-               //handler: function() { Ext.DomQuery.selectValue('javascript',action,null);}
-               handler: function() { eval(tmp);}
+               handler: function() { alert(Ext.DomQuery.selectNode('code/javascript',action,null));}
+               //handler: function() { eval(tmp);}
             }); 
 
             // add separator
