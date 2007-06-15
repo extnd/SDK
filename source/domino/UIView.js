@@ -343,17 +343,10 @@ Ext.nd.UIView.prototype = {
             curLevelTitle = '';
          }
          
+         //RW - made this work, best to clean up this section before release, ie useful variable names, etc :P
+         var tmp = Ext.DomQuery.selectValue('javascript',action,null);
+         var tmp2 = function(bleh) { eval(bleh);}.createCallback(tmp);
          
-         var tmp = "return false;";
-         var arJS = action.getElementsByTagName("javascript");
-         if (arJS.length > 0) {
-            //tmp = "test('here3')";
-            tmp = Ext.DomQuery.selectValue('code/javascript',action,null);
-            //tmp = "ntNewDoc('Person', '[UserCreator]', 'People', '&OldForm=(46Person)')"
-         }
-         
-         
-                     
          if (isSubAction) {
             if (isFirst) {
                arJSONActions.push({
@@ -363,8 +356,7 @@ Ext.nd.UIView.prototype = {
                         text: title,
                         cls: 'x-btn-text-icon',
                         icon: icon,
-                        handler: function() { Ext.DomQuery.selectValue('javascript',action,null);}
-                        //handler: function() { eval(tmp);}
+                        handler: tmp2
                      }]
                   }
                }); 
@@ -377,17 +369,15 @@ Ext.nd.UIView.prototype = {
                   text: title,
                   cls: 'x-btn-text-icon',
                   icon: icon,
-                  handler: function() { Ext.DomQuery.selectValue('javascript',action,null);}
-                  //handler: function() { eval(tmp);}
+                  handler: tmp2
                });            
             }
          } else {
-            arJSONActions.push({
+            arJSONActions.push({            
                text: title,
                cls: 'x-btn-text-icon',
                icon: icon,
-               handler: function() { alert(Ext.DomQuery.selectNode('code/javascript',action,null));}
-               //handler: function() { eval(tmp);}
+               handler: tmp2
             }); 
 
             // add separator
