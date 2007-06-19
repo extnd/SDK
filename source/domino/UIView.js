@@ -15,6 +15,8 @@ Ext.nd.UIView = function(config) {
    this.count = 40,
    this.singleSelect = false,
    this.viewName = '';
+   this.includeActionbar = true;
+   this.toolbar = false;
    
    // Set any config params passed in to override defaults
    Ext.apply(this,config);
@@ -36,16 +38,32 @@ Ext.nd.UIView = function(config) {
 Ext.nd.UIView.prototype = {
 
   init: function() {
+  
+    if (this.includeActionbar || this.toolbar) {
+      if (!this.toolbar) {
+         this.createToolbar();
+      }
+    } else {
+      this.getViewDesign();
+    }
+  
+  },
+  
+  
+  getViewDesign: function() {
+  
     var cb = {
-      success : this.init2.createDelegate(this), 
-      failure : this.init2.createDelegate(this),
+      success : this.getViewDesignCB.createDelegate(this), 
+      failure : this.getViewDesignCB.createDelegate(this),
       scope: this
     };    
 
     Ext.lib.Ajax.request('POST', this.viewUrl + '?ReadDesign', cb);
+  
   },
   
-  init2: function(o) {
+
+  getViewDesignCB: function(o) {
     var response = o.responseXML;
     var arColumns = response.getElementsByTagName('column');
   
@@ -194,10 +212,7 @@ Ext.nd.UIView.prototype = {
     }
 
     // create a DominoGrid        
-    // container can be a string id reference or a dom object, or even an Ext panel
     var dh = Ext.DomHelper;
-    var container = (this.container.getEl) ? this.container.getEl() : this.container;
-    //this.grid = new Ext.nd.grid.DominoGrid(container, {
     this.grid = new Ext.nd.grid.DominoGrid(dh.append(document.body,{tag: 'div'}), {
       ds: ds,
       cm: this.cm,
@@ -207,25 +222,19 @@ Ext.nd.UIView.prototype = {
       enableColLock: false    
     });
 
+    // add grid to the container
+    // container can be a string id reference or a dom object, or even an Ext panel
+    var container = (this.container.getEl) ? this.container.getEl() : this.container;
     var layout = Ext.BorderLayout.create({
-      north: {
-         initialSize: 30,
-         panels: [new Ext.ContentPanel('extnd-toolbar',{autoCreate:true})]
-      },
+      //north: {
+      //   initialSize: 30,
+      //   panels: [new Ext.ContentPanel('extnd-toolbar',{autoCreate:true})]
+      //},
       center: {
-         panels: [new Ext.GridPanel(this.grid, {fitToFrame : true})] 
+         panels: [new Ext.GridPanel(this.grid, {toolbar: this.toolbar, fitToFrame : true})] 
       }
     }, container);
    
-
-
-    var cb = {
-      success : this.createToolbar.createDelegate(this), 
-      failure : this.createToolbar.createDelegate(this),
-      scope: this
-    };    
-
-    Ext.lib.Ajax.request('POST', this.dbPath + '($Ext.nd.NotesDxlExporter)?OpenAgent&useDisk=true&type=view&value=' + this.viewName, cb);
 
 
 
@@ -296,7 +305,18 @@ Ext.nd.UIView.prototype = {
        */
   },
 
-  createToolbar: function(o) {
+  createToolbar: function() {
+    var cb = {
+      success : this.createToolbarCB.createDelegate(this), 
+      failure : this.createToolbarCB.createDelegate(this),
+      scope: this
+    };    
+
+    Ext.lib.Ajax.request('POST', this.dbPath + '($Ext.nd.NotesDxlExporter)?OpenAgent&useDisk=true&type=view&value=' + this.viewName, cb);
+
+  },
+
+  createToolbarCB: function(o) {
    
     var response = o.responseXML;
     var arActions = response.getElementsByTagName('action');
@@ -388,8 +408,12 @@ Ext.nd.UIView.prototype = {
 
     }
     
-    var tb = new Ext.Toolbar('extnd-toolbar', arJSONActions);
+    var tb = Ext.DomHelper.append(document.body,{tag: 'div'});
+    this.toolbar = new Ext.Toolbar(tb, arJSONActions);
 
+    // now get the rest of the view's design
+    this.getViewDesign();
+    
   },
 
   dominoRenderer: function(value, cell, row, rowIndex, colIndex,dataStore) {
