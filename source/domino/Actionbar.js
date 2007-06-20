@@ -1,39 +1,40 @@
 /**
  * @class Ext.nd.Actionbar
-  * Makes an AJAX call to a Domino Agent that retrieve the DXL of a view or form and translates it into an {@link Ext.Toolbar}
+ * @extends Ext.Toolbar
+ * An expanded version of Ext's Toolbar to deal with Domino's view and form actionbars
  * @constructor
- * Creates a new Actionbar component
- * @param {Object} config Configuration options
+ * Create a new Actionbar
  */
-Ext.nd.Actionbar = function(config) {
-
+Ext.nd.Actionbar = function(config){
    var sess = Ext.nd.Session; 
    var db = sess.CurrentDatabase;
    
    // defaults
    this.dbPath = db.WebFilePath;
    this.noteType = '';
-   this.formName = '';
+   this.noteName = '';
+
+   Ext.apply(this, config);
    
-   // Set any config params passed in to override defaults
-   Ext.apply(this,config);
+   Ext.nd.Actionbar.superclass.constructor.call(this, config.container);
    
    // noteUrl is either passed in or built from dbPath and noteName
    this.noteUrl = (this.noteUrl) ? this.noteUrl : this.dbPath + this.noteName;
-   
+  
    // make sure we have a noteName
    if (this.noteName == '') {
       var vni = this.noteUrl.lastIndexOf('/')+1;
       this.dbPath = this.noteUrl.substring(0,vni);
       this.noteName = this.noteUrl.substring(vni);
    }
-   
+
    // now create the toolbar/actionbar
    this.createToolbar();
+
 };
 
-Ext.nd.Actionbar.prototype = {
-  
+Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
+ 
   createToolbar: function() {
     var cb = {
       success : this.createToolbarCB.createDelegate(this), 
@@ -46,31 +47,41 @@ Ext.nd.Actionbar.prototype = {
   },
 
   createToolbarCB: function(o) {
-   
+    var q = Ext.DomQuery;
     var response = o.responseXML;
-    var arActions = response.getElementsByTagName('action');
+    var arActions = q.select('action',response);
     var arJSONActions = [];
     var curLevelTitle = '';
     var isFirst = false;
     
     for (var i=0; i<arActions.length; i++) {
       var show = true;
-      var action = arActions.item(i);
-      var title = action.attributes.getNamedItem('title').value;   
-      var hide = action.attributes.getNamedItem('hide');   
-      var imageref = action.getElementsByTagName('imageref');
-      var icon = (imageref.length>0) ? imageref.item(0).attributes.getNamedItem('name').value : '';
-
-      if (hide) {
-         var arHide = hide.value.split(' ');
+      var action = arActions[i];
+      var title = q.selectValue('@title',action,null);
+      var hidewhen = q.selectValue('@hide',action,null);
+      var showinbar = q.selectValue('@showinbar',action,null);
+      var iconOnly = q.select('@onlyiconinbar',action);
+      var icon = q.selectValue('imageref/@name',action,'');
+      var syscmd = q.selectValue('@systemcommand',action,null);
+      
+      // handle hidewheb
+      if (hidewhen) {
+         var arHide = hidewhen.split(' ');
          for (var h=0; h<arHide.length; h++) {
             if (arHide[h] == 'web') {
                show = false;
             }
          }
       } 
-
-      if (show) {
+      
+      // handle 'Include action in Action bar' option
+      if (showinbar == 'false') {
+         show = false;
+      }
+      
+      
+      // now go ahead and handle the actions we can show
+      if (show && syscmd == null) {  // for now we do not want to show system commands
                
          var slashLoc = title.indexOf('\\');
          if (slashLoc > 0) { // we have a subaction
@@ -133,11 +144,12 @@ Ext.nd.Actionbar.prototype = {
             arJSONActions.push('-');
          }
        
-      }
+      } // end: if (show && syscmd == null)
 
     }
     
-    return new Ext.Toolbar(this.container, arJSONActions);
+    // now add the actions to the toolbar (this)
+    this.add(arJSONActions);
  
   }
-};
+});
