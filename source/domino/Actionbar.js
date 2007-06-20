@@ -61,7 +61,8 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
       var hidewhen = q.selectValue('@hide',action,null);
       var showinbar = q.selectValue('@showinbar',action,null);
       var iconOnly = q.select('@onlyiconinbar',action);
-      var icon = q.selectValue('imageref/@name',action,'');
+      var icon = q.selectNumber('@icon',action,null);
+      var imageRef = q.selectValue('imageref/@name',action,null);
       var syscmd = q.selectValue('@systemcommand',action,null);
       
       // handle hidewheb
@@ -79,6 +80,17 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
          show = false;
       }
       
+      if (icon) {
+         if (icon < 10) {
+            imageRef = "00"+icon;
+         } else if (icon < 100) {
+            imageRef = "0"+icon;
+         } else {
+            imageRef = ""+icon;
+         }
+         imageRef = "/icons/actn"+imageRef+".gif";
+      }
+         
       
       // now go ahead and handle the actions we can show
       if (show && syscmd == null) {  // for now we do not want to show system commands
@@ -114,8 +126,8 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                   menu: {
                      items: [{
                         text: title,
-                        cls: 'x-btn-text-icon',
-                        icon: icon,
+                        cls: (icon) ? 'x-btn-text-icon' : null,
+                        icon: imageRef,
                         handler: tmp2
                      }]
                   }
@@ -127,16 +139,16 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                // length-2 so we can get back past the separator and to the top level of the dropdown
                arJSONActions[arJSONActions.length-2].menu.items.push({
                   text: title,
-                  cls: 'x-btn-text-icon',
-                  icon: icon,
+                  cls: (icon) ? 'x-btn-text-icon' : null,
+                  icon: imageRef,
                   handler: tmp2
                });            
             }
          } else {
             arJSONActions.push({            
                text: title,
-               cls: 'x-btn-text-icon',
-               icon: icon,
+               cls: (icon) ? 'x-btn-text-icon' : null,
+               icon: imageRef,
                handler: tmp2
             }); 
 
