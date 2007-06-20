@@ -1,6 +1,6 @@
 /**
  * @class Ext.nd.UIView
-  * Makes an AJAX call to readviewentries and translates it into an {@link Ext.nd.grid.DominoGrid}
+ * Makes an AJAX call to readviewentries and translates it into an {@link Ext.nd.grid.DominoGrid}
  * @constructor
  * Creates a new UIView component
  * @param {Object} config Configuration options
@@ -15,7 +15,7 @@ Ext.nd.UIView = function(config) {
    this.count = 40,
    this.singleSelect = false,
    this.viewName = '';
-   this.includeActionbar = true;
+   this.showActionbar = true;
    this.toolbar = false;
    
    // Set any config params passed in to override defaults
@@ -39,14 +39,16 @@ Ext.nd.UIView.prototype = {
 
   init: function() {
   
-    if (this.includeActionbar || this.toolbar) {
+    // need an actionbar?
+    if (this.showActionbar || this.toolbar) {
       if (!this.toolbar) {
          var tb = Ext.DomHelper.append(document.body,{tag: 'div'});
          this.toolbar = new Ext.nd.Actionbar({container:tb, noteType:'view', noteName:this.viewName});
       }
-    } else {
-      this.getViewDesign();
-    }
+    } 
+  
+    // now get the rest of the view design
+    this.getViewDesign();
   
   },
   
