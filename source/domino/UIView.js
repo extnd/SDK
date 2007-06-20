@@ -41,7 +41,8 @@ Ext.nd.UIView.prototype = {
   
     if (this.includeActionbar || this.toolbar) {
       if (!this.toolbar) {
-         this.createToolbar();
+         var tb = Ext.DomHelper.append(document.body,{tag: 'div'});
+         this.toolbar = new Ext.nd.Actionbar({container:tb, noteType:'view', noteName:this.viewName});
       }
     } else {
       this.getViewDesign();
@@ -305,116 +306,6 @@ Ext.nd.UIView.prototype = {
        */
   },
 
-  createToolbar: function() {
-    var cb = {
-      success : this.createToolbarCB.createDelegate(this), 
-      failure : this.createToolbarCB.createDelegate(this),
-      scope: this
-    };    
-
-    Ext.lib.Ajax.request('POST', this.dbPath + '($Ext.nd.NotesDxlExporter)?OpenAgent&useDisk=true&type=view&value=' + this.viewName, cb);
-
-  },
-
-  createToolbarCB: function(o) {
-   
-    var response = o.responseXML;
-    var arActions = response.getElementsByTagName('action');
-    var arJSONActions = [];
-    var curLevelTitle = '';
-    var isFirst = false;
-    
-    for (var i=0; i<arActions.length; i++) {
-      var show = true;
-      var action = arActions.item(i);
-      var title = action.attributes.getNamedItem('title').value;   
-      var hide = action.attributes.getNamedItem('hide');   
-      var imageref = action.getElementsByTagName('imageref');
-      var icon = (imageref.length>0) ? imageref.item(0).attributes.getNamedItem('name').value : '';
-
-      if (hide) {
-         var arHide = hide.value.split(' ');
-         for (var h=0; h<arHide.length; h++) {
-            if (arHide[h] == 'web') {
-               show = false;
-            }
-         }
-      } 
-
-      if (show) {
-               
-         var slashLoc = title.indexOf('\\');
-         if (slashLoc > 0) { // we have a subaction
-            isSubAction = true;
-            var arLevels = title.split('\\');
-            var iLevels = arLevels.length;
-            
-            var tmpCurLevelTitle = title.substring(0,slashLoc);
-            title = title.substring(slashLoc+1);
-            
-            if (tmpCurLevelTitle != curLevelTitle) {
-               curLevelTitle = tmpCurLevelTitle
-               isFirst = true;
-            } else {
-               isFirst = false;
-            }               
-         } else {
-            isSubAction = false;
-            curLevelTitle = '';
-         }
-         
-         //RW - made this work, best to clean up this section before release, ie useful variable names, etc :P
-         var tmp = Ext.DomQuery.selectValue('javascript',action,null);
-         var tmp2 = function(bleh) { eval(bleh);}.createCallback(tmp);
-         
-         if (isSubAction) {
-            if (isFirst) {
-               arJSONActions.push({
-                  text: curLevelTitle,
-                  menu: {
-                     items: [{
-                        text: title,
-                        cls: 'x-btn-text-icon',
-                        icon: icon,
-                        handler: tmp2
-                     }]
-                  }
-               }); 
-               // add separator
-               arJSONActions.push('-');
-
-            } else {
-               // length-2 so we can get back past the separator and to the top level of the dropdown
-               arJSONActions[arJSONActions.length-2].menu.items.push({
-                  text: title,
-                  cls: 'x-btn-text-icon',
-                  icon: icon,
-                  handler: tmp2
-               });            
-            }
-         } else {
-            arJSONActions.push({            
-               text: title,
-               cls: 'x-btn-text-icon',
-               icon: icon,
-               handler: tmp2
-            }); 
-
-            // add separator
-            arJSONActions.push('-');
-         }
-       
-      }
-
-    }
-    
-    var tb = Ext.DomHelper.append(document.body,{tag: 'div'});
-    this.toolbar = new Ext.Toolbar(tb, arJSONActions);
-
-    // now get the rest of the view's design
-    this.getViewDesign();
-    
-  },
 
   dominoRenderer: function(value, cell, row, rowIndex, colIndex,dataStore) {
    var args = arguments;
