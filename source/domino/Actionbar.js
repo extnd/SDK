@@ -126,7 +126,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                   menu: {
                      items: [{
                         text: title,
-                        cls: (icon) ? 'x-btn-text-icon' : null,
+                        cls: (icon || imageRef) ? 'x-btn-text-icon' : null,
                         icon: imageRef,
                         handler: tmp2
                      }]
@@ -139,7 +139,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                // length-2 so we can get back past the separator and to the top level of the dropdown
                arJSONActions[arJSONActions.length-2].menu.items.push({
                   text: title,
-                  cls: (icon) ? 'x-btn-text-icon' : null,
+                  cls: (icon || imageRef) ? 'x-btn-text-icon' : null,
                   icon: imageRef,
                   handler: tmp2
                });            
@@ -147,7 +147,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
          } else {
             arJSONActions.push({            
                text: title,
-               cls: (icon) ? 'x-btn-text-icon' : null,
+               cls: (icon || imageRef) ? 'x-btn-text-icon' : null,
                icon: imageRef,
                handler: tmp2
             }); 
