@@ -17,9 +17,16 @@ Ext.nd.UIView = function(config) {
    this.viewName = '';
    this.showActionbar = true;
    this.toolbar = false;
+   this.showSingleCategory = null;
+   this.baseParams = {};
    
    // Set any config params passed in to override defaults
    Ext.apply(this,config);
+   
+   // set single category if required
+   if (this.showSingleCategory) {
+      this.baseParams.RestrictToCategory = this.showSingleCategory;
+   }
    
    // viewUrl is either passed in or built from dbPath and viewName
    this.viewUrl = (this.viewUrl) ? this.viewUrl : this.dbPath + this.viewName;
@@ -44,6 +51,7 @@ Ext.nd.UIView.prototype = {
       if (!this.toolbar) {
          var tb = Ext.DomHelper.append(document.body,{tag: 'div'});
          this.toolbar = new Ext.nd.Actionbar({container:tb, noteType:'view', noteName:this.viewName});
+         this.toolbar.addSeparator(); // hack for now to make sure that the gridpanel knows the correct height of the toolbar
       }
     } 
   
@@ -67,25 +75,42 @@ Ext.nd.UIView.prototype = {
   
 
   getViewDesignCB: function(o) {
+    var q = Ext.DomQuery;
     var response = o.responseXML;
-    var arColumns = response.getElementsByTagName('column');
+    //var arColumns = response.getElementsByTagName('column');
+    var arColumns = q.select('column',response);
   
     var arColumnConfig = [];
     var arRecordConfig = [];
   
     for (var i=0; i<arColumns.length; i++) {
-        var col = arColumns.item(i);
-        var name = col.attributes.getNamedItem('name').value;
-        var columnnumber = col.attributes.getNamedItem('columnnumber').value;
+        // don't process first column if showSingleCategory is set
+        if (i==0 && this.showSingleCategory) {
+           continue;
+        }
+        
+        //var col = arColumns.item(i);
+        var col = arColumns[i];
+        //var name = col.attributes.getNamedItem('name').value;
+        var name = q.selectValue('name',col);
+        //var columnnumber = col.attributes.getNamedItem('columnnumber').value;
+        var columnnumber = q.selectNumber('columnnumber',col);
+        
+        // adjust columnnumber if only showing a single category (to fix a bug with domino not matching column numbers in readviewentries to readdesign)
+        columnnumber = (this.showSingleCategory) ? columnnumber + 1 : columnnumber;
+        
         // if name is blank, give it a new unique name
         name = (name == '') ? 'columnnumber_' + columnnumber : name;
 
-        var title = col.attributes.getNamedItem('title').value;
+        //var title = col.attributes.getNamedItem('title').value;
+        var title = q.selectValue('title',col);
         title = (title == "") ? "&nbsp;" : title;
-        var width = col.attributes.getNamedItem('width').value * 1.41; // multiplying by 1.41 converts the width to pixels
+        //var width = col.attributes.getNamedItem('width').value * 1.41; // multiplying by 1.41 converts the width to pixels
+        var width = q.selectNumber('width',col) * 1.41; // multiplying by 1.41 converts the width to pixels
         
         // response
-        var response = col.attributes.getNamedItem('response');
+        //var response = col.attributes.getNamedItem('response');
+        var response = q.select('response',col);
         var responseValue = (response) ? true : false;
   
         // twistie
@@ -133,6 +158,7 @@ Ext.nd.UIView.prototype = {
         var headerAlignValue = (headerAlign) ? ((headerAlign.value == "2") ? 'center' : 'right') : 'left';
 
         // date formatting
+        //var tmpDateTimeFormat   = col.getElementsByTagName('datetimeformat')[0].attributes;
         var tmpDateTimeFormat   = col.getElementsByTagName('datetimeformat')[0].attributes;
         var datetimeformat = {};
         datetimeformat.show  = tmpDateTimeFormat.getNamedItem('show').value;       
@@ -203,6 +229,7 @@ Ext.nd.UIView.prototype = {
             url: this.viewUrl + '?ReadViewEntries',
             method: "GET"
         }),
+        baseParams: this.baseParams,
         reader: viewEntryReader,
         remoteSort: true
     });
