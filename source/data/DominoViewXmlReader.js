@@ -76,41 +76,50 @@ Ext.extend(Ext.nd.data.DominoViewXmlReader, Ext.data.XmlReader, {
      * @return {String} nodeValue the value found within the XML node
      */
    getViewColumnValue : function(node, colNbr, defaultValue){
-      var oValue = {type:'text',data:[defaultValue]};
-      var entryDataNodes = node.getElementsByTagName('entrydata');
+      var q = Ext.DomQuery;
+      var type;
+      var data;
+      //var oValue = {type:'text',data:[defaultValue]};
+      var oValue = {type:'text',data:[]};
+      var entryDataNodes = q.select('entrydata',node);
       for (var i = 0; i<entryDataNodes.length; i++) {
          // have to use 'columnnumber' since we can not be guaranteed that the 'name' attribute will have a value
-         var attrNode = entryDataNodes[i].attributes.getNamedItem('columnnumber');
+         var cn = q.selectNumber('@columnnumber',entryDataNodes[i]);
          
-         if(attrNode.value == colNbr) {
+         if(cn == colNbr) {
 
             // try text
-            oValue = this.getValue(entryDataNodes[i], 'text');
-
-            // try date
-            if (oValue.length == 0) {
-               oValue = this.getValue(entryDataNodes[i], 'datetime');
+            type = 'text';
+            data = q.select(type,entryDataNodes[i]);
+                        
+            if (data.length == 0) {
+               type = 'datetime';
+               data = q.select(type,entryDataNodes[i]);
             }
-
-            // try number
-            if (oValue.length == 0) {
-               oValue = this.getValue(entryDataNodes[i], 'number');
+            
+            if (data.length == 0) {
+               type = 'number';
+               data = q.select(type,entryDataNodes[i]);
             }
+                        
+            // now get the data
+            oValue = this.getValue(entryDataNodes[i], type);
 
-         } // end if(attrNode.value == colNbr)
+         } // end if(cn == colNbr)
       } // end for
 
       return oValue;
       
    }, // end getViewColumnValue
 
-   getValue : function(entryDataNode, type, suffix) {
+   getValue : function(entryDataNode, type) {
+      var q = Ext.DomQuery;
       var oValue = {type:type, data:[]};
-      var data = entryDataNode.getElementsByTagName(type);               
+      var data = q.select(type,entryDataNode);               
       
-      if(data && data.item(0) && data.item(0).firstChild) {
+      if(data && data[0] && data[0].firstChild) {
          for (var i=0; i<data.length; i++) {
-            oValue.data[i] = data.item(i).firstChild.nodeValue;
+            oValue.data[i] = data[i].firstChild.nodeValue;
          }
       }
       
