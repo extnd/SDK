@@ -116,7 +116,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
          }
          
          //RW - made this work, best to clean up this section before release, ie useful variable names, etc :P
-         var tmp = Ext.DomQuery.selectValue('javascript',action,null);
+         var tmp = Ext.DomQuery.selectValue('javascript',action,Ext.emptyFn);
          var tmp2 = function(bleh) { eval(bleh);}.createCallback(tmp);
          
          if (isSubAction) {
@@ -161,7 +161,9 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
     }
     
     // now add the actions to the toolbar (this)
-    this.add(arJSONActions);
+    for (var i=0; i<arJSONActions.length; i++) {
+      this.add(arJSONActions[i]);
+    }
  
   }
 });
