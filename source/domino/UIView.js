@@ -95,7 +95,7 @@ Ext.nd.UIView.prototype = {
         var columnnumber = q.selectNumber('@columnnumber',col);
         
         // adjust columnnumber if only showing a single category (to fix a bug with domino not matching column numbers in readviewentries to readdesign)
-        columnnumber = (this.showSingleCategory) ? columnnumber + 1 : columnnumber;
+        columnnumber = (this.showSingleCategory) ? columnnumber - 1 : columnnumber;
         
         // if name is blank, give it a new unique name
         var tmpName = q.selectValue('@name',col,'');
@@ -154,10 +154,10 @@ Ext.nd.UIView.prototype = {
         // date formatting
         var tmpDateTimeFormat   = q.select('datetimeformat',col)[0];
         var datetimeformat = {};
-        datetimeformat.show  = q.selectValue('show',tmpDateTimeFormat);
-        datetimeformat.date  = q.selectValue('date',tmpDateTimeFormat);
-        datetimeformat.time  = q.selectValue('time',tmpDateTimeFormat);
-        datetimeformat.zone  = q.selectValue('zone',tmpDateTimeFormat);
+        datetimeformat.show  = q.selectValue('@show',tmpDateTimeFormat);
+        datetimeformat.date  = q.selectValue('@date',tmpDateTimeFormat);
+        datetimeformat.time  = q.selectValue('@time',tmpDateTimeFormat);
+        datetimeformat.zone  = q.selectValue('@zone',tmpDateTimeFormat);
      
         var columnConfig = {
            header: title,
