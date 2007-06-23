@@ -50,19 +50,22 @@ Ext.nd.UIView.prototype = {
     if (this.showActionbar || this.toolbar) {
       if (!this.toolbar) {
          var tb = Ext.DomHelper.append(document.body,{tag: 'div'});
-         this.toolbar = new Ext.nd.Actionbar({container:tb, noteType:'view', noteName:this.viewName});
-         this.toolbar.addSeparator(); // hack for now to make sure that the gridpanel knows the correct height of the toolbar
+         this.toolbar = new Ext.nd.Actionbar({
+            container:tb, 
+            noteType:'view', 
+            noteName:this.viewName
+         });
+         // TODO: this hack is just to make sure the toolbar has a height before the grid loads
+         this.toolbar.addSeparator();
       }
     } 
-  
-    // now get the rest of the view design
-    this.getViewDesign();
-  
+      // now get the rest of the view design
+      this.getViewDesign();
   },
   
   
   getViewDesign: function() {
-  
+    // TODO: need a failure function
     var cb = {
       success : this.getViewDesignCB.createDelegate(this), 
       failure : this.getViewDesignCB.createDelegate(this),
@@ -76,9 +79,7 @@ Ext.nd.UIView.prototype = {
 
   getViewDesignCB: function(o) {
     var q = Ext.DomQuery;
-    var response = o.responseXML;
-    //var arColumns = response.getElementsByTagName('column');
-    var arColumns = q.select('column',response);
+    var arColumns = q.select('column',o.responseXML);
   
     var arColumnConfig = [];
     var arRecordConfig = [];
@@ -91,80 +92,72 @@ Ext.nd.UIView.prototype = {
         
         //var col = arColumns.item(i);
         var col = arColumns[i];
-        //var name = col.attributes.getNamedItem('name').value;
-        var name = q.selectValue('name',col);
-        //var columnnumber = col.attributes.getNamedItem('columnnumber').value;
-        var columnnumber = q.selectNumber('columnnumber',col);
+        var columnnumber = q.selectNumber('@columnnumber',col);
         
         // adjust columnnumber if only showing a single category (to fix a bug with domino not matching column numbers in readviewentries to readdesign)
         columnnumber = (this.showSingleCategory) ? columnnumber + 1 : columnnumber;
         
         // if name is blank, give it a new unique name
-        name = (name == '') ? 'columnnumber_' + columnnumber : name;
-
-        //var title = col.attributes.getNamedItem('title').value;
-        var title = q.selectValue('title',col);
-        title = (title == "") ? "&nbsp;" : title;
-        //var width = col.attributes.getNamedItem('width').value * 1.41; // multiplying by 1.41 converts the width to pixels
-        var width = q.selectNumber('width',col) * 1.41; // multiplying by 1.41 converts the width to pixels
+        var tmpName = q.selectValue('@name',col,'');
+        var name = (tmpName == undefined) ? 'columnnumber_' + columnnumber : tmpName;
+        
+        var tmpTitle = q.selectValue('@title',col,"&nbsp;");
+        var title = (tmpTitle == undefined) ? "&nbsp;" : tmpTitle;
+        var width = q.selectNumber('@width',col) * 1.41; // multiplying by 1.41 converts the width to pixels
         
         // response
-        //var response = col.attributes.getNamedItem('response');
-        var response = q.select('response',col);
+        var response = q.selectValue('@response',col,false);
         var responseValue = (response) ? true : false;
   
         // twistie
-        var twistie = col.attributes.getNamedItem('twistie');
+        var twistie = q.selectValue('twistie',col,false);
         var twistieValue = (twistie) ? true : false;
   
         // listseparator
-        var listseparator = col.attributes.getNamedItem('listseparator');
-        var listseparatorValue = (listseparator) ? listseparator.value : 'none';      
+        var listseparatorValue = q.selectValue('listseparator',col,'none');
         
         // resize
-        var resize = col.attributes.getNamedItem('resize');
+        var resize = q.selectValue('resize',col,false);
         var resizeValue = (resize) ? true : false;
         
         // sortcategorize (category column)
-        var sortcategorize = col.attributes.getNamedItem('sortcategorize')
+        var sortcategorize = q.selectValue('sortcategorize',col,false)
         var sortcategorizeValue = (sortcategorize) ? true : false;
         
         // resort asc
-        var resortascending = col.attributes.getNamedItem('resortascending');
+        var resortascending = q.selectValue('resortascending',col,false);
         var resortascendingValue = (resortascending) ? true : false;
               
         // resort desc
-        var resortdescending = col.attributes.getNamedItem('resortdescending');
+        var resortdescending = q.selectValue('resortdescending',col,false);
         var resortdescendingValue = (resortdescending) ? true : false;
               
         // jump to view
-        var resorttoview = col.attributes.getNamedItem('resorttoview');
+        var resorttoview = q.selectValue('resorttoview',col,false);
         var resorttoviewValue = (resorttoview) ? true : false;
-        var resortviewunid = col.attributes.getNamedItem('resortviewunid');
-        var resortviewunidValue = (resortviewunid) ? resortviewunid.value : "";
+        var resortviewunidValue = q.selectValue('resortviewunid',col,"");
            
         var isSortable = (resortascendingValue || resortdescendingValue || resorttoviewValue) ? true : false;
   
         // icon
-        var icon = col.attributes.getNamedItem('icon');
+        var icon = q.selectValue('icon',col,false);
         var iconValue = (icon) ? true : false;
   
         // align (1=right, 2=center, null=left)
-        var align = col.attributes.getNamedItem('align');
-        var alignValue = (align) ? ((align.value == "2") ? 'center' : 'right') : 'left';
+        var align = q.selectValue('align',col,false);
+        var alignValue = (align) ? ((align == "2") ? 'center' : 'right') : 'left';
 
         // headerAlign (1=right, 2=center, null=left) - TODO - need to figure out how to update the header with this
-        var headerAlign = col.attributes.getNamedItem('headeralign');
-        var headerAlignValue = (headerAlign) ? ((headerAlign.value == "2") ? 'center' : 'right') : 'left';
+        var headerAlign = q.selectValue('headeralign',col,false);
+        var headerAlignValue = (headerAlign) ? ((headerAlign == "2") ? 'center' : 'right') : 'left';
 
         // date formatting
-        //var tmpDateTimeFormat   = col.getElementsByTagName('datetimeformat')[0].attributes;
-        var tmpDateTimeFormat   = col.getElementsByTagName('datetimeformat')[0].attributes;
+        var tmpDateTimeFormat   = q.select('datetimeformat',col)[0];
         var datetimeformat = {};
-        datetimeformat.show  = tmpDateTimeFormat.getNamedItem('show').value;       
-        datetimeformat.date  = tmpDateTimeFormat.getNamedItem('date').value;       
-        datetimeformat.time  = tmpDateTimeFormat.getNamedItem('time').value;       
-        datetimeformat.zone  = tmpDateTimeFormat.getNamedItem('zone').value;       
+        datetimeformat.show  = q.selectValue('show',tmpDateTimeFormat);
+        datetimeformat.date  = q.selectValue('date',tmpDateTimeFormat);
+        datetimeformat.time  = q.selectValue('time',tmpDateTimeFormat);
+        datetimeformat.zone  = q.selectValue('zone',tmpDateTimeFormat);
      
         var columnConfig = {
            header: title,
