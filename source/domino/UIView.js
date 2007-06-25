@@ -18,6 +18,8 @@ Ext.nd.UIView = function(config) {
    this.showActionbar = true;
    this.toolbar = false;
    this.showSingleCategory = null;
+   this.showCategoryComboBox = true;
+   this.categoryComboBoxCount = -1;
    this.baseParams = {};
    
    // Set any config params passed in to override defaults
@@ -57,12 +59,49 @@ Ext.nd.UIView.prototype = {
          });
          // TODO: this hack is just to make sure the toolbar has a height before the grid loads
          this.toolbar.addSeparator();
+
+         if (this.showSingleCategory && this.showCategoryComboBox) {
+            var store = new Ext.data.Store({
+               proxy: new Ext.data.HttpProxy({
+                  method:'post', 
+                  url: this.viewUrl + '?ReadViewEntries&CollapseAll&count=' + this.categoryComboBoxCount + '&randomizer='+new Date().getTime()
+               }),
+               reader: new Ext.data.XmlReader({
+                     record: 'viewentry',
+                     totalRecords: '@toplevelentries',
+                     id: '@position'
+                  },[{name:'text'}]
+               )
+            });
+            store.load();         
+            
+            var combo = new Ext.form.ComboBox({
+                store: store,
+                displayField:'text',
+                typeAhead: true,
+                mode: 'local',
+                triggerAction: 'all',
+                emptyText:'Select a category...',
+                selectOnFocus:true,
+                width:135
+            });
+            this.toolbar.addField(combo);
+            this.toolbar.addSeparator();
+            combo.on('select',this.handleCategoryChange.createDelegate(this));
+         }
       }
     } 
       // now get the rest of the view design
       this.getViewDesign();
   },
   
+  
+  handleCategoryChange: function(combo, record, index) {
+    var category = record.data.text;
+    this.grid.dataSource.baseParams.RestrictToCategory = category;
+    this.grid.dataSource.load({params:{start:1}});
+    
+  },
   
   getViewDesign: function() {
     // TODO: need a failure function
