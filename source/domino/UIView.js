@@ -15,12 +15,18 @@ Ext.nd.UIView = function(config) {
    this.count = 40,
    this.singleSelect = false,
    this.viewName = '';
+   this.baseParams = {};
+   
+   // defaults for actionbar/toolbar
    this.showActionbar = true;
    this.toolbar = false;
+   
+   // defaults for single category options
    this.showSingleCategory = null;
+   this.emptyText = 'Select a category...';
    this.showCategoryComboBox = true;
    this.categoryComboBoxCount = -1;
-   this.baseParams = {};
+   
    
    // Set any config params passed in to override defaults
    Ext.apply(this,config);
@@ -81,9 +87,11 @@ Ext.nd.UIView.prototype = {
                 typeAhead: true,
                 mode: 'local',
                 triggerAction: 'all',
-                emptyText:'Select a category...',
+                emptyText: this.emptyText,
+                value: this.showSingleCategory,
                 selectOnFocus:true,
-                width:135
+                grow: true,
+                resizable: true
             });
             this.toolbar.addField(combo);
             this.toolbar.addSeparator();
@@ -149,45 +157,45 @@ Ext.nd.UIView.prototype = {
         var responseValue = (response) ? true : false;
   
         // twistie
-        var twistie = q.selectValue('twistie',col,false);
+        var twistie = q.selectValue('@twistie',col,false);
         var twistieValue = (twistie) ? true : false;
   
         // listseparator
-        var listseparatorValue = q.selectValue('listseparator',col,'none');
+        var listseparatorValue = q.selectValue('@listseparator',col,'none');
         
         // resize
-        var resize = q.selectValue('resize',col,false);
+        var resize = q.selectValue('@resize',col,false);
         var resizeValue = (resize) ? true : false;
         
         // sortcategorize (category column)
-        var sortcategorize = q.selectValue('sortcategorize',col,false)
+        var sortcategorize = q.selectValue('@sortcategorize',col,false)
         var sortcategorizeValue = (sortcategorize) ? true : false;
         
         // resort asc
-        var resortascending = q.selectValue('resortascending',col,false);
+        var resortascending = q.selectValue('@resortascending',col,false);
         var resortascendingValue = (resortascending) ? true : false;
               
         // resort desc
-        var resortdescending = q.selectValue('resortdescending',col,false);
+        var resortdescending = q.selectValue('@resortdescending',col,false);
         var resortdescendingValue = (resortdescending) ? true : false;
               
         // jump to view
-        var resorttoview = q.selectValue('resorttoview',col,false);
+        var resorttoview = q.selectValue('@resorttoview',col,false);
         var resorttoviewValue = (resorttoview) ? true : false;
-        var resortviewunidValue = q.selectValue('resortviewunid',col,"");
+        var resortviewunidValue = q.selectValue('@resortviewunid',col,"");
            
         var isSortable = (resortascendingValue || resortdescendingValue || resorttoviewValue) ? true : false;
   
         // icon
-        var icon = q.selectValue('icon',col,false);
+        var icon = q.selectValue('@icon',col,false);
         var iconValue = (icon) ? true : false;
   
         // align (1=right, 2=center, null=left)
-        var align = q.selectValue('align',col,false);
+        var align = q.selectValue('@align',col,false);
         var alignValue = (align) ? ((align == "2") ? 'center' : 'right') : 'left';
 
         // headerAlign (1=right, 2=center, null=left) - TODO - need to figure out how to update the header with this
-        var headerAlign = q.selectValue('headeralign',col,false);
+        var headerAlign = q.selectValue('@headeralign',col,false);
         var headerAlignValue = (headerAlign) ? ((headerAlign == "2") ? 'center' : 'right') : 'left';
 
         // date formatting
