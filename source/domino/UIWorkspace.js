@@ -36,10 +36,17 @@ Ext.nd.UIWorkspace.prototype = {
       this.minHeight = 400;
       this.type = "custom";
       this.select = "single";
+
       this.title = "PickList";
       this.prompt = "Please make your selection(s) and click <OK>.";
       this.column = 0;
-      
+   
+      // defaults for single category options
+      this.showSingleCategory = null;
+      this.emptyText = 'Select a category...';
+      this.showCategoryComboBox = false;
+      this.categoryComboBoxCount = -1;
+   
       // override defaults with config object
       Ext.apply(this,config);
    
@@ -104,7 +111,11 @@ Ext.nd.UIWorkspace.prototype = {
          this.uiView = new Ext.nd.UIView({
             container : viewPanel,
             viewUrl : this.viewUrl,
-            gridHandleRowDblClick : handleOK.createDelegate(this)
+            gridHandleRowDblClick : handleOK.createDelegate(this),
+            showSingleCategory : this.showSingleCategory,
+            emptyText : this.emptyText,
+            showCategoryComboBox : this.showCategoryComboBox,
+            categoryComboBoxCount : this.categoryComboBoxCount
          });
          
          // tell the layout we are done so it can draw itself on the screen
@@ -122,7 +133,10 @@ Ext.nd.UIWorkspace.prototype = {
       
          for (var i=0; i<arSelections.length; i++) {
             var map = arSelections[i].fields.keys[this.column];
-            arReturn.push( arSelections[i].data[map].substring(1));
+            var data = arSelections[i].data[map].data;
+            for (var d=0; d<data.length; d++) {
+               arReturn.push(data[d]);
+            }
          }
       
          // if a callback has been defined, call it and pass the array of return values to it
