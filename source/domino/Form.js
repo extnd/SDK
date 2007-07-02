@@ -54,7 +54,7 @@ Ext.nd.Form.prototype = {
             noteName:this.formName
          });
          // TODO: this hack is just to make sure the toolbar has a height
-         this.toolbar.addSeparator();
+         this.toolbar.add({text : '&nbsp;'});
       }
     } 
 
