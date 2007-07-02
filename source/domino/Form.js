@@ -8,14 +8,15 @@ Ext.nd.Form = function(config) {
    
    var sess = Ext.nd.Session; 
    var db = sess.CurrentDatabase;
+   var uidoc = Ext.nd.UIDocument;
    
    // defaults
    this.dbPath = db.WebFilePath;
    this.showActionbar = true;
    this.toolbar = false;
    this.bConvertFields = true;
-   this.form = document.forms[0];
-   this.formName = this.form.name.substring(1); // need to remove the underscore Domino prepends to the name
+   this.form = uidoc.form;
+   this.formName = uidoc.formName;
 
    // Set any config params passed in to override defaults
    Ext.apply(this,config);
@@ -59,7 +60,7 @@ Ext.nd.Form.prototype = {
 
     // define the layout
     var layout = new Ext.BorderLayout(document.body, {
-       north : { titlebar: false},
+       north : {titlebar: false},
        center: { }
     });
    
