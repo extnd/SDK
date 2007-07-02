@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project path="" name="Ext.nd - Ext for Notes / Domino" author="Ext.nd Team" version="Alpha 1" copyright="$projectName $version&#xD;&#xA;Copyright(c) 2006, $author.&#xD;&#xA;&#xD;&#xA;http://www.extjs.com/license" output="$project\build" source="true" source-dir="$output\source" minify="true" min-dir="$output\build" doc="true" doc-dir="$output\docs" master="true" master-file="$output\yui-ext.js" zip="true" zip-file="$output\yuo-ext.$version.zip">
+<project path="" name="Ext.nd - Ext for Notes / Domino" author="Ext.nd Team" version="Pre Alpha 2" copyright="$projectName $version&#xD;&#xA;Copyright(c) 2006, $author.&#xD;&#xA;&#xD;&#xA;http://www.extjs.com/license" output="$project\build" source="true" source-dir="$output\source" minify="true" min-dir="$output\build" doc="true" doc-dir="$output\docs" master="true" master-file="$output\yui-ext.js" zip="true" zip-file="$output\yuo-ext.$version.zip">
   <directory name="" />
   <file name="data\DominoPagingToolbar.js" path="data" />
   <file name="data\DominoViewStore.js" path="data" />
@@ -26,5 +26,9 @@
     <include name="domino\UIView.js" />
     <include name="domino\UIWorkspace.js" />
     <include name="grid\DominoGrid.js" />
+    <include name="domino\Actionbar.js" />
+    <include name="domino\Form.js" />
   </target>
+  <file name="domino\Actionbar.js" path="domino" />
+  <file name="domino\Form.js" path="domino" />
 </project>
