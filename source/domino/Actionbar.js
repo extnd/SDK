@@ -42,7 +42,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
       scope: this
     };    
 
-    Ext.lib.Ajax.request('POST', this.dbPath + '($Ext.nd.NotesDxlExporter)?OpenAgent&useDisk=true&type=' + this.noteType + '&value=' + this.noteName, cb);
+    Ext.lib.Ajax.request('POST', this.dbPath + '($Ext.nd.NotesDxlExporter)?OpenAgent&type=' + this.noteType + '&name=' + this.noteName, cb);
 
   },
 
