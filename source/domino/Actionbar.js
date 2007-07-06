@@ -64,7 +64,8 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
     var q = Ext.DomQuery;
     actionbar = q.selectNode('table',document);
     arActions = q.select('a',actionbar);
-   
+    var hasActionbar = (arActions.length > 0) ? true : false;
+    
     var arJSONActions = [];
     var curLevelTitle = '';
     var isFirst = false;
@@ -161,8 +162,14 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
     } 
 
     // now delete the original actionbar (table) that was sent from domino
-    var tmp = actionbar.parentNode.removeChild(actionbar);
-    tmp = null;                 
+    if (hasActionbar) {
+      var tmp;
+      tmp = actionbar.parentNode.removeChild(actionbar);
+      tmp = null;                 
+      var hr = q.selectNode('hr');
+      tmp = hr.parentNode.removeChild(hr);
+      tmp = null;
+    }
 
 
   },
