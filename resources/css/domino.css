@@ -1,16 +1,30 @@
 /* Domino Common CSS Rules */
 
 /* view styles */
-.extnd-view-category{
+.xnd-view-category{
    width: 100%;
 }
 
-.extnd-view-response {
+.xnd-view-response {
    width: 100%;
    z-index:2; 
 }
 
+
 /* to allow for rows to grow in height */
 .x-grid-row td {
   white-space: normal;
+}
+
+.x-btn-text-icon .x-btn-center .x-btn-text{
+  background-position: 0 2px;
+  background-repeat: no-repeat;
+  padding-left:23px;
+  padding-top:3px;
+  padding-bottom:3px;
+  padding-right:0;
+}
+
+.x-btn-left, .x-btn-right{
+  height:21px;
 }
