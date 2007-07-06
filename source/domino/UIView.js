@@ -61,7 +61,8 @@ Ext.nd.UIView.prototype = {
          this.toolbar = new Ext.nd.Actionbar({
             container:tb, 
             noteType:'view', 
-            noteName:this.viewName
+            noteName:this.viewName,
+            useDxl: true
          });
          // TODO: this hack is just to make sure the toolbar has a height before the grid loads
          this.toolbar.addSeparator();
@@ -182,7 +183,7 @@ Ext.nd.UIView.prototype = {
         // jump to view
         var resorttoview = q.selectValue('@resorttoview',col,false);
         var resorttoviewValue = (resorttoview) ? true : false;
-        var resortviewunidValue = q.selectValue('@resortviewunid',col,"");
+        var resortviewunidValue = (resorttoview) ? q.selectValue('@resortviewunid',col,"") : "";
            
         var isSortable = (resortascendingValue || resortdescendingValue || resorttoviewValue) ? true : false;
   
