@@ -6,50 +6,174 @@
  * Create a new Actionbar
  */
 Ext.nd.Actionbar = function(config){
-   var sess = Ext.nd.Session; 
-   var db = sess.CurrentDatabase;
+  var sess = Ext.nd.Session; 
+  var db = sess.CurrentDatabase;
    
-   // defaults
-   this.dbPath = db.WebFilePath;
-   this.noteType = '';
-   this.noteName = '';
-
-   Ext.apply(this, config);
-   
-   Ext.nd.Actionbar.superclass.constructor.call(this, config.container);
-   
-   // noteUrl is either passed in or built from dbPath and noteName
-   this.noteUrl = (this.noteUrl) ? this.noteUrl : this.dbPath + this.noteName;
+  // defaults
+  this.dbPath = db.WebFilePath;
+  this.noteType = '';
+  this.noteName = '';
+  this.useDxl = false;
   
-   // make sure we have a noteName
-   if (this.noteName == '') {
-      var vni = this.noteUrl.lastIndexOf('/')+1;
-      this.dbPath = this.noteUrl.substring(0,vni);
-      this.noteName = this.noteUrl.substring(vni);
-   }
+  Ext.apply(this, config);
+   
+  Ext.nd.Actionbar.superclass.constructor.call(this, config.container);
+   
+  // noteUrl is either passed in or built from dbPath and noteName
+  this.noteUrl = (this.noteUrl) ? this.noteUrl : this.dbPath + this.noteName;
+  
+  // make sure we have a noteName
+  if (this.noteName == '') {
+    var vni = this.noteUrl.lastIndexOf('/')+1;
+    this.dbPath = this.noteUrl.substring(0,vni);
+    this.noteName = this.noteUrl.substring(vni);
+  }
 
-   // now create the toolbar/actionbar
-   this.createToolbar();
+
+  // first, add an empty button that we'll remove later
+  // we do this so that the browser will calculate the size of the toolbar
+  // otherwise, the toolbar won't have a size right away and elements
+  // won't size properly -- if we didn't get the data via an Ajax call
+  // we wouldn't have this problem
+  this.add({text:'&nbsp;', id:'xnd-tb-tmp'});
+   
+  // now create the toolbar/actionbar
+  this.createToolbar();
 
 };
 
 Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
  
+
   createToolbar: function() {
+    if (!this.useDxl) {
+      this.createToolbarFromDocument();
+      return;
+    }
     var cb = {
-      success : this.createToolbarCB.createDelegate(this), 
-      failure : this.createToolbarCB.createDelegate(this),
+      success : this.createToolbarFromDxl.createDelegate(this), 
+      failure : this.createToolbarFromDxl.createDelegate(this),
       scope: this
     };    
-
     Ext.lib.Ajax.request('POST', this.dbPath + '($Ext.nd.NotesDxlExporter)?OpenAgent&type=' + this.noteType + '&name=' + this.noteName, cb);
-
   },
 
-  createToolbarCB: function(o) {
+
+  createToolbarFromDocument: function(o) {
+    var actionbar, arActions;
     var q = Ext.DomQuery;
-    var response = o.responseXML;
-    var arActions = q.select('action',response);
+    actionbar = q.selectNode('table',document);
+    arActions = q.select('a',actionbar);
+   
+    var arJSONActions = [];
+    var curLevelTitle = '';
+    var isFirst = false;
+    
+    for (var i=0; i<arActions.length; i++) {
+      var action = arActions[i];
+      var title = action.lastChild.nodeValue;
+      var slashLoc = title.indexOf('\\');
+      var imageRef = q.selectValue('img/@src',action, null);
+      
+      if (slashLoc > 0) { // we have a subaction
+        isSubAction = true;
+        var arLevels = title.split('\\');
+        var iLevels = arLevels.length;
+        var tmpCurLevelTitle = title.substring(0,slashLoc);
+        title = title.substring(slashLoc+1);
+            
+        if (tmpCurLevelTitle != curLevelTitle) {
+          curLevelTitle = tmpCurLevelTitle
+          isFirst = true;
+        } else {
+          isFirst = false;
+        }               
+    
+      } else {
+        isSubAction = false;
+        curLevelTitle = '';
+      }
+
+      // get the onclick and href attributes         
+      var tmpHref = action.getAttribute('href');
+      if (tmpHref != '') {
+        var tmpOnclick = "location.href = '" + tmpHref + "';";
+      } else {
+        var tmpOnclick = q.selectValue('@onclick',action,Ext.emptyFn);
+        var arTmpOnclick = tmpOnclick.split('\r');
+        arTmpOnclick.splice(arTmpOnclick.length-1,1); //removing the 'return false;' that domino adds
+        tmpOnclick = arTmpOnclick.join('\r');
+      }
+      
+      // asign to a handler
+      var handler = function(bleh) { eval(bleh);}.createCallback(tmpOnclick);
+        
+      // handle subActions  
+      if (isSubAction) {
+        // special case for the first one  
+        if (isFirst) {
+          arJSONActions.push({
+            text: curLevelTitle,
+            menu: {
+              items: [{
+                text: title,
+                cls: (imageRef) ? 'x-btn-text-icon' : null,
+                icon: imageRef,
+                handler: handler
+              }]
+            }
+          }); 
+      
+          // add separator
+          arJSONActions.push('-');
+        
+        // subaction that is not the first one
+        } else {
+          // length-2 so we can get back past the separator and to the top level of the dropdown
+          arJSONActions[arJSONActions.length-2].menu.items.push({
+            text: title,
+            cls: (imageRef) ? 'x-btn-text-icon' : null,
+            icon: imageRef,
+            handler: handler
+          });            
+        }
+        
+      // normal non-sub actions  
+      } else {
+        arJSONActions.push({            
+          text: title,
+          cls: (imageRef) ? 'x-btn-text-icon' : null,
+          icon: imageRef,
+          handler: handler
+        }); 
+
+        // add separator
+        arJSONActions.push('-');
+        
+      } // end if(isSubAction)
+
+    } // end for arActions.length
+    
+    
+    // now add the actions to the toolbar (this)
+    for (var i=0; i<arJSONActions.length; i++) {
+      this.add(arJSONActions[i]);
+    } 
+
+    // now delete the original actionbar (table) that was sent from domino
+    var tmp = actionbar.parentNode.removeChild(actionbar);
+    tmp = null;                 
+
+
+  },
+  
+
+  createToolbarFromDxl: function(o) {
+    var actionbar, arActions;
+    var q = Ext.DomQuery;
+    response = o.responseXML;
+    arActions = q.select('action',response);
+   
     var arJSONActions = [];
     var curLevelTitle = '';
     var isFirst = false;
@@ -57,6 +181,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
     for (var i=0; i<arActions.length; i++) {
       var show = true;
       var action = arActions[i];
+
       var title = q.selectValue('@title',action,null);
       var hidewhen = q.selectValue('@hide',action,null);
       var showinbar = q.selectValue('@showinbar',action,null);
@@ -67,103 +192,107 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
       
       // handle hidewheb
       if (hidewhen) {
-         var arHide = hidewhen.split(' ');
-         for (var h=0; h<arHide.length; h++) {
-            if (arHide[h] == 'web') {
-               show = false;
-            }
-         }
+        var arHide = hidewhen.split(' ');
+        for (var h=0; h<arHide.length; h++) {
+          if (arHide[h] == 'web') {
+            show = false;
+          }
+        }
       } 
       
       // handle 'Include action in Action bar' option
       if (showinbar == 'false') {
-         show = false;
+        show = false;
       }
       
       if (icon) {
-         if (icon < 10) {
-            imageRef = "00"+icon;
-         } else if (icon < 100) {
-            imageRef = "0"+icon;
-         } else {
-            imageRef = ""+icon;
-         }
-         imageRef = "/icons/actn"+imageRef+".gif";
+        if (icon < 10) {
+          imageRef = "00"+icon;
+        } else if (icon < 100) {
+          imageRef = "0"+icon;
+        } else {
+          imageRef = ""+icon;
+        }
+        imageRef = "/icons/actn"+imageRef+".gif";
       }
          
       
       // now go ahead and handle the actions we can show
       if (show && syscmd == null) {  // for now we do not want to show system commands
                
-         var slashLoc = title.indexOf('\\');
-         if (slashLoc > 0) { // we have a subaction
-            isSubAction = true;
-            var arLevels = title.split('\\');
-            var iLevels = arLevels.length;
+        var slashLoc = title.indexOf('\\');
+        
+        if (slashLoc > 0) { // we have a subaction
+          isSubAction = true;
+          var arLevels = title.split('\\');
+          var iLevels = arLevels.length;
             
-            var tmpCurLevelTitle = title.substring(0,slashLoc);
-            title = title.substring(slashLoc+1);
+          var tmpCurLevelTitle = title.substring(0,slashLoc);
+          title = title.substring(slashLoc+1);
             
-            if (tmpCurLevelTitle != curLevelTitle) {
-               curLevelTitle = tmpCurLevelTitle
-               isFirst = true;
-            } else {
-               isFirst = false;
-            }               
-         } else {
-            isSubAction = false;
-            curLevelTitle = '';
-         }
+          if (tmpCurLevelTitle != curLevelTitle) {
+            curLevelTitle = tmpCurLevelTitle
+            isFirst = true;
+          } else {
+            isFirst = false;
+          }               
+        
+        } else {
+          isSubAction = false;
+          curLevelTitle = '';
+        }
          
-         //RW - made this work, best to clean up this section before release, ie useful variable names, etc :P
-         var tmp = Ext.DomQuery.selectValue('javascript',action,Ext.emptyFn);
-         var tmp2 = function(bleh) { eval(bleh);}.createCallback(tmp);
+        var tmpOnclick = Ext.DomQuery.selectValue('javascript',action,Ext.emptyFn);
+        var handler = function(bleh) { eval(bleh);}.createCallback(tmpOnclick);
          
-         if (isSubAction) {
-            if (isFirst) {
-               arJSONActions.push({
-                  text: curLevelTitle,
-                  menu: {
-                     items: [{
-                        text: title,
-                        cls: (icon || imageRef) ? 'x-btn-text-icon' : null,
-                        icon: imageRef,
-                        handler: tmp2
-                     }]
-                  }
-               }); 
-               // add separator
-               arJSONActions.push('-');
-
-            } else {
-               // length-2 so we can get back past the separator and to the top level of the dropdown
-               arJSONActions[arJSONActions.length-2].menu.items.push({
-                  text: title,
-                  cls: (icon || imageRef) ? 'x-btn-text-icon' : null,
-                  icon: imageRef,
-                  handler: tmp2
-               });            
-            }
-         } else {
-            arJSONActions.push({            
-               text: title,
-               cls: (icon || imageRef) ? 'x-btn-text-icon' : null,
-               icon: imageRef,
-               handler: tmp2
+        if (isSubAction) {
+          if (isFirst) {
+            arJSONActions.push({
+              text: curLevelTitle,
+              menu: {
+                items: [{
+                text: title,
+                cls: (icon || imageRef) ? 'x-btn-text-icon' : null,
+                icon: imageRef,
+                handler: handler
+              }]}
             }); 
-
-            // add separator
+          
+            //add separator
             arJSONActions.push('-');
-         }
+
+          } else {
+            // length-2 so we can get back past the separator and to the top level of the dropdown
+            arJSONActions[arJSONActions.length-2].menu.items.push({
+              text: title,
+              cls: (icon || imageRef) ? 'x-btn-text-icon' : null,
+              icon: imageRef,
+              handler: handler
+            });            
+          }
+          
+        } else {
+          arJSONActions.push({            
+            text: title,
+            cls: (icon || imageRef) ? 'x-btn-text-icon' : null,
+            icon: imageRef,
+            handler: handler
+          }); 
+
+          // add separator
+          arJSONActions.push('-');
+          
+        } // end: if (isSubAction)
        
       } // end: if (show && syscmd == null)
 
-    }
+    } // end: for arActions.length
     
     // now add the actions to the toolbar (this)
     for (var i=0; i<arJSONActions.length; i++) {
       this.add(arJSONActions[i]);
     }
+   
+ }
  
-  }
 });
