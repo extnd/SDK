@@ -34,9 +34,12 @@ Ext.nd.Actionbar = function(config){
   // we do this so that the browser will calculate the size of the toolbar
   // otherwise, the toolbar won't have a size right away and elements
   // won't size properly -- if we didn't get the data via an Ajax call
-  // we wouldn't have this problem
-  this.add({text:'&nbsp;', id:'xnd-tb-tmp'});
-   
+  // we wouldn't have this problem so therefore, this is only needed when
+  // useDxl = true since that is when we make an ajax call
+  if(this.useDxl) {
+    this.add({text:'&nbsp;', id:'xnd-tb-tmp'});
+  }
+  
   // now create the toolbar/actionbar
   this.createToolbar();
 
@@ -64,7 +67,9 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
     var q = Ext.DomQuery;
     actionbar = this.getDominoActionbar();
 
+    // domino didn't send an actionbar
     if (!actionbar) {
+      this.add({text:'&nbsp;'}); // add a blank button so that the actionbar will at least have the right height
       return; // no actionbar so bail
     }
     
@@ -80,6 +85,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
       var title = action.lastChild.nodeValue;
       var slashLoc = (title) ? title.indexOf('\\') : -1;
       var imageRef = q.selectValue('img/@src',action, null);
+      var cls = (title == null) ? 'x-btn-icon' : (imageRef) ? 'x-btn-text-icon' : null;
       
       if (slashLoc > 0) { // we have a subaction
         isSubAction = true;
@@ -118,27 +124,31 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
       if (isSubAction) {
         // special case for the first one  
         if (isFirst) {
+        
+          if (i>0) {
+            // add separator
+            arJSONActions.push('-');
+          }
+          
+          // add action
           arJSONActions.push({
             text: curLevelTitle,
             menu: {
               items: [{
                 text: title,
-                cls: (imageRef) ? 'x-btn-text-icon' : null,
+                cls: cls,
                 icon: imageRef,
                 handler: handler
               }]
             }
           }); 
-      
-          // add separator
-          arJSONActions.push('-');
-        
+              
         // subaction that is not the first one
         } else {
-          // length-2 so we can get back past the separator and to the top level of the dropdown
-          arJSONActions[arJSONActions.length-2].menu.items.push({
+          // length-1 so we can get back past the separator and to the top level of the dropdown
+          arJSONActions[arJSONActions.length-1].menu.items.push({
             text: title,
-            cls: (imageRef) ? 'x-btn-text-icon' : null,
+            cls: cls,
             icon: imageRef,
             handler: handler
           });            
@@ -146,15 +156,20 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
         
       // normal non-sub actions  
       } else {
+ 
+        if (i>0) {
+          // add separator
+          arJSONActions.push('-');
+        }
+        
+        // add action
         arJSONActions.push({            
           text: title,
-          cls: (imageRef) ? 'x-btn-text-icon' : null,
+          cls: cls,
           icon: imageRef,
           handler: handler
         }); 
 
-        // add separator
-        arJSONActions.push('-');
         
       } // end if(isSubAction)
 
@@ -187,7 +202,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
     
     var cn = frm.childNodes;
     var actionbar;
-    var bTest1 = false; // 1st element has to be <table>
+    var bTest1 = false; // 1st (non-hidden) element has to be <table>
     var bTest2 = false; // only 1 row can be in the table;
     var bTest3 = false; // 2nd element has to be <hr>
     var bTest4 = false; // # of <td> tags must equal # <a> tags
@@ -196,6 +211,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
       var c = cn[i];
       if (c.nodeType == 1) {
         if (!bTest1) {
+          
           if (c.tagName == 'TABLE') {
             actionbar = c;
             var arRows = q.select('tr',actionbar);
@@ -207,17 +223,22 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
               continue;
             }
             
+          } else if (c.tagName == 'INPUT' && c.getAttribute('type') == 'hidden') {
+            continue; // domino sometimes puts hidden input fields before the actionbar
           } else {
             break; // didn't pass test 1 so bail
           }
-        } else {
+          
+        } else { // bTest1 == true
+          
           if (c.tagName == 'HR'){
             bTest3 = true;
           }
           break; // done with both tests so exit loop
-        }
+          
+        } // end: !bTest1
  
-      }
+      } // end: c.nodeType == 1
 
       if (bTest1 && bTest2 && bTest3) {
         // we passed test1, test2, and test3 so break out of the for loop
@@ -320,6 +341,12 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
          
         if (isSubAction) {
           if (isFirst) {
+
+            if (i>0) {
+              //add separator
+              arJSONActions.push('-');
+            }
+            
             arJSONActions.push({
               text: curLevelTitle,
               menu: {
@@ -331,12 +358,10 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
               }]}
             }); 
           
-            //add separator
-            arJSONActions.push('-');
 
           } else {
-            // length-2 so we can get back past the separator and to the top level of the dropdown
-            arJSONActions[arJSONActions.length-2].menu.items.push({
+            // length-1 so we can get back past the separator and to the top level of the dropdown
+            arJSONActions[arJSONActions.length-1].menu.items.push({
               text: title,
               cls: (icon || imageRef) ? 'x-btn-text-icon' : null,
               icon: imageRef,
@@ -345,6 +370,12 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
           }
           
         } else {
+
+          if (i>0) {
+            // add separator
+            arJSONActions.push('-');
+          }
+          
           arJSONActions.push({            
             text: title,
             cls: (icon || imageRef) ? 'x-btn-text-icon' : null,
@@ -352,8 +383,6 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
             handler: handler
           }); 
 
-          // add separator
-          arJSONActions.push('-');
           
         } // end: if (isSubAction)
        
