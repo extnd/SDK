@@ -62,7 +62,12 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
   createToolbarFromDocument: function(o) {
     var actionbar, arActions;
     var q = Ext.DomQuery;
-    actionbar = q.selectNode('table',document);
+    actionbar = this.getDominoActionbar();
+
+    if (!actionbar) {
+      return; // no actionbar so bail
+    }
+    
     arActions = q.select('a',actionbar);
     var hasActionbar = (arActions.length > 0) ? true : false;
     
@@ -73,7 +78,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
     for (var i=0; i<arActions.length; i++) {
       var action = arActions[i];
       var title = action.lastChild.nodeValue;
-      var slashLoc = title.indexOf('\\');
+      var slashLoc = (title) ? title.indexOf('\\') : -1;
       var imageRef = q.selectValue('img/@src',action, null);
       
       if (slashLoc > 0) { // we have a subaction
@@ -174,7 +179,68 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
 
   },
   
+  getDominoActionbar: function() {
+    // domino's form is the first form
+    var frm = document.forms[0]; 
+    var isFirstTable = false;
+    var q = Ext.DomQuery;
+    
+    var cn = frm.childNodes;
+    var actionbar;
+    var bTest1 = false; // 1st element has to be <table>
+    var bTest2 = false; // only 1 row can be in the table;
+    var bTest3 = false; // 2nd element has to be <hr>
+    var bTest4 = false; // # of <td> tags must equal # <a> tags
+    
+    for (var i=0; i<cn.length; i++) {
+      var c = cn[i];
+      if (c.nodeType == 1) {
+        if (!bTest1) {
+          if (c.tagName == 'TABLE') {
+            actionbar = c;
+            var arRows = q.select('tr',actionbar);
+            if (arRows.length != 1) {
+              break;
+            } else {
+              bTest1 = true;
+              bTest2 = true;
+              continue;
+            }
+            
+          } else {
+            break; // didn't pass test 1 so bail
+          }
+        } else {
+          if (c.tagName == 'HR'){
+            bTest3 = true;
+          }
+          break; // done with both tests so exit loop
+        }
+ 
+      }
 
+      if (bTest1 && bTest2 && bTest3) {
+        // we passed test1, test2, and test3 so break out of the for loop
+        break;
+      }
+    }
+    
+    if (bTest1 && bTest2 && bTest3) {
+      // get the first table
+      var arTDs = q.select('td',actionbar);
+      var arActions = q.select('a',actionbar);
+      if (arTDs.length == arActions.length) {
+        bTest4 = true;
+        return actionbar;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+    
+  },
+  
   createToolbarFromDxl: function(o) {
     var actionbar, arActions;
     var q = Ext.DomQuery;
