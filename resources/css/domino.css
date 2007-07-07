@@ -16,15 +16,15 @@
   white-space: normal;
 }
 
-.x-btn-text-icon .x-btn-center .x-btn-text{
-  background-position: 0 2px;
-  background-repeat: no-repeat;
-  padding-left:23px;
-  padding-top:3px;
-  padding-bottom:3px;
-  padding-right:0;
-}
 
+/* domino's icons are 21px + add 2px for padding */
+.x-btn-text-icon .x-btn-center .x-btn-text{
+  padding-left:23px;
+}
+.x-btn-icon .x-btn-center .x-btn-text{
+  height: 23px;
+  width: 23px;
+}
 .x-btn-left, .x-btn-right{
-  height:21px;
+  height:23px;
 }
