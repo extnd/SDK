@@ -106,19 +106,32 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
         curLevelTitle = '';
       }
 
-      // get the onclick and href attributes         
-      var tmpHref = action.getAttribute('href');
-      if (tmpHref != '') {
-        var tmpOnclick = "location.href = '" + tmpHref + "';";
+      // get the onclick and href attributes
+      var sHref, sOnclick, oOnclick, arOnclick;
+      //sHref = q.selectValue('@href',action,''); // there's a bug in IE with getAttribute('href') so we can't use this
+      sHref = action.getAttribute('href',2); // IE needs the '2' to tell it to get the actual href attribute value;
+      
+      if (sHref != '') {
+        sOnclick = "location.href = '" + sHref + "';";
       } else {
-        var tmpOnclick = q.selectValue('@onclick',action,Ext.emptyFn);
-        var arTmpOnclick = tmpOnclick.split('\r');
-        arTmpOnclick.splice(arTmpOnclick.length-1,1); //removing the 'return false;' that domino adds
-        tmpOnclick = arTmpOnclick.join('\r');
+        //sOnclick = q.selectValue('@onclick',action,Ext.emptyFn);
+        //sOnclick = action.getAttribute('onclick');
+        // neither of the above ways worked in IE.  IE kept wrapping the onclick code
+        // in function() anonymous { code }, instead of just returning the value of onclick
+        oOnclick = action.attributes['onclick'];
+        if (oOnclick) {
+          sOnclick = oOnclick.nodeValue;
+        } else {
+          sOnclick = ''
+        }
+          
+        arOnclick = sOnclick.split('\r');
+        arOnclick.splice(arOnclick.length-1,1); //removing the 'return false;' that domino adds
+        sOnclick = arOnclick.join('\r');
       }
       
       // asign to a handler
-      var handler = function(bleh) { eval(bleh);}.createCallback(tmpOnclick);
+      var handler = function(bleh) { eval(bleh);}.createCallback(sOnclick);
         
       // handle subActions  
       if (isSubAction) {
@@ -223,7 +236,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
               continue;
             }
             
-          } else if (c.tagName == 'INPUT' && c.getAttribute('type') == 'hidden') {
+          } else if (c.tagName == 'INPUT' && q.selectValue('@type',c,'') == 'hidden') {
             continue; // domino sometimes puts hidden input fields before the actionbar
           } else {
             break; // didn't pass test 1 so bail
