@@ -21,10 +21,3 @@
 .x-btn-text-icon .x-btn-center .x-btn-text{
   padding-left:23px;
 }
-.x-btn-icon .x-btn-center .x-btn-text{
-  height: 23px;
-  width: 23px;
-}
-.x-btn-left, .x-btn-right{
-  height:23px;
-}
