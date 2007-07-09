@@ -118,7 +118,7 @@ Ext.nd.Form.prototype = {
                 var onChange = attr['onchange'];
                 if (onChange) {
                   var sOnChange = onChange.nodeValue;
-                  cb.on('change',function() { 
+                  cb.on('select',function() { 
                     eval(sOnChange);
                   });
                 }
@@ -156,7 +156,7 @@ Ext.nd.Form.prototype = {
                 var onChange = attr['onchange'];
                 if (onChange) {
                   var sOnChange = onChange.nodeValue;
-                  cb.on('change',function() { 
+                  cb.on('select',function() { 
                     eval(sOnChange);
                   });
                 }
