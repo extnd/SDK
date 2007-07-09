@@ -358,7 +358,7 @@ Ext.nd.UIView.prototype = {
        */
        
        /* TODO: work on making the search dialog look just like the Notes version (button text, etc.)
-       this.showQuickSearchDialog = new Ext.LayoutDialog('domino-view-search',{
+       this.showQuickSearchDialog = new Ext.LayoutDialog('xnd-view-search',{
           autoCreate: true,
           title: 'Starts with...', 
           msg: 'Search Text',
@@ -404,7 +404,7 @@ Ext.nd.UIView.prototype = {
 
    // has children and is a categorized column
    if (hasChildren && colConfig.sortcategorize) {
-      cell.css = " domino-view-expand domino-view-category";   
+      cell.css = " xnd-view-expand xnd-view-category";   
       cell.attr = "style='position: absolute;'";
       if (nextViewentry) {
          var nextViewentryPosition = nextViewentry.attributes.getNamedItem('position').value;
@@ -420,7 +420,7 @@ Ext.nd.UIView.prototype = {
    } 
    // has children but is NOT a response, so therefore, must be a regular doc with response docs
    else if (hasChildren && !isResponse && colConfig.response) {
-      cell.css = "domino-view-expand domino-view-category"; 
+      cell.css = "xnd-view-expand xnd-view-category"; 
       cell.attr = "style='position: absolute;'";
       if (nextViewentry) {
          var nextViewentryPosition = nextViewentry.attributes.getNamedItem('position').value;
@@ -436,7 +436,7 @@ Ext.nd.UIView.prototype = {
    }  
    // has children and IS a response doc
    else if (hasChildren && isResponse && colConfig.response) { 
-      cell.css = "domino-view-expand domino-view-response"; 
+      cell.css = "xnd-view-expand xnd-view-response"; 
       cell.attr = "style='position: absolute; padding-left:" + indentPadding + ";'"; // TODO: need to figure out how to STYLE the cell
       if (nextViewentry) {
          var nextViewentryPosition = nextViewentry.attributes.getNamedItem('position').value;
@@ -452,7 +452,7 @@ Ext.nd.UIView.prototype = {
    }  
    // does NOT have children and IS a response doc
    else if (!hasChildren && isResponse && colConfig.response) { 
-      cell.css = "domino-view-response";  
+      cell.css = "xnd-view-response";  
       cell.attr = "style='position: absolute; padding-left:" + indentPaddingNoIcon + ";'"; // notice we use the padding that has the extra 19px since no icon is shown
       value = this.getValue(value, colConfig);
    }  
