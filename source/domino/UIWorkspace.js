@@ -362,12 +362,9 @@ Ext.nd.UIWorkspace.prototype = {
           isTarget : true,
           leaf : false
         });
-        curNode.on('dblclick', add);
+        curNode.on('dblclick', moveCS);
         rootChoices.appendChild(curNode);
       }
-      
-      
-
 
 
       // Tree-selected
@@ -410,6 +407,7 @@ Ext.nd.UIWorkspace.prototype = {
           isTarget : true,
           leaf : false
         });
+        curNode.on('dblclick', moveSC);
         rootSelections.appendChild(curNode);
       }
       
@@ -425,8 +423,10 @@ Ext.nd.UIWorkspace.prototype = {
     // now show our custom dialog 
     dialog.show();
 
-    function add() {
-      alert('add');
+    function add(node, e) {
+      var parent = node.parentNode;
+      parent.removeChild(node);
+      
     }
     
     function addAll() {
@@ -441,6 +441,23 @@ Ext.nd.UIWorkspace.prototype = {
       alert('removeAll');
     }
     
+
+    function moveCS(node, e) {
+      node.on('dblclick', moveSC);
+      move(node, rootSelections, e);      
+    }
+
+    function moveSC(node, e) {
+      node.on('dblclick', moveCS);
+      move(node, rootChoices, e);
+    }
+    
+    function move(node, newroot, e) {
+      var parent = node.parentNode;
+      parent.removeChild(node);
+      newroot.appendChild(node);
+    }
+
     
     function handleOK() {
       var arSelections = this.uiView.grid.getSelections();
