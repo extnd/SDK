@@ -13,7 +13,9 @@ Ext.nd.Form = function(config) {
   // defaults
   this.dbPath = db.WebFilePath;
   this.showActionbar = true;
-  this.toolbar = false;
+  this.toolbar = false; // developer can pass in an Ext.Toolbar
+  this.toolbarContainer; // developer can specify where the toolbar should appear
+  this.headerContainer; // developer can specify the header of the form
   this.bConvertFields = true;
   this.form = uidoc.form;
   this.formName = uidoc.formName;
@@ -29,8 +31,12 @@ Ext.nd.Form = function(config) {
 Ext.nd.Form.prototype = {
 
   render: function() {
+    document.body.style.visibility = "hidden";
+    var msg = Ext.MessageBox.wait("Loading document...");
     this.buildLayout();
     this.convertFields();
+    msg.hide();
+    document.body.style.visibility = "";
   },
  
   buildLayout: function() {
@@ -43,29 +49,36 @@ Ext.nd.Form.prototype = {
     // now append the form into the UI
     Ext.get(ui).dom.appendChild(this.form);
    
-   
-    // need an actionbar?
+    // need an actionbar? or was one passed in?
     if (this.showActionbar || this.toolbar) {
       if (!this.toolbar) {
-        var tb = dh.append(ui,{tag: 'div'});
+        if (!this.toolbarContainer) {
+          this.toolbarContainer = dh.append(ui,{tag: 'div'});
+        }
         this.toolbar = new Ext.nd.Actionbar({
-          container:tb, 
-          noteType:'form', 
-          noteName:this.formName
+          container: this.toolbarContainer, 
+          noteType: 'form', 
+          noteName: this.formName
         });
       }
     } 
 
+    // define the header of the form 
+    // if none was specified, defaults to the toolbarContainer
+    if (!this.headerContainer) {
+      this.headerContainer = this.toolbarContainer;
+    }
+
     // define the layout
-    var layout = new Ext.BorderLayout(document.body, {
+    this.layout = new Ext.BorderLayout(document.body, {
       north : {titlebar: false},
       center: { }
     });
    
-    layout.beginUpdate();
-    layout.add('north', new Ext.ContentPanel(this.toolbar.el.dom));
-    layout.add('center', new Ext.ContentPanel(ui, {fitToFrame : true, autoScroll : true}));
-    layout.endUpdate();
+    this.layout.beginUpdate();
+    this.layout.add('north', new Ext.ContentPanel(this.headerContainer));
+    this.layout.add('center', new Ext.ContentPanel(ui, {fitToFrame : true, autoScroll : true}));
+    this.layout.endUpdate();
     
   },
   
@@ -97,8 +110,19 @@ Ext.nd.Form.prototype = {
                 typeAhead : true,
                 triggerAction : 'all',
                 transform : el,
-                forceSelection : true
+                forceSelection : true,
+                resizable: true
               });
+              var attr = el.attributes;
+              if (attr) {
+                var onChange = attr['onchange'];
+                if (onChange) {
+                  var sOnChange = onChange.nodeValue;
+                  cb.on('change',function() { 
+                    eval(sOnChange);
+                  });
+                }
+              }
               converted = true;
               break;
 
@@ -124,12 +148,25 @@ Ext.nd.Form.prototype = {
                 typeAhead : true,
                 triggerAction : 'all',
                 transform : el,
-                forceSelection : true
+                forceSelection : true,
+                resizable: true
               });
+              var attr = el.attributes;
+              if (attr) {
+                var onChange = attr['onchange'];
+                if (onChange) {
+                  var sOnChange = onChange.nodeValue;
+                  cb.on('change',function() { 
+                    eval(sOnChange);
+                  });
+                }
+              }
               break;
 
             case 'TEXTAREA' :
-              var ta = new Ext.form.TextArea();
+              var ta = new Ext.form.TextArea({
+                resizable: true
+              });
               ta.applyTo(el);
               break;
 
