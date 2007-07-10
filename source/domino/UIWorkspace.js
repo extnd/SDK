@@ -196,6 +196,8 @@ Ext.nd.UIWorkspace.prototype = {
 
   DialogList : function(config) {
     var dialog, cb, curNode;
+    var dh = Ext.DomHelper;
+    
     var sess = Ext.nd.Session; 
     var db = sess.CurrentDatabase;
 
@@ -203,11 +205,11 @@ Ext.nd.UIWorkspace.prototype = {
     this.server = "";
     this.dbPath = db.WebFilePath;
     this.viewName = "";
-    this.width = 300;
-    this.height = 200;
+    this.width = 400;
+    this.height = 300;
     this.shadow = true;
-    this.minWidth = 200;
-    this.minHeight = 150;
+    this.minWidth = 300;
+    this.minHeight = 20;
     this.type = "custom";
     this.select = "single";
     
@@ -215,7 +217,7 @@ Ext.nd.UIWorkspace.prototype = {
     this.prompt = "Please make your selection(s) and click <OK>.";
     this.column = 0;
     this.choices = [];
-    this.selected = [];
+    this.selections = [];
     
     // defaults for single category options
     this.showSingleCategory = null;
@@ -296,15 +298,14 @@ Ext.nd.UIWorkspace.prototype = {
         fitToFrame : true
       }));
 
-      // create selected panel
-      var selectedPanel = layout.add('east', new Ext.ContentPanel('xnd-dialoglist-selected', {
+      // create selections panel
+      var selectionsPanel = layout.add('east', new Ext.ContentPanel('xnd-dialoglist-selections', {
         autoCreate : true,
         title : this.title,
         closable : false,
         fitToFrame : true
       }));
       
-      var dh = Ext.DomHelper;
       var dlb = dh.append(document.body,{
         id:'xnd-dialoglist-buttons', 
         style:{'text-align':'center'}
@@ -326,95 +327,54 @@ Ext.nd.UIWorkspace.prototype = {
         fitToFrame:true
       }));
 
-      // now create the lists/trees - one for choices and one for selected
-      // Tree-choices
-      var treeChoices = new Ext.tree.TreePanel('xnd-dialoglist-choices', {
-        animate:true, 
-        enableDD:true,
-        rootVisible:false,
-        containerScroll: true,
-        dropConfig: {appendOnly:true},
-        dropZone: {allowContainerDrop:true}
-      });
-            
-      // add a tree sorter in folder mode
-      new Ext.tree.TreeSorter(treeChoices, {folderSort:true});
-            
-      // set the root node
-      var rootChoices = new Ext.tree.AsyncTreeNode({
-        text: 'Choices', 
-        draggable:false, // disable root node dragging
-        id:'choices'
-      });
-      treeChoices.setRootNode(rootChoices);
-            
-      // render the tree
-      treeChoices.render();
-            
-      rootChoices.expand(false, /*no anim*/ false);
+      var listTpl = new Ext.Template('<div>{display}</div>');
       
-      for (var i=0; i<this.choices.length; i++) {
-        curNode = new Ext.tree.TreeNode({
-          text : this.choices[i], 
-          //cls : cls, 
-          allowDrag : true, 
-          allowDrop : true,
-          isTarget : true,
-          leaf : false
-        });
-        curNode.on('dblclick', moveCS);
-        rootChoices.appendChild(curNode);
-      }
 
 
-      // Tree-selected
-      var treeSelections = new Ext.tree.TreePanel('xnd-dialoglist-selected', {
-        animate:true, 
-        rootVisible: false,
-        containerScroll: true,
-        enableDD:true,
-        dropConfig: {appendOnly:true}
+      var storeChoices = new Ext.data.SimpleStore({
+        fields: ['display', 'value'],
+        data : [['test11','11'],['test22','22'],['test33','33']]
+      });
+      var cbChoices = new Ext.View(choicesPanel.el.dom,listTpl,{
+        store: storeChoices,
+        multiSelect: true
+      });
+      cbChoices.on('click',function(vw, index, node, e) {
+        this.select(index,true);
+      });
+      cbChoices.on('dblclick',function(vw, index, node, e) {
+        var record = this.store.getAt(index);
+        cbSelections.store.add(record);
+        this.store.remove(record);
       });
 
-      var drop2 = new Ext.dd.DropTarget('xnd-dialoglist');
-      drop2.notifyDrop = function(dd, e, data) {
-        alert('here')
-      }
-      Ext.dd.Registry.register(drop2);
-      
-      
-      // add a tree sorter in folder mode
-      new Ext.tree.TreeSorter(treeSelections, {folderSort:true});
-
-      // add the root node
-      var rootSelections = new Ext.tree.TreeNode({
-        text: 'Selected', 
-        allowDrag : true, 
-        allowDrop : true, 
-        id:'selected'
+      var storeSelections = new Ext.data.SimpleStore({
+        fields: ['display', 'value'],
+        data : [['test1','1'],['test2','2'],['test3','3']]
       });
-      treeSelections.setRootNode(rootSelections);
-      treeSelections.render();
+      var cbSelections = new Ext.View(selectionsPanel.el.dom,listTpl,{
+        store: storeSelections,
+        multiSelect: true
+      });
+      cbSelections.on('click',function(vw, index, node, e) {
+        this.select(index,true);
+      });
+      cbSelections.on('dblclick',function(vw, index, node, e) {
+        var record = this.store.getAt(index);
+        cbChoices.store.add(record);
+        this.store.remove(record);
+      });
 
-      rootSelections.expand(false, /*no anim*/ false);
 
-      for (var i=0; i<this.selected.length; i++) {
-        curNode = new Ext.tree.TreeNode({
-          text : this.selected[i], 
-          //cls : cls, 
-          allowDrag : true, 
-          allowDrop : true,
-          isTarget : true,
-          leaf : false
-        });
-        curNode.on('dblclick', moveSC);
-        rootSelections.appendChild(curNode);
-      }
+/*
+      cbSelections.on('beforeselect',function(cb,r,i){
+        var rr = r;
+      });
+      cbSelections.onSelect = function(cb,r,i){
+        var rr = r;
+      };
       
-      
-
-
-
+*/      
       // tell the layout we are done so it can draw itself on the screen
       layout.endUpdate();
 
@@ -422,11 +382,10 @@ Ext.nd.UIWorkspace.prototype = {
       
     // now show our custom dialog 
     dialog.show();
-
-    function add(node, e) {
-      var parent = node.parentNode;
-      parent.removeChild(node);
+    
       
+    function add() {
+      alert('add')      
     }
     
     function addAll() {
