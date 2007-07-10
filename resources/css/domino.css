@@ -21,3 +21,10 @@
 .x-btn-text-icon .x-btn-center .x-btn-text{
   padding-left:23px;
 }
+
+
+/* Ext didn't have this class defined for some reason */
+.x-view-selected {
+  background-color: #316ac5 !important;
+  color: white;
+}
