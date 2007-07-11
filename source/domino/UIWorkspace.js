@@ -7,7 +7,7 @@
  */
 Ext.nd.UIWorkspace = function(config) {
   Ext.apply(this,config);
-}
+};
 
 Ext.nd.UIWorkspace.prototype = {
 
@@ -158,6 +158,7 @@ Ext.nd.UIWorkspace.prototype = {
 
   },
 
+
   Prompt : function() {
     var cb;
     this.type = "ok";
@@ -212,6 +213,7 @@ Ext.nd.UIWorkspace.prototype = {
     this.minHeight = 20;
     this.type = "custom";
     this.select = "single";
+    this.tag = 'div';
     
     this.title = "DialogList";
     this.prompt = "Please make your selection(s) and click <OK>.";
@@ -245,7 +247,6 @@ Ext.nd.UIWorkspace.prototype = {
 
     // build the dialog/PickList     
     if(!dialog){ 
-      
       var btnCol = 50
       var selCol = this.width/2 - btnCol/2;
       
@@ -280,17 +281,43 @@ Ext.nd.UIWorkspace.prototype = {
       dialog.addButton('OK', handleOK, this);
       dialog.addButton('Cancel', handleCancel, this);
 
+      
       // create layout           
       var layout = dialog.getLayout();
       layout.beginUpdate();
 
+      
       // add prompt panel
       var promptPanel = layout.add('north', new Ext.ContentPanel('xnd-dialoglist-prompt', {
         autoCreate: true, 
         title : this.prompt
       }));
+      
+      var dlb = dh.append(document.body,{
+        id:'xnd-dialoglist-buttons', 
+        style:{'text-align':'center'}
+      });
+      new Ext.Button(dlb,{text:'&raquo;',handler:this.add});
+      new Ext.Button(dlb,{text:'&raquo;',handler:this.addAll});
+      new Ext.Button(dlb,{text:'&laquo;',handler:this.remove});
+      new Ext.Button(dlb,{text:'&laquo;',handler:this.removeAll});
+      
+      
+      var actionButtons = layout.add('center', new Ext.ContentPanel('xnd-dialoglist-buttons', {
+        fitToFrame:true
+      }));
 
-      // create choices panel
+      // define a template for each option
+      var listTpl;
+      if (this.tag == 'option') {
+        listTpl = new Ext.Template('<option value="{value}">{display}</option>');
+      } else {
+        listTpl = new Ext.Template('<div style="cursor:pointer; -moz-user-select:none;" unselectable="on">{display}</div>');
+      }
+
+     /**
+      *  Choices
+      */
       var choicesPanel = layout.add('west', new Ext.ContentPanel('xnd-dialoglist-choices', {
         autoCreate : true,
         title : this.title,
@@ -298,49 +325,42 @@ Ext.nd.UIWorkspace.prototype = {
         fitToFrame : true
       }));
 
-      // create selections panel
-      var selectionsPanel = layout.add('east', new Ext.ContentPanel('xnd-dialoglist-selections', {
-        autoCreate : true,
-        title : this.title,
-        closable : false,
-        fitToFrame : true
-      }));
+      var choicesSelect;
+      if (this.tag == 'option') {
+        choicesSelect = dh.append(choicesPanel.el.dom,{tag: 'select', name: 'choicesSelect', multiple:'true', size: '15', style: {width: '100%'}});
+      } else {
+        choicesSelect = choicesPanel.el.dom;
+      }
       
-      var dlb = dh.append(document.body,{
-        id:'xnd-dialoglist-buttons', 
-        style:{'text-align':'center'}
-      });
-      new Ext.Button(dlb,{text:'&raquo;',handler:add});
-      new Ext.Button(dlb,{text:'&raquo;',handler:addAll});
-      new Ext.Button(dlb,{text:'&laquo;',handler:remove});
-      new Ext.Button(dlb,{text:'&laquo;',handler:removeAll});
-      
-      /*
-      var tpl = new Ext.Template('<button>{text}</button>');
-      tpl.append('xnd-dialoglist-buttons',{text:'&gt;'});
-      tpl.append('xnd-dialoglist-buttons',{text:'&raquo;'});
-      tpl.append('xnd-dialoglist-buttons',{text:'&lt;'});
-      tpl.append('xnd-dialoglist-buttons',{text:'&laquo;'});
-      */
-      
-      var actionButtons = layout.add('center', new Ext.ContentPanel('xnd-dialoglist-buttons', {
-        fitToFrame:true
-      }));
-
-      var listTpl = new Ext.Template('<div>{display}</div>');
-      
-
-
       var storeChoices = new Ext.data.SimpleStore({
         fields: ['display', 'value'],
-        data : [['test11','11'],['test22','22'],['test33','33']]
+        data : [
+          ['test11','11'],
+          ['test22','22'],
+          ['test33','33'],
+          ['test44','44'],
+          ['test55','55'],
+          ['test66','66'],
+          ['test77','77'],
+          ['test88','88'],
+          ['test99','99']
+        ]
       });
-      var cbChoices = new Ext.View(choicesPanel.el.dom,listTpl,{
+
+      var cbChoices = new Ext.View(choicesSelect,listTpl,{
         store: storeChoices,
-        multiSelect: true
+        multiSelect: true,
+        selectedClass: 'x-grid-cell-selected'
       });
       cbChoices.on('click',function(vw, index, node, e) {
-        this.select(index,true);
+        /*
+        if (e.ctrlKey) {
+          if (this.isSelected(node) {
+              
+        } else {
+          this.select(index,true);
+        }
+        */
       });
       cbChoices.on('dblclick',function(vw, index, node, e) {
         var record = this.store.getAt(index);
@@ -348,13 +368,43 @@ Ext.nd.UIWorkspace.prototype = {
         this.store.remove(record);
       });
 
+      
+     /**
+      *  Selections
+      */
+      var selectionsPanel = layout.add('east', new Ext.ContentPanel('xnd-dialoglist-selections', {
+        autoCreate : true,
+        title : this.title,
+        closable : false,
+        fitToFrame : true
+      }));
+      
+      var selectionsSelect;
+      if (this.tag == 'option') {
+        selectionsSelect = dh.append(selectionsPanel.el.dom,{tag: 'select', name: 'selectionsSelect', multiple:'true', size: '15', style: {width: '100%'}});
+      } else {
+        selectionsSelect = selectionsPanel.el.dom;
+      }
+      
+      
       var storeSelections = new Ext.data.SimpleStore({
         fields: ['display', 'value'],
-        data : [['test1','1'],['test2','2'],['test3','3']]
+        data : [
+          ['test1','1'],
+          ['test2','2'],
+          ['test3','3'],
+          ['test4','4'],
+          ['test5','5'],
+          ['test6','6'],
+          ['test7','7'],
+          ['test8','8'],
+          ['test9','9']
+        ]
       });
-      var cbSelections = new Ext.View(selectionsPanel.el.dom,listTpl,{
+      var cbSelections = new Ext.View(selectionsSelect,listTpl,{
         store: storeSelections,
-        multiSelect: true
+        multiSelect: true,
+        selectedClass: 'x-grid-cell-selected'
       });
       cbSelections.on('click',function(vw, index, node, e) {
         this.select(index,true);
@@ -366,23 +416,14 @@ Ext.nd.UIWorkspace.prototype = {
       });
 
 
-/*
-      cbSelections.on('beforeselect',function(cb,r,i){
-        var rr = r;
-      });
-      cbSelections.onSelect = function(cb,r,i){
-        var rr = r;
-      };
-      
-*/      
       // tell the layout we are done so it can draw itself on the screen
       layout.endUpdate();
 
-    }
+    } // end if(!dialog);
       
     // now show our custom dialog 
     dialog.show();
-    
+
       
     function add() {
       alert('add')      
@@ -419,36 +460,16 @@ Ext.nd.UIWorkspace.prototype = {
 
     
     function handleOK() {
-      var arSelections = this.uiView.grid.getSelections();
-      var arReturn = new Array();
       dialog.hide();
-
-      for (var i=0; i<arSelections.length; i++) {
-        var map = arSelections[i].fields.keys[this.column];
-        var data = arSelections[i].data[map].data;
-        for (var d=0; d<data.length; d++) {
-          arReturn.push(data[d]);
-        }
-      }
-
-      // if a callback has been defined, call it and pass the array of return values to it
-      if (cb) {
-        cb(arReturn);
-      } else {
-        return arReturn; //only usefull if async = false, otherwise your code won't be able to process
-      }
+      alert('you clicked ok');
     }
 
     function handleCancel() {
       dialog.hide();
-      if (cb) {
-        cb(null);
-      } else {
-        return null;
-      }
+      alert('you clicked cancel');
     }
 
-  }
+  } // end Dialoglist
 
 }; 
 
