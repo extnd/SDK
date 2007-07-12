@@ -297,10 +297,10 @@ Ext.nd.UIWorkspace.prototype = {
         id:'xnd-dialoglist-buttons', 
         style:{'text-align':'center'}
       });
-      new Ext.Button(dlb,{text:'&raquo;',handler:this.add});
-      new Ext.Button(dlb,{text:'&raquo;',handler:this.addAll});
-      new Ext.Button(dlb,{text:'&laquo;',handler:this.remove});
-      new Ext.Button(dlb,{text:'&laquo;',handler:this.removeAll});
+      new Ext.Button(dlb,{text:'&raquo;', handler: add});
+      new Ext.Button(dlb,{text:'&raquo;', handler: addAll});
+      new Ext.Button(dlb,{text:'&laquo;', handler: remove});
+      new Ext.Button(dlb,{text:'&laquo;', handler: removeAll});
       
       
       var actionButtons = layout.add('center', new Ext.ContentPanel('xnd-dialoglist-buttons', {
@@ -352,21 +352,7 @@ Ext.nd.UIWorkspace.prototype = {
         multiSelect: true,
         selectedClass: 'x-grid-cell-selected'
       });
-      cbChoices.on('click',function(vw, index, node, e) {
-        /*
-        if (e.ctrlKey) {
-          if (this.isSelected(node) {
-              
-        } else {
-          this.select(index,true);
-        }
-        */
-      });
-      cbChoices.on('dblclick',function(vw, index, node, e) {
-        var record = this.store.getAt(index);
-        cbSelections.store.add(record);
-        this.store.remove(record);
-      });
+      cbChoices.on('dblclick',handleDoubleClick);
 
       
      /**
@@ -406,14 +392,7 @@ Ext.nd.UIWorkspace.prototype = {
         multiSelect: true,
         selectedClass: 'x-grid-cell-selected'
       });
-      cbSelections.on('click',function(vw, index, node, e) {
-        this.select(index,true);
-      });
-      cbSelections.on('dblclick',function(vw, index, node, e) {
-        var record = this.store.getAt(index);
-        cbChoices.store.add(record);
-        this.store.remove(record);
-      });
+      cbSelections.on('dblclick',handleDoubleClick);
 
 
       // tell the layout we are done so it can draw itself on the screen
@@ -424,40 +403,59 @@ Ext.nd.UIWorkspace.prototype = {
     // now show our custom dialog 
     dialog.show();
 
-      
+    
+    function handleDoubleClick(vw, index, node, e) {
+      var sSourceID, cbTarget;
+      var record = this.store.getAt(index);
+      sSourceID = vw.el.dom.id;
+      if (sSourceID == cbChoices.el.id) {
+        cbTarget = cbSelections;
+      } else {
+        cbTarget = cbChoices;
+      }
+      move(vw,cbTarget,record);
+    }
+    
+    function move(cbSource, cbTarget, record) {
+      cbTarget.store.add(record);
+      cbSource.store.remove(record);    
+    }
+    
     function add() {
-      alert('add')      
+      var nodes = cbChoices.getSelectedNodes();
+      var len = nodes.length
+      for (var r=len-1; r>=0; r--) {
+        var record = cbChoices.store.getAt(nodes[r].nodeIndex);
+        move(cbChoices, cbSelections, record);
+      }
     }
     
     function addAll() {
-      alert('addAll');
+      var nodes = cbChoices.nodes;
+      var len = nodes.length
+      for (var r=len-1; r>=0; r--) {
+        var record = cbChoices.store.getAt(r);
+        move(cbChoices, cbSelections, record);
+      }
     }
     
     function remove() {
-      alert('remove');
+      var nodes = cbSelections.getSelectedNodes();
+      var len = nodes.length
+      for (var r=len-1; r>=0; r--) {
+        var record = cbSelections.store.getAt(nodes[r].nodeIndex);
+        move(cbSelections, cbChoices, record);
+      }
     }
     
     function removeAll() {
-      alert('removeAll');
+      var nodes = cbSelections.nodes;
+      var len = nodes.length
+      for (var r=len-1; r>=0; r--) {
+        var record = cbSelections.store.getAt(r);
+        move(cbSelections, cbChoices, record);
+      }
     }
-    
-
-    function moveCS(node, e) {
-      node.on('dblclick', moveSC);
-      move(node, rootSelections, e);      
-    }
-
-    function moveSC(node, e) {
-      node.on('dblclick', moveCS);
-      move(node, rootChoices, e);
-    }
-    
-    function move(node, newroot, e) {
-      var parent = node.parentNode;
-      parent.removeChild(node);
-      newroot.appendChild(node);
-    }
-
     
     function handleOK() {
       dialog.hide();
