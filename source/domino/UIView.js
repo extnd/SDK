@@ -116,6 +116,7 @@ Ext.nd.UIView.prototype = {
       this.getViewDesign();
   },
   
+  // This is a work in progress, not yet implemented
   handleViewSearch: function() {
 		var qry = this.searchField.getValue();
 		var ds = this.grid.dataSource;
