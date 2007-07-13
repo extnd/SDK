@@ -149,7 +149,7 @@ Ext.nd.UIView.prototype = {
       failure : this.getViewDesignFailure,
       scope: this
     };    
-    Ext.lib.Ajax.request('POST', this.viewUrl + '?ReadDesign', cb);
+    Ext.lib.Ajax.request('GET', this.viewUrl + '?ReadDesign', cb); // RW - changed to GET cause of proxy issues
   },
   
   // Silent fail for now... what should this do? perhaps we can provide an openlog integration that posts back JavaScript errors
