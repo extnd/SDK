@@ -1,11 +1,3 @@
-/*
- * Ext.nd JS library 1.0
- * Copyright (c) 2006-2007, ExtND
- * licensing@extjs.com
- * 
- * http://www.extjs.com/license
- */
-
 Ext.namespace("Ext.nd", "Ext.nd.grid", "Ext.nd.data", "Ext.nd.domino");
 
 Ext.nd.extndUrl = "/extnd.nsf/";  // default
