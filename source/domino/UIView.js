@@ -145,15 +145,17 @@ Ext.nd.UIView.prototype = {
   getViewDesign: function() {
     // TODO: need a failure function
     var cb = {
-      success : this.getViewDesignCB.createDelegate(this), 
-      failure : this.getViewDesignCB.createDelegate(this),
+      success : this.getViewDesignCB, 
+      failure : this.getViewDesignFailure,
       scope: this
     };    
-
     Ext.lib.Ajax.request('POST', this.viewUrl + '?ReadDesign', cb);
-  
   },
   
+  // Silent fail for now... what should this do? perhaps we can provide an openlog integration that posts back JavaScript errors
+  getViewDesignFailure: function(res) {
+    // alert("Error communicating with the server");
+  },
 
   getViewDesignCB: function(o) {
     var q = Ext.DomQuery;
@@ -943,8 +945,8 @@ Ext.nd.UIView.prototype = {
       Ext.MessageBox.alert("Delete Error","You have this document open in another tab.  Please close the document first before deleting.");
    } else {
       var cb = {
-         success : this.gridDeleteDocumentSuccess.createDelegate(this), 
-         failure : this.gridDeleteDocumentFailure.createDelegate(this), 
+         success : this.gridDeleteDocumentSuccess, 
+         failure : this.gridDeleteDocumentFailure, 
          argument: rowIndex,
          scope: this
       };    
