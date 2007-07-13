@@ -16,7 +16,6 @@ Ext.nd.Actionbar = function(config){
   this.useDxl = false;
   
   Ext.apply(this, config);
-   
   Ext.nd.Actionbar.superclass.constructor.call(this, config.container);
    
   // noteUrl is either passed in or built from dbPath and noteName
@@ -28,7 +27,6 @@ Ext.nd.Actionbar = function(config){
     this.dbPath = this.noteUrl.substring(0,vni);
     this.noteName = this.noteUrl.substring(vni);
   }
-
 
   // first, add an empty button that we'll remove later
   // we do this so that the browser will calculate the size of the toolbar
@@ -47,21 +45,24 @@ Ext.nd.Actionbar = function(config){
 
 Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
  
-
   createToolbar: function() {
     if (!this.useDxl) {
       this.createToolbarFromDocument();
       return;
     }
     var cb = {
-      success : this.createToolbarFromDxl.createDelegate(this), 
-      failure : this.createToolbarFromDxl.createDelegate(this),
+      success : this.createToolbarFromDxl, 
+      failure : this.createToolbarFailure,
       scope: this
     };    
     Ext.lib.Ajax.request('POST', this.dbPath + '($Ext.nd.NotesDxlExporter)?OpenAgent&type=' + this.noteType + '&name=' + this.noteName, cb);
   },
 
-
+  // Quick sample failure call... 
+  createToolbarFailure: function(res) {
+    // alert("Error communicating with the server");
+  },
+  
   createToolbarFromDocument: function(o) {
     var actionbar, arActions;
     var q = Ext.DomQuery;
@@ -99,8 +100,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
           isFirst = true;
         } else {
           isFirst = false;
-        }               
-    
+        }
       } else {
         isSubAction = false;
         curLevelTitle = '';
@@ -137,7 +137,6 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
       if (isSubAction) {
         // special case for the first one  
         if (isFirst) {
-        
           if (i>0) {
             // add separator
             arJSONActions.push('-');
@@ -166,10 +165,8 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
             handler: handler
           });            
         }
-        
       // normal non-sub actions  
       } else {
- 
         if (i>0) {
           // add separator
           arJSONActions.push('-');
@@ -181,14 +178,9 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
           cls: cls,
           icon: imageRef,
           handler: handler
-        }); 
-
-        
+        });
       } // end if(isSubAction)
-
     } // end for arActions.length
-    
-    
     // now add the actions to the toolbar (this)
     for (var i=0; i<arJSONActions.length; i++) {
       this.add(arJSONActions[i]);
@@ -203,8 +195,6 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
       tmp = hr.parentNode.removeChild(hr);
       tmp = null;
     }
-
-
   },
   
   getDominoActionbar: function() {
@@ -224,7 +214,6 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
       var c = cn[i];
       if (c.nodeType == 1) {
         if (!bTest1) {
-          
           if (c.tagName == 'TABLE') {
             actionbar = c;
             var arRows = q.select('tr',actionbar);
@@ -235,24 +224,18 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
               bTest2 = true;
               continue;
             }
-            
           } else if (c.tagName == 'INPUT' && q.selectValue('@type',c,'') == 'hidden') {
             continue; // domino sometimes puts hidden input fields before the actionbar
           } else {
             break; // didn't pass test 1 so bail
           }
-          
         } else { // bTest1 == true
-          
           if (c.tagName == 'HR'){
             bTest3 = true;
           }
           break; // done with both tests so exit loop
-          
         } // end: !bTest1
- 
       } // end: c.nodeType == 1
-
       if (bTest1 && bTest2 && bTest3) {
         // we passed test1, test2, and test3 so break out of the for loop
         break;
@@ -322,8 +305,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
         }
         imageRef = "/icons/actn"+imageRef+".gif";
       }
-         
-      
+       
       // now go ahead and handle the actions we can show
       if (show && syscmd == null) {  // for now we do not want to show system commands
                
@@ -342,8 +324,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
             isFirst = true;
           } else {
             isFirst = false;
-          }               
-        
+          }
         } else {
           isSubAction = false;
           curLevelTitle = '';
@@ -354,7 +335,6 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
          
         if (isSubAction) {
           if (isFirst) {
-
             if (i>0) {
               //add separator
               arJSONActions.push('-');
@@ -371,7 +351,6 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
               }]}
             }); 
           
-
           } else {
             // length-1 so we can get back past the separator and to the top level of the dropdown
             arJSONActions[arJSONActions.length-1].menu.items.push({
@@ -383,7 +362,6 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
           }
           
         } else {
-
           if (i>0) {
             // add separator
             arJSONActions.push('-');
@@ -395,19 +373,12 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
             icon: imageRef,
             handler: handler
           }); 
-
-          
         } // end: if (isSubAction)
-       
       } // end: if (show && syscmd == null)
-
     } // end: for arActions.length
-    
     // now add the actions to the toolbar (this)
     for (var i=0; i<arJSONActions.length; i++) {
       this.add(arJSONActions[i]);
     }
-   
  }
- 
 });
