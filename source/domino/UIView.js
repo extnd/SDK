@@ -20,17 +20,17 @@ Ext.nd.UIView = function(config) {
    // defaults for actionbar/toolbar
    this.showActionbar = true;
    this.toolbar = false;
-	 
+   
    // defaults for single category options
    this.showSingleCategory = null;
    this.emptyText = 'Select a category...';
    this.showCategoryComboBox = true;
    this.categoryComboBoxCount = -1;
    
-	 // defaults for search
+   // defaults for search
    this.showSearch = false;
-	 this.searchCount = 20;
-	 
+   this.searchCount = 20;
+   
    // Set any config params passed in to override defaults
    Ext.apply(this,config);
    
@@ -101,15 +101,15 @@ Ext.nd.UIView.prototype = {
             this.toolbar.addSeparator();
             combo.on('select',this.handleCategoryChange.createDelegate(this));
          }
-				if (this.showSearch) {
-					this.searchField = new Ext.form.TextField({
-						blankText: "Search view...",
-						name: "extnd-vw-search",
-						width: 100
-					});
-					this.toolbar.addField(this.searchField);
-					this.toolbar.addButton({text: "Search", scope: this, handler: this.handleViewSearch});
-				}
+        if (this.showSearch) {
+          this.searchField = new Ext.form.TextField({
+            blankText: "Search view...",
+            name: "extnd-vw-search",
+            width: 100
+          });
+          this.toolbar.addField(this.searchField);
+          this.toolbar.addButton({text: "Search", scope: this, handler: this.handleViewSearch});
+        }
       }
     } 
       // now get the rest of the view design
@@ -118,12 +118,12 @@ Ext.nd.UIView.prototype = {
   
   // This is a work in progress, not yet implemented
   handleViewSearch: function() {
-		var qry = this.searchField.getValue();
-		var ds = this.grid.dataSource;
-		
-		delete ds.lastOptions.params.start;
-		
-		var ds = new Ext.nd.data.DominoViewStore({
+    var qry = this.searchField.getValue();
+    var ds = this.grid.dataSource;
+    
+    delete ds.lastOptions.params.start;
+    
+    var ds = new Ext.nd.data.DominoViewStore({
         proxy: new Ext.data.HttpProxy({
             url: this.viewUrl + '?ReadViewEntries',
             method: "GET"
@@ -132,9 +132,9 @@ Ext.nd.UIView.prototype = {
         reader: viewEntryReader,
         remoteSort: false
     });
-		
-	},
-	
+    
+  },
+  
   handleCategoryChange: function(combo, record, index) {
     var category = record.data.text;
     this.grid.dataSource.baseParams.RestrictToCategory = category;
@@ -329,10 +329,6 @@ Ext.nd.UIView.prototype = {
     // container can be a string id reference or a dom object, or even an Ext panel
     var container = (this.container.getEl) ? this.container.getEl() : this.container;
     var layout = Ext.BorderLayout.create({
-      //north: {
-      //   initialSize: 30,
-      //   panels: [new Ext.ContentPanel('extnd-toolbar',{autoCreate:true})]
-      //},
       center: {
          panels: [new Ext.GridPanel(this.grid, {toolbar: this.toolbar, fitToFrame : true})] 
       }
