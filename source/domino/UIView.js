@@ -588,29 +588,7 @@ Ext.nd.UIView.prototype = {
    
       return newValue;
   },
-  
-  preprocessDominoData: function(value) {
-   return value;
-   
-   var dataType = value.substring(0,1);
-   var newvalue = value.substring(1);
-   
-   switch (dataType) {
-      case 'd':
-         var d = new Date(Date.parseDate(newvalue.split(',')[0].replace('T','.'),"Ymd.His"));
-         newvalue = d ? d.dateFormat("m/d/Y h:i:s A") : '';
-         break;
-      case 't':
-         newvalue = newvalue;
-         break;
-      case 'n':
-         newvalue = newvalue;
-         break;
-      default:
-         newvalue = newvalue;
-   }
-   return newvalue;
-  },
+ 
   
   gridHandleKeyDown: function(e) {
    var node, row, rowIndex, unid, target;
