@@ -73,7 +73,7 @@ Ext.nd.UIView.prototype = {
          if (this.showSingleCategory && this.showCategoryComboBox) {
             var store = new Ext.data.Store({
                proxy: new Ext.data.HttpProxy({
-                  method:'post', 
+                  method:'GET', 
                   url: this.viewUrl + '?ReadViewEntries&CollapseAll&count=' + this.categoryComboBoxCount + '&randomizer='+new Date().getTime()
                }),
                reader: new Ext.data.XmlReader({
