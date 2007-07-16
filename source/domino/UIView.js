@@ -28,7 +28,7 @@ Ext.nd.UIView = function(config) {
    this.categoryComboBoxCount = -1;
    
    // defaults for search
-   this.showSearch = false;
+   this.showSearch = true;
    this.searchCount = 40;
    this.isSearching = false;
    this.searchInPagingToolbar = true;
@@ -766,10 +766,20 @@ Ext.nd.UIView.prototype = {
   },
 
   gridContextMenuSearchView: function() {
-   Ext.MessageBox.alert('Search View', 'In a future release, you will be able to search a view.');
-   return;
+    if (!this.showSearch) {
+      Ext.MessageBox.alert('Search View', 'showSearch must be enabled for the view');
+    } else {
+      Ext.MessageBox.prompt('Search View', 'Query:', this.handleContextMenuSearch,this);
+    }
   },
 
+  handleContextMenuSearch: function(btn, text) {
+    if(btn == "ok" && text) {
+      this.searchField.setValue(text);
+      this.handleViewSearch();
+    }
+  },
+  
   gridContextMenuShowDocumentPropertiesDialog: function() {
    Ext.MessageBox.alert('Document Properties', 'In a future release, you will see a document properties box.');
    return;
