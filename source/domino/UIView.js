@@ -29,7 +29,7 @@ Ext.nd.UIView = function(config) {
    
    // defaults for search
    this.showSearch = false;
-   this.searchCount = 20;
+   this.searchCount = 40;
    this.isSearching = false;
    
    // Set any config params passed in to override defaults
@@ -141,6 +141,8 @@ Ext.nd.UIView.prototype = {
       });
     
       this.grid.reconfigure(ds, this.grid.getColumnModel());
+      this.paging.unbind(this.oldDataSource);
+      this.paging.bind(ds);
       this.isSearching = true; // Set this so we don't create the search datastore multiple times
       this.clearSearchButton = this.toolbar.addButton({text: "Clear Results", scope: this, handler: this.handleClearSearch});
     }
@@ -149,6 +151,8 @@ Ext.nd.UIView.prototype = {
   
   handleClearSearch: function() {
     if (this.isSearching) {
+      this.paging.unbind(this.grid.getDataSource());
+      this.paging.bind(this.oldDataSource);
       this.grid.reconfigure(this.oldDataSource, this.grid.getColumnModel());
       this.grid.getDataSource().load({params:{start:1}});
       this.isSearching = false;
@@ -382,7 +386,7 @@ Ext.nd.UIView.prototype = {
     var gridFoot = this.grid.getView().getFooterPanel(true);
 
     // add a paging toolbar to the grid's footer
-    var paging = new Ext.nd.DominoPagingToolbar(gridFoot, ds, {pageSize: this.count});
+    this.paging = new Ext.nd.DominoPagingToolbar(gridFoot, ds, {pageSize: this.count});
    
      /* example of adding a button to toolbar
          paging.add('-', {
