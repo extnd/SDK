@@ -30,6 +30,7 @@ Ext.nd.UIView = function(config) {
    // defaults for search
    this.showSearch = false;
    this.searchCount = 20;
+   this.isSearching = false;
    
    // Set any config params passed in to override defaults
    Ext.apply(this,config);
@@ -119,20 +120,41 @@ Ext.nd.UIView.prototype = {
   // This is a work in progress, not yet implemented
   handleViewSearch: function() {
     var qry = this.searchField.getValue();
-    var ds = this.grid.dataSource;
     
-    delete ds.lastOptions.params.start;
+    if (!this.isSearching) {
+      this.oldDataSource = this.grid.getDataSource(); // Save the current DS so we can restore it when search is cleared
+      
+      // define the Domino viewEntry record
+      var viewEntry = Ext.data.Record.create(this.dominoView.recordConfig);
+
+      // create reader that reads viewEntry records
+      var viewEntryReader = new Ext.nd.data.DominoViewXmlReader(this.dominoView.meta, viewEntry);
+      
+      var ds = new Ext.nd.data.DominoViewStore({
+          proxy: new Ext.data.HttpProxy({
+              url: Ext.nd.extndUrl+'($Ext.nd.SearchView)?OpenAgent',
+              method: "GET"
+          }),
+          baseParams: {db: "/"+Ext.nd.Session.CurrentDatabase.FilePath, vw: this.viewName},
+          reader: viewEntryReader,
+          remoteSort: false
+      });
     
-    var ds = new Ext.nd.data.DominoViewStore({
-        proxy: new Ext.data.HttpProxy({
-            url: this.viewUrl + '?ReadViewEntries',
-            method: "GET"
-        }),
-        baseParams: this.baseParams,
-        reader: viewEntryReader,
-        remoteSort: false
-    });
-    
+      this.grid.reconfigure(ds, this.grid.getColumnModel());
+      this.isSearching = true; // Set this so we don't create the search datastore multiple times
+      this.clearSearchButton = this.toolbar.addButton({text: "Clear Results", scope: this, handler: this.handleClearSearch});
+    }
+    this.grid.getDataSource().load({params:{query: qry, count: this.searchCount, start: 1}});
+  },
+  
+  handleClearSearch: function() {
+    if (this.isSearching) {
+      this.grid.reconfigure(this.oldDataSource, this.grid.getColumnModel());
+      this.grid.getDataSource().load({params:{start:1}});
+      this.isSearching = false;
+      this.searchField.reset();
+      this.clearSearchButton.destroy();
+    }
   },
   
   handleCategoryChange: function(combo, record, index) {
@@ -848,7 +870,6 @@ Ext.nd.UIView.prototype = {
       window.open(link)
       return;
    }
-
       
    var entry = this.layout.getRegion('center').getPanel(unid);
             
@@ -931,9 +952,13 @@ Ext.nd.UIView.prototype = {
   },
   
   getViewUrl: function(grid) {
-   var viewUrlTmp = grid.dataSource.proxy.conn.url;
-   var iLocReadViewEntries = viewUrlTmp.toLowerCase().indexOf('readviewentries') - 1; // in case ! is used instead of ?
-   var viewUrl = viewUrlTmp.substring(0,iLocReadViewEntries)
-   return viewUrl;
+    if (this.isSearching) {
+      return this.viewName;
+    } else {
+      var viewUrlTmp = grid.dataSource.proxy.conn.url;
+      var iLocReadViewEntries = viewUrlTmp.toLowerCase().indexOf('readviewentries') - 1; // in case ! is used instead of ?
+      var viewUrl = viewUrlTmp.substring(0,iLocReadViewEntries)
+      return viewUrl;
+    }
   }
 };
