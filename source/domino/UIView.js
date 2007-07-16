@@ -31,6 +31,7 @@ Ext.nd.UIView = function(config) {
    this.showSearch = false;
    this.searchCount = 40;
    this.isSearching = false;
+   this.searchInPagingToolbar = true;
    
    // Set any config params passed in to override defaults
    Ext.apply(this,config);
@@ -102,14 +103,8 @@ Ext.nd.UIView.prototype = {
             this.toolbar.addSeparator();
             combo.on('select',this.handleCategoryChange.createDelegate(this));
          }
-        if (this.showSearch) {
-          this.searchField = new Ext.form.TextField({
-            blankText: "Search view...",
-            name: "extnd-vw-search",
-            width: 100
-          });
-          this.toolbar.addField(this.searchField);
-          this.toolbar.addButton({text: "Search", scope: this, handler: this.handleViewSearch});
+        if (this.showSearch && !this.searchInPagingToolbar) {
+          this.createSearch(this.toolbar);
         }
       }
     } 
@@ -117,9 +112,21 @@ Ext.nd.UIView.prototype = {
       this.getViewDesign();
   },
   
-  // This is a work in progress, not yet implemented
+  createSearch: function(toolbar) {
+    this.searchField = new Ext.form.TextField({
+      blankText: "Search view...",
+      name: "extnd-vw-search",
+      width: 100
+    });
+    toolbar.addSeparator();
+    toolbar.addField(this.searchField);
+    toolbar.addButton({text: "Search", scope: this, handler: this.handleViewSearch});
+    toolbar.addSeparator();
+  },
+  
   handleViewSearch: function() {
     var qry = this.searchField.getValue();
+    var tb = (this.searchInPagingToolbar)?this.paging:this.toolbar;
     
     if (!this.isSearching) {
       this.oldDataSource = this.grid.getDataSource(); // Save the current DS so we can restore it when search is cleared
@@ -144,7 +151,7 @@ Ext.nd.UIView.prototype = {
       this.paging.unbind(this.oldDataSource);
       this.paging.bind(ds);
       this.isSearching = true; // Set this so we don't create the search datastore multiple times
-      this.clearSearchButton = this.toolbar.addButton({text: "Clear Results", scope: this, handler: this.handleClearSearch});
+      this.clearSearchButton = tb.addButton({text: "Clear Results", scope: this, handler: this.handleClearSearch});
     }
     this.grid.getDataSource().load({params:{query: qry, count: this.searchCount, start: 1}});
   },
@@ -388,6 +395,10 @@ Ext.nd.UIView.prototype = {
     // add a paging toolbar to the grid's footer
     this.paging = new Ext.nd.DominoPagingToolbar(gridFoot, ds, {pageSize: this.count});
    
+    if (this.showSearch && this.searchInPagingToolbar) {
+      this.createSearch(this.paging);
+    }
+    
      /* example of adding a button to toolbar
          paging.add('-', {
           pressed: true,
