@@ -124,9 +124,18 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
         } else {
           sOnclick = ''
         }
-          
-        arOnclick = sOnclick.split('\r');
-        arOnclick.splice(arOnclick.length-1,1); //removing the 'return false;' that domino adds
+        
+        // first, let's remove the beginning 'return' if it exists due to domino's 'return _doClick...' code that is generated to handle @formulas
+        if (sOnclick.indexOf('return _doClick') == 0) {
+         sOnclick = sOnclick.substring(7);
+        }
+        
+        // now, let's remove the 'return false;' if it exists since this is what domino usually adds to the end of javascript actions
+        arOnclick = sOnclick.split('\r'); // TODO: will \r work on all browsers and all platforms???
+        var len = arOnclick.length;
+        if (arOnclick[len-1] == 'return false;') {
+         arOnclick.splice(arOnclick.length-1,1); //removing the 'return false;' that domino adds
+        }
         sOnclick = arOnclick.join('\r');
       }
       
