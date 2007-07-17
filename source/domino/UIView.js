@@ -101,7 +101,13 @@ Ext.nd.UIView.prototype = {
             });
             this.toolbar.addField(combo);
             this.toolbar.addSeparator();
-            combo.on('select',this.handleCategoryChange.createDelegate(this));
+            combo.on('beforeselect',function() { 
+              if(this.isSearching) { 
+                Ext.MessageBox.alert("Error","You must clear the search results before changing categories");
+                return false; // Cancel the select
+              }
+            },this);
+            combo.on('select',this.handleCategoryChange,this);
          }
         if (this.showSearch && !this.searchInPagingToolbar) {
           this.createSearch(this.toolbar);
@@ -172,7 +178,6 @@ Ext.nd.UIView.prototype = {
     var category = record.data.text;
     this.grid.dataSource.baseParams.RestrictToCategory = category;
     this.grid.dataSource.load({params:{start:1}});
-    
   },
   
   getViewDesign: function() {
