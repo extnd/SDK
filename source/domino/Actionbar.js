@@ -55,7 +55,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
       failure : this.createToolbarFailure,
       scope: this
     };    
-    Ext.lib.Ajax.request('GET', this.dbPath + '($Ext.nd.NotesDxlExporter)?OpenAgent&type=' + this.noteType + '&name=' + this.noteName, cb); // Changed to GET cause of proxy issues
+    Ext.lib.Ajax.request('GET', this.dbPath + '($Ext.nd.NotesDxlExporter)?OpenAgent&type=' + this.noteType + '&name=' + this.noteName + '&randomizer='+new Date().getTime(), cb); // Changed to GET cause of proxy issues
   },
 
   // Quick sample failure call... 

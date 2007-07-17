@@ -51,14 +51,14 @@ Ext.nd.Formula.prototype = {
       scope: this
     };    
   
-    Ext.lib.Ajax.request('POST', this.url, cb);
+    Ext.lib.Ajax.request('GET', this.url + '&randomizer='+new Date().getTime(), cb);
       
     if (this.target != null) {
       var el = Ext.get(target);
       var mgr = el.getUpdateManager();
       mgr.update(this.url, body, this.assignValue.createDelegate(this));
     } else {
-      Ext.lib.Ajax.request('POST', this.url, cb);
+      Ext.lib.Ajax.request('GET', this.url + '&randomizer='+new Date().getTime(), cb);
     }
   },
   

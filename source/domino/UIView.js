@@ -148,7 +148,7 @@ Ext.nd.UIView.prototype = {
               url: Ext.nd.extndUrl+'($Ext.nd.SearchView)?OpenAgent',
               method: "GET"
           }),
-          baseParams: {db: "/"+Ext.nd.Session.CurrentDatabase.FilePath, vw: this.viewName},
+          baseParams: {db: "/"+Ext.nd.Session.CurrentDatabase.FilePath, vw: this.viewName },
           reader: viewEntryReader,
           remoteSort: false
       });
@@ -187,7 +187,7 @@ Ext.nd.UIView.prototype = {
       failure : this.getViewDesignFailure,
       scope: this
     };    
-    Ext.lib.Ajax.request('GET', this.viewUrl + '?ReadDesign', cb); // RW - changed to GET cause of proxy issues
+    Ext.lib.Ajax.request('GET', this.viewUrl + '?ReadDesign&randomizer='+new Date().getTime(), cb); // RW - changed to GET cause of proxy issues
   },
   
   // Silent fail for now... what should this do? perhaps we can provide an openlog integration that posts back JavaScript errors
@@ -976,7 +976,7 @@ Ext.nd.UIView.prototype = {
          scope: this
       };    
    
-      Ext.lib.Ajax.request('POST', deleteDocUrl, cb);
+      Ext.lib.Ajax.request('GET', deleteDocUrl + '&randomizer='+new Date().getTime(), cb);
 
    }
   },

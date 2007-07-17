@@ -32,7 +32,7 @@ Ext.nd.UIOutline.prototype = {
       failure : this.init2.createDelegate(this),
       scope: this
     };    
-    Ext.lib.Ajax.request('POST', this.outlineUrl + '?ReadEntries', cb);
+    Ext.lib.Ajax.request('GET', this.outlineUrl + '?ReadEntries&randomizer='+new Date().getTime(), cb);
   },
   
   // Private

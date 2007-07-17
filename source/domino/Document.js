@@ -23,7 +23,7 @@ Ext.nd.Document = function(config) {
       scope: this
    };    
 
-   Ext.lib.Ajax.request('POST', this.url, cb);
+   Ext.lib.Ajax.request('GET', this.url + '&randomizer='+new Date().getTime(), cb);
    
 };
 
