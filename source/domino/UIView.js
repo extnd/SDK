@@ -633,48 +633,51 @@ Ext.nd.UIView.prototype = {
  
   
   gridHandleKeyDown: function(e) {
-   var node, row, rowIndex, unid, target;
-   var keyCode = e.browserEvent.keyCode;
-   var charCode = e.charCode;
-   
-   target = e.getTarget();
-   row = this.grid.selModel.getSelected();
-   rowIndex = this.grid.dataSource.indexOf(row);
-
-   // for now, we won't worry about the altKey
-   if (e.altKey) { 
+    if (e.getTarget().name == "extnd-vw-search") {
       return;
-   }
+    }
+    var node, row, rowIndex, unid, target;
+    var keyCode = e.browserEvent.keyCode;
+    var charCode = e.charCode;
+   
+    target = e.getTarget();
+    row = this.grid.selModel.getSelected();
+    rowIndex = this.grid.dataSource.indexOf(row);
 
-   // if Ctrl+E
-   if (e.ctrlKey && keyCode == 69) {
+    // for now, we won't worry about the altKey
+    if (e.altKey) { 
+      return;
+    }
+
+    // if Ctrl+E
+    if (e.ctrlKey && keyCode == 69) {
       if(row){
          this.openDocument(this.grid, rowIndex, e, true);
       }
       return;
-   }
+    }
    
-   // for now, we won't worry about all other ctrlKey clicks
-   if (e.ctrlKey) { 
+    // for now, we won't worry about all other ctrlKey clicks
+    if (e.ctrlKey) { 
       return;
-   }
+    }
    
-   // we don't worry about the shift key, unless another key is typed
-   if (e.shiftKey && keyCode == 16) {
+    // we don't worry about the shift key, unless another key is typed
+    if (e.shiftKey && keyCode == 16) {
       return;
-   }
+    }
    
-   switch (keyCode) {   
+    switch (keyCode) {   
       case e.RETURN :
-         if(row){
-            this.openDocument(this.grid, rowIndex, e);
-         }
-         break;
+        if(row){
+          this.openDocument(this.grid, rowIndex, e);
+        }
+        break;
       case e.DELETE :
-         if(row){
-            this.deleteDocument(this.grid, row, e);
-         }
-         break;
+        if(row){
+          this.deleteDocument(this.grid, row, e);
+        }
+        break;
          
       case e.BACKSPACE :
       case e.DOWN :
@@ -687,87 +690,84 @@ Ext.nd.UIView.prototype = {
       case e.RIGHT :
       case e.UP :
       case e.TAB :
-   
-         break;
-      
+        break; 
       case e.SPACE :
-         Ext.MessageBox.alert("Coming Soon","In a future release, the space bar will toggle the selection of the document.");
-         break;
+        Ext.MessageBox.alert("Coming Soon","In a future release, the space bar will toggle the selection of the document.");
+        break;
       default :
-         if (row) { // don't process if not typing from a row in the grid
-            Ext.MessageBox.prompt( 'Search Text', 'Starts with...', this.quickSearch, this)
-            //this.showQuickSearchDialog.show();            
-
-         }
-   } 
+        if (row) { // don't process if not typing from a row in the grid
+          Ext.MessageBox.prompt( 'Search Text', 'Starts with...', this.quickSearch, this)
+          //this.showQuickSearchDialog.show();            
+        }
+    } 
   },
 
   quickSearch: function(btn, text) {
-   var ds = this.grid.dataSource;
-   if (btn == 'ok') {
+    var ds = this.grid.dataSource;
+    if (btn == 'ok') {
       // first, remove the start param from the lastOptions.params
       delete ds.lastOptions.params.start;
       // next, load dataSrource, passing the startkey param
       ds.load({params: Ext.apply(ds.lastOptions.params, {startkey : text})}); // append the startkey param to the existing params (ds.lastOptions)
-   }
+    }
   },
   
   quickSearch_EXPERIMENT: function() {
-   this.showQuickSearchDialog.hide();
-   var vsi = Ext.get('extnd-view-search-input').dom;
-   var s = vsi.value;
-   vsi.value = ""; // reset for next search  
-   Ext.MessageBox.alert('Coming Soon','this is where we would make an XHR call to view?readviewentries&startkey=' + s)
+    this.showQuickSearchDialog.hide();
+    var vsi = Ext.get('extnd-view-search-input').dom;
+    var s = vsi.value;
+    vsi.value = ""; // reset for next search  
+    Ext.MessageBox.alert('Coming Soon','this is where we would make an XHR call to view?readviewentries&startkey=' + s)
   },
   
   gridHandleHeaderClick: function(grid, colIndex, e) {
-   var colConfig = this.cm.config[colIndex];
-   if (colConfig.resortviewunid != "") {
+    var colConfig = this.cm.config[colIndex];
+    if (colConfig.resortviewunid != "") {
       // first, let's stop the propagation of this event so that the sort events don't try and run as well
       e.stopPropagation();
       e.stopEvent(); // TODO: for some reason this doesn't work and the event is still propagated to the headerClick event of the DominoViewStore
       
       // delete the current grid
       if (this.grid) {
-         try {
-            this.grid.destroy();
-         } catch(e) {}
+        try {
+          this.grid.destroy();
+        } catch(e) {}
       }
       // now display this new view
       this.grid = new Ext.nd.UIView({
-         layout : this.layout,
-         viewUrl : colConfig.resortviewunid,
-         viewParams : "",
-         container : this.container,
-         statusPanel : this.statusPanel
+        layout : this.layout,
+        viewUrl : colConfig.resortviewunid,
+        viewParams : "",
+        container : this.container,
+        statusPanel : this.statusPanel
       });
-   } 
+    } 
   },
 
   gridHandleCellClick: function(grid, rowIndex, colIndex, e) {
-   var node, unid;
-   //alert('cell clicked')
+    var node, unid;
+    //alert('cell clicked')
   },
   
   gridHandleRowContextMenu: function(grid, rowIndex, e) {
-   e.stopEvent();
+    e.stopEvent();
    
-   var menu = new Ext.menu.Menu({
+    var menu = new Ext.menu.Menu({
       id : 'xnd-context-menu'
-   });
-   menu.add({text : 'Document Properties', handler : this.gridContextMenuShowDocumentPropertiesDialog, scope: this});
-   menu.addSeparator();
-   menu.add({editMode : false, text : 'Open', handler : this.gridContextMenuOpenDocument, scope: this});
-   menu.add({editMode : true, text : 'Edit', handler : this.gridContextMenuOpenDocument, scope: this});
-   menu.addSeparator();
-   menu.add({text : 'Search This View', handler : this.gridContextMenuSearchView, scope: this});
+    });
+    menu.add({text : 'Document Properties', handler : this.gridContextMenuShowDocumentPropertiesDialog, scope: this});
+    menu.addSeparator();
+    menu.add({editMode : false, text : 'Open', handler : this.gridContextMenuOpenDocument, scope: this});
+    menu.add({editMode : true, text : 'Edit', handler : this.gridContextMenuOpenDocument, scope: this});
+    menu.addSeparator();
+    menu.add({text : 'Search This View', handler : this.gridContextMenuSearchView, scope: this});
    
    
-   // tell menu which row is selected and show menu
-   menu.grid = grid;
-   menu.rowIndex = rowIndex;
-   var coords = e.getXY();
-   menu.showAt([coords[0], coords[1]]);
+    // tell menu which row is selected and show menu
+    menu.grid = grid;
+    menu.rowIndex = rowIndex;
+    var coords = e.getXY();
+    menu.showAt([coords[0], coords[1]]);
   },
 
   gridContextMenuSearchView: function() {
@@ -786,162 +786,162 @@ Ext.nd.UIView.prototype = {
   },
   
   gridContextMenuShowDocumentPropertiesDialog: function() {
-   Ext.MessageBox.alert('Document Properties', 'In a future release, you will see a document properties box.');
-   return;
+    Ext.MessageBox.alert('Document Properties', 'In a future release, you will see a document properties box.');
+    return;
     if(!this.dialog){ // lazy initialize the dialog and only create it once
-   this.dialog = new Ext.LayoutDialog("hello-dlg", { 
-      modal:true,
-      width:600,
-      height:400,
-      shadow:true,
-      minWidth:300,
-      minHeight:300,
-      west: {
-         split:true,
-         initialSize: 150,
-         minSize: 100,
-         maxSize: 250,
-         titlebar: true,
-         collapsible: true,
-         animate: true
-          },
-          center: {
-         autoScroll:true,
-         tabPosition: 'top',
-         closeOnTab: true,
-         alwaysShowTabs: true
-          }
-   });
-   dialog.addKeyListener(27, dialog.hide, dialog);
-   dialog.addButton('Submit', dialog.hide, dialog);
-   dialog.addButton('Close', dialog.hide, dialog);
+      this.dialog = new Ext.LayoutDialog("hello-dlg", { 
+        modal:true,
+        width:600,
+        height:400,
+        shadow:true,
+        minWidth:300,
+        minHeight:300,
+        west: {
+          split:true,
+          initialSize: 150,
+          minSize: 100,
+          maxSize: 250,
+          titlebar: true,
+          collapsible: true,
+          animate: true
+        },
+        center: {
+          autoScroll:true,
+          tabPosition: 'top',
+          closeOnTab: true,
+          alwaysShowTabs: true
+        }
+      });
+      dialog.addKeyListener(27, dialog.hide, dialog);
+      dialog.addButton('Submit', dialog.hide, dialog);
+      dialog.addButton('Close', dialog.hide, dialog);
 
-   var layout = dialog.getLayout();
-   layout.beginUpdate();
-   layout.add('west', new Ext.ContentPanel('west', {title: 'West'}));
-   layout.add('center', new Ext.ContentPanel('center', {title: 'The First Tab'}));
-   // generate some other tabs
-   layout.add('center', new Ext.ContentPanel(Ext.id(), {
-            autoCreate:true, title: 'Another Tab', background:true}));
-   layout.add('center', new Ext.ContentPanel(Ext.id(), {
-            autoCreate:true, title: 'Third Tab', closable:true, background:true}));
-   layout.endUpdate();
+      var layout = dialog.getLayout();
+      layout.beginUpdate();
+      layout.add('west', new Ext.ContentPanel('west', {title: 'West'}));
+      layout.add('center', new Ext.ContentPanel('center', {title: 'The First Tab'}));
+      // generate some other tabs
+      layout.add('center', new Ext.ContentPanel(Ext.id(), {
+              autoCreate:true, title: 'Another Tab', background:true}));
+      layout.add('center', new Ext.ContentPanel(Ext.id(), {
+              autoCreate:true, title: 'Third Tab', closable:true, background:true}));
+      layout.endUpdate();
     }
     dialog.show(showBtn.dom);
   },
   
   gridDeleteDocumentSuccess: function(o) {
-   //alert("The document was successfully deleted.");
-   var row = o.argument;
-   var ds = this.grid.dataSource;
-   var sm = this.grid.selModel;
-   var rowIndex = ds.indexOf(row);
-   if (rowIndex == ds.data.length) {
+    //alert("The document was successfully deleted.");
+    var row = o.argument;
+    var ds = this.grid.dataSource;
+    var sm = this.grid.selModel;
+    var rowIndex = ds.indexOf(row);
+    if (rowIndex == ds.data.length) {
       sm.selectRow(rowIndex);
-   } else {
+    } else {
       sm.selectRow(rowIndex+1);
-   }
-   ds.remove(row);
+    }
+    ds.remove(row);
   },
   
   removeRow: function(row) {
-   ds.remove(row);
+    ds.remove(row);
   },
   
   gridDeleteDocumentFailure: function(o) {
-   Ext.MessageBox.alert('Delete Error','The document could not be deleted.  Please check your access.')
+    Ext.MessageBox.alert('Delete Error','The document could not be deleted.  Please check your access.')
   },
   
   gridHandleRowsDeleted: function(row) {
-   // TODO: we should fetch more data as rows are being deleted
+    // TODO: we should fetch more data as rows are being deleted
   },
 
   gridHandleBeforeLoad: function(dm) {
-   //alert('handle before load of the datamodel')
+    //alert('handle before load of the datamodel')
   },
   
   loadView: function(view, dm) {
-   if (this.statusPanel) {
+    if (this.statusPanel) {
       this.viewTitle = (typeof this.viewTitle == 'undefined') ? "" : this.viewTitle;
       this.statusPanel.setContent('Loading view ' + this.viewTitle + '...');
       this.statusPanel.getEl().removeClass('done');
-   }
-   ds.loadPage(1);
+    }
+    ds.loadPage(1);
   },
   
   showError: function() {
-   Ext.MessageBox.alert('Error','An error occurred.');
+    Ext.MessageBox.alert('Error','An error occurred.');
   },
 
   gridContextMenuOpenDocument: function(action, e) {
-   var grid = action.parentMenu.grid;
-   var rowIndex = action.parentMenu.rowIndex;
-   var bEditMode = action.editMode;
-   this.openDocument(grid, rowIndex, e, bEditMode);   
+    var grid = action.parentMenu.grid;
+    var rowIndex = action.parentMenu.rowIndex;
+    var bEditMode = action.editMode;
+    this.openDocument(grid, rowIndex, e, bEditMode);   
   },
   
   openDocument: function(grid, rowIndex, e, bEditMode) {
-   var mode = (bEditMode) ? '?EditDocument' : '?OpenDocument';
-   var title = "Opening...";
-   var ds = grid.dataSource;
-   var row = grid.selModel.getSelected();
-   var node = row.node;
-   var unid = node.attributes.getNamedItem('unid');
-   // if a unid does not exist this row is a category so bail
-   if (!unid) { 
+    var mode = (bEditMode) ? '?EditDocument' : '?OpenDocument';
+    var title = "Opening...";
+    var ds = grid.dataSource;
+    var row = grid.selModel.getSelected();
+    var node = row.node;
+    var unid = node.attributes.getNamedItem('unid');
+    // if a unid does not exist this row is a category so bail
+    if (!unid) { 
       return;
-   } else {
+    } else {
       unid = unid.value;
-   }
-   var viewUrl = this.getViewUrl(grid);   
-   var link = viewUrl + '/' + unid + mode     
+    }
+    var viewUrl = this.getViewUrl(grid);   
+    var link = viewUrl + '/' + unid + mode     
 
-   if (!this.layout) {
+    if (!this.layout) {
       window.open(link)
       return;
-   }
+    }
       
-   var entry = this.layout.getRegion('center').getPanel(unid);
+    var entry = this.layout.getRegion('center').getPanel(unid);
             
-   if(!entry){ 
+    if(!entry){ 
       var iframe = Ext.DomHelper.append(document.body, {
-         tag: 'iframe', 
-         frameBorder: 0, 
-         src: link,
-         id : unid
+        tag: 'iframe', 
+        frameBorder: 0, 
+        src: link,
+        id : unid
       });
       var panel = new Ext.ContentPanel(iframe, {
-         title: Ext.util.Format.ellipsis(title,16), 
-         fitToFrame:true, 
-         closable:true
+        title: Ext.util.Format.ellipsis(title,16), 
+        fitToFrame:true, 
+        closable:true
       });
       this.layout.add('center', panel);
-
+      
       // wait half a second for the iframe to start loading the page, then grab it's title
       var readyState;
       var id = setInterval( function() {
-         try {
-            var oContentDocument;
-            if (document.getElementById(unid).contentDocument) {
-               oContentDocument = document.getElementById(unid).contentDocument;
+        try {
+          var oContentDocument;
+          if (document.getElementById(unid).contentDocument) {
+            oContentDocument = document.getElementById(unid).contentDocument;
+          } else {
+            oContentDocument = document.frames[unid].document;
+          }
+          readyState = oContentDocument.readyState;
+          if (readyState == 'complete') {
+            title = oContentDocument.title;
+            if (title != "") {
+              panel.setTitle(Ext.util.Format.ellipsis(title,16));
             } else {
-               oContentDocument = document.frames[unid].document;
+              panel.setTitle("Untitled");
             }
-            readyState = oContentDocument.readyState;
-            if (readyState == 'complete') {
-               title = oContentDocument.title;
-               if (title != "") {
-                  panel.setTitle(Ext.util.Format.ellipsis(title,16));
-               } else {
-                  panel.setTitle("Untitled");
-               }
-               clearInterval(id);
-            }
-         } catch (e) {clearInterval(id); }
+            clearInterval(id);
+          }
+        } catch (e) {clearInterval(id); }
       }, 50);
-   } else { // we've already opened this document
+    } else { // we've already opened this document
       this.layout.showPanel(entry);
-   }
+    }
   },
   
   // set the default rowdblclick to openDocument
@@ -951,34 +951,33 @@ Ext.nd.UIView.prototype = {
   },
   
   deleteDocument: function(grid, rowIndex, e) {
-   var ds = grid.dataSource;
-   var row = grid.selModel.getSelected();
-   var node = row.node;
-   var unid = node.attributes.getNamedItem('unid');
-   // if a unid does not exist this row is a category so bail
-   if (!unid) { 
+    var ds = grid.dataSource;
+    var row = grid.selModel.getSelected();
+    var node = row.node;
+    var unid = node.attributes.getNamedItem('unid');
+    // if a unid does not exist this row is a category so bail
+    if (!unid) { 
       return;
-   } else {
+    } else {
       unid = unid.value;
-   }
-   //var link = '0/' + unid + '?OpenDocument';  
-   var viewUrl = this.getViewUrl(grid);   
-   var deleteDocUrl = viewUrl + '/' + unid + '?DeleteDocument'
-   var docExists = this.layout.getRegion('center').getPanel(unid);
+    }
+    //var link = '0/' + unid + '?OpenDocument';  
+    var viewUrl = this.getViewUrl(grid);   
+    var deleteDocUrl = viewUrl + '/' + unid + '?DeleteDocument'
+    var docExists = this.layout.getRegion('center').getPanel(unid);
    
-   if (docExists) {
+    if (docExists) {
       Ext.MessageBox.alert("Delete Error","You have this document open in another tab.  Please close the document first before deleting.");
-   } else {
+    } else {
       var cb = {
-         success : this.gridDeleteDocumentSuccess, 
-         failure : this.gridDeleteDocumentFailure, 
-         argument: rowIndex,
-         scope: this
+        success : this.gridDeleteDocumentSuccess, 
+        failure : this.gridDeleteDocumentFailure, 
+        argument: rowIndex,
+        scope: this
       };    
    
       Ext.lib.Ajax.request('GET', deleteDocUrl + '&randomizer='+new Date().getTime(), cb);
-
-   }
+    }
   },
   
   getViewUrl: function(grid) {
