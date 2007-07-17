@@ -110,6 +110,7 @@ Ext.nd.Form.prototype = {
                 typeAhead : true,
                 triggerAction : 'all',
                 transform : el,
+                hiddenName : el.name,
                 forceSelection : true,
                 resizable: true
               });
@@ -148,6 +149,7 @@ Ext.nd.Form.prototype = {
                 typeAhead : true,
                 triggerAction : 'all',
                 transform : el,
+                hiddenName : el.name,
                 forceSelection : true,
                 resizable: true
               });
