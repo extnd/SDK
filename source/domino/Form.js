@@ -119,9 +119,8 @@ Ext.nd.Form.prototype = {
                 var onChange = attr['onchange'];
                 if (onChange) {
                   var sOnChange = onChange.nodeValue;
-                  cb.on('select',function() { 
-                    eval(sOnChange);
-                  });
+                  var handler = function(bleh) { eval(bleh);}.createCallback(sOnChange);
+                  cb.on('select',handler);
                 }
               }
               converted = true;
@@ -158,9 +157,8 @@ Ext.nd.Form.prototype = {
                 var onChange = attr['onchange'];
                 if (onChange) {
                   var sOnChange = onChange.nodeValue;
-                  cb.on('select',function() { 
-                    eval(sOnChange);
-                  });
+                  var handler = function(bleh) { eval(bleh);}.createCallback(sOnChange);
+                  cb.on('select',handler);
                 }
               }
               break;
