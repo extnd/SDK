@@ -106,23 +106,7 @@ Ext.nd.Form.prototype = {
    
           switch (cls) {
             case 'xnd-combobox' :
-              var cb = new Ext.form.ComboBox({
-                typeAhead : true,
-                triggerAction : 'all',
-                transform : el,
-                hiddenName : el.name,
-                forceSelection : true,
-                resizable: true
-              });
-              var attr = el.attributes;
-              if (attr) {
-                var onChange = attr['onchange'];
-                if (onChange) {
-                  var sOnChange = onChange.nodeValue;
-                  var handler = function(bleh) { eval(bleh);}.createCallback(sOnChange);
-                  cb.on('select',handler);
-                }
-              }
+              convertSelectToComboBox(el);
               converted = true;
               break;
 
@@ -144,23 +128,8 @@ Ext.nd.Form.prototype = {
         if (!converted) {
           switch(el.tagName) {
             case 'SELECT' :
-              var cb = new Ext.form.ComboBox({
-                typeAhead : true,
-                triggerAction : 'all',
-                transform : el,
-                hiddenName : el.name,
-                forceSelection : true,
-                resizable: true
-              });
-              var attr = el.attributes;
-              if (attr) {
-                var onChange = attr['onchange'];
-                if (onChange) {
-                  var sOnChange = onChange.nodeValue;
-                  var handler = function(bleh) { eval(bleh);}.createCallback(sOnChange);
-                  cb.on('select',handler);
-                }
-              }
+              convertSelectToComboBox(el);
+              converted = true;
               break;
 
             case 'TEXTAREA' :
@@ -200,6 +169,46 @@ Ext.nd.Form.prototype = {
       } // end for xndElements
       
     } // if this.bConvertFields
+    
+    
+    function convertSelectToComboBox(el) {
+      var cb = new Ext.form.ComboBox({
+        typeAhead : true,
+        triggerAction : 'all',
+        transform : el,
+        forceSelection : true,
+        resizable: true
+      });
+
+      // if domino sends an onchange attribute then grab it so we can later add it to the onSelect event of ComboBox
+      var attr = el.attributes;
+      if (attr) {
+        var onChange = attr['onchange'];
+        if (onChange) {
+          var sOnChange = onChange.nodeValue;
+          var extcallback = function(bleh) { eval(bleh);}.createCallback(sOnChange);
+        }
+      }
+
+      // to fix a bug with DomHelper not liking domino sometimes wrapping a SELECT within a FONT tag 
+      // we need to handle setting the value of the hiddenField ourselves
+      var value = (cb.getValue()) ? cb.getValue() : cb.getRawValue();
+      var field = Ext.get(cb.hiddenName);
+      field.dom.value = value;
+      
+      // we must also define a listener to change the value of the hidden field when the selection in the combobox changes
+      cb.on('select',function(){
+         /* value is the selection value if set, otherwise is the raw typed text */
+         var value = (this.getValue()) ? this.getValue() : this.getRawValue();
+         var field = Ext.get(this.hiddenName);
+         field.dom.value = value;
+         if (typeof extcallback == 'function') {
+            extcallback(); 
+         }
+      });
+      
+    } // end convertSelectToComboBox
+   
 
   } 
 
