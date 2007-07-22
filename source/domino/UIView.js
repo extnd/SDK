@@ -16,6 +16,7 @@ Ext.nd.UIView = function(config) {
    this.singleSelect = false,
    this.viewName = '';
    this.baseParams = {};
+   this.loadMask = true;
    
    // defaults for actionbar/toolbar
    this.showActionbar = true;
@@ -360,7 +361,8 @@ Ext.nd.UIView.prototype = {
       selModel: new Ext.grid.RowSelectionModel({singleSelect : this.singleSelect}),
       enableDragDrop: true,
       ddGroup: 'TreeDD',
-      enableColLock: false    
+      enableColLock: false,
+      loadMask: this.loadMask
     });
 
     // add grid to the container
