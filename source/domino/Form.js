@@ -180,27 +180,34 @@ Ext.nd.Form.prototype = {
         resizable: true
       });
 
-      // if domino sends an onchange attribute then grab it and assign it to the onSelect event of ComboBox
+      // if domino sends an onchange attribute then grab it so we can later add it to the onSelect event of ComboBox
       var attr = el.attributes;
       if (attr) {
         var onChange = attr['onchange'];
         if (onChange) {
           var sOnChange = onChange.nodeValue;
-          cb.on('change', function(bleh) { eval(bleh);}.createCallback(sOnChange));
+          var extcallback = function(bleh) { eval(bleh);}.createCallback(sOnChange);
         }
       }
 
-      // domino sometimes wraps a SELECT within a FONT tag 
-      // as a result the onRender method of the ComboBox returns a reference to a new FONT tag
-      // created by DomHelper when it calls range.createContextualFragment(html)
-      // therefore, we must reassign the hiddenField so it'll point to the hidden input and not the font
+      // to fix a bug with DomHelper not liking domino sometimes wrapping a SELECT within a FONT tag 
+      // we need to handle setting the value of the hiddenField ourselves
       var value = (cb.getValue()) ? cb.getValue() : cb.getRawValue();
-      cb.hiddenField = Ext.get(cb.hiddenName);
-      cb.hiddenField.dom.value = value;
+      var field = Ext.get(cb.hiddenName);
+      field.dom.value = value;
       
+      // we must also define a listener to change the value of the hidden field when the selection in the combobox changes
+      cb.on('select',function(){
+         /* value is the selection value if set, otherwise is the raw typed text */
+         var value = (this.getValue()) ? this.getValue() : this.getRawValue();
+         var field = Ext.get(this.hiddenName);
+         field.dom.value = value;
+         if (typeof extcallback == 'function') {
+            extcallback(); 
+         }
+      });
       
     } // end convertSelectToComboBox
-   
 
   } 
 
