@@ -694,7 +694,9 @@ Ext.nd.UIView.prototype = {
       case e.TAB :
         break; 
       case e.SPACE :
-        Ext.MessageBox.alert("Coming Soon","In a future release, the space bar will toggle the selection of the document.");
+        if (row) {
+          Ext.MessageBox.alert("Coming Soon","In a future release, the space bar will toggle the selection of the document.");
+        }
         break;
       default :
         if (row) { // don't process if not typing from a row in the grid
