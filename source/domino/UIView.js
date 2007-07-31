@@ -448,6 +448,11 @@ Ext.nd.UIView.prototype = {
        */
   },
 
+  // Quick utility function to call load on the grid's datastore, allows you to pass in extra parameters if need be.
+  refresh: function(extraParams) {
+    var params = Ext.apply({count: this.count},extraParams);
+    this.grid.getDataSource().load(params);
+  },
 
   dominoRenderer: function(value, cell, row, rowIndex, colIndex,dataStore) {
    var args = arguments;
@@ -707,7 +712,7 @@ Ext.nd.UIView.prototype = {
   },
 
   quickSearch: function(btn, text) {
-    var ds = this.grid.dataSource;
+    var ds = this.grid.getDataSource();
     if (btn == 'ok') {
       // first, remove the start param from the lastOptions.params
       delete ds.lastOptions.params.start;
@@ -837,7 +842,7 @@ Ext.nd.UIView.prototype = {
   gridDeleteDocumentSuccess: function(o) {
     //alert("The document was successfully deleted.");
     var row = o.argument;
-    var ds = this.grid.dataSource;
+    var ds = this.grid.getDataSource();
     var sm = this.grid.selModel;
     var rowIndex = ds.indexOf(row);
     if (rowIndex == ds.data.length) {
@@ -887,7 +892,7 @@ Ext.nd.UIView.prototype = {
   openDocument: function(grid, rowIndex, e, bEditMode) {
     var mode = (bEditMode) ? '?EditDocument' : '?OpenDocument';
     var title = "Opening...";
-    var ds = grid.dataSource;
+    var ds = grid.getDataSource();
     var row = grid.selModel.getSelected();
     var node = row.node;
     var unid = node.attributes.getNamedItem('unid');
@@ -955,7 +960,7 @@ Ext.nd.UIView.prototype = {
   },
   
   deleteDocument: function(grid, rowIndex, e) {
-    var ds = grid.dataSource;
+    var ds = grid.getDataSource();
     var row = grid.selModel.getSelected();
     var node = row.node;
     var unid = node.attributes.getNamedItem('unid');
@@ -988,7 +993,7 @@ Ext.nd.UIView.prototype = {
     if (this.isSearching) {
       return this.viewName;
     } else {
-      var viewUrlTmp = grid.dataSource.proxy.conn.url;
+      var viewUrlTmp = grid.getDataSource().proxy.conn.url;
       var iLocReadViewEntries = viewUrlTmp.toLowerCase().indexOf('readviewentries') - 1; // in case ! is used instead of ?
       var viewUrl = viewUrlTmp.substring(0,iLocReadViewEntries)
       return viewUrl;
