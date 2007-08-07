@@ -45,7 +45,7 @@ Ext.nd.UIOutline.prototype = {
     var container = (this.container.getEl) ? this.container.getEl() : this.container;
     
     var Tree = Ext.tree;
-    this.tree = new Tree.TreePanel(container, {
+    var tree = new Tree.TreePanel(container, {
         animate : true, 
         enableDD : true,
         ddGroup: 'TreeDD',
@@ -64,7 +64,7 @@ Ext.nd.UIOutline.prototype = {
         draggable : false, // disable root node dragging
         id : 'domino-folders'
     });
-    this.tree.setRootNode(root);
+    tree.setRootNode(root);
     var curNode = null;
     var arNodes = [];
     for (var i=0; i<arEntries.length; i++) {
@@ -131,10 +131,10 @@ Ext.nd.UIOutline.prototype = {
     }
 
    // handle the drop of the doc on the folder
-   this.tree.on('beforenodedrop', this.addToFolder);
+   tree.on('beforenodedrop', this.addToFolder);
 
    // render the tree
-   this.tree.render();
+   tree.render();
           
    //root.expand(false, /*no anim*/ false);
    root.expand(); 
