@@ -38,7 +38,7 @@ Ext.extend(Ext.nd.data.DominoViewStore, Ext.data.Store, {
 		options = options || {};
 		if(this.fireEvent("beforeload", this, options) !== false){
 			this.storeOptions(options);
-			var p = Ext.apply( this.baseParams, options.params || {});
+			var p = Ext.apply(this.baseParams, options.params || {});
 			if(this.sortInfo && this.remoteSort){
 				var pn = this.paramNames;
 				
