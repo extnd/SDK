@@ -27,12 +27,14 @@ Ext.nd.UIOutline = function(config) {
 
 Ext.nd.UIOutline.prototype = {
   init: function() {
-    var cb = {
-      success : this.init2.createDelegate(this), 
-      failure : this.init2.createDelegate(this),
-      scope: this
-    };    
-    Ext.lib.Ajax.request('GET', this.outlineUrl + '?ReadEntries&randomizer='+new Date().getTime(), cb);
+    Ext.Ajax.request({
+      method: 'GET',
+      disableCaching: true,
+      success: this.init2,
+      failure: this.init2,
+      scope: this,
+      url: this.outlineUrl + '?ReadEntries'
+    });
   },
   
   // Private
@@ -117,7 +119,7 @@ Ext.nd.UIOutline.prototype = {
         icon : (this.useOutlineIcons) ? extndIcon : null
       });
          
-      curNode.on('click', this.openEntry.createDelegate(this), this, true);   
+      curNode.on('click', this.openEntry, this, true);   
       //curNode.leaf = false;
       
       arNodes[curPosition] = curNode;
@@ -193,7 +195,11 @@ Ext.nd.UIOutline.prototype = {
     if (extndType == "2" || extndType == "20") {
       // delete the current grid
       if (this.uiView.grid) {
-        this.viewPanel.setContent("");
+        if (this.viewPanel.setContent) {
+          this.viewPanel.setContent("");
+        } else {
+          Ext.get(this.viewPanel).update("");
+        }
         try {
           this.uiView.grid.destroy();
         } catch(e) {}
@@ -208,9 +214,11 @@ Ext.nd.UIOutline.prototype = {
         container : this.viewPanel,
         statusPanel : this.statusPanel
       });
-         
-      this.viewPanel.setTitle(title);
-      this.layout.showPanel(this.viewPanel);
+      
+      if (typeof this.viewPanel != "String") {
+        this.viewPanel.setTitle(title);
+        this.layout.showPanel(this.viewPanel);
+      }
     } else if (extndHref != "") {
       var entry = this.layout.getRegion('center').getPanel(entryId);
       if(!entry){ 
