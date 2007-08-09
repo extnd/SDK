@@ -6,25 +6,25 @@
  * @param {Object} config Configuration options
  */
 Ext.nd.Document = function(config) {
-   var sForm = 'Ext.nd.Document.json';
-   
-   // Set any config params passed in to override defaults
-   Ext.apply(this,config);
+  var sForm = 'Ext.nd.Document.json';
+  
+  // Set any config params passed in to override defaults
+  Ext.apply(this,config);
 
-   var sHREF, locNSF, urlStart;
-   sHREF = location.href;
-   locNSF = sHREF.toLowerCase().indexOf('.nsf/');
-   urlStart = sHREF.substring(0,locNSF+5);
-   this.url = urlStart + '($Ext.nd.SwitchForm)/' + this.unid + '?OpenDocument&form=' + sForm;
-         
-   var cb = {
-      success: this.assignValue.createDelegate(this),
-      failure: this.processException,
-      scope: this
-   };    
+  var sHREF, locNSF, urlStart;
+  sHREF = location.href;
+  locNSF = sHREF.toLowerCase().indexOf('.nsf/');
+  urlStart = sHREF.substring(0,locNSF+5);
+  this.url = urlStart + '($Ext.nd.SwitchForm)/' + this.unid + '?OpenDocument&form=' + sForm;
 
-   Ext.lib.Ajax.request('GET', this.url + '&randomizer='+new Date().getTime(), cb);
-   
+  Ext.Ajax.request({
+    method: 'GET',
+    disableCaching: true,
+    success: this.assignValue,
+    failure: this.processException,
+    scope: this,
+    url: this.url
+  });
 };
 
 Ext.nd.Document.prototype = {
