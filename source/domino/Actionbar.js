@@ -50,12 +50,14 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
       this.createToolbarFromDocument();
       return;
     }
-    var cb = {
+    Ext.Ajax.request({
+      method: 'GET',
+      disableCaching: true,
       success : this.createToolbarFromDxl, 
       failure : this.createToolbarFailure,
-      scope: this
-    };    
-    Ext.lib.Ajax.request('GET', this.dbPath + '($Ext.nd.NotesDxlExporter)?OpenAgent&type=' + this.noteType + '&name=' + this.noteName + '&randomizer='+new Date().getTime(), cb); // Changed to GET cause of proxy issues
+      scope: this,
+      url: this.dbPath + '($Ext.nd.NotesDxlExporter)?OpenAgent&type=' + this.noteType + '&name=' + this.noteName
+    });
   },
 
   // Quick sample failure call... 

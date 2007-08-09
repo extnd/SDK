@@ -182,13 +182,14 @@ Ext.nd.UIView.prototype = {
   },
   
   getViewDesign: function() {
-    // TODO: need a failure function
-    var cb = {
-      success : this.getViewDesignCB, 
-      failure : this.getViewDesignFailure,
-      scope: this
-    };    
-    Ext.lib.Ajax.request('GET', this.viewUrl + '?ReadDesign&randomizer='+new Date().getTime(), cb); // RW - changed to GET cause of proxy issues
+    Ext.Ajax.request({
+      method: 'GET',
+      disableCaching: true,
+      success: this.getViewDesignCB,
+      failure: this.getViewDesignFailure,
+      scope: this,
+      url: this.viewUrl + '?ReadDesign'
+    });
   },
   
   // Silent fail for now... what should this do? perhaps we can provide an openlog integration that posts back JavaScript errors
@@ -978,14 +979,14 @@ Ext.nd.UIView.prototype = {
     if (docExists) {
       Ext.MessageBox.alert("Delete Error","You have this document open in another tab.  Please close the document first before deleting.");
     } else {
-      var cb = {
+      Ext.Ajax.request({
+        method: 'GET',
+        disableCaching: true,
         success : this.gridDeleteDocumentSuccess, 
-        failure : this.gridDeleteDocumentFailure, 
-        argument: rowIndex,
-        scope: this
-      };    
-   
-      Ext.lib.Ajax.request('GET', deleteDocUrl + '&randomizer='+new Date().getTime(), cb);
+        failure : this.gridDeleteDocumentFailure,
+        scope: this,
+        url: deleteDocUrl
+      });
     }
   },
   

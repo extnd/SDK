@@ -45,20 +45,23 @@ Ext.nd.Formula.prototype = {
   eval: function() {
     var body = 'formula='+encodeURIComponent(this.text);
   
-    var cb = {
+    var ajaxOpts = {
+      method: 'GET',
+      disableCache: true,
       success: this.assignValue.createDelegate(this),
       failure: this.processException,
-      scope: this
-    };    
+      scope: this,
+      url: this.url
+    };
   
-    Ext.lib.Ajax.request('GET', this.url + '&randomizer='+new Date().getTime(), cb);
+    Ext.Ajax.request(ajaxOpts);
       
     if (this.target != null) {
       var el = Ext.get(target);
       var mgr = el.getUpdateManager();
       mgr.update(this.url, body, this.assignValue.createDelegate(this));
     } else {
-      Ext.lib.Ajax.request('GET', this.url + '&randomizer='+new Date().getTime(), cb);
+      Ext.Ajax.request(ajaxOpts);
     }
   },
   
