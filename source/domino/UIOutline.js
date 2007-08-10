@@ -215,7 +215,7 @@ Ext.nd.UIOutline.prototype = {
         statusPanel : this.statusPanel
       });
       
-      if (typeof this.viewPanel != "String") {
+      if (typeof this.viewPanel != "string") {
         this.viewPanel.setTitle(title);
         this.layout.showPanel(this.viewPanel);
       }
