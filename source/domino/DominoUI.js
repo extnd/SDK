@@ -1,11 +1,13 @@
 /**
  * @class Ext.nd.DominoUI
-  * <p>Here's an example showing the creation of a typical DominoUI:</p> * <pre><code>
+  * <p>Here's an example showing the creation of a typical DominoUI:</p>
+ * <pre><code>
 new Ext.nd.DominoUI({
   uiOutline : {outlineName: "mainOL"},
   uiView : {viewName: "Requests", viewTitle: "Requests"}    
 });
- * @cfg {Object} uiOutline A {@link Ext.nd.UIOutline} config object * @cfg {Object} uiView A {@link Ext.nd.UIView} config object
+ * @cfg {Object} uiOutline A {@link Ext.nd.UIOutline} config object
+ * @cfg {Object} uiView A {@link Ext.nd.UIView} config object
  * @constructor
  * Create an integrated domino interface, with a view and an outline
  * @param {Object} config Configuration options
@@ -95,6 +97,8 @@ Ext.nd.DominoUI.prototype = {
   
      this.layout.beginUpdate();
   
+     this.layout.getRegion("center").on("beforeremove", this.fixIFrame, this);
+     
      //initialize the statusbar
      this.statusPanel = this.layout.add('south', new Ext.ContentPanel('extnd-status', {
         autoCreate : true
@@ -119,6 +123,16 @@ Ext.nd.DominoUI.prototype = {
      this.layout.endUpdate();
   },
 
+  // This is a hack to fix the memory issues that occur when opening and closing stuff within iFrames
+  // Thanks goes to the Dojo folks for the fix: http://dojotoolkit.org/forum/general/general-discussion/using-dojo-iframes-solving-memory-leak
+  fixIFrame: function(lr, cp, e) {
+    var iFrame = cp.getEl().dom;
+    if(iFrame.src) {
+      iFrame.src = "javascript:false";
+      setTimeout(function() {}, 100);
+    }
+  },
+  
   showError: function() {
     alert("An error has occured");
   }
