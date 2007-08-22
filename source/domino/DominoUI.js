@@ -124,12 +124,10 @@ Ext.nd.DominoUI.prototype = {
   },
 
   // This is a hack to fix the memory issues that occur when opening and closing stuff within iFrames
-  // Thanks goes to the Dojo folks for the fix: http://dojotoolkit.org/forum/general/general-discussion/using-dojo-iframes-solving-memory-leak
   fixIFrame: function(lr, cp, e) {
     var iFrame = cp.getEl().dom;
     if(iFrame.src) {
       iFrame.src = "javascript:false";
-      setTimeout(function() {}, 100);
     }
   },
   
