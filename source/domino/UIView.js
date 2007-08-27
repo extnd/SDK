@@ -354,9 +354,15 @@ Ext.nd.UIView.prototype = {
       } catch (e) {}
     }
 
-    // create a DominoGrid        
-    var dh = Ext.DomHelper;
-    this.grid = new Ext.nd.grid.DominoGrid(dh.append(document.body,{tag: 'div'}), {
+    // create a DominoGrid   
+    if (typeof this.container == 'undefined') {
+      var dh = Ext.DomHelper;
+      container = dh.append(document.body,{tag: 'div'});
+    } else {
+      container = (this.container.getEl) ? this.container.getEl() : this.container;
+    }
+    
+    this.grid = new Ext.nd.grid.DominoGrid(container, {
       ds: ds,
       cm: this.cm,
       selModel: new Ext.grid.RowSelectionModel({singleSelect : this.singleSelect}),
@@ -366,15 +372,11 @@ Ext.nd.UIView.prototype = {
       loadMask: this.loadMask
     });
 
-    // add grid to the container
-    // container can be a string id reference or a dom object, or even an Ext panel
-    var container = (this.container.getEl) ? this.container.getEl() : this.container;
-    var layout = Ext.BorderLayout.create({
-      center: {
-         panels: [new Ext.GridPanel(this.grid, {toolbar: this.toolbar, fitToFrame : true})] 
-      }
-    }, container);
-   
+    // add grid to layout/region if specified
+    if (this.layout) {
+      this.region = (this.region) ? this.region : "center"; // just in case they forgot
+      this.layout.add(this.region,new Ext.GridPanel(this.grid, {toolbar: this.toolbar, fitToFrame : true}));
+    }
 
 
 
