@@ -37,6 +37,8 @@ Ext.nd.UIWorkspace.prototype = {
     this.type = "custom";
     this.select = "single";
 
+    this.viewOptions = "";
+    
     this.title = "PickList";
     this.prompt = "Please make your selection(s) and click <OK>.";
     this.column = 0;
@@ -108,7 +110,7 @@ Ext.nd.UIWorkspace.prototype = {
       }));
 
       // now create the view
-      this.uiView = new Ext.nd.UIView({
+      this.uiView = new Ext.nd.UIView(Ext.apply({
         container : viewPanel,
         viewUrl : this.viewUrl,
         gridHandleRowDblClick : handleOK.createDelegate(this),
@@ -116,7 +118,7 @@ Ext.nd.UIWorkspace.prototype = {
         emptyText : this.emptyText,
         showCategoryComboBox : this.showCategoryComboBox,
         categoryComboBoxCount : this.categoryComboBoxCount
-      });
+      },this.viewOptions);
 
       // tell the layout we are done so it can draw itself on the screen
       layout.endUpdate();
