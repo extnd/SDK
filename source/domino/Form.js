@@ -117,7 +117,11 @@ Ext.nd.Form.prototype = {
               dt.applyTo(el);
               converted = true;
               break;
-               
+            
+            case 'xnd-ignore' :
+              converted = true;
+              break;
+              
             default :
               break;               
           } // end switch(cls)
