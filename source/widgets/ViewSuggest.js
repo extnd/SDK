@@ -1,3 +1,4 @@
+Ext.namespace("Ext.nd.form");
 /**
  * @class Ext.nd.form.ViewSuggest
  * A class to simplify creating a "suggest" text field using an Ext combo box and the $Ext.nd.Suggest agent
