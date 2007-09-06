@@ -118,7 +118,7 @@ Ext.nd.UIWorkspace.prototype = {
         emptyText : this.emptyText,
         showCategoryComboBox : this.showCategoryComboBox,
         categoryComboBoxCount : this.categoryComboBoxCount
-      },this.viewOptions);
+      },this.viewOptions));
 
       // tell the layout we are done so it can draw itself on the screen
       layout.endUpdate();

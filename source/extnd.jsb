@@ -31,4 +31,5 @@
   </target>
   <file name="domino\Actionbar.js" path="domino" />
   <file name="domino\Form.js" path="domino" />
+  <file name="widgets\ViewSuggest.js" path="widgets" />
 </project>
