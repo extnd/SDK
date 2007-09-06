@@ -53,6 +53,6 @@ Ext.nd.form.ViewSuggest.prototype = {
       listWidth: 200,
       width: 200
     },this.comboParams));
-    addrCombo.applyTo(this.el);
+    this.combo.applyTo(this.el);
   }
 };
