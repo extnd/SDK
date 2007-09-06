@@ -20,17 +20,22 @@ Ext.nd.form.ViewSuggest.prototype = {
       var db = sess.CurrentDatabase;
    
       this.url = db.WebFilePath + this.agentUrl; // Or you can pass in just a different agent that should be called via agentUrl
+      this.db = db.FileName;
     }
     
     if (!this.view || !this.field) {
       Ext.Messagebox.alert("Error", "Required parameter (view or fieldname) was omitted from Ext.nd.form.ViewSuggest");
     }
-    if (!this.extraFields) {
-      this.flds = [this.field];
-    } else {
+    if (this.extraFields) {
       this.flds = [this.field].push(this.extraFields);
+    } else {
+      this.flds = [this.field];
     }
     
+    this.baseStoreParams =  { view: this.view, fields: this.flds };
+    if (this.db) {
+      this.baseStoreParams.db = this.db;
+    }
     this.store = new Ext.data.Store(Ext.apply({
   	  proxy: new Ext.data.HttpProxy({
   	      url: this.url
@@ -38,7 +43,7 @@ Ext.nd.form.ViewSuggest.prototype = {
   	  reader: new Ext.data.JsonReader({
    	     root: 'root'
  	    }, this.flds),
-      baseParams: { view: this.view, fields: this.flds },
+      baseParams:,
       remoteSort: false
     },this.storeParams));
     
