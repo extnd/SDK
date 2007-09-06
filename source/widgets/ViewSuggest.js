@@ -43,7 +43,7 @@ Ext.nd.form.ViewSuggest.prototype = {
   	  reader: new Ext.data.JsonReader({
    	     root: 'root'
  	    }, this.flds),
-      baseParams:,
+      baseParams: this.baseStoreParams,
       remoteSort: false
     },this.storeParams));
     
