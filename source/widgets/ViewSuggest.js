@@ -9,6 +9,7 @@ Ext.namespace("Ext.nd.form");
 Ext.nd.form.ViewSuggest = function(el, config) {
   this.el = el;
   this.agentUrl = "($Ext.nd.Suggest)?OpenAgent";
+  this.unique = true; // Set this as default
   Ext.apply(this,config);
   this.init();
 };
@@ -19,20 +20,32 @@ Ext.nd.form.ViewSuggest.prototype = {
       var sess = Ext.nd.Session;
       var db = sess.CurrentDatabase;
    
-      this.url = db.WebFilePath + this.agentUrl; // Or you can pass in just a different agent that should be called via agentUrl
-      this.db = db.FileName;
+      this.url = Ext.nd.extndUrl + this.agentUrl; // Or you can pass in just a different agent that should be called via agentUrl
+      this.db = db.FilePath;
     }
     
     if (!this.view || !this.field) {
       Ext.Messagebox.alert("Error", "Required parameter (view or fieldname) was omitted from Ext.nd.form.ViewSuggest");
+      return;
     }
+    
     if (this.extraFields) {
+      if (this.unique) {
+        Ext.Messagebox.alert("Error", "You cannot use extra fields when unique is set!");
+        return;
+      }
       this.flds = [this.field].push(this.extraFields);
     } else {
       this.flds = [this.field];
     }
     
-    this.baseStoreParams =  { view: this.view, fields: this.flds };
+    if (this.unique) { // force the value the agent expects
+      this.unique = 1;
+    } else {
+      this.unique = 0;
+    }
+    
+    this.baseStoreParams =  { view: this.view, fields: this.flds, unique: this.unique };
     if (this.db) {
       this.baseStoreParams.db = this.db;
     }
