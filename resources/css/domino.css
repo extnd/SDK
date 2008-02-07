@@ -1,5 +1,10 @@
 /* Domino Common CSS Rules */
 
+html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,p,blockquote,th,td {
+  font-family: tahoma,verdana,helvetica;
+  font-size: 11px;
+}
+  
 /* view styles */
 .xnd-view-category{
    width: 100%;
@@ -17,9 +22,19 @@
 }
 
 
-/* domino's icons are 21px + add 2px for padding */
+/* fix button padding for domino's larger buttons 
+ * domino's icons are 21px + add 2px for padding 
+ */
 .x-btn-text-icon .x-btn-center .x-btn-text{
   padding-left:23px;
+}
+
+
+/* give form and page contents a little margin since they
+ * are loaded in a viewport that has 0 margin 
+ */
+#xnd-form-ui {
+  margin: 5px;
 }
 
 

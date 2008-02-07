@@ -1,6 +1,6 @@
 /**
  * @class Ext.nd.DominoUI
-  * <p>Here's an example showing the creation of a typical DominoUI:</p>
+ * <p>Here's an example showing the creation of a typical DominoUI:</p>
  * <pre><code>
 new Ext.nd.DominoUI({
   uiOutline : {outlineName: "mainOL"},
@@ -17,31 +17,6 @@ Ext.nd.DominoUI = function(config) {
    // set defaults
    this.uiView = {viewName: '', viewUrl: ''};
    this.uiOutline = {outlineName: '', outlineUrl: ''};
-
-   this.west = {
-      titlebar : true,
-      split : true,
-      collapsible : true, 
-      initialSize : 200, 
-      minSize : 100, 
-      maxSize : 400,
-      autoScroll : true
-   };
-   this.center = {
-      titlebar : false,
-      tabPosition : 'top',
-      closeOnTab : true,
-      initialSize : 400,
-      autoScroll : true
-   };
-   this.south = {
-      titlebar : false, 
-      split : false,
-      minSize : 16,
-      maxSize : 16,
-      collapsible : false,
-      animate : false
-   };
 
    // for later features (allowing developer to pick which regions to include)
    this.includeWest = true;
@@ -65,70 +40,71 @@ Ext.nd.DominoUI.prototype = {
     // if we have a viewName or a viewUrl we can create the view
     if (this.uiView.viewName != '' || this.uiView.viewUrl != '') {
       this.uiView = new Ext.nd.UIView(Ext.apply({
-        container : this.viewPanel,
-        layout : this.layout,
-        statusPanel : this.statusPanel
+        viewport: this.viewport,
+        tabPanel: this.tabPanel,
+        container: this.viewContainer,
+        statusPanel : this.statusPanel,
+        showActionBar: true
       }, this.uiView));
  
       // set the title of the view panel
-      this.viewTitle = (this.viewTitle) ? this.viewTitle : (this.uiView.viewName) ? this.uiView.viewName : this.uiView.viewUrl;
-      this.viewPanel.setTitle(this.viewTitle);
+      // this.viewTitle = (this.viewTitle) ? this.viewTitle : (this.uiView.viewName) ? this.uiView.viewName : this.uiView.viewUrl;
+      // this.viewPanel.setTitle(this.viewTitle);
     }
     
     // if we have a outlineName or a outlineUrl we can create the outline
     if (this.uiOutline.outlineName != '' || this.uiOutline.outlineUrl != '') {
       this.uiOutline = new Ext.nd.UIOutline(Ext.apply({
-        layout : this.layout,
-        container : this.outlinePanel, 
-        viewPanel : this.viewPanel,
-        uiView : this.uiView
+        container: this.outlinePanel,
+        viewport: this.viewport, 
+        outlinePanel: this.outlinePanel,
+        tabPanel : this.tabPanel,
+        uiView : this.uiView,
+        statusPanel: this.statusPanel
       },this.uiOutline));
     }
   },
-  
+    
   // Private
   createDominoUI: function() {
-    this.layout = new Ext.BorderLayout(document.body, {
-        hideOnLayout: true,
-        west: this.west,
-        center: this.center,
-        south: this.south
-     });
-  
-     this.layout.beginUpdate();
-  
-     this.layout.getRegion("center").on("beforeremove", this.fixIFrame, this);
-     
-     //initialize the statusbar
-     this.statusPanel = this.layout.add('south', new Ext.ContentPanel('extnd-status', {
-        autoCreate : true
-     }));
-  
-     // create outline panel
-     this.outlinePanel = this.layout.add('west', new Ext.ContentPanel('extnd-outline', {
-        autoCreate : true,
-        title : document.title,
-        fitToFrame : true
-     }));
-     
-     // crate view panel
-     this.viewPanel = this.layout.add('center', new Ext.ContentPanel('extnd-view', {
-        autoCreate : true,
-        title : 'View',
-        closable : false,
-        fitToFrame : true
-     }));
-     
-     // tell the layout we are done so it can draw itself on the screen
-     this.layout.endUpdate();
+    this.viewport = new Ext.Viewport({
+      layout: 'border',
+      id: 'extnd-viewport',
+      items:[{
+        xtype: 'panel',
+        layout: 'fit',
+        region: 'west',
+        collapsible: true,
+        id: 'xnd-outline-panel',
+        title: Ext.nd.Session.currentDatabase.title,
+        split: true,
+        width: 200
+      },{
+        xtype: 'tabpanel',
+        region:'center',
+        id: 'xnd-center-panel',
+        enableTabScroll: true,
+        activeTab:0,
+        items: [{
+          id: 'xnd-grid-panel',
+          layout: 'fit'
+        }]
+      }]
+    });
+
+    this.outlinePanel = Ext.getCmp('xnd-outline-panel');
+    this.viewContainer = Ext.getCmp('xnd-grid-panel');
+    this.tabPanel = Ext.getCmp('xnd-center-panel');
+    this.tabPanel.on('beforeremove',this.fixIFrame,this);
   },
 
   // This is a hack to fix the memory issues that occur when opening and closing stuff within iFrames
-  fixIFrame: function(lr, cp, e) {
-    var iFrame = cp.getEl().dom;
+  fixIFrame: function(container, panel) {
+    var iFrame = panel.getEl().dom;
     if(iFrame.src) {
       iFrame.src = "javascript:false";
     }
+    Ext.removeNode(iFrame);
   },
   
   showError: function() {

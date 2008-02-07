@@ -1,9 +1,10 @@
 Ext.namespace("Ext.nd", "Ext.nd.grid", "Ext.nd.data", "Ext.nd.domino");
 
-Ext.nd.extndUrl = "/extnd.nsf/";  // default
+Ext.nd.extUrl = "/extnd.nsf/ext/";  // default
+Ext.nd.extndUrl = "/extnd.nsf/extnd/";  // default
 
 Ext.nd.getBlankImageUrl = function() {
-   return this.extndUrl + "extnd/resources/images/s.gif";
+   return this.extndUrl + "resources/images/s.gif";
 };
 
 Ext.nd.init = function(config) {

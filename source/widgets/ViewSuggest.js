@@ -8,7 +8,7 @@ Ext.namespace("Ext.nd.form");
  */
 Ext.nd.form.ViewSuggest = function(el, config) {
   this.el = el;
-  this.agentUrl = "($Ext.nd.Suggest)?OpenAgent";
+  this.agentUrl = "Suggest?OpenAgent";
   this.unique = true; // Set this as default
   Ext.apply(this,config);
   this.init();
@@ -18,20 +18,20 @@ Ext.nd.form.ViewSuggest.prototype = {
   init: function() {
     if (!this.url) { // Does not require Ext.nd.Session if url is passed in
       var sess = Ext.nd.Session;
-      var db = sess.CurrentDatabase;
+      var db = sess.currentDatabase;
    
       this.url = Ext.nd.extndUrl + this.agentUrl; // Or you can pass in just a different agent that should be called via agentUrl
-      this.db = db.FilePath;
+      this.db = db.filePath;
     }
     
     if (!this.view || !this.field) {
-      Ext.Messagebox.alert("Error", "Required parameter (view or fieldname) was omitted from Ext.nd.form.ViewSuggest");
+      Ext.Msg.alert("Error", "Required parameter (view or fieldname) was omitted from Ext.nd.form.ViewSuggest");
       return;
     }
     
     if (this.extraFields) {
       if (this.unique) {
-        Ext.Messagebox.alert("Error", "You cannot use extra fields when unique is set!");
+        Ext.Msg.alert("Error", "You cannot use extra fields when unique is set!");
         return;
       }
       this.flds = [this.field].push(this.extraFields);
@@ -69,8 +69,8 @@ Ext.nd.form.ViewSuggest.prototype = {
       minChars: 3,
       hideTrigger: true,
       listWidth: 200,
-      width: 200
+      width: 200,
+      applyTo: this.el
     },this.comboParams));
-    this.combo.applyTo(this.el);
   }
 };

@@ -1,6 +1,21 @@
 /**
  * @class Ext.nd.DominoUI
  * Makes an AJAX call to the outline's readentries and translates it into an {@link Ext.Tree}
+ * Simple example:<pre><code>
+new Ext.nd.UIOutline({
+  outlineName: 'mainOL',
+  treeConfig: {
+    renderTo: 'outlineDiv'
+  }
+});</pre></code>
+ * @cfg {String} outlineName
+ * The name or alias of an outline as set in Domino Desgner.
+ * @cfg {String} outlineUrl
+ * The full web path to an outline (i.e. '/someDb/outlineName').  
+ * Used for when you want to load an outline from a different database.
+ * @cfg {Boolean} useOutlineIcons
+ * Whether to use the icons as set in Domino Designer.  
+ * If set to false, Ext folder and leaf icons will be used. (Defaults to false)
  * @constructor
  * Create a new UIOutline component
  * @param {Object} config Configuration options
@@ -8,15 +23,15 @@
 Ext.nd.UIOutline = function(config) {
 
    var sess = Ext.nd.Session; // should we assume that there will always be a session?
-   var db = sess.CurrentDatabase;
+   var db = sess.currentDatabase;
 
    // defaults      
-   this.dbPath = db.WebFilePath;
+   this.dbPath = db.webFilePath;
    this.outlineName = '';
    this.useOutlineIcons = false;
 
    // Set any config params passed in to override defaults
-   Ext.apply(this,config);
+   Ext.apply(this, config);
    
    // outlineUrl is either passed in or built from dbPath and outlineName
    this.outlineUrl = (this.outlineUrl) ? this.outlineUrl : this.dbPath + this.outlineName;
@@ -40,33 +55,40 @@ Ext.nd.UIOutline.prototype = {
   // Private
   init2: function(o) {
     var response = o.responseXML;
-    var arEntries = response.getElementsByTagName('outlineentry');
-  
-    // container can be a string id reference or a dom object, or even an Ext panel
-    var dh = Ext.DomHelper;
-    var container = (this.container.getEl) ? this.container.getEl() : this.container;
-    
+    var arEntries = response.getElementsByTagName('outlineentry');  
     var Tree = Ext.tree;
-    this.tree = new Tree.TreePanel(container, {
+
+    var otlId = "xnd-outline-"+Ext.id();
+    
+    this.tree = new Tree.TreePanel(Ext.apply({
+       // el: this.contentEl,
+        xtype: 'treepanel',
+        id: otlId,
         animate : true, 
         enableDD : true,
         ddGroup: 'TreeDD',
+        autoScroll: true,
         containerScroll : true,
         dropConfig : {appendOnly : true},
+        root: new Tree.TreeNode({
+          text : 'outline root', 
+          draggable : false, // disable root node dragging
+          id : 'xnd-outline-root'+Ext.id()
+        }),
         rootVisible : false
-    });
-     
+    },this.treeConfig));
+    
+    if (this.container) {
+      this.container.add(this.tree);
+    }
+    var root = this.tree.getRootNode();
+    
      // add a tree sorter in folder mode
      //new Tree.TreeSorter(tree, {folderSort : true}); // leave the sort order alone for domino outlines
             
      // set the root node
      // var root = new Tree.AsyncTreeNode({
-    var root = new Tree.TreeNode({
-        text : 'domino-folders', 
-        draggable : false, // disable root node dragging
-        id : 'domino-folders'
-    });
-    this.tree.setRootNode(root);
+     
     var curNode = null;
     var arNodes = [];
     for (var i=0; i<arEntries.length; i++) {
@@ -119,7 +141,6 @@ Ext.nd.UIOutline.prototype = {
         icon : (this.useOutlineIcons) ? extndIcon : null
       });
          
-      curNode.on('click', this.openEntry, this, true);   
       //curNode.leaf = false;
       
       arNodes[curPosition] = curNode;
@@ -135,11 +156,12 @@ Ext.nd.UIOutline.prototype = {
    // handle the drop of the doc on the folder
    this.tree.on('beforenodedrop', this.addToFolder);
 
+   this.tree.on('click', this.openEntry, this);
+   
    // render the tree
-   this.tree.render();
-          
-   //root.expand(false, /*no anim*/ false);
-   root.expand(); 
+    if (this.container) {
+      this.container.doLayout();
+    }
   },
   
   // Private
@@ -184,58 +206,51 @@ Ext.nd.UIOutline.prototype = {
   
   // Private
   openEntry: function(node, e) {
-    var attributes, extndType, extndHref, extndPosition, entryId, title;
+    var attributes, extndType, extndHref, extndPosition, panelId, title;
     attributes = node.attributes;
     extndHref = attributes.extndHref;
     extndType = attributes.extndType;
     extndPosition = attributes.extndPosition;
-    entryId = "id-" + extndPosition;
+    panelId = 'xnd-pnl' + extndPosition;
+    iframeId = 'xnd-ifrm' + extndPosition;
     title = node.text;
-   
+    
     if (extndType == "2" || extndType == "20") {
       // delete the current grid
-      if (this.uiView.grid) {
-        if (this.viewPanel.setContent) {
-          this.viewPanel.setContent("");
-        } else {
-          Ext.get(this.viewPanel).update("");
-        }
-        try {
-          this.uiView.grid.destroy();
-        } catch(e) {}
-      }
-      var viewUrl = (extndHref.indexOf('?') > 0) ? extndHref.split('?')[0] : extndHref.split('!')[0];       
-      // now create our new view/folder                  
-      //this.UIView(this.viewPanel.getEl(), url);
-      this.uiView = new Ext.nd.UIView({
-        layout : this.layout,
-        viewUrl : viewUrl,
-        viewParams : "",
-        container : this.viewPanel,
-        statusPanel : this.statusPanel
-      });
       
-      if (typeof this.viewPanel != "string") {
-        this.viewPanel.setTitle(title);
-        this.layout.showPanel(this.viewPanel);
-      }
+      this.uiView.removeFromContainer();
+
+      var viewUrl = (extndHref.indexOf('?') > 0) ? extndHref.split('?')[0] : extndHref.split('!')[0];       
+      // now create our new view/folder 
+      this.uiView = new Ext.nd.UIView({
+        viewport: this.viewport,
+        tabPanel: this.tabPanel,
+        container: this.uiView.container,
+        statusPanel: this.statusPanel,
+        showActionBar: false,
+        toolbar: false,
+        viewUrl: viewUrl
+      });
+      this.tabPanel.setActiveTab(this.uiView.container);
     } else if (extndHref != "") {
-      var entry = this.layout.getRegion('center').getPanel(entryId);
+      var entry = this.tabPanel.getItem(panelId);
       if(!entry){ 
         var iframe = Ext.DomHelper.append(document.body, {
-          tag: 'iframe', 
+          tag: 'iframe',
+          id: iframeId,
           frameBorder: 0, 
           src: extndHref,
-          id : entryId
+          style: {width:'100%', height:'100%'}
         });
-        var panel = new Ext.ContentPanel(iframe, {
+        this.tabPanel.add({
+          contentEl: iframe.id,
           title: Ext.util.Format.ellipsis(title,16),
-          fitToFrame:true, 
+          layout: 'fit',
+          id : panelId,
           closable:true
-        });
-        this.layout.add('center', panel);
+        }).show();
       } else { // we've already opened this entry
-        this.layout.showPanel(entry);
+        entry.show();
       }
     }
   }

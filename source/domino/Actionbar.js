@@ -1,22 +1,52 @@
 /**
  * @class Ext.nd.Actionbar
- * @extends Ext.Toolbar
- * An expanded version of Ext's Toolbar to deal with Domino's view and form actionbars
+ * An {@link Ext.Toolbar} plugin to deal with Domino's view and form actionbars.  By default
+ * it will make a call to the Ext.nd Dxl exporter agent and parse the Actionbar Xml section 
+ * Example usage:<pre><code>
+new Ext.Toolbar({
+        id:'xnd-view-toolbar-'+Ext.id(),
+        plugins: new Ext.nd.Actionbar({
+          noteType: 'view', 
+          noteName: this.viewName,
+          useDxl: true,
+          tabPanel: this.tabPanel || null
+        })</code></pre>
+ * @cfg {String} noteType
+ * Current options are 'form' or 'view' this lets the toolbar know how to handle certain 
+ * actions based off from where it is located
+ * @cfg {String} noteName
+ * The name of the form or view that will be used to access URL commands
+ * @cfg {Boolean} useDxl
+ * When using noteType: 'form' set to false to convert the HTML actionbar instead of
+ * grabbing the form's Dxl and transforming it (Defaults to true)
+ * @cfg {convertFormulas}
+ * Whether you want basic domino @Formulas converted over to JavaScript code.  Currently
+ * only single formulas are supported. (Defaults to true)
+ * Supported for Views:
+ * @Command([Compose])
+ * @Command([EditDocument])
+ * Supported for Forms:
+ * @Command([Compose])
+ * @Command([EditDocument])
+ * @Command([FileSave])
+ * @Command([FileCloseWindow])
  * @constructor
  * Create a new Actionbar
  */
 Ext.nd.Actionbar = function(config){
-  var sess = Ext.nd.Session; 
-  var db = sess.CurrentDatabase;
+  this.sess = Ext.nd.Session; 
+  this.db = this.sess.currentDatabase;
    
   // defaults
-  this.dbPath = db.WebFilePath;
+  this.dbPath = this.db.webFilePath;
   this.noteType = '';
   this.noteName = '';
-  this.useDxl = false;
+  this.useDxl = true;
+  this.useViewTitleFromDxl = false;
+  this.convertFormulas = true;
   
   Ext.apply(this, config);
-  Ext.nd.Actionbar.superclass.constructor.call(this, config.container);
+  Ext.nd.Actionbar.superclass.constructor.call(this);
    
   // noteUrl is either passed in or built from dbPath and noteName
   this.noteUrl = (this.noteUrl) ? this.noteUrl : this.dbPath + this.noteName;
@@ -27,27 +57,18 @@ Ext.nd.Actionbar = function(config){
     this.dbPath = this.noteUrl.substring(0,vni);
     this.noteName = this.noteUrl.substring(vni);
   }
-
-  // first, add an empty button that we'll remove later
-  // we do this so that the browser will calculate the size of the toolbar
-  // otherwise, the toolbar won't have a size right away and elements
-  // won't size properly -- if we didn't get the data via an Ajax call
-  // we wouldn't have this problem so therefore, this is only needed when
-  // useDxl = true since that is when we make an ajax call
-  if(this.useDxl) {
-    this.add({text:'&nbsp;', id:'xnd-tb-tmp'});
-  }
-  
-  // now create the toolbar/actionbar
-  this.createToolbar();
-
 };
 
-Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
- 
+Ext.extend(Ext.nd.Actionbar, Ext.util.Observable, {
+  // private
+  init: function(toolbar) {
+    this.toolbar = toolbar;
+    this.createToolbar();
+  },
+  // private
   createToolbar: function() {
     if (!this.useDxl) {
-      this.createToolbarFromDocument();
+      this.toolbar.on('render', this.createToolbarFromDocument,this); // We need to wait until the toolbar is rendered before we can add buttons to it
       return;
     }
     Ext.Ajax.request({
@@ -56,15 +77,18 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
       success : this.createToolbarFromDxl, 
       failure : this.createToolbarFailure,
       scope: this,
-      url: this.dbPath + '($Ext.nd.NotesDxlExporter)?OpenAgent&type=' + this.noteType + '&name=' + this.noteName
+      url: Ext.nd.extndUrl + 'DXLExporter?OpenAgent&db=' + this.db.filePath + '&type=' + this.noteType + '&name=' + this.noteName
     });
   },
 
-  // Quick sample failure call... 
+  /**
+  * Override this method to deal with server communication issues as you please
+  * @param {Object} res The Ajax response object
+  */
   createToolbarFailure: function(res) {
     // alert("Error communicating with the server");
   },
-  
+  // private
   createToolbarFromDocument: function(o) {
     var actionbar, arActions;
     var q = Ext.DomQuery;
@@ -72,7 +96,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
 
     // domino didn't send an actionbar
     if (!actionbar) {
-      this.add({text:'&nbsp;'}); // add a blank button so that the actionbar will at least have the right height
+      this.toolbar.add({text:'&nbsp;'}); // add a blank button so that the actionbar will at least have the right height
       return; // no actionbar so bail
     }
     
@@ -88,6 +112,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
       var title = action.lastChild.nodeValue;
       var slashLoc = (title) ? title.indexOf('\\') : -1;
       var imageRef = q.selectValue('img/@src',action, null);
+      imageRef = (imageRef && imageRef.indexOf('/') == 0) ? imageRef : this.dbPath + imageRef;
       var cls = (title == null) ? 'x-btn-icon' : (imageRef) ? 'x-btn-text-icon' : null;
       
       if (slashLoc > 0) { // we have a subaction
@@ -194,20 +219,22 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
     } // end for arActions.length
     // now add the actions to the toolbar (this)
     for (var i=0; i<arJSONActions.length; i++) {
-      this.add(arJSONActions[i]);
+      this.toolbar.add(arJSONActions[i]);
     } 
 
     // now delete the original actionbar (table) that was sent from domino
     if (hasActionbar) {
-      var tmp;
-      tmp = actionbar.parentNode.removeChild(actionbar);
-      tmp = null;                 
-      var hr = q.selectNode('hr');
-      tmp = hr.parentNode.removeChild(hr);
-      tmp = null;
+      this.removeDominoActionbar(actionbar);
     }
   },
-  
+  // private
+  removeDominoActionbar : function(actionbar) {
+    if (actionbar) {
+      Ext.get(actionbar).remove();
+      Ext.get(Ext.query('hr')[0]).remove();
+    }
+  },
+  // private
   getDominoActionbar: function() {
     // domino's form is the first form
     var frm = document.forms[0]; 
@@ -268,12 +295,24 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
     }
     
   },
+  // private
+  // this is a hack to set the view name on the tab since view?ReadDesign doesn't give the view title
+  setViewName : function(response) {
+      var q = Ext.DomQuery;
+      var vwName = q.selectValue('view/@name', response);
+      this.tabPanel.activeTab.setTitle(vwName)
+  },
   
   createToolbarFromDxl: function(o) {
     var actionbar, arActions;
     var q = Ext.DomQuery;
     response = o.responseXML;
     arActions = q.select('action',response);
+    
+    // hack to get the correct view title
+    if (this.noteType == 'view' && this.tabPanel && this.useViewTitleFromDxl) {
+      this.setViewName(response);
+    }
    
     var arJSONActions = [];
     var curLevelTitle = '';
@@ -291,20 +330,28 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
       var imageRef = q.selectValue('imageref/@name',action,null);
       var syscmd = q.selectValue('@systemcommand',action,null);
       
-      // handle hidewheb
+      // SHOW? check hidewhen
       if (hidewhen) {
         var arHide = hidewhen.split(' ');
         for (var h=0; h<arHide.length; h++) {
-          if (arHide[h] == 'web') {
+          if (arHide[h] == 'web' || (arHide[h] == 'edit' && Ext.nd.UIDocument.editMode) || 
+              (arHide[h] == 'read' && !Ext.nd.UIDocument.editMode)) {
             show = false;
           }
         }
       } 
       
-      // handle 'Include action in Action bar' option
+      // SHOW? check 'Include action in Action bar' option
       if (showinbar == 'false') {
         show = false;
       }
+      
+      // SHOW? check lotusscript
+      var lotusscript = Ext.DomQuery.selectValue('lotusscript', action, null);
+      if (lotusscript) {
+        show = false;
+      }
+      
       
       if (icon) {
         if (icon < 10) {
@@ -315,6 +362,10 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
           imageRef = ""+icon;
         }
         imageRef = "/icons/actn"+imageRef+".gif";
+      } else {
+        if (imageRef) {
+          imageRef = (imageRef.indexOf('/') == 0) ? imageRef : this.dbPath + imageRef;
+        }
       }
        
       // now go ahead and handle the actions we can show
@@ -341,9 +392,42 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
           curLevelTitle = '';
         }
          
-        var tmpOnclick = Ext.DomQuery.selectValue('javascript',action,Ext.emptyFn);
-        var handler = function(bleh) { eval(bleh);}.createCallback(tmpOnclick);
-         
+        var tmpOnClick = Ext.DomQuery.selectValue('javascript', action, null);
+        var handler;
+        
+        // the JavaScript onClick takes precendence
+        if (tmpOnClick) {
+            handler = function(bleh) { eval(bleh) }.createCallback(tmpOnClick);
+        } else if(this.convertFormulas) {
+          // Handle known formulas
+          var formula = Ext.DomQuery.selectValue('formula', action, null);
+          // @Command([Compose];"profile")
+          // runagent, openview, delete, saveoptions := "0"
+          if (formula) {
+            var cmdFrm = formula.match(/\@Command\(\[(\w+)\];*"*(\w+)*"*\)/);
+            if (cmdFrm.length) {
+              switch(cmdFrm[1]) {
+                case 'Compose': 
+                  handler = this.openForm.createDelegate(this, [cmdFrm[2]]);
+                  break;
+                case 'EditDocument':
+                  handler = this.openDocument.createDelegate(this, [true]);
+                  break;
+                case 'FileCloseWindow':
+                  handler = this.closeDocument.createDelegate(this);
+                  break;
+                case 'FileSave':
+                  handler = this.saveDocument.createDelegate(this);
+                  break;
+                case 'OpenView':
+                case 'RunAgent':
+                default:
+                  handler = this.unsupportedAtCommand.createDelegate(this,[formula]);
+              } // end switch
+            } // end if (cmdFrm.length) 
+          } // end if (formula)
+        } // end if (tmpOnClick)
+        
         if (isSubAction) {
           if (isFirst) {
             if (i>0) {
@@ -389,7 +473,181 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
     } // end: for arActions.length
     // now add the actions to the toolbar (this)
     for (var i=0; i<arJSONActions.length; i++) {
-      this.add(arJSONActions[i]);
+      this.toolbar.add(arJSONActions[i]);
     }
- }
+    if (this.noteType == 'form') {
+      this.removeDominoActionbar(this.getDominoActionbar());
+    }
+  },
+  /**
+  * Handler for @Command([Compose];'myform')
+  * @param {String} form the url accessible name for the form
+  */
+  openForm : function(form) {
+    var src = this.db.webFilePath+form+'?OpenForm';
+    if(this.tabPanel) {
+      var iframe = Ext.DomHelper.append(document.body, {
+        tag: 'iframe',
+        frameBorder: 0, 
+        src: src,
+        id: 'xnd-open-form-'+Ext.id(),
+        style: {width: '100%', height: '100%'}
+      });
+      this.tabPanel.add({
+        id: 'xnd-form-pnl-'+Ext.id(),
+        contentEl: iframe.id,
+        title: 'New '+form, 
+        layout: 'fit',
+        closable: true
+      }).show();
+    } else {
+      window.open(src);
+    }
+  },
+  /**
+  * Handler for @Command([EditDocument])
+  * @param {Boolean} editMode true for edit, false for read mode
+  */
+  openDocument : function(editMode) {
+    if (this.noteType == 'view') {
+      this.openDocumentFromView(editMode);
+      return;
+    }
+    
+    var mode = (editMode) ? '?EditDocument' : '?OpenDocument';
+    var unid = Ext.nd.UIDocument.document.universalID;
+    var pnlId = 'pnl-'+unid;
+    var src = this.dbPath +'0/' + unid + mode;
+    if(this.tabPanel) {
+      var pnl = this.tabPanel.getItem(pnlId);
+      if(pnl) {
+        var iframe = window.parent.Ext.get(unid);
+        if(iframe) {
+          iframe.dom.src = src;
+        }
+        pnl.show();
+      } else {
+        var iframe = Ext.DomHelper.append(document.body, {
+          tag: 'iframe',
+          frameBorder: 0, 
+          src: src,
+          id: unid,
+          style: {width: '100%', height: '100%'}
+        });
+        this.tabPanel.add({
+          id: pnlId,
+          contentEl: iframe.id,
+          title: 'FixMe', 
+          layout: 'fit',
+          closable: true
+        }).show();
+      }
+    } else {
+      window.open(src);
+    }
+  },
+  /**
+  * Handler for @Command([EditDocument]) when called from a view - this is the same code as found in UIView and will be refactored at some point
+  * @param {Boolean} editMode true for edit, false for read mode
+  */
+  openDocumentFromView : function(editMode) {
+    
+    //
+    if (this.tabPanel) {
+      var grid = this.tabPanel.activeTab.items.items[0];
+    } else {
+      return; // not sure how to find the grid if a tabPanel isn't present
+    }
+    
+    var mode = (editMode) ? '?EditDocument' : '?OpenDocument';
+    var title = "Opening...";
+    var ds = grid.getStore();
+    var row = grid.getSelectionModel().getSelected();
+    if (!row) {
+      Ext.Msg.alert('Error','Please select a document');
+      return;
+    }
+    var node = row.node;
+    var unid = node.attributes.getNamedItem('unid');
+    // if a unid does not exist this row is a category so bail
+    if (!unid) { 
+      return;
+    } else {
+      unid = unid.value;
+    }
+    var panelId = 'pnl-' + unid;
+    //var viewUrl = this.getViewUrl(grid);   
+    var viewUrl = '0';
+    var link = viewUrl + '/' + unid + mode     
+
+    if (!this.tabPanel) {
+      window.open(link)
+      return;
+    }
+
+    var entry = this.tabPanel.getItem(panelId);
+
+    if(!entry){ 
+      var iframe = Ext.DomHelper.append(document.body, {
+          tag: 'iframe', 
+          frameBorder: 0, 
+          src: link,
+          id: unid,
+          style: {width: '100%', height: '100%'}
+      });
+      this.tabPanel.add({
+        id: panelId,
+        contentEl: iframe.id,
+        title: Ext.util.Format.ellipsis(title,16), 
+        layout: 'fit',
+        closable: true
+      }).show();
+
+      var panel = Ext.getCmp(panelId);
+
+      var dom = Ext.get(unid).dom;
+      var event = Ext.isIE ? 'onreadystatechange' : 'onload';
+      dom[event] = (function() {
+        var cd = this.contentWindow || window.frames[this.name];
+        var title = cd.document.title;
+        if (title != "") {
+          panel.setTitle(Ext.util.Format.ellipsis(title,16));
+        } else {
+          panel.setTitle("Untitled");
+        }
+      }).createDelegate(dom);
+    } else { // we've already opened this document
+      entry.show();
+    }
+  },
+  /**
+  * Handler for @Command([FileCloseWindow]), will look for a tabPanel and try to close the tab.  Otherwise it attempts
+  * to call the browsers back function, if that fails then it closes the window (if we can't go back then the doc must have
+  * been opened in a new window)
+  */
+  closeDocument : function() {
+    if(this.tabPanel) {
+      this.tabPanel.remove(this.tabPanel.getActiveTab());
+    } else {
+      try {
+        window.back();
+      } catch(e) {
+        window.close();
+      }
+    }
+  },
+  /**
+  * Handler for @Command([FileSave]), for now it just calls the underlying form submit.  In the future will look into
+  *  Ajaxifying the submit.
+  */
+  saveDocument : function() {
+    document.forms[0].submit();
+  },
+  /**
+  * Default handler when the @Formula is not understood by the parser.
+  * @param {String} formula the unparsed formula
+  */
+  unsupportedAtCommand : function(formula) {
+    Ext.Msg.alert('Error', 'Sorry, the @command "' + formula + '" is not currently supported by Ext.nd');
+  }
 });

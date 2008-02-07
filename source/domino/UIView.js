@@ -1,6 +1,75 @@
 /**
  * @class Ext.nd.UIView
- * Makes an AJAX call to readviewentries and translates it into an {@link Ext.nd.grid.DominoGrid}
+ * Makes an Ajax call to readviewentries and translates it into an {@link Ext.nd.grid.DominoGrid}
+ * Simple example where only the viewName and renderTo is set:<pre><code>
+new Ext.nd.UIView({
+  viewName: 'myView1',
+  gridConfig: {
+    renderTo: 'div1'
+  }
+});</pre></code>
+ * More complex example where a custom title is set along with the url of a view in another database:<pre><code>
+new Ext.nd.UIView({
+    viewTitle: 'My View',
+    viewUrl: '/mydb.nsf/someView',
+    viewport: this.viewport,
+    tabPanel: this.tabPanel,
+    container: this.viewContainer,
+    statusPanel : this.statusPanel,
+    gridConfig: {
+      id: 'myCustomGridId'
+    }
+}</pre></code>
+ * @cfg {String} viewName
+ * The name of the view as defined in Domino Designer.  This name will be appended to the full web path
+ * of the database and will be passed along to the Ext.GridPanel
+ * @cfg {String} viewUrl
+ * A full web path to a web accessable view.  ?ReadDesign and ?ReadViewEntries will be appended to this path
+ * in order to get the design and view data.  Use this when you wish to retrieve a view in a database that
+ * is different that the one you are in currently.
+ * @ cfg {String} viewTitle
+ * Use this property to set a custom view title.  On a tab panel, this is the name shown on the tab. 
+ * If you do not set this property, then the view's 'name' as defined in Domino Designer will be used.
+ * @cfg {Object} viewport
+ * If you are utilizing an Ext.Viewport, make sure to pass it into UIView so that it can fix 
+ * sizing issues that can occur
+ * @cfg {Object} tabPanel 
+ * If you want the default opendocument handler to be able to open up new tabs be sure to
+ * pass in the Ext.TabPanel
+ * @cfg {Object} container
+ * An Ext.Container or any derived class (such as a Panel) to render the view into
+ * @cfg {Object} statusPanel
+ * An Ext.Panel that UIView can use to display loading status
+ * @cfg {Object} gridConfig
+ * A config object that is passed directly to the Ext.grid.GridPanel, it can be used to override
+ * any of Ext.nd.UIView's default configurations
+ * @cfg {Boolean} singleSelect
+ * A simple config option passed along to the Ext.grid.RowSelectionModel.  If set row selection
+ * functions as if control was always held down (clicking on a row selects it, clicking again 
+ * removes the selection) (Defaults to false)
+ * @cfg {Boolean} showActionbar
+ * Whether or not UIView should read in the view DXL behind the scences and build an 
+ * Ext.Toolbar from domino actions (Defaults to true)
+ * @cfg {String} showSingleCategory
+ * The name of the initial category to display.  As long as there is a value present UIView will
+ * read in the list of categories and build a combobox that will list the categories and filter 
+ * the grid based off of the selection
+ * @cfg {Boolean} showCategoryComboBox
+ * Set to false to have a single category view fixed on the one you specified (users will not be
+ * shown a combobox, and will not be able to change the category) (Defaults to true)
+ * @cfg {Integer} count
+ * The number of rows per page to display in the grid (Defualts to 40)
+ * @cfg {Boolean} showSearch
+ * Whether the search textfield should be displayed in the toolbar (Defaults to true)
+ * @cfg {Integer} searchCount
+ * The number of rows per page to display in the grid for search results (Defualts to 40)
+ * @cfg {Boolean} searchInPagingToolbar
+ * If set to false the search field and buttons will be rendered into the top toolbar (actionbar)
+ * instead of the bottom toolbar (paging) (Defaults to true - paging)
+ * @cfg {Boolean} showPagingToolbar
+ * If set to false the paging toolbar will never even be created.  WARNING: this means that users
+ * will not be able to access more than a single page worth of data unless other means to control
+ * the grid are built (Defaults to true)
  * @constructor
  * Creates a new UIView component
  * @param {Object} config Configuration options
@@ -8,15 +77,16 @@
 Ext.nd.UIView = function(config) {
 
    var sess = Ext.nd.Session; 
-   var db = sess.CurrentDatabase;
+   var db = sess.currentDatabase;
    
    // defaults
-   this.dbPath = db.WebFilePath;
-   this.count = 40,
-   this.singleSelect = false,
+   this.dbPath = db.webFilePath;
+   this.count = 40;
+   this.singleSelect = false;
    this.viewName = '';
+   this.viewTitle = '';
    this.baseParams = {};
-   this.loadMask = true;
+   this.adjustedHeight = false;
    
    // defaults for actionbar/toolbar
    this.showActionbar = true;
@@ -33,6 +103,8 @@ Ext.nd.UIView = function(config) {
    this.searchCount = 40;
    this.isSearching = false;
    this.searchInPagingToolbar = true;
+   
+   this.showPagingToolbar = true;
    
    // Set any config params passed in to override defaults
    Ext.apply(this,config);
@@ -52,135 +124,25 @@ Ext.nd.UIView = function(config) {
       this.viewName = this.viewUrl.substring(vni);
    }
    
+   // make sure we have a viewTitle
+   if (this.viewTitle == '') {
+      this.viewTitle = this.viewName;
+      this.useViewTitleFromDxl = true;
+   } else {
+      this.useViewTitleFromDxl = false;
+   }
+   
    // init the view, which creates it in the container passed in the config object
    this.init();
 };
 
 Ext.nd.UIView.prototype = {
-
+  // private
   init: function() {
-  
-    // need an actionbar?
-    if (this.showActionbar || this.toolbar) {
-      if (!this.toolbar) {
-         var tb = Ext.DomHelper.append(document.body,{tag: 'div'});
-         this.toolbar = new Ext.nd.Actionbar({
-            container:tb, 
-            noteType:'view', 
-            noteName:this.viewName,
-            useDxl: true
-         });
-         // TODO: this hack is just to make sure the toolbar has a height before the grid loads
-         this.toolbar.addSeparator();
-
-         if (this.showSingleCategory && this.showCategoryComboBox) {
-            var store = new Ext.data.Store({
-               proxy: new Ext.data.HttpProxy({
-                  method:'GET', 
-                  url: this.viewUrl + '?ReadViewEntries&CollapseView&count=' + this.categoryComboBoxCount + '&randomizer='+new Date().getTime()
-               }),
-               reader: new Ext.data.XmlReader({
-                     record: 'viewentry',
-                     totalRecords: '@toplevelentries',
-                     id: '@position'
-                  },[{name:'text'}]
-               )
-            });
-            store.load();         
-            
-            var combo = new Ext.form.ComboBox({
-                store: store,
-                displayField:'text',
-                typeAhead: true,
-                mode: 'local',
-                triggerAction: 'all',
-                emptyText: this.emptyText,
-                value: this.showSingleCategory,
-                selectOnFocus:true,
-                grow: true,
-                resizable: true
-            });
-            this.toolbar.addField(combo);
-            this.toolbar.addSeparator();
-            combo.on('beforeselect',function() { 
-              if(this.isSearching) { 
-                Ext.MessageBox.alert("Error","You must clear the search results before changing categories");
-                return false; // Cancel the select
-              }
-            },this);
-            combo.on('select',this.handleCategoryChange,this);
-         }
-        if (this.showSearch && !this.searchInPagingToolbar) {
-          this.createSearch(this.toolbar);
-        }
-      }
-    } 
-      // now get the rest of the view design
-      this.getViewDesign();
+    this.getViewDesign();
   },
   
-  createSearch: function(toolbar) {
-    this.searchField = new Ext.form.TextField({
-      blankText: "Search view...",
-      name: "extnd-vw-search",
-      width: 100
-    });
-    toolbar.addSeparator();
-    toolbar.addField(this.searchField);
-    toolbar.addButton({text: "Search", scope: this, handler: this.handleViewSearch});
-    toolbar.addSeparator();
-  },
-  
-  handleViewSearch: function() {
-    var qry = this.searchField.getValue();
-    var tb = (this.searchInPagingToolbar)?this.paging:this.toolbar;
-    
-    if (!this.isSearching) {
-      this.oldDataSource = this.grid.getDataSource(); // Save the current DS so we can restore it when search is cleared
-      
-      // define the Domino viewEntry record
-      var viewEntry = Ext.data.Record.create(this.dominoView.recordConfig);
-
-      // create reader that reads viewEntry records
-      var viewEntryReader = new Ext.nd.data.DominoViewXmlReader(this.dominoView.meta, viewEntry);
-      
-      var ds = new Ext.nd.data.DominoViewStore({
-          proxy: new Ext.data.HttpProxy({
-              url: Ext.nd.extndUrl+'($Ext.nd.SearchView)?OpenAgent',
-              method: "GET"
-          }),
-          baseParams: {db: "/"+Ext.nd.Session.CurrentDatabase.FilePath, vw: this.viewName },
-          reader: viewEntryReader,
-          remoteSort: false
-      });
-    
-      this.grid.reconfigure(ds, this.grid.getColumnModel());
-      this.paging.unbind(this.oldDataSource);
-      this.paging.bind(ds);
-      this.isSearching = true; // Set this so we don't create the search datastore multiple times
-      this.clearSearchButton = tb.addButton({text: "Clear Results", scope: this, handler: this.handleClearSearch});
-    }
-    this.grid.getDataSource().load({params:{query: qry, count: this.searchCount, start: 1}});
-  },
-  
-  handleClearSearch: function() {
-    if (this.isSearching) {
-      this.paging.unbind(this.grid.getDataSource());
-      this.paging.bind(this.oldDataSource);
-      this.grid.reconfigure(this.oldDataSource, this.grid.getColumnModel());
-      this.grid.getDataSource().load({params:{start:1}});
-      this.isSearching = false;
-      this.searchField.reset();
-      this.clearSearchButton.destroy();
-    }
-  },
-  
-  handleCategoryChange: function(combo, record, index) {
-    var category = record.data.text;
-    this.grid.dataSource.baseParams.RestrictToCategory = category;
-    this.grid.dataSource.load({params:{start:1}});
-  },
-  
+  // private
   getViewDesign: function() {
     Ext.Ajax.request({
       method: 'GET',
@@ -192,11 +154,16 @@ Ext.nd.UIView.prototype = {
     });
   },
   
-  // Silent fail for now... what should this do? perhaps we can provide an openlog integration that posts back JavaScript errors
+  /**
+  * Override this method to deal with server communication issues as you please
+  * @param {Object} res The Ajax response object
+  */
   getViewDesignFailure: function(res) {
+  // Silent fail for now... what should this do? perhaps we can provide an openlog integration that posts back JavaScript errors
     // alert("Error communicating with the server");
   },
 
+  // private
   getViewDesignCB: function(o) {
     var q = Ext.DomQuery;
     var arColumns = q.select('column',o.responseXML);
@@ -257,7 +224,7 @@ Ext.nd.UIView.prototype = {
         var resorttoviewValue = (resorttoview) ? true : false;
         var resortviewunidValue = (resorttoview) ? q.selectValue('@resortviewunid',col,"") : "";
            
-        var isSortable = (resortascendingValue || resortdescendingValue || resorttoviewValue) ? true : false;
+        var isSortable = (resortascendingValue || resortdescendingValue) ? true : false;
   
         // icon
         var icon = q.selectValue('@icon',col,false);
@@ -280,7 +247,7 @@ Ext.nd.UIView.prototype = {
         datetimeformat.zone  = q.selectValue('@zone',tmpDateTimeFormat);
      
         var columnConfig = {
-           header: title,
+           header: (resorttoviewValue) ? title + "<img src='/icons/viewsort.gif' />" : title,
            align: alignValue,
            dataIndex: name,
            width: width,
@@ -324,6 +291,7 @@ Ext.nd.UIView.prototype = {
     this.createGrid();
   },
 
+  // private
   createGrid: function() {
     var sViewParams = (this.viewParams == undefined) ? "" : this.viewParams;
    
@@ -354,29 +322,55 @@ Ext.nd.UIView.prototype = {
       } catch (e) {}
     }
 
+
     // create a DominoGrid        
-    var dh = Ext.DomHelper;
-    this.grid = new Ext.nd.grid.DominoGrid(dh.append(document.body,{tag: 'div'}), {
-      ds: ds,
+    var panId = "xnd-view-"+Ext.id();
+    this.grid = new Ext.grid.GridPanel(Ext.apply({
+      id: panId,
+      layout: 'fit',
+      store: ds,
       cm: this.cm,
-      selModel: new Ext.grid.RowSelectionModel({singleSelect : this.singleSelect}),
-      enableDragDrop: true,
+      sm: new Ext.grid.RowSelectionModel({singleSelect: this.singleSelect}),
+      enableDragDrop : true,
       ddGroup: 'TreeDD',
-      enableColLock: false,
-      loadMask: this.loadMask
-    });
+      viewConfig: {
+        //forceFit: true
+      },
+      loadMask: true,
+      tbar: (this.toolbar || this.showActionbar || this.showCategoryComboBox) ? new Ext.Toolbar({
+        id:'xnd-view-toolbar-'+Ext.id(),
+        plugins: new Ext.nd.Actionbar({
+          noteType: 'view', 
+          noteName: this.viewName,
+          useDxl: true,
+          useViewTitleFromDxl: this.useViewTitleFromDxl,
+          tabPanel: this.tabPanel || null
+        })
+      }) : null,
+      bbar: (this.showPagingToolbar) ? new Ext.nd.DominoPagingToolbar({
+        store: ds,
+        pageSize: this.count,
+        paramNames: {start: 'start',limit:'count'}
+      }) : null
+    },this.gridConfig));
+    
 
-    // add grid to the container
-    // container can be a string id reference or a dom object, or even an Ext panel
-    var container = (this.container.getEl) ? this.container.getEl() : this.container;
-    var layout = Ext.BorderLayout.create({
-      center: {
-         panels: [new Ext.GridPanel(this.grid, {toolbar: this.toolbar, fitToFrame : true})] 
-      }
-    }, container);
-   
-
-
+    // tabPanel comes from DominoUI 
+    // use 'renderTo' to have view rendered in an existing div
+    if (this.container) {
+      // add grid to the panel
+      var cmp = this.container.add(this.grid);
+      this.container.setTitle(this.viewTitle);
+      this.container.doLayout();
+    }
+    
+    this.toolbar = this.grid.getTopToolbar();
+    if (this.showPagingToolbar) {
+      this.paging = this.grid.getBottomToolbar();
+    }
+    
+    // add extra items to toolbar (search field, single category combobox, etc.)
+    this.addToolbarItems();
 
     // rowdblclick, to open a document
     //this.grid.addListener('rowdblclick',this.openDocument, this, true);
@@ -394,94 +388,205 @@ Ext.nd.UIView.prototype = {
     //this.grid.enableDragDrop = true;
     //this.grid.on('dragdrop',addDocToFolder);
          
-    // render our domino view 'grid'
-    this.grid.render();  
-
-    // setup the paging toolbar   
-    var gridFoot = this.grid.getView().getFooterPanel(true);
-
-    // add a paging toolbar to the grid's footer
-    this.paging = new Ext.nd.DominoPagingToolbar(gridFoot, ds, {pageSize: this.count});
-   
-    if (this.showSearch && this.searchInPagingToolbar) {
+    if (this.showSearch && this.searchInPagingToolbar && this.showPagingToolbar) {
       this.createSearch(this.paging);
     }
-    
-     /* example of adding a button to toolbar
-         paging.add('-', {
-          pressed: true,
-          enableToggle:true,
-          text: 'Detailed View',
-          cls: 'x-btn-text-icon details',
-          toggleHandler: toggleDetails
-        });
-         */
    
+    // This is a pretty bad hack.  We need to dig into the root cause of the grid height issues
+    if (this.viewport) {
+      ds.on('load', this.fixViewHeight, this);
+    }
+    
     // trigger the data store load
-    ds.load({params:{count : this.count}});
-    
-    //this.grid.getView().fitColumns();
+    ds.load({params:{count: this.count, start: 1}});
    
-    /* example for paging toolbar button
-       function toggleDetails(btn, pressed){
-          this.cm.getColumnById('topic').renderer = pressed ? renderTopic : renderTopicPlain;
-          this.cm.getColumnById('last').renderer = pressed ? renderLast : renderLastPlain;
-          this.grid.getView().refresh();
-       }  
-       */
-       
-       /* TODO: work on making the search dialog look just like the Notes version (button text, etc.)
-       this.showQuickSearchDialog = new Ext.LayoutDialog('xnd-view-search',{
-          autoCreate: true,
-          title: 'Starts with...', 
-          msg: 'Search Text',
-          width: 380,
-          height: 100,
-          resizable: false
-       });
-       this.showQuickSearchDialog.addButton('Search',this.quickSearch,this);
-       this.showQuickSearchDialog.addButton('Cancel',this.showQuickSearchDialog.hide,this.showQuickSearchDialog);
-       var qsBody = this.showQuickSearchDialog.body;
-       qsBody.createChild({
-          tag: 'div', 
-          html:'<span class="ext-mb-text">Starts with...</span><input type="text" class="ext-mb-input" id="dwt-view-search-input" name="extnd-view-search-input">'
-       });
-       */
   },
 
-  // Quick utility function to call load on the grid's datastore, allows you to pass in extra parameters if need be.
+  // private
+  fixViewHeight: function() {
+    var adj = this.toolbar.getEl().getHeight() + 7;
+    if(this.paging && this.toolbar && !this.adjustedHeight) {
+      var grd = this.grid.getEl().child('.x-grid3');
+      grd.setHeight(grd.getHeight()-adj);
+      var par = grd.parent();
+      par.setHeight(par.getHeight()-adj);
+      var scroller = this.grid.getEl().child('.x-grid3-scroller');
+      scroller.setHeight(scroller.getHeight()-adj);
+      this.adjustedHeight = true;
+    }
+  },
+
+  // private
+  addToolbarItems: function() {
+    if (this.showSingleCategory && this.showCategoryComboBox) {
+      this.createSingleCategoryComboBox(this.toolbar)
+    }
+
+    if (this.showSearch && !this.searchInPagingToolbar) {
+      this.createSearch(this.toolbar);
+    }
+  },
+
+  // private
+  createSingleCategoryComboBox: function(toolbar) {
+    var store = new Ext.data.Store({
+       proxy: new Ext.data.HttpProxy({
+          method:'GET', 
+          url: this.viewUrl + '?ReadViewEntries&CollapseView&count=' + this.categoryComboBoxCount + '&randomizer='+new Date().getTime()
+       }),
+       reader: new Ext.data.XmlReader({
+             record: 'viewentry',
+             totalRecords: '@toplevelentries',
+             id: '@position'
+          },[{name:'text'}]
+       )
+    });
+    store.load();         
+
+    var cmbId = 'xnd-search-combo-'+Ext.id();
+    toolbar.add({
+        xtype: 'combo',
+        id: cmbId,
+        store: store,
+        displayField:'text',
+        typeAhead: true,
+        mode: 'local',
+        triggerAction: 'all',
+        emptyText: this.emptyText,
+        value: this.showSingleCategory,
+        selectOnFocus:true,
+        grow: true,
+        resizable: true
+    },'-');
+    
+    var combo = Ext.getCmp(cmbId);
+    combo.on('select',this.handleCategoryChange,this);
+  },
+
+  // private
+  createSearch: function(toolbar) {
+    var srchId = 'xnd-vw-search-'+Ext.id();
+    toolbar.add('-',{
+      xtype: 'textfield',
+      blankText: "Search view...",
+      name: "xnd-vw-search",
+      id: srchId,
+      width: 100,
+      listeners: {
+        'specialkey': this.handleViewSearchKey,
+        scope: this
+      }
+    },{
+      xtype: 'button',
+      text: "Search", 
+      scope: this, 
+      handler: this.handleViewSearch
+    },'-');
+    this.searchField = Ext.getCmp(srchId);
+  },
+
+  // private:
+  handleViewSearchKey: function(field, e) {
+    e.preventDefault();
+    if (e.getKey() == Ext.EventObject.ENTER) {
+      this.handleViewSearch();
+    }
+  },
+  // private
+  handleViewSearch: function() {
+    var qry = this.searchField.getValue();
+    var tb = (this.searchInPagingToolbar && this.paging)?this.paging:this.toolbar;
+    
+    if (!this.isSearching) {
+      this.oldDataSource = this.grid.getStore(); // Save the current DS so we can restore it when search is cleared
+      
+      // define the Domino viewEntry record
+      var viewEntry = Ext.data.Record.create(this.dominoView.recordConfig);
+
+      // create reader that reads viewEntry records
+      var viewEntryReader = new Ext.nd.data.DominoViewXmlReader(this.dominoView.meta, viewEntry);
+      
+      var ds = new Ext.nd.data.DominoViewStore({
+          proxy: new Ext.data.HttpProxy({
+              url: Ext.nd.extndUrl+'SearchView?OpenAgent',
+              method: "GET"
+          }),
+          baseParams: {db: "/"+Ext.nd.Session.currentDatabase.filePath, vw: this.viewName },
+          reader: viewEntryReader,
+          remoteSort: false
+      });
+    
+      this.grid.reconfigure(ds, this.grid.getColumnModel());
+      if (this.paging) {
+        this.paging.unbind(this.oldDataSource);
+        this.paging.bind(ds);
+      }
+      this.isSearching = true; // Set this so we don't create the search datastore multiple times
+      this.clearSearchButton = tb.addButton({text: "Clear Results", scope: this, handler: this.handleClearSearch});
+    }
+    this.grid.getStore().load({params:{query: qry, count: this.searchCount, start: 1}});
+  },
+
+  // private
+  handleClearSearch: function() {
+    if (this.isSearching) {
+      if (this.paging) {
+        this.paging.unbind(this.grid.getStore());
+        this.paging.bind(this.oldDataSource);
+      }
+      this.grid.reconfigure(this.oldDataSource, this.grid.getColumnModel());
+      this.grid.getStore().load({params:{start:1}});
+      this.isSearching = false;
+      this.searchField.reset();
+      this.clearSearchButton.destroy();
+    }
+  },
+
+  // private
+  handleCategoryChange: function(combo, record, index) {
+    var category = record.data.text;
+    this.grid.getStore().baseParams.RestrictToCategory = category;
+    this.grid.getStore().load({params:{start:1}});
+  },
+  
+  /**
+  * Quick utility function to call load on the grid's datastore
+  * @param {Object} extraParams
+  * Any additional parameters to pass back to the server
+  */
   refresh: function(extraParams) {
     var params = Ext.apply({count: this.count},extraParams);
-    this.grid.getDataSource().load(params);
+    this.grid.getStore().load(params);
   },
 
+  // private
   dominoRenderer: function(value, cell, row, rowIndex, colIndex,dataStore) {
-   var args = arguments;
-   var colConfig = this.cm.config[colIndex];
+    var args = arguments;
+    var colConfig = this.cm.config[colIndex];
 
-   // get the viewentry for this row
-   var viewentry = row.node;
-   var dsItem = dataStore.data.items[rowIndex + 1]
-   var nextViewentry = (dsItem) ? dsItem.data.node : null;
+    // get the viewentry for this row
+    var viewentry = row.node;
+    var dsItem = dataStore.data.items[rowIndex + 1]
+    var nextViewentry = (dsItem) ? dsItem.data.node : null;
 
-   // does this row have 'children' - would mean that it is a category or has response docs under it
-   var hasChildren = viewentry.attributes.getNamedItem('children');
+    // does this row have 'children' - would mean that it is a category or has response docs under it
+    var hasChildren = viewentry.attributes.getNamedItem('children');
 
-   // is this row a response 
-   var isResponse = viewentry.attributes.getNamedItem('response');
+    // is this row a response 
+    var isResponse = viewentry.attributes.getNamedItem('response');
 
-   // indent padding
-   var viewentryPosition = viewentry.attributes.getNamedItem('position').value;
-   var viewentryLevel = viewentryPosition.split('.').length;
+    // indent padding
+    var viewentryPosition = viewentry.attributes.getNamedItem('position').value;
+    var viewentryLevel = viewentryPosition.split('.').length;
 
-   // for the expand/collapse icon width + indent width
-   var sCollapseImage = '<img src="/icons/collapse.gif" style="vertical-align:bottom; padding-right:4px;"/>';
-   var sExpandImage = '<img src="/icons/expand.gif" style="vertical-align:bottom; padding-right:4px;"/>';
-   var indentPadding = (20 * viewentryLevel) + "px";
-   var indentPaddingNoIcon = (20 + (20 * viewentryLevel)) + "px"; 
+    // for the expand/collapse icon width + indent width
+    var sCollapseImage = '<img src="/icons/collapse.gif" style="vertical-align:bottom; padding-right:4px;"/>';
+    var sExpandImage = '<img src="/icons/expand.gif" style="vertical-align:bottom; padding-right:4px;"/>';
+    var indentPadding = (20 * viewentryLevel) + "px";
+    var indentPaddingNoIcon = (20 + (20 * viewentryLevel)) + "px"; 
 
-   // has children and is a categorized column
-   if (hasChildren && colConfig.sortcategorize) {
+    // has children and is a categorized column
+    if (hasChildren && colConfig.sortcategorize) {
       cell.css = " xnd-view-expand xnd-view-category";   
       cell.attr = "style='position: absolute;'";
       if (nextViewentry) {
@@ -495,9 +600,9 @@ Ext.nd.UIView.prototype = {
       } else { // should be a categorized column on the last row
          value = sExpandImage + this.getValue(value, colConfig);
       }
-   } 
-   // has children but is NOT a response, so therefore, must be a regular doc with response docs
-   else if (hasChildren && !isResponse && colConfig.response) {
+    } 
+    // has children but is NOT a response, so therefore, must be a regular doc with response docs
+    else if (hasChildren && !isResponse && colConfig.response) {
       cell.css = "xnd-view-expand xnd-view-category"; 
       cell.attr = "style='position: absolute;'";
       if (nextViewentry) {
@@ -511,9 +616,9 @@ Ext.nd.UIView.prototype = {
       } else { // should be a categorized column on the last row
          value = sExpandImage + this.getValue(value, colConfig);
       }
-   }  
-   // has children and IS a response doc
-   else if (hasChildren && isResponse && colConfig.response) { 
+    }  
+    // has children and IS a response doc
+    else if (hasChildren && isResponse && colConfig.response) { 
       cell.css = "xnd-view-expand xnd-view-response"; 
       cell.attr = "style='position: absolute; padding-left:" + indentPadding + ";'"; // TODO: need to figure out how to STYLE the cell
       if (nextViewentry) {
@@ -527,56 +632,47 @@ Ext.nd.UIView.prototype = {
       } else { // should be a categorized column on the last row
          value = sExpandImage + this.getValue(value, colConfig);
       }
-   }  
-   // does NOT have children and IS a response doc
-   else if (!hasChildren && isResponse && colConfig.response) { 
+    }  
+    // does NOT have children and IS a response doc
+    else if (!hasChildren && isResponse && colConfig.response) { 
       cell.css = "xnd-view-response";  
       cell.attr = "style='position: absolute; padding-left:" + indentPaddingNoIcon + ";'"; // notice we use the padding that has the extra 19px since no icon is shown
       value = this.getValue(value, colConfig);
-   }  
-   // just normal data
-   else {
+    }  
+    // just normal data
+    else {
       value = this.getValue(value, colConfig);
-   }
+    }
   
-   return value;
+    return value;
   
   },
 
   
   getValue: function(value, colConfig) {
-  
-   var dataType, newValue, tmpDate, tmpDateFmt, separator;
-   
-   switch (colConfig.listseparator) {
-      
+    var dataType, newValue, tmpDate, tmpDateFmt, separator;
+    switch (colConfig.listseparator) {
       case "none" :
          separator = '';
          break;
-         
       case "space" :
          separator = ' ';
          break;
-         
       case "comma" :
          separator = ',';
          break;
-         
       case "newline" :
          separator = '<br/>';
          break;
-         
       case "semicolon" :
          separator = ';';
          break;
-         
       default : 
          separator = '';
-     
-   }
+    }
    
-   newValue = '';
-   for (var i=0, len=value.data.length; i<len; i++) {
+    newValue = '';
+    for (var i=0, len=value.data.length; i<len; i++) {
       var sep = (i+1 < len) ? separator : '';
       dataType = value.type; // set in the DominoViewXmlReader.getNamedValue method
       var tmpValue = value.data[i];
@@ -591,55 +687,43 @@ Ext.nd.UIView.prototype = {
             return '<img src="/icons/vwicn' + newValue + '.gif"/>';
          }
       } else {
-   
-         switch (dataType) {
+        switch (dataType) {
+          case 'datetime':
+            var dtf = colConfig.datetimeformat;
+            if (tmpValue.indexOf('T') > 0) {
+              tmpDate = tmpValue.split(',')[0].replace('T','.');
+              tmpDateFmt = "Ymd.His";
+            } else {
+              tmpDate = tmpValue;
+              tmpDateFmt = "Ymd";
+            }
+            var d = new Date(Date.parseDate(tmpDate,tmpDateFmt));
+            switch (dtf.show) {
+              case 'date':
+                tmpValue = d ? d.dateFormat("m/d/Y") : '';
+                break;
+              case 'datetime':
+                tmpValue = d ? d.dateFormat("m/d/Y h:i:s A") : '';
+                break;
+            }
+            break;
+          case 'text':
+            tmpValue = tmpValue;
+            break;
+          case 'number':
+            tmpValue = tmpValue;
+            break;
+          default:
+            tmpValue = tmpValue;
+        } // end switch
 
-            // dates
-            case 'datetime':
-               var dtf = colConfig.datetimeformat;
-               if (tmpValue.indexOf('T') > 0) {
-                  tmpDate = tmpValue.split(',')[0].replace('T','.');
-                  tmpDateFmt = "Ymd.His";
-               } else {
-                  tmpDate = tmpValue;
-                  tmpDateFmt = "Ymd";
-               }
-               var d = new Date(Date.parseDate(tmpDate,tmpDateFmt));
-               switch (dtf.show) {
-                  case 'date':
-                     tmpValue = d ? d.dateFormat("m/d/Y") : '';
-                     break;
-                  case 'datetime':
-                     tmpValue = d ? d.dateFormat("m/d/Y h:i:s A") : '';
-                     break;
-                  }
-               break;
-   
-            // text
-            case 'text':
-               tmpValue = tmpValue;
-               break;
-   
-            // numbers
-            case 'number':
-               tmpValue = tmpValue;
-               break;
-
-            // default
-            default:
-               tmpValue = tmpValue;
-         } // end switch
-         
-         newValue = newValue + tmpValue + sep;
-         
+        newValue = newValue + tmpValue + sep; 
       } // end if (colConfig.icon)
-  
-   } // end for
-   
-      return newValue;
+    } // end for
+    return newValue;
   },
- 
-  
+
+  // private
   gridHandleKeyDown: function(e) {
     if (e.getTarget().name == "extnd-vw-search") {
       return;
@@ -650,7 +734,7 @@ Ext.nd.UIView.prototype = {
    
     target = e.getTarget();
     row = this.grid.selModel.getSelected();
-    rowIndex = this.grid.dataSource.indexOf(row);
+    rowIndex = this.grid.getStore().indexOf(row);
 
     // for now, we won't worry about the altKey
     if (e.altKey) { 
@@ -706,14 +790,14 @@ Ext.nd.UIView.prototype = {
         break;
       default :
         if (row) { // don't process if not typing from a row in the grid
-          Ext.MessageBox.prompt( 'Search Text', 'Starts with...', this.quickSearch, this)
-          //this.showQuickSearchDialog.show();            
+          Ext.MessageBox.prompt( 'Search Text', 'Starts with...', this.quickSearch, this);
         }
     } 
   },
 
+  // private
   quickSearch: function(btn, text) {
-    var ds = this.grid.getDataSource();
+    var ds = this.grid.getStore();
     if (btn == 'ok') {
       // first, remove the start param from the lastOptions.params
       delete ds.lastOptions.params.start;
@@ -722,14 +806,7 @@ Ext.nd.UIView.prototype = {
     }
   },
   
-  quickSearch_EXPERIMENT: function() {
-    this.showQuickSearchDialog.hide();
-    var vsi = Ext.get('extnd-view-search-input').dom;
-    var s = vsi.value;
-    vsi.value = ""; // reset for next search  
-    Ext.MessageBox.alert('Coming Soon','this is where we would make an XHR call to view?readviewentries&startkey=' + s)
-  },
-  
+  // private
   gridHandleHeaderClick: function(grid, colIndex, e) {
     var colConfig = this.cm.config[colIndex];
     if (colConfig.resortviewunid != "") {
@@ -738,30 +815,42 @@ Ext.nd.UIView.prototype = {
       e.stopEvent(); // TODO: for some reason this doesn't work and the event is still propagated to the headerClick event of the DominoViewStore
       
       // delete the current grid
-      if (this.grid) {
-        try {
-          this.grid.destroy();
-        } catch(e) {}
-      }
+      this.removeFromContainer();
+ 
+      // get the url to the db this view is in
+      var dbUrl = this.getViewUrl(grid);
+      dbUrl = dbUrl.substring(0,dbUrl.lastIndexOf('/')+1);
+      
       // now display this new view
-      this.grid = new Ext.nd.UIView({
-        layout : this.layout,
-        viewUrl : colConfig.resortviewunid,
-        viewParams : "",
+      this.uiView = new Ext.nd.UIView({
+        viewport : this.viewport,
+        tabPanel : this.tabPanel,
         container : this.container,
+        viewUrl : dbUrl + colConfig.resortviewunid,
+        viewParams : "",
+        showActionbar : this.showActionbar,
         statusPanel : this.statusPanel
       });
     } 
   },
 
+  // private
+  removeFromContainer: function() {
+    if (this.grid) {
+      this.container.remove(this.grid.id);
+    }
+  },
+
+  // private
   gridHandleCellClick: function(grid, rowIndex, colIndex, e) {
     var node, unid;
     //alert('cell clicked')
   },
-  
+
+  // private
   gridHandleRowContextMenu: function(grid, rowIndex, e) {
     e.stopEvent();
-   
+
     var menu = new Ext.menu.Menu({
       id : 'xnd-context-menu'
     });
@@ -771,8 +860,7 @@ Ext.nd.UIView.prototype = {
     menu.add({editMode : true, text : 'Edit', handler : this.gridContextMenuOpenDocument, scope: this});
     menu.addSeparator();
     menu.add({text : 'Search This View', handler : this.gridContextMenuSearchView, scope: this});
-   
-   
+
     // tell menu which row is selected and show menu
     menu.grid = grid;
     menu.rowIndex = rowIndex;
@@ -780,6 +868,7 @@ Ext.nd.UIView.prototype = {
     menu.showAt([coords[0], coords[1]]);
   },
 
+  // private
   gridContextMenuSearchView: function() {
     if (!this.showSearch) {
       Ext.MessageBox.alert('Search View', 'showSearch must be enabled for the view');
@@ -788,6 +877,7 @@ Ext.nd.UIView.prototype = {
     }
   },
 
+  // private
   handleContextMenuSearch: function(btn, text) {
     if(btn == "ok" && text) {
       this.searchField.setValue(text);
@@ -795,55 +885,16 @@ Ext.nd.UIView.prototype = {
     }
   },
   
+  // private
   gridContextMenuShowDocumentPropertiesDialog: function() {
     Ext.MessageBox.alert('Document Properties', 'In a future release, you will see a document properties box.');
     return;
-    if(!this.dialog){ // lazy initialize the dialog and only create it once
-      this.dialog = new Ext.LayoutDialog("hello-dlg", { 
-        modal:true,
-        width:600,
-        height:400,
-        shadow:true,
-        minWidth:300,
-        minHeight:300,
-        west: {
-          split:true,
-          initialSize: 150,
-          minSize: 100,
-          maxSize: 250,
-          titlebar: true,
-          collapsible: true,
-          animate: true
-        },
-        center: {
-          autoScroll:true,
-          tabPosition: 'top',
-          closeOnTab: true,
-          alwaysShowTabs: true
-        }
-      });
-      dialog.addKeyListener(27, dialog.hide, dialog);
-      dialog.addButton('Submit', dialog.hide, dialog);
-      dialog.addButton('Close', dialog.hide, dialog);
-
-      var layout = dialog.getLayout();
-      layout.beginUpdate();
-      layout.add('west', new Ext.ContentPanel('west', {title: 'West'}));
-      layout.add('center', new Ext.ContentPanel('center', {title: 'The First Tab'}));
-      // generate some other tabs
-      layout.add('center', new Ext.ContentPanel(Ext.id(), {
-              autoCreate:true, title: 'Another Tab', background:true}));
-      layout.add('center', new Ext.ContentPanel(Ext.id(), {
-              autoCreate:true, title: 'Third Tab', closable:true, background:true}));
-      layout.endUpdate();
-    }
-    dialog.show(showBtn.dom);
   },
   
+  // private
   gridDeleteDocumentSuccess: function(o) {
-    //alert("The document was successfully deleted.");
     var row = o.argument;
-    var ds = this.grid.getDataSource();
+    var ds = this.grid.getStore();
     var sm = this.grid.selModel;
     var rowIndex = ds.indexOf(row);
     if (rowIndex == ds.data.length) {
@@ -854,35 +905,36 @@ Ext.nd.UIView.prototype = {
     ds.remove(row);
   },
   
+  // private
   removeRow: function(row) {
     ds.remove(row);
   },
   
+  // private
   gridDeleteDocumentFailure: function(o) {
     Ext.MessageBox.alert('Delete Error','The document could not be deleted.  Please check your access.')
   },
   
+  // private
   gridHandleRowsDeleted: function(row) {
     // TODO: we should fetch more data as rows are being deleted
   },
 
+  // private
   gridHandleBeforeLoad: function(dm) {
     //alert('handle before load of the datamodel')
   },
   
+  // private
   loadView: function(view, dm) {
     if (this.statusPanel) {
-      this.viewTitle = (typeof this.viewTitle == 'undefined') ? "" : this.viewTitle;
       this.statusPanel.setContent('Loading view ' + this.viewTitle + '...');
       this.statusPanel.getEl().removeClass('done');
     }
     ds.loadPage(1);
   },
   
-  showError: function() {
-    Ext.MessageBox.alert('Error','An error occurred.');
-  },
-
+  // private
   gridContextMenuOpenDocument: function(action, e) {
     var grid = action.parentMenu.grid;
     var rowIndex = action.parentMenu.rowIndex;
@@ -890,11 +942,12 @@ Ext.nd.UIView.prototype = {
     this.openDocument(grid, rowIndex, e, bEditMode);   
   },
   
+  // private
   openDocument: function(grid, rowIndex, e, bEditMode) {
     var mode = (bEditMode) ? '?EditDocument' : '?OpenDocument';
     var title = "Opening...";
-    var ds = grid.getDataSource();
-    var row = grid.selModel.getSelected();
+    var ds = grid.getStore();
+    var row = grid.getSelectionModel().getSelected();
     var node = row.node;
     var unid = node.attributes.getNamedItem('unid');
     // if a unid does not exist this row is a category so bail
@@ -903,65 +956,67 @@ Ext.nd.UIView.prototype = {
     } else {
       unid = unid.value;
     }
+    var panelId = 'pnl-' + unid;
     var viewUrl = this.getViewUrl(grid);   
     var link = viewUrl + '/' + unid + mode     
 
-    if (!this.layout) {
+    if (!this.tabPanel) {
       window.open(link)
       return;
     }
       
-    var entry = this.layout.getRegion('center').getPanel(unid);
+    var entry = this.tabPanel.getItem(panelId);
             
     if(!entry){ 
       var iframe = Ext.DomHelper.append(document.body, {
-        tag: 'iframe', 
-        frameBorder: 0, 
-        src: link,
-        id : unid
+          tag: 'iframe', 
+          frameBorder: 0, 
+          src: link,
+          id: unid,
+          style: {width: '100%', height: '100%'}
       });
-      var panel = new Ext.ContentPanel(iframe, {
+      this.tabPanel.add({
+        id: panelId,
+        contentEl: iframe.id,
         title: Ext.util.Format.ellipsis(title,16), 
-        fitToFrame:true, 
-        closable:true
-      });
-      this.layout.add('center', panel);
+        layout: 'fit',
+        closable: true
+      }).show();
       
-      // wait half a second for the iframe to start loading the page, then grab it's title
-      var readyState;
-      var id = setInterval( function() {
-        try {
-          var oContentDocument;
-          if (document.getElementById(unid).contentDocument) {
-            oContentDocument = document.getElementById(unid).contentDocument;
-          } else {
-            oContentDocument = document.frames[unid].document;
-          }
-          readyState = oContentDocument.readyState;
-          if (readyState == 'complete') {
-            title = oContentDocument.title;
-            if (title != "") {
-              panel.setTitle(Ext.util.Format.ellipsis(title,16));
-            } else {
-              panel.setTitle("Untitled");
-            }
-            clearInterval(id);
-          }
-        } catch (e) {clearInterval(id); }
-      }, 50);
+      var panel = Ext.getCmp(panelId);
+      
+      var dom = Ext.get(unid).dom;
+      var event = Ext.isIE ? 'onreadystatechange' : 'onload';
+      dom[event] = (function() {
+        var cd = this.contentWindow || window.frames[this.name];
+        var title = cd.document.title;
+        if (title != "") {
+          panel.setTitle(Ext.util.Format.ellipsis(title,16));
+        } else {
+          panel.setTitle("Untitled");
+        }
+      }).createDelegate(dom);
+      
     } else { // we've already opened this document
-      this.layout.showPanel(entry);
+      entry.show();
     }
   },
   
-  // set the default rowdblclick to openDocument
-  // if you need a view to do something different on a rowdblclick, then you can override this method
+  /**
+  * set the default rowdblclick to openDocument
+  * if you need a view to do something different on a rowdblclick, then you can override this method
+  * @param {Grid} grid
+  * @param {Number} rowIndex
+  * @param {Ext.EventObject} e
+  * @param {Boolean} bEditMode
+  */
   gridHandleRowDblClick: function(grid, rowIndex, e, bEditMode) {
     this.openDocument(grid, rowIndex, e, bEditMode);
   },
-  
+
+  // private
   deleteDocument: function(grid, rowIndex, e) {
-    var ds = grid.getDataSource();
+    var ds = grid.getStore();
     var row = grid.selModel.getSelected();
     var node = row.node;
     var unid = node.attributes.getNamedItem('unid');
@@ -989,12 +1044,13 @@ Ext.nd.UIView.prototype = {
       });
     }
   },
-  
+
+  // private
   getViewUrl: function(grid) {
     if (this.isSearching) {
       return this.viewName;
     } else {
-      var viewUrlTmp = grid.getDataSource().proxy.conn.url;
+      var viewUrlTmp = grid.getStore().proxy.conn.url;
       var iLocReadViewEntries = viewUrlTmp.toLowerCase().indexOf('readviewentries') - 1; // in case ! is used instead of ?
       var viewUrl = viewUrlTmp.substring(0,iLocReadViewEntries)
       return viewUrl;

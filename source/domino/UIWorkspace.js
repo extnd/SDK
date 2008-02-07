@@ -1,6 +1,5 @@
 /**
  * @class Ext.nd.UIWorkspace
- * Currently in-progress and not considered functional
  * @constructor
  * Create a new UIWorkspace component
  * @param {Object} config Configuration options
@@ -22,12 +21,12 @@ Ext.nd.UIWorkspace.prototype = {
    */
   PickList : function(config) {
     var dialog, cb;
-    var sess = Ext.nd.Session; 
-    var db = sess.CurrentDatabase;
+    this.sess = Ext.nd.Session; 
+    this.db = this.sess.currentDatabase;
 
     // defaults
     this.server = "";
-    this.dbPath = db.WebFilePath;
+    this.dbPath = this.db.webFilePath;
     this.viewName = "";
     this.width = 500;
     this.height = 400;
@@ -36,6 +35,8 @@ Ext.nd.UIWorkspace.prototype = {
     this.minHeight = 400;
     this.type = "custom";
     this.select = "single";
+    this.showActionbar = false;
+    this.showSearch = true;
 
     this.viewOptions = "";
     
@@ -53,7 +54,18 @@ Ext.nd.UIWorkspace.prototype = {
     Ext.apply(this,config);
 
     // viewUrl is either passed in or built from dbPath and viewName
-    this.viewUrl = (this.viewUrl) ? this.viewUrl : this.dbPath + this.viewName;
+    switch (this.type) {
+      case "custom" :
+        this.viewUrl = (this.viewUrl) ? this.viewUrl : this.dbPath + this.viewName;
+        break;
+
+      case "names" :
+        this.viewUrl = this.sess.addressBooks[0].webFilePath + '($PeopleGroupsFlat)';
+        break;
+
+      default :
+         this.viewUrl = (this.viewUrl) ? this.viewUrl : this.dbPath + this.viewName;
+    } //end switch(this.type)
 
     // move the callback to a local variable
     if (this.callback) {
@@ -74,8 +86,9 @@ Ext.nd.UIWorkspace.prototype = {
 
     // build the dialog/PickList     
     if(!dialog){ 
-      dialog = new Ext.LayoutDialog('xnd-picklist', { 
-        autoCreate: true,
+      dialog = new Ext.Window({
+        id: 'xnd-picklist',
+        layout: 'border',
         modal:true,
         width:this.width,
         height:this.height,
@@ -83,46 +96,39 @@ Ext.nd.UIWorkspace.prototype = {
         minWidth:this.minWidth,
         minHeight:this.minHeight,
         title:this.title,
-        north : {
-          titlebar : true
-        },
-        center : {
-          autoScroll:true
-        }
+        items: [{
+          region: 'north',
+          titlebar: true,
+          title : this.prompt,
+          id: 'xnd-picklist-prompt'
+        },{
+          region: 'center',
+          layout:'fit',
+          id:'xnd-picklist-view',
+          title : this.title
+        }]
       });
-      dialog.addKeyListener(27, handleOK, this);
+      //dialog.addKeyListener(27, handleOK, this);
       dialog.addButton('OK', handleOK, this);
       dialog.addButton('Cancel', handleCancel, this);
 
-      // creae layout           
-      var layout = dialog.getLayout();
-      layout.beginUpdate();
-
-      // add prompt panel
-      var promptPanel = layout.add('north', new Ext.ContentPanel('xnd-picklist-prompt', {autoCreate : true, title : this.prompt}));
-
-      // create view panel
-      var viewPanel = layout.add('center', new Ext.ContentPanel('xnd-picklist-view', {
-        autoCreate : true,
-        title : this.title,
-        closable : false,
-        fitToFrame : true
-      }));
 
       // now create the view
       this.uiView = new Ext.nd.UIView(Ext.apply({
-        container : viewPanel,
+        container : Ext.getCmp('xnd-picklist-view'),
+        header: false,
         viewUrl : this.viewUrl,
         gridHandleRowDblClick : handleOK.createDelegate(this),
         showSingleCategory : this.showSingleCategory,
         emptyText : this.emptyText,
         showCategoryComboBox : this.showCategoryComboBox,
-        categoryComboBoxCount : this.categoryComboBoxCount
+        categoryComboBoxCount : this.categoryComboBoxCount,
+        
+        showActionbar : this.showActionbar,
+        showSearch : this.showSearch
+        
       },this.viewOptions));
-
-      // tell the layout we are done so it can draw itself on the screen
-      layout.endUpdate();
-
+      
     } // end if(!dialog)
       
     // now show our custom dialog 
