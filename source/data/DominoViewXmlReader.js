@@ -42,20 +42,24 @@ Ext.extend(Ext.nd.data.DominoViewXmlReader, Ext.data.XmlReader, {
       var records = [];
       var ns = q.select(this.meta.record, root);
       for(var i = 0, len = ns.length; i < len; i++) {
-         var n = ns[i];
-         var values = {};
-         var id = sid ? q.selectValue(sid, n) : undefined;
-         for(var j = 0, jlen = fields.length; j < jlen; j++){
-            var f = fields.items[j];
-            //var v = q.selectValue(f.mapping || f.name, n, f.defaultValue);
-            // we use '.mapping' since it is the columnnumber and '.name' may not have a value
-            var v = this.getViewColumnValue(n, f.mapping, f.defaultValue);
-            v = f.convert(v);
-            values[f.name] = v;
-         }
-         var record = new recordType(values, id);
-         record.node = n;
-         records[records.length] = record;
+				var n = ns[i];
+				var values = {};
+				var id = sid ? q.selectValue(sid, n) : undefined;
+				for(var j = 0, jlen = fields.length; j < jlen; j++){
+				  var f = fields.items[j];
+				  //var v = q.selectValue(f.mapping || f.name, n, f.defaultValue);
+				  // we use '.mapping' since it is the columnnumber and '.name' may not have a value
+				  var v = this.getViewColumnValue(n, f.mapping, f.defaultValue);
+				  v = f.convert(v);
+				  values[f.name] = v;
+				}
+				var record = new recordType(values, id);
+				record.node = n;
+				records[records.length] = record;
+ 
+	      record.hasChildren = n.attributes.getNamedItem('children');
+		    record.isResponse = n.attributes.getNamedItem('response');
+		    record.position = n.attributes.getNamedItem('position').value;
       }
       
       return {
@@ -88,20 +92,8 @@ Ext.extend(Ext.nd.data.DominoViewXmlReader, Ext.data.XmlReader, {
          
          if(cn == colNbr) {
 
-            // try text
-            type = 'text';
-            data = q.select(type,entryDataNodes[i]);
-                        
-            if (data.length == 0) {
-               type = 'datetime';
-               data = q.select(type,entryDataNodes[i]);
-            }
-            
-            if (data.length == 0) {
-               type = 'number';
-               data = q.select(type,entryDataNodes[i]);
-            }
-                        
+         		type = entryDataNodes[i].lastChild.nodeName;
+      			
             // now get the data
             oValue = this.getValue(entryDataNodes[i], type);
 

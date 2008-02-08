@@ -432,7 +432,7 @@ Ext.nd.UIView.prototype = {
     var store = new Ext.data.Store({
        proxy: new Ext.data.HttpProxy({
           method:'GET', 
-          url: this.viewUrl + '?ReadViewEntries&CollapseView&count=' + this.categoryComboBoxCount;
+          url: this.viewUrl + '?ReadViewEntries&CollapseView&count=' + this.categoryComboBoxCount
        }),
        reader: new Ext.data.XmlReader({
              record: 'viewentry',
@@ -560,7 +560,7 @@ Ext.nd.UIView.prototype = {
   },
 
   // private
-  dominoRenderer: function(value, cell, row, rowIndex, colIndex,dataStore) {
+  dominoRenderer: function(value, cell, row, rowIndex, colIndex, dataStore) {
     var args = arguments;
     var colConfig = this.cm.config[colIndex];
 
@@ -570,18 +570,18 @@ Ext.nd.UIView.prototype = {
     var nextViewentry = (dsItem) ? dsItem.data.node : null;
 
     // does this row have 'children' - would mean that it is a category or has response docs under it
-    var hasChildren = viewentry.attributes.getNamedItem('children');
+    var hasChildren = row.hasChildren;
 
     // is this row a response 
-    var isResponse = viewentry.attributes.getNamedItem('response');
+    var isResponse = row.isResponse;
 
     // indent padding
-    var viewentryPosition = viewentry.attributes.getNamedItem('position').value;
+    var viewentryPosition = row.position;
     var viewentryLevel = viewentryPosition.split('.').length;
 
     // for the expand/collapse icon width + indent width
-    var sCollapseImage = '<img src="/icons/collapse.gif" style="vertical-align:bottom; padding-right:4px;"/>';
-    var sExpandImage = '<img src="/icons/expand.gif" style="vertical-align:bottom; padding-right:4px;"/>';
+    var sCollapseImage = '<img src="'+Ext.nd.extUrl+'resources/images/default/tree/elbow-minus-nl.gif" style="padding-right:4px;"/>';
+    var sExpandImage = '<img src="'+Ext.nd.extUrl+'resources/images/default/tree/elbow-plus-nl.gif" style="padding-right:4px;"/>';
     var indentPadding = (20 * viewentryLevel) + "px";
     var indentPaddingNoIcon = (20 + (20 * viewentryLevel)) + "px"; 
 
