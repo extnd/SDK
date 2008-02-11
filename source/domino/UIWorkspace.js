@@ -1,7 +1,9 @@
 /**
  * @class Ext.nd.UIWorkspace
- * @constructor
  * Create a new UIWorkspace component
+ * Simple example<pre><code>
+var ws = new Ext.nd.UIWorkspace();</pre></code>
+ * @constructor
  * @param {Object} config Configuration options
  */
 Ext.nd.UIWorkspace = function(config) {
@@ -15,6 +17,16 @@ Ext.nd.UIWorkspace.prototype = {
    *  stringArray = notesUIWorkspace.PickListStrings( type% [, multipleSelection ] )
    *  stringArray = notesUIWorkspace.PickListStrings( type% [, multipleSelection ], server$, databaseFileName$, viewName$, title$, prompt$, column% [, categoryname$ ] )
    *  @PickList( [CUSTOM] : [SINGLE] ; server : dbPath ; viewName ; title ; prompt ; column ; categoryname  )
+   * Example showing how to call the PickList method<pre><code>
+var ws = new Ext.nd.UIWorkspace();
+ws.PickList({
+  type : "custom",
+  viweName : "yourView",
+  title : "some title",
+  prompt : "your prompt text",
+  column : 1,
+  callback : someFunction
+});</pre></code>
    * 
    *  @param {String/Integer/Object} type or a config object
    *  
@@ -166,7 +178,17 @@ Ext.nd.UIWorkspace.prototype = {
 
   },
 
-
+ /**
+  * Modeled after NotesUIWorkspace.Prompt
+  * @cfg {String} type
+  * 
+  * @cfg {String} title
+  * 
+  * @cfg {String} prompt
+  * 
+  * @cfg {String} callback
+  * 
+  */
   Prompt : function() {
     var cb;
     this.type = "ok";
