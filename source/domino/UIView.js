@@ -333,6 +333,7 @@ Ext.nd.UIView.prototype = {
       sm: new Ext.grid.RowSelectionModel({singleSelect: this.singleSelect}),
       enableDragDrop : true,
       ddGroup: 'TreeDD',
+      viewName: this.viewName,
       viewConfig: {
         //forceFit: true
       },
@@ -818,7 +819,7 @@ Ext.nd.UIView.prototype = {
       this.removeFromContainer();
  
       // get the url to the db this view is in
-      var dbUrl = this.getViewUrl(grid);
+      var dbUrl = this.viewUrl;
       dbUrl = dbUrl.substring(0,dbUrl.lastIndexOf('/')+1);
       
       // now display this new view
@@ -957,8 +958,7 @@ Ext.nd.UIView.prototype = {
       unid = unid.value;
     }
     var panelId = 'pnl-' + unid;
-    var viewUrl = this.getViewUrl(grid);   
-    var link = viewUrl + '/' + unid + mode     
+    var link = this.viewUrl + '/' + unid + mode     
 
     if (!this.tabPanel) {
       window.open(link)
@@ -1026,9 +1026,8 @@ Ext.nd.UIView.prototype = {
     } else {
       unid = unid.value;
     }
-    //var link = '0/' + unid + '?OpenDocument';  
-    var viewUrl = this.getViewUrl(grid);   
-    var deleteDocUrl = viewUrl + '/' + unid + '?DeleteDocument'
+
+    var deleteDocUrl = this.viewUrl + '/' + unid + '?DeleteDocument'
     var docExists = this.layout.getRegion('center').getPanel(unid);
    
     if (docExists) {
@@ -1043,17 +1042,6 @@ Ext.nd.UIView.prototype = {
         url: deleteDocUrl
       });
     }
-  },
-
-  // private
-  getViewUrl: function(grid) {
-    if (this.isSearching) {
-      return this.viewName;
-    } else {
-      var viewUrlTmp = grid.getStore().proxy.conn.url;
-      var iLocReadViewEntries = viewUrlTmp.toLowerCase().indexOf('readviewentries') - 1; // in case ! is used instead of ?
-      var viewUrl = viewUrlTmp.substring(0,iLocReadViewEntries)
-      return viewUrl;
-    }
   }
+  
 };
