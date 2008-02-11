@@ -27,6 +27,7 @@ Ext.nd.UIOutline = function(config) {
 
    // defaults      
    this.dbPath = db.webFilePath;
+   this.filePath = db.filePath;
    this.outlineName = '';
    this.useOutlineIcons = false;
 
@@ -69,7 +70,12 @@ Ext.nd.UIOutline.prototype = {
         ddGroup: 'TreeDD',
         autoScroll: true,
         containerScroll : true,
-        dropConfig : {appendOnly : true},
+        dropConfig : {
+          appendOnly : true,
+          notifyDrop : this.addToFolder.createDelegate(this),
+          //notifyOver : this.addToFolderSetClass.createDelegate(this),
+          onNodeOver : this.addToFolderCheck.createDelegate(this)
+        },
         root: new Tree.TreeNode({
           text : 'outline root', 
           draggable : false, // disable root node dragging
@@ -94,6 +100,8 @@ Ext.nd.UIOutline.prototype = {
     for (var i=0; i<arEntries.length; i++) {
       var entry = arEntries.item(i);
       var extndType = entry.attributes.getNamedItem('type').value;
+      var extndUNID = entry.attributes.getNamedItem('unid');
+      extndUNID = (extndUNID) ? extndUNID.value : null;
       var extndTitle = entry.attributes.getNamedItem('title').value;
       var tmpextndHref = entry.attributes.getNamedItem('url');
       var extndHref = (tmpextndHref) ? tmpextndHref.value : "";
@@ -130,12 +138,13 @@ Ext.nd.UIOutline.prototype = {
       var curNode = new Tree.TreeNode({
         text : extndTitle, 
         cls : cls, 
-        allowDrag : true, 
-        allowDrop : (extndType == "20" || extndType == "0") ? true : false,
+        allowDrag : (extndType == "20") ? true : false, 
+        allowDrop : (extndType == "20") ? true : false,
         isTarget : true,
         leaf : false,
         extndHref : extndHref,
         extndType : extndType,
+        extndUNID : extndUNID,
         extndExpandable: isExpandable,
         extndPosition : curPosition,
         icon : (this.useOutlineIcons) ? extndIcon : null
@@ -153,9 +162,6 @@ Ext.nd.UIOutline.prototype = {
       }
     }
 
-   // handle the drop of the doc on the folder
-   this.tree.on('beforenodedrop', this.addToFolder);
-
    this.tree.on('click', this.openEntry, this);
    
    // render the tree
@@ -164,45 +170,73 @@ Ext.nd.UIOutline.prototype = {
     }
   },
   
-  // Private
-  addToFolder: function(e) {
-    console.log('nodedragover - start');
-    console.log('addToFolder - start');
-  
-    var type = e.target.attributes.extndType;
-    console.log('type='+type);
-  
-    if (type == "20" || type == "0") {
-      console.log('expanding');
-      e.target.expand();
+  addToFolderCheck: function(n, dd, e, data) {
+    var node = n.node;
+    var type = node.attributes.extndType;
+    var unid = node.attributes.extndUNID;
+    
+    // go ahead and expand node if possible
+    if (node.expand) {
+      node.expand();
+    }
+    
+    if (type == "20") {
+      this.isFolder = true;
+      this.folderUNID = unid;
+      return dd.dropAllowed;
     } else {
-      console.log('no, this is not a folder you can drop docs onto');
+      this.isFolder = false;
+      this.folderUNID = '';
+      return dd.dropNotAllowed;
     }
-     
-    var unid, sFormula;
-    sFormula = '@username';
-    var selections = e.data.selections;
-    if (selections) {
-      console.log('we have some docs selected!');
-      for (var i=0; i<selections.length; i++) {
-        var oUNID = selections[i].node.attributes.getNamedItem('unid')
-        var unid = (oUNID) ? oUNID.value : null;
-        if (unid != null) {
-          console.log('unid='+unid);
-          var formula = new Ext.nd.Formula(sFormula,{
-            "ExecuteInDocumentContext": true,
-            "unid" : unid
-          });
-          // eval/execute formula 
-          console.log('evaling formula');
-          formula.eval();      
-        }
-      }
-    }
-  
-    console.log('addToFolder - end');
-    console.log('nodedragover - end');
   },
+
+  // Private
+  addToFolder: function(source, e, data) {
+  
+    var unids = "";    
+    // don't even bother if not a folder
+    if (this.isFolder) {
+      var target = e.target;
+      var fromFolder = '';
+
+      // data.selections are for rows in a grid
+      if (data.selections) {
+        var select = data.selections;
+        fromFolder = source.grid.viewName;
+        for (var i=0; i<select.length; i++) {
+          var d = select[i];
+          unids += "unid=" + d.unid + "&";
+        }
+        Ext.Ajax.request({
+          method: 'POST',
+          disableCaching: true,
+          success: this.addToFolderSuccess,
+          failure: this.addToFolderFailure,
+          scope: this,
+          params : unids,
+          url: Ext.nd.extndUrl + 'FolderOperations?OpenAgent&db=' + this.filePath + '&operation=putinfolder' + '&folder=' + this.folderUNID + '&fromfolder=' + fromFolder
+        });
+        return true;
+      }
+
+      // data.node is for other folders in the tree
+      if (data.node) {
+        // need to do something here
+        return true;
+      }
+      
+    } // if (this.isFolder)
+ },
+ 
+ addToFolderSuccess: function() {
+  //alert('added to folder!');
+ },
+ 
+ addToFolderFailure: function() {
+  //alert('error adding to folder!');
+ },
+ 
   
   // Private
   openEntry: function(node, e) {
