@@ -149,7 +149,7 @@ Ext.nd.UIOutline.prototype = {
         extndUNID : extndUNID,
         extndExpandable: isExpandable,
         extndPosition : curPosition,
-        icon : (this.useOutlineIcons) ? extndIcon : null
+        icon : (this.showIcons && this.useOutlineIcons) ? extndIcon : null
       });
          
       //curNode.leaf = false;
