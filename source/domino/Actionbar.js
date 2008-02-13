@@ -428,6 +428,10 @@ Ext.extend(Ext.nd.Actionbar, Ext.util.Observable, {
                   case 'FileSave':
                     handler = this.saveDocument.createDelegate(this);
                     break;
+                  case 'FilePrint':
+                  case 'FilePrintSetup':
+                    handler = this.print.createDelegate(this);
+                    break;
                   case 'OpenView':
                   case 'RunAgent':
                   default:
@@ -652,6 +656,13 @@ Ext.extend(Ext.nd.Actionbar, Ext.util.Observable, {
   */
   saveDocument : function() {
     document.forms[0].submit();
+  },
+  /**
+  * Handler for @Command([FilePrint]), for now it just calls window.print().  In the future will look into
+  *  perhaps making the doc/view 'printer friendly'
+  */
+  print : function() {
+    window.print();
   },
   /**
   * Default handler when the @Formula is not understood by the parser.
