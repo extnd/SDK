@@ -223,6 +223,13 @@ ws.PickList({
     } //end switch(this.type)
 
   //end Prompt
+  },
+  
+  /*
+   * Returns the currently opened document
+   */
+  currentDocument : function() {
+    return Ext.nd.UIDocument;
   }
 }; 
 
