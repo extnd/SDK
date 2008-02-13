@@ -29,6 +29,13 @@ html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,p,bloc
   padding-left:23px;
 }
 
+/* use this class to not display any icons
+ * next to the nodes/entries in a tree/outline
+ */
+.xnd-no-icon {
+  display: none;
+  background-image:url(../images/s.gif);
+}
 
 /* give form and page contents a little margin since they
  * are loaded in a viewport that has 0 margin 
