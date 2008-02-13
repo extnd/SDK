@@ -135,11 +135,11 @@ Ext.nd.UIOutline.prototype = {
          default :
             cls = "file";
       };
-            
+
       var curNode = new Tree.TreeNode({
         text : extndTitle, 
         cls : (this.showIcons) ? cls : null, 
-        iconCls : (this.showIcons) ? null : 'xnd-no-icon',
+        iconCls : (this.showIcons) ? ((this.useOutlineIcons) ? 'xnd-icon' : null) : 'xnd-no-icon',
         allowDrag : (extndType == "20") ? true : false, 
         allowDrop : (extndType == "20") ? true : false,
         isTarget : true,
