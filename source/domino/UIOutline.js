@@ -29,6 +29,7 @@ Ext.nd.UIOutline = function(config) {
    this.dbPath = db.webFilePath;
    this.filePath = db.filePath;
    this.outlineName = '';
+   this.showIcons = true;
    this.useOutlineIcons = false;
 
    // Set any config params passed in to override defaults
@@ -137,7 +138,8 @@ Ext.nd.UIOutline.prototype = {
             
       var curNode = new Tree.TreeNode({
         text : extndTitle, 
-        cls : cls, 
+        cls : (this.showIcons) ? cls : null, 
+        iconCls : (this.showIcons) ? null : 'xnd-no-icon',
         allowDrag : (extndType == "20") ? true : false, 
         allowDrop : (extndType == "20") ? true : false,
         isTarget : true,
@@ -227,16 +229,17 @@ Ext.nd.UIOutline.prototype = {
       }
       
     } // if (this.isFolder)
- },
+  },
  
- addToFolderSuccess: function() {
-  //alert('added to folder!');
- },
+  addToFolderSuccess: function(response, request) {
+    //Ext.Msg.alert("Success","your document(s) have been moved to the folder.");
+  },
  
- addToFolderFailure: function() {
-  //alert('error adding to folder!');
- },
- 
+  addToFolderFailure: function(response, request) {
+    var failure = Ext.util.JSON.decode(response.responseText);
+    Ext.Msg.alert("Error",failure.error.msg);
+  },
+
   
   // Private
   openEntry: function(node, e) {
