@@ -77,10 +77,10 @@ new Ext.nd.UIView({
 Ext.nd.UIView = function(config) {
 
    var sess = Ext.nd.Session; 
-   var db = sess.currentDatabase;
+   this.db = sess.currentDatabase;
    
    // defaults
-   this.dbPath = db.webFilePath;
+   this.dbPath = this.db.webFilePath;
    this.count = 40;
    this.singleSelect = false;
    this.viewName = '';
@@ -134,9 +134,38 @@ Ext.nd.UIView = function(config) {
    
    // init the view, which creates it in the container passed in the config object
    this.init();
+   
+   // MIFTEST
+  this.mm = new Ext.ux.ModuleManager({
+    disableCaching : false
+  });
+  this.mm.on('beforeload', this.cacheModule, this);
+  this.mm.modulePath = Ext.nd.extUrl;
+  
+  this.mmLoad = this.mm.load.createDelegate(this.mm);
+  this.mmLoad('resources/css/ext-all.css',
+               'adapter/ext/ext-base.js',
+               'ext-all.js',
+               '../../extnd/2.0.1/ext-basex.js',
+               '../../extnd/2.0.1/extnd-all.js',
+               '../../extnd/2.0.1/Session.js?OpenAgent&db='+this.db.filePath,
+               '../../extnd/2.0.1/resources/css/domino.css'
+               )
+  
 };
 
 Ext.nd.UIView.prototype = {
+  modules : {},
+  cacheModule : function(manager, module, response) {
+    console.log('cachemodule-' +module.name);
+    this.modules[module.name] = Ext.apply({}, {
+      content : response.responseText
+    }, module);
+    //we DO NOT want to eval the result into the main-page (window) context,
+    //just caching it for later injection, so return false
+    return false;
+
+  },
   // private
   init: function() {
     this.getViewDesign();
@@ -968,6 +997,27 @@ Ext.nd.UIView.prototype = {
     var entry = this.tabPanel.getItem(panelId);
             
     if(!entry){ 
+      // MIFTEST
+      this.mmLoad('../../extnd/2.0.1/UIDocument.js?OpenAgent&db='+ this.db.filePath + '&unid=' + 
+        unid + '&editmode=' + ((bEditMode)?'true':'false'),
+               '../../appprof.js');
+      var tab = this.tabPanel.add({
+        xtype : 'iframepanel',
+        id : unid,
+	      title : 'test',
+	      listeners : {
+          documentloaded : Ext.emptyFn,
+		      domready : this.transform,
+		      exception : this.exception,
+		      scope : this
+        },
+	      autoScroll : false,
+	      loadMask : true,
+        defaultSrc : link
+      });
+
+      this.tabPanel.setActiveTab(tab);
+      /*
       var iframe = Ext.DomHelper.append(document.body, {
           tag: 'iframe', 
           frameBorder: 0, 
@@ -996,12 +1046,72 @@ Ext.nd.UIView.prototype = {
           panel.setTitle("Untitled");
         }
       }).createDelegate(dom);
+      */
       
     } else { // we've already opened this document
       entry.show();
     }
   },
   
+  // MIFTEST
+	exception : function(frame, ex) {
+		console.log(['exception', ex.description || ex.essage || ex]);
+	},
+	transform : function(iframe) {
+    
+    console.log('here');
+	  if (!iframe.domWritable()) {
+	    alert('Not writable');
+	    return;
+	  }
+	
+	  var idoc = iframe.getDocument();
+	  var iwin = iframe.getWindow();
+	  var head = idoc.getElementsByTagName("head")[0];
+	  var exception;
+	
+    console.log(this.modules);
+	  forEach(this.modules, function(module, name) {
+	    console.log(name);
+	    if (module.extension == 'css') {
+	
+	      //All css is injected into document's head section
+	
+	      var rules = idoc.createElement("style");
+	      rules.setAttribute("type", "text/css");
+	      if (Ext.isIE) {
+	        head.appendChild(rules);
+	        rules.styleSheet.cssText = module.content;
+	      } else {
+	        try {
+	          rules.appendChild(idoc
+	              .createTextNode(module.content));
+	        } catch (e) {
+	          rules.cssText = module.content;
+	        }
+	        head.appendChild(rules);
+	      }
+	
+	    } else {
+/*	      exception = function(i, ex, module) {
+	        this.balloon(this.tabs.el, 't', 'Iframe Exception:'
+	            + module, (ex.description || ex.message || ex));
+	      }.createDelegate(this, [module.name], true);*/
+	
+	      iframe.on('exception', this.exception, this);
+	      iframe.execScript(module.content, true); //write script tags for debugging.
+	      iframe.un('exception', this.exception, this);
+	    }
+	
+	  }, this);
+	
+	  iframe.execScript("Ext.lib.Ajax.forceActiveX = true;");
+	
+    
+    iframe.execScript("Ext.nd.init({'extndUrl':'"+Ext.nd.extndUrl+"','extUrl':'"+Ext.nd.extUrl+"'})", true, true);
+    
+	},
+
   /**
   * set the default rowdblclick to openDocument
   * if you need a view to do something different on a rowdblclick, then you can override this method
