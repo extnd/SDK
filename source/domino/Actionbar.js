@@ -25,9 +25,11 @@ new Ext.Toolbar({
  * Supported for Views:
  * @Command([Compose])
  * @Command([EditDocument])
+ * @Command([FilePrint])
  * Supported for Forms:
  * @Command([Compose])
  * @Command([EditDocument])
+ * @Command([FilePrint]) 
  * @Command([FileSave])
  * @Command([FileCloseWindow])
  * @constructor
