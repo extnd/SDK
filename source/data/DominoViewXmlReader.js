@@ -61,6 +61,21 @@ Ext.extend(Ext.nd.data.DominoViewXmlReader, Ext.data.XmlReader, {
         record.isResponse = n.attributes.getNamedItem('response');
         record.position = n.attributes.getNamedItem('position').value;
         record.unid = n.attributes.getNamedItem('unid').value;
+        
+         var n = ns[i];
+         var values = {};
+         var id = sid ? q.selectValue(sid, n) : undefined;
+         for(var j = 0, jlen = fields.length; j < jlen; j++){
+            var f = fields.items[j];
+            //var v = q.selectValue(f.mapping || f.name, n, f.defaultValue);
+            // we use '.mapping' since it is the columnnumber and '.name' may not have a value
+            var v = this.getViewColumnValue(n, f.mapping, f.defaultValue);
+            v = f.convert(v);
+            values[f.name] = v;
+         }
+         var record = new recordType(values, id);
+         record.node = n;
+         records[records.length] = record;
       }
       
       return {
@@ -92,8 +107,19 @@ Ext.extend(Ext.nd.data.DominoViewXmlReader, Ext.data.XmlReader, {
          var cn = q.selectNumber('@columnnumber',entryDataNodes[i]);
          
          if(cn == colNbr) {
-
-            type = entryDataNodes[i].lastChild.nodeName;
+            // try text
+            type = 'text';
+            data = q.select(type,entryDataNodes[i]);
+                        
+            if (data.length == 0) {
+               type = 'datetime';
+               data = q.select(type,entryDataNodes[i]);
+            }
+            
+            if (data.length == 0) {
+               type = 'number';
+               data = q.select(type,entryDataNodes[i]);
+            }
             
             // now get the data
             oValue = this.getValue(entryDataNodes[i], type);
