@@ -415,32 +415,30 @@ Ext.extend(Ext.nd.Actionbar, Ext.util.Observable, {
           // runagent, openview, delete, saveoptions := "0"
           if (formula) {
             var cmdFrm = formula.match(/\@Command\(\[(\w+)\];*"*(\w+)*"*\)/);
-            if (cmdFrm) {
-              if (cmdFrm.length) {
-                switch(cmdFrm[1]) {
-                  case 'Compose': 
-                    handler = this.openForm.createDelegate(this, [cmdFrm[2]]);
-                    break;
-                  case 'EditDocument':
-                    handler = this.openDocument.createDelegate(this, [true]);
-                    break;
-                  case 'FileCloseWindow':
-                    handler = this.closeDocument.createDelegate(this);
-                    break;
-                  case 'FileSave':
-                    handler = this.saveDocument.createDelegate(this);
-                    break;
-                  case 'FilePrint':
-                  case 'FilePrintSetup':
-                    handler = this.print.createDelegate(this);
-                    break;
-                  case 'OpenView':
-                  case 'RunAgent':
-                  default:
-                    handler = this.unsupportedAtCommand.createDelegate(this,[formula]);
-                } // end switch
-              } // end if (cmdFrm.length) 
-            } // end if (cmdFrm)
+            if (cmdFrm && cmdFrm.length) {
+              switch(cmdFrm[1]) {
+                case 'Compose': 
+                  handler = this.openForm.createDelegate(this, [cmdFrm[2]]);
+                  break;
+                case 'EditDocument':
+                  handler = this.openDocument.createDelegate(this, [true]);
+                  break;
+                case 'FileCloseWindow':
+                  handler = this.closeDocument.createDelegate(this);
+                  break;
+                case 'FileSave':
+                  handler = this.saveDocument.createDelegate(this);
+                  break;
+                case 'FilePrint':
+                case 'FilePrintSetup':
+                  handler = this.print.createDelegate(this);
+                  break;
+                case 'OpenView':
+                case 'RunAgent':
+                default:
+                  handler = this.unsupportedAtCommand.createDelegate(this,[formula]);
+              } // end switch
+            } // end if (cmdFrm.length)
           } // end if (formula)
         } // end if (tmpOnClick)
         
