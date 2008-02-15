@@ -433,7 +433,7 @@ Ext.nd.UIView.prototype = {
     var store = new Ext.data.Store({
        proxy: new Ext.data.HttpProxy({
           method:'GET', 
-          url: this.viewUrl + '?ReadViewEntries&CollapseView&count=' + this.categoryComboBoxCount;
+          url: this.viewUrl + '?ReadViewEntries&CollapseView&count=' + this.categoryComboBoxCount
        }),
        reader: new Ext.data.XmlReader({
              record: 'viewentry',
