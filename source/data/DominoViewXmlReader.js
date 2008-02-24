@@ -97,10 +97,10 @@ Ext.extend(Ext.nd.data.DominoViewXmlReader, Ext.data.XmlReader, {
 
       if (cn == colNbr) {
 
-        type = entryDataNodes[i].lastChild.nodeName;
+        var lc = entryDataNodes[i].lastChild;
 
         // now get the data
-        oValue = this.getValue(entryDataNodes[i], type);
+        oValue = this.getValue(lc, lc.nodeName);
 
       } // end if(cn == colNbr)
     } // end for
@@ -109,13 +109,13 @@ Ext.extend(Ext.nd.data.DominoViewXmlReader, Ext.data.XmlReader, {
 
   }, // end getViewColumnValue
 
-  getValue : function(entryDataNode, type) {
+  getValue : function(valNode, type) {
     var oValue = {
       type : type,
       data : []
     };
     
-    var node = entryDataNode.lastChild.firstChild;
+    var node = valNode.firstChild;
     if (!node) {
       oValue.data.push(null);
     } else if (node.hasChildNodes()) {
