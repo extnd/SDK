@@ -14,118 +14,134 @@
  * Record subclass created with {@link Ext.data.Record#create}, or an array of objects with which to call
  * Ext.data.Record.create.  See the {@link Ext.data.Record} class for more details.
  */
-Ext.nd.data.DominoViewXmlReader = function(meta, recordType){
-   Ext.nd.data.DominoViewXmlReader.superclass.constructor.call(this, meta, recordType);
+Ext.nd.data.DominoViewXmlReader = function(meta, recordType) {
+  Ext.nd.data.DominoViewXmlReader.superclass.constructor.call(this, meta,
+      recordType);
 };
 
 Ext.extend(Ext.nd.data.DominoViewXmlReader, Ext.data.XmlReader, {
-       /**
-     * Create a data block containing Ext.data.Records from an XML document.
-    * @param {Object} doc A parsed XML document.
-     * @return {Object} records A data block which is used by an {@link Ext.nd.DominoViewStore} as
-     * a cache of Ext.data.Records.
-     */
-   readRecords : function(doc){
   /**
-         * After any data loads/reads, the raw XML Document is available for further custom processing.
-         * @type XMLDocument
-         */
-      this.xmlData = doc;
-      var root = doc.documentElement || doc;
-      var q = Ext.DomQuery;
-      var recordType = this.recordType, fields = recordType.prototype.fields;
-      var sid = this.meta.id;
-      var totalRecords = 0;
-      if(this.meta.totalRecords){
-         totalRecords = q.selectNumber(this.meta.totalRecords, root, 0);
-      }
-      var records = [];
-      var ns = q.select(this.meta.record, root);
-      for(var i = 0, len = ns.length; i < len; i++) {
-        var n = ns[i];
-        var values = {};
-        var id = sid ? q.selectValue(sid, n) : undefined;
-        for(var j = 0, jlen = fields.length; j < jlen; j++){
-          var f = fields.items[j];
-          //var v = q.selectValue(f.mapping || f.name, n, f.defaultValue);
-          // we use '.mapping' since it is the columnnumber and '.name' may not have a value
-          var v = this.getViewColumnValue(n, f.mapping, f.defaultValue);
-          v = f.convert(v);
-          values[f.name] = v;
-        }
-        var record = new recordType(values, id);
-        record.node = n;
-        records[records.length] = record;
- 
-        record.hasChildren = n.attributes.getNamedItem('children');
-        record.isResponse = n.attributes.getNamedItem('response');
-        record.position = n.attributes.getNamedItem('position').value;
-        record.unid = n.attributes.getNamedItem('unid').value;
-      }
-      
-      return {
-         records : records,
-         totalRecords : totalRecords || records.length
-      };
-   },
-
-   beforeload : function() {
-      alert('this is a test');
-   },
-            
-   /**
-     * Used to parse Domino's ReadViewEntries format
-     * @param {Object} node An XML node
-   * @param {String} name The name attribute to look for within the XML node
-     * @param {String} defaultValue Value to return if name or node are not present
-     * @return {String} nodeValue the value found within the XML node
+   * Create a data block containing Ext.data.Records from an XML document.
+   * @param {Object} doc A parsed XML document.
+   * @return {Object} records A data block which is used by an {@link Ext.nd.DominoViewStore} as
+   * a cache of Ext.data.Records.
+   */
+  readRecords : function(doc) {
+    /**
+     * After any data loads/reads, the raw XML Document is available for further custom processing.
+     * @type XMLDocument
      */
-   getViewColumnValue : function(node, colNbr, defaultValue){
-      var q = Ext.DomQuery;
-      var type;
-      var data;
-      //var oValue = {type:'text',data:[defaultValue]};
-      var oValue = {type:'text',data:[]};
-      var entryDataNodes = q.select('entrydata',node);
-      for (var i = 0; i<entryDataNodes.length; i++) {
-         // have to use 'columnnumber' since we can not be guaranteed that the 'name' attribute will have a value
-         var cn = q.selectNumber('@columnnumber',entryDataNodes[i]);
-         
-         if(cn == colNbr) {
-
-            type = entryDataNodes[i].lastChild.nodeName;
-            
-            // now get the data
-            oValue = this.getValue(entryDataNodes[i], type);
-
-         } // end if(cn == colNbr)
-      } // end for
-
-      return oValue;
-      
-   }, // end getViewColumnValue
-
-   getValue : function(entryDataNode, type) {
-      var q = Ext.DomQuery;
-      var oValue = {type:type, data:[]};
-      var data = q.select(type,entryDataNode);               
-      
-      if(data && data[0] && data[0].firstChild) {
-         for (var i=0; i<data.length; i++) {
-            oValue.data[i] = data[i].firstChild.nodeValue;
-         }
+    this.xmlData = doc;
+    var root = doc.documentElement || doc;
+    var q = Ext.DomQuery;
+    var recordType = this.recordType, fields = recordType.prototype.fields;
+    var sid = this.meta.id;
+    var totalRecords = 0;
+    if (this.meta.totalRecords) {
+      totalRecords = q.selectNumber(this.meta.totalRecords, root, 0);
+    }
+    var records = [];
+    var ns = q.select(this.meta.record, root);
+    for (var i = 0, len = ns.length; i < len; i++) {
+      var n = ns[i];
+      var values = {};
+      var id = sid ? q.selectValue(sid, n) : undefined;
+      for (var j = 0, jlen = fields.length; j < jlen; j++) {
+        var f = fields.items[j];
+        //var v = q.selectValue(f.mapping || f.name, n, f.defaultValue);
+        // we use '.mapping' since it is the columnnumber and '.name' may not have a value
+        var v = this.getViewColumnValue(n, f.mapping, f.defaultValue);
+        v = f.convert(v);
+        values[f.name] = v;
       }
-      
-      return oValue;
-      
-   }, // end getValue
-   
-   expand : function(url, params, callback, insertIndex){
-      Ext.MessageBox.alert('Coming Soon','expand')
-   },
+      var record = new recordType(values, id);
+      record.node = n;
+      records[records.length] = record;
 
-   collapse : function(url, params, callback, insertIndex){
-      Ext.MessageBox.alert('Coming Soon','collapse')
-   }
-   
+      record.hasChildren = n.attributes.getNamedItem('children');
+      record.isResponse = n.attributes.getNamedItem('response');
+      record.position = n.attributes.getNamedItem('position').value;
+      record.unid = n.attributes.getNamedItem('unid').value;
+    }
+
+    return {
+      records : records,
+      totalRecords : totalRecords || records.length
+    };
+  },
+
+  beforeload : function() {
+    alert('this is a test');
+  },
+
+  /**
+   * Used to parse Domino's ReadViewEntries format
+   * @param {Object} node An XML node
+   * @param {String} name The name attribute to look for within the XML node
+   * @param {String} defaultValue Value to return if name or node are not present
+   * @return {String} nodeValue the value found within the XML node
+   */
+  getViewColumnValue : function(node, colNbr, defaultValue) {
+    var q = Ext.DomQuery;
+    var type;
+    var data;
+    //var oValue = {type:'text',data:[defaultValue]};
+    var oValue = {
+      type : 'text',
+      data : []
+    };
+    var entryDataNodes = q.select('entrydata', node);
+    for (var i = 0; i < entryDataNodes.length; i++) {
+      // have to use 'columnnumber' since we can not be guaranteed that the 'name' attribute will have a value
+      var cn = q.selectNumber('@columnnumber', entryDataNodes[i]);
+
+      if (cn == colNbr) {
+
+        type = entryDataNodes[i].lastChild.nodeName;
+
+        // now get the data
+        oValue = this.getValue(entryDataNodes[i], type);
+
+      } // end if(cn == colNbr)
+    } // end for
+
+    return oValue;
+
+  }, // end getViewColumnValue
+
+  getValue : function(entryDataNode, type) {
+    var oValue = {
+      type : type,
+      data : []
+    };
+    
+    var node = entryDataNode.lastChild.firstChild;
+    if (!node) {
+      oValue.data.push(null);
+    } else if (node.hasChildNodes()) {
+      for (var i = 0; i < node.childNodes.length; i++) {
+        oValue.type = node.nodeName;
+        oValue.data.push(node.childNodes[i].nodeValue);
+//        console.log(['mult',node.childNodes[i], oValue.type, oValue.data]);
+      }
+    } else {
+      if (node.nodeName != '#text') {
+        oValue.type = node.nodeName;
+      }
+      oValue.data.push(node.nodeValue);
+//      console.log(['single',node, oValue.type, oValue.data]);
+    }
+
+    return oValue;
+
+  }, // end getValue
+
+  expand : function(url, params, callback, insertIndex) {
+    Ext.MessageBox.alert('Coming Soon', 'expand')
+  },
+
+  collapse : function(url, params, callback, insertIndex) {
+    Ext.MessageBox.alert('Coming Soon', 'collapse')
+  }
+
 });
