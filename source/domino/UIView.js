@@ -1,6 +1,6 @@
 /**
  * @class Ext.nd.UIView
- * Makes an Ajax call to readviewentries and translates it into an {@link Ext.nd.grid.DominoGrid}
+ * Makes an Ajax call to readviewentries and translates it into an {@link Ext.nd.grid.DominoGridPanel}
  * Simple example where only the viewName and renderTo is set:<pre><code>
 new Ext.nd.UIView({
   viewName: 'myView1',

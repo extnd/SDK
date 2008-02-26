@@ -19,7 +19,7 @@ new Ext.Toolbar({
  * @cfg {Boolean} useDxl
  * When using noteType: 'form' set to false to convert the HTML actionbar instead of
  * grabbing the form's Dxl and transforming it (Defaults to true)
- * @cfg {convertFormulas}
+ * @cfg {Boolean} convertFormulas
  * Whether you want basic domino @Formulas converted over to JavaScript code.  Currently
  * only single formulas are supported. (Defaults to true)
  * Supported for Views:
