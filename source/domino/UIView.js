@@ -1,6 +1,6 @@
 /**
  * @class Ext.nd.UIView
- * Makes an Ajax call to readviewentries and translates it into an {@link Ext.nd.grid.DominoGridPanel}
+ * Makes an Ajax call to readviewentries and translates it into an {@link Ext.grid.GridPanel}
  * Simple example where only the viewName and renderTo is set:<pre><code>
 new Ext.nd.UIView({
   viewName: 'myView1',
@@ -22,7 +22,7 @@ new Ext.nd.UIView({
 }</pre></code>
  * @cfg {String} viewName
  * The name of the view as defined in Domino Designer.  This name will be appended to the full web path
- * of the database and will be passed along to the Ext.GridPanel
+ * of the database and will be passed along to the {@link Ext.GridPanel}
  * @cfg {String} viewUrl
  * A full web path to a web accessable view.  ?ReadDesign and ?ReadViewEntries will be appended to this path
  * in order to get the design and view data.  Use this when you wish to retrieve a view in a database that
@@ -31,25 +31,25 @@ new Ext.nd.UIView({
  * Use this property to set a custom view title.  On a tab panel, this is the name shown on the tab. 
  * If you do not set this property, then the view's 'name' as defined in Domino Designer will be used.
  * @cfg {Object} viewport
- * If you are utilizing an Ext.Viewport, make sure to pass it into UIView so that it can fix 
+ * If you are utilizing an {@link Ext.Viewport}, make sure to pass it into UIView so that it can fix 
  * sizing issues that can occur
  * @cfg {Object} tabPanel 
  * If you want the default opendocument handler to be able to open up new tabs be sure to
- * pass in the Ext.TabPanel
+ * pass in the {@link Ext.TabPanel}
  * @cfg {Object} container
- * An Ext.Container or any derived class (such as a Panel) to render the view into
+ * An {@link Ext.Container} or any derived class (such as an {@link Ext.Panel}) to render the view into
  * @cfg {Object} statusPanel
- * An Ext.Panel that UIView can use to display loading status
+ * An {@link Ext.Panel} that UIView can use to display loading status
  * @cfg {Object} gridConfig
- * A config object that is passed directly to the Ext.grid.GridPanel, it can be used to override
+ * A config object that is passed directly to the {@link Ext.grid.GridPanel}, it can be used to override
  * any of Ext.nd.UIView's default configurations
  * @cfg {Boolean} singleSelect
- * A simple config option passed along to the Ext.grid.RowSelectionModel.  If set row selection
+ * A simple config option passed along to the {@link Ext.grid.RowSelectionModel}.  If set row selection
  * functions as if control was always held down (clicking on a row selects it, clicking again 
  * removes the selection) (Defaults to false)
  * @cfg {Boolean} showActionbar
  * Whether or not UIView should read in the view DXL behind the scences and build an 
- * Ext.Toolbar from domino actions (Defaults to true)
+ * {@link Ext.Toolbar} from domino actions (Defaults to true)
  * @cfg {String} showSingleCategory
  * The name of the initial category to display.  As long as there is a value present UIView will
  * read in the list of categories and build a combobox that will list the categories and filter 
