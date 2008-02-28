@@ -2,7 +2,7 @@
  * @class Ext.nd.data.DominoViewXmlReader
  * @extends Ext.data.XmlReader
  * An expanded version of Ext's XmlReader to deal with Domino's funky ReadViewEntries format
- * @cfg {String} totalRecords - unused, domino uses toplevelentries
+ * @cfg {String} totalRecords - override domino's toplevelentries
  * @cfg {String} record The DomQuery path to the repeated element which contains record information.
  * @cfg {String} success The DomQuery path to the success attribute used by forms.
  * @cfg {String} id The DomQuery path relative from the record element to the element that contains
@@ -68,10 +68,6 @@ Ext.extend(Ext.nd.data.DominoViewXmlReader, Ext.data.XmlReader, {
       records : records,
       totalRecords : totalRecords || records.length
     };
-  },
-
-  beforeload : function() {
-    alert('this is a test');
   },
 
   /**

@@ -1,4 +1,4 @@
-Ext.namespace("Ext.nd", "Ext.nd.grid", "Ext.nd.data", "Ext.nd.domino");
+Ext.namespace("Ext.nd", "Ext.nd.form", "Ext.nd.data");
 
 Ext.nd.extUrl = "/extnd.nsf/ext/";  // default
 Ext.nd.extndUrl = "/extnd.nsf/extnd/";  // default

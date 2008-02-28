@@ -2,12 +2,9 @@
 /**
  * @class Ext.nd.data.DominoViewStore
  * @extends Ext.data.Store
- * The Store class encapsulates a client side cache of {@link Ext.data.Record} objects which provide input data
- * for widgets such as the Ext.grid.Grid, or the Ext.form.ComboBox.
- * A Store object uses an implementation of {@link Ext.data.DataProxy} to access a data object unless you call loadData() directly and pass in your data. The Store object
- * has no knowledge of the format of the data returned by the Proxy.
- * The Store object uses its configured implementation of Ext.data.DataReader to create Ext.data.Record
- * instances from the data object. These records are cached and made available through accessor functions.
+ * A specialized version of {@link Ext.data.Store} to deal with oddities from
+ * reading a Domino view via ?ReadViewEntries.  Use for widgets such as the 
+ * {@link Ext.grid.GridPanel}, or the {@link Ext.form.ComboBox}.
  * @constructor
  * Creates a new Store
  * @param {Object} config A config object containing the objects needed for the Store to access data,
@@ -111,8 +108,6 @@ Ext.extend(Ext.nd.data.DominoViewStore, Ext.data.Store, {
 				}
 			}
 
-			// IE seems to cache XHR calls so this extra params solves that\
-			p = Ext.apply(p, {random : new Date().getTime()});
 			this.proxy.load(p, this.reader, this.loadRecords, this, options);
 		}
 	},

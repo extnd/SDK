@@ -1,9 +1,29 @@
 Ext.namespace("Ext.nd.form");
 /**
  * @class Ext.nd.form.ViewSuggest
- * A class to simplify creating a "suggest" text field using an Ext combo box and the $Ext.nd.Suggest agent
+ * A class to simplify creating a "suggest" text field using an {@link Ext.form.Combobox} 
+ * and the Extnd Suggest agent
+ * @cfg {String} url 
+ * Define a direct url to the suggest agent (Optional, defaults to undefined)
+ * @cfg {Boolean} unique
+ * Whether the agent should filter down to only unique results (defaults to true)
+ * @cfg {String} view
+ * The name of the view to use (required)
+ * @cfg {String} field
+ * The name of the field to populate the Combobox (required)
+ * @cfg {Array} extraFields
+ * An array of strings, this can be used to have the underlying store contain
+ * extra fields from the document (unique must be false!)
+ * @cfg {Object} extraParams
+ * An object containing extra parameters to be sent to the agent via POST
+ * @cfg {Object} storeConfig
+ * An object containing extra parameters to pass along to the {@link Ext.data.Store} config
+ * @cfg {Object} comboConfig
+ * An object containing extra parameters to pass along to the {@link Ext.form.Combobox} config,
+ * use this to overide things such as width, minChars, loadingText, etc.
  * @constructor
  * Creates a new ViewSuggest object
+ * @param {String/Ext.Element/HTMLElement} el Input element that Suggest will be applied to
  * @param {Object} config Configuration options
  */
 Ext.nd.form.ViewSuggest = function(el, config) {
@@ -15,6 +35,7 @@ Ext.nd.form.ViewSuggest = function(el, config) {
 };
 
 Ext.nd.form.ViewSuggest.prototype = {
+  // private
   init: function() {
     if (!this.url) { // Does not require Ext.nd.Session if url is passed in
       var sess = Ext.nd.Session;
@@ -25,13 +46,13 @@ Ext.nd.form.ViewSuggest.prototype = {
     }
     
     if (!this.view || !this.field) {
-      Ext.Msg.alert("Error", "Required parameter (view or fieldname) was omitted from Ext.nd.form.ViewSuggest");
+      Ext.Msg.alert("ViewSuggest Error", "Required parameter (view or fieldname) was omitted from Ext.nd.form.ViewSuggest");
       return;
     }
     
     if (this.extraFields) {
       if (this.unique) {
-        Ext.Msg.alert("Error", "You cannot use extra fields when unique is set!");
+        Ext.Msg.alert("ViewSuggest Error", "You cannot use extra fields when unique is set!");
         return;
       }
       this.flds = [this.field].push(this.extraFields);
@@ -39,15 +60,11 @@ Ext.nd.form.ViewSuggest.prototype = {
       this.flds = [this.field];
     }
     
-    if (this.unique) { // force the value the agent expects
-      this.unique = 1;
-    } else {
-      this.unique = 0;
-    }
+    this.unique = this.unique ? 1 : 0;
     
-    this.baseStoreParams =  { view: this.view, fields: this.flds, unique: this.unique };
+    this.baseParams =  { view: this.view, fields: this.flds, unique: this.unique };
     if (this.db) {
-      this.baseStoreParams.db = this.db;
+      this.baseParams.db = this.db;
     }
     this.store = new Ext.data.Store(Ext.apply({
   	  proxy: new Ext.data.HttpProxy({
@@ -56,9 +73,9 @@ Ext.nd.form.ViewSuggest.prototype = {
   	  reader: new Ext.data.JsonReader({
    	     root: 'root'
  	    }, this.flds),
-      baseParams: this.baseStoreParams,
+      baseParams: Ext.apply(this.baseParams, this.extraParams),
       remoteSort: false
-    },this.storeParams));
+    }, this.storeConfig));
     
     this.combo = new Ext.form.ComboBox(Ext.apply({
       store: this.store,
@@ -71,6 +88,6 @@ Ext.nd.form.ViewSuggest.prototype = {
       listWidth: 200,
       width: 200,
       applyTo: this.el
-    },this.comboParams));
+    }, this.comboConfig));
   }
 };
