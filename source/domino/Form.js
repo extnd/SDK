@@ -107,65 +107,35 @@ Ext.nd.Form.prototype = {
   doConvertFields: function() {
 
     var dh = Ext.DomHelper;
-  
-    // handle xnd-* classes
     var el, arClasses, cls;
     var q = Ext.DomQuery;
-   
-    //var xndElements = q.select('*[class*=xnd-]');
-    var xndElements = this.form.elements;
     var converted;
+    
+    // 1st, convert all elements that do not use an 'xnd-*' class
+    var allElements = this.form.elements;
+    for (var i=0; i<allElements.length; i++) {
 
-    for (var i=0; i<xndElements.length; i++) {
-      converted = false;
-      el = xndElements[i];
-      arClasses = el.className.split(' ');
-
-      // check classes first
-      for (var c=0; c < arClasses.length; c++) {
-        cls = arClasses[c];
-
-        switch (cls) {
-          case 'xnd-combobox' :
+      el = allElements[i];
+  
+      switch(el.tagName) {
+        case 'SELECT' :
+          if (!this.convertFromClassName(el,false)) {
             this.convertSelectToComboBox(el);
-            converted = true;
-            break;
+          }
+          break;
 
-          case 'xnd-date' :
-            var dt = new Ext.form.DateField({
-              selectOnFocus : true
-            });      
-            dt.applyToMarkup(el);
-            converted = true;
-            break;
-
-          case 'xnd-ignore' :
-            converted = true;
-            break;
-
-          default :
-            break;               
-        } // end switch(cls)
-
-      } // end for arClasses
-
-      // if the field did not have a 'xnd-' class then try to convert it based off of the tagName or type
-      if (!converted) {
-        switch(el.tagName) {
-          case 'SELECT' :
-            this.convertSelectToComboBox(el);
-            converted = true;
-            break;
-
-          case 'TEXTAREA' :
+        case 'TEXTAREA' :
+          if (!this.convertFromClassName(el,false)) {
             var ta = new Ext.form.TextArea({
               resizable: true
             });
             ta.applyToMarkup(el);
-            break;
+          }
+          break;
 
 
-          case 'INPUT' :
+        case 'INPUT' :
+          if (!this.convertFromClassName(el,false)) {
             var type = el.getAttribute('type');
             switch(type) {
               case 'hidden' :
@@ -177,21 +147,120 @@ Ext.nd.Form.prototype = {
               default :
                 var f = new Ext.form.Field();
                 f.applyToMarkup(el);
-                break;
-
+                break;         
             } // end switch(type)
-
-          default :                  
+          }
+          break;
+          
+        default :                  
+          if (!this.convertFromClassName(el,false)) {
             var f = new Ext.form.Field();
             f.applyToMarkup(el);
-            break;
+          }
+          break;
 
-        } // end switch(el.tagName)
-      } // end !converted
-    } // end for xndElements
+      } // end switch(el.tagName)
+
+    } // end for allElements
+
+
+    // now handle the elements with 'xnd-' classNames
+    // we do this second/last so that any new elements introduced by Ext are not
+    // processed again if we would run the above code last
+    
+    var xndElements = q.select('*[class*=xnd-]');
+    for (var i=0; i<xndElements.length; i++) {
+      el = xndElements[i];
+      this.convertFromClassName(el,true);
+    }
+    
   }, // end function doConvertFields()
     
+
+  convertFromClassName: function(el,doConvert) {
+  
+    var arClasses = el.className.split(' ');
+    var converted = false;
     
+    // check classes first
+    for (var c=0; c < arClasses.length; c++) {
+      cls = arClasses[c];
+
+      switch (cls) {
+        case 'xnd-combobox' :
+          if (doConvert) {
+            this.convertSelectToComboBox(el);
+          }
+          converted = true;
+          break;
+
+        case 'xnd-date' :
+          if (doConvert) {
+            var dt = new Ext.form.DateField({
+              selectOnFocus : true
+            });      
+            dt.applyToMarkup(el);
+          }
+          converted = true;
+          break;
+
+        case 'xnd-htmleditor' :
+          if (doConvert) {
+            this.convertToHtmlEditor(el);
+          }
+          converted = true;
+          break;
+
+        case 'xnd-ignore' :
+          converted = true;
+          break;
+
+        default :
+          break;               
+      } // end switch(cls)
+
+    } // end for arClasses
+    
+    // return the value of converted so we know if this field was converted or not
+    return converted;
+  },
+  
+  convertToHtmlEditor: function(el) {
+  
+    // Html Editor needs QuickTips inorder to work
+    Ext.QuickTips.init();
+    
+    // get the tagName since the developer may add the class to a rich text field (textarea) or a div
+    var tag = el.tagName.toLowerCase();
+    var ed;
+    
+    if (tag == 'div') {
+      ed = new Ext.form.HtmlEditor({renderTo: el});
+    
+    } else {  
+      var dh = Ext.DomHelper;
+
+      // define a place holder for the HtmlEditor
+      var heContainer = dh.insertBefore(el,{tag:'div', style: {width: 500}},true);
+
+      // now append (move) the textarea into the heContainer
+      // this is needed since the renderT of HtmlEditor will try and render
+      // into the parentNode of the textarea and since domino sometimes
+      // wraps <font> tags around the textarea, the renderTo code will break
+      
+      heContainer.dom.appendChild(el);
+
+      // make sure the textarea is at least 510px for the richtext toolbar
+      Ext.get(el).setStyle({width:510});
+      
+      // now create the HtmlEditor and apply it to the textarea field
+      ed = new Ext.form.HtmlEditor();
+      ed.applyToMarkup(el);
+     
+    }
+            
+  },
+  
   convertSelectToComboBox : function(el) {
     var cb = new Ext.form.ComboBox({
       typeAhead : true,
