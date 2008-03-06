@@ -697,6 +697,7 @@ Ext.nd.UIView.prototype = {
             } else {
               tmpDate = tmpValue;
               tmpDateFmt = "Ymd";
+              dtf.show = 'date'; // switch to date only since there isn't a time component present
             }
             var d = new Date(Date.parseDate(tmpDate,tmpDateFmt));
             switch (dtf.show) {
