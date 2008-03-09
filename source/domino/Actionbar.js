@@ -421,7 +421,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.util.Observable, {
                   handler = this.openForm.createDelegate(this, [cmdFrm[2]]);
                   break;
                 case 'EditDocument':
-                  handler = this.openDocument.createDelegate(this, [true]);
+                  handler = this.openDocument.createDelegate(this, [(cmdFrm[2] == undefined) ? true : (cmdFrm[2] == "1") ? true : false]);
                   break;
                 case 'FileCloseWindow':
                   handler = this.closeDocument.createDelegate(this);
@@ -523,8 +523,9 @@ Ext.extend(Ext.nd.Actionbar, Ext.util.Observable, {
   * @param {Boolean} editMode true for edit, false for read mode
   */
   openDocument : function(editMode) {
+    
     if (this.noteType == 'view') {
-      this.openDocumentFromView(editMode);
+      this.openDocumentFromView(editMode); 
       return;
     }
     
@@ -561,78 +562,16 @@ Ext.extend(Ext.nd.Actionbar, Ext.util.Observable, {
     }
   },
   /**
-  * Handler for @Command([EditDocument]) when called from a view - this is the same code as found in UIView and will be refactored at some point
+  * Handler for @Command([EditDocument]) when called from a view
   * @param {Boolean} editMode true for edit, false for read mode
   */
-  openDocumentFromView : function(editMode) {
-    
-    //
-    if (this.tabPanel) {
-      var grid = this.tabPanel.activeTab.items.items[0];
-    } else {
-      return; // not sure how to find the grid if a tabPanel isn't present
-    }
-    
-    var mode = (editMode) ? '?EditDocument' : '?OpenDocument';
-    var title = "Opening...";
-    var ds = grid.getStore();
-    var row = grid.getSelectionModel().getSelected();
-    if (!row) {
-      Ext.Msg.alert('Error','Please select a document');
-      return;
-    }
-    var node = row.node;
-    var unid = node.attributes.getNamedItem('unid');
-    // if a unid does not exist this row is a category so bail
-    if (!unid) { 
-      return;
-    } else {
-      unid = unid.value;
-    }
-    var panelId = 'pnl-' + unid;
-    //var viewUrl = this.getViewUrl(grid);   
-    var viewUrl = '0';
-    var link = viewUrl + '/' + unid + mode     
-
-    if (!this.tabPanel) {
-      window.open(link)
-      return;
-    }
-
-    var entry = this.tabPanel.getItem(panelId);
-
-    if(!entry){ 
-      var iframe = Ext.DomHelper.append(document.body, {
-          tag: 'iframe', 
-          frameBorder: 0, 
-          src: link,
-          id: unid,
-          style: {width: '100%', height: '100%'}
-      });
-      this.tabPanel.add({
-        id: panelId,
-        contentEl: iframe.id,
-        title: Ext.util.Format.ellipsis(title,16), 
-        layout: 'fit',
-        closable: true
-      }).show();
-
-      var panel = Ext.getCmp(panelId);
-
-      var dom = Ext.get(unid).dom;
-      var event = Ext.isIE ? 'onreadystatechange' : 'onload';
-      dom[event] = (function() {
-        var cd = this.contentWindow || window.frames[this.name];
-        var title = cd.document.title;
-        if (title != "") {
-          panel.setTitle(Ext.util.Format.ellipsis(title,16));
-        } else {
-          panel.setTitle("Untitled");
-        }
-      }).createDelegate(dom);
-    } else { // we've already opened this document
-      entry.show();
-    }
+  openDocumentFromView: function(editMode) {
+    var grid = this.uiView.grid;
+    var row = grid.selModel.getSelected();
+    var rowIndex = grid.getStore().indexOf(row);
+    var e = null; // not sure how to get the event so we'll just set it to null;
+    // just call the UIView.openDocument method
+    this.uiView.openDocument(grid, rowIndex, e, editMode);
   },
   /**
   * Handler for @Command([FileCloseWindow]), will look for a tabPanel and try to close the tab.  Otherwise it attempts
