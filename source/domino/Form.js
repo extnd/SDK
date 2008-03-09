@@ -25,7 +25,7 @@ Ext.nd.Form = function(config) {
   
   var sess = Ext.nd.Session; 
   var db = sess.currentDatabase;
-  var uidoc = Ext.nd.UIDocument;
+  this.uidoc = Ext.nd.UIDocument;
    
   // defaults
   this.dbPath = db.webFilePath;
@@ -35,8 +35,8 @@ Ext.nd.Form = function(config) {
   this.toolbar = false; // developer can pass in an Ext.Toolbar
   this.toolbarContainer; // developer can specify where the toolbar should appear
   this.headerContainer; // developer can specify the header of the form
-  this.form = uidoc.form;
-  this.formName = uidoc.formName || document.forms[0].name.substring(1)
+  this.form = this.uidoc.form;
+  this.formName = this.uidoc.formName || document.forms[0].name.substring(1)
   
   // for a page we need this hack to get the page name (that we store in the formName variable)
   // we do this since the UIDocument.js agent couldn't get this info and 
@@ -94,6 +94,7 @@ Ext.nd.Form.prototype = {
           plugins: new Ext.nd.Actionbar({
             noteType: 'form', 
             noteName: this.formName,
+            uiDocument: this.uidoc,
             useDxl: true,
             tabPanel: (window.parent)? window.parent.Ext.getCmp('xnd-center-panel') : undefined
           })
