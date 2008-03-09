@@ -343,6 +343,7 @@ Ext.nd.UIView.prototype = {
         plugins: new Ext.nd.Actionbar({
           noteType: 'view', 
           noteName: this.viewName,
+          uiView: this,
           useDxl: true,
           useViewTitleFromDxl: this.useViewTitleFromDxl,
           tabPanel: this.tabPanel || null
@@ -950,6 +951,11 @@ Ext.nd.UIView.prototype = {
     var title = "Opening...";
     var ds = grid.getStore();
     var row = grid.getSelectionModel().getSelected();
+    if (row == undefined) {
+      return; // can't open a doc if a row is not selected so bail
+    }
+    
+    // we have a row so continue
     var node = row.node;
     var unid = node.attributes.getNamedItem('unid');
     // if a unid does not exist this row is a category so bail
