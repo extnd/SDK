@@ -389,6 +389,9 @@ Ext.nd.UIView.prototype = {
       
     //this.grid.enableDragDrop = true;
     //this.grid.on('dragdrop',addDocToFolder);
+    
+    // the grid cellclick will allow us to capture clicking on an expand/collapse icon
+    this.grid.on('cellclick',this.gridHandleCellClick,this, true);
          
     if (this.showSearch && this.searchInPagingToolbar && this.showPagingToolbar) {
       this.createSearch(this.paging);
@@ -569,7 +572,7 @@ Ext.nd.UIView.prototype = {
     // get the viewentry for this row
     var viewentry = row.node;
     var dsItem = dataStore.data.items[rowIndex + 1]
-    var nextViewentry = (dsItem) ? dsItem.data.node : null;
+    var nextViewentry = (dsItem) ? dsItem.node : null;
 
     // does this row have 'children' - would mean that it is a category or has response docs under it
     var hasChildren = viewentry.attributes.getNamedItem('children');
@@ -589,49 +592,55 @@ Ext.nd.UIView.prototype = {
 
     // has children and is a categorized column
     if (hasChildren && colConfig.sortcategorize) {
-      cell.css = " xnd-view-expand xnd-view-category";   
       cell.attr = "style='position: absolute;'";
       if (nextViewentry) {
          var nextViewentryPosition = nextViewentry.attributes.getNamedItem('position').value;
          var nextViewentryLevel = nextViewentryPosition.split('.').length;
          if (nextViewentryLevel > viewentryLevel) {
+            cell.css = " xnd-view-collapse xnd-view-category";   
             value = sCollapseImage + this.getValue(value, colConfig);
          } else {
+            cell.css = " xnd-view-expand xnd-view-category";   
             value = sExpandImage + this.getValue(value, colConfig);
          }        
       } else { // should be a categorized column on the last row
+         cell.css = " xnd-view-expand xnd-view-category";   
          value = sExpandImage + this.getValue(value, colConfig);
       }
     } 
     // has children but is NOT a response, so therefore, must be a regular doc with response docs
     else if (hasChildren && !isResponse && colConfig.response) {
-      cell.css = "xnd-view-expand xnd-view-category"; 
       cell.attr = "style='position: absolute;'";
       if (nextViewentry) {
          var nextViewentryPosition = nextViewentry.attributes.getNamedItem('position').value;
          var nextViewentryLevel = nextViewentryPosition.split('.').length;
          if (nextViewentryLevel > viewentryLevel) {
+            cell.css = "xnd-view-collapse xnd-view-category"; 
             value = sCollapseImage + this.getValue(value, colConfig);
          } else {
+            cell.css = "xnd-view-expand xnd-view-category"; 
             value = sExpandImage + this.getValue(value, colConfig);
          }        
       } else { // should be a categorized column on the last row
+         cell.css = "xnd-view-expand xnd-view-category"; 
          value = sExpandImage + this.getValue(value, colConfig);
       }
     }  
     // has children and IS a response doc
     else if (hasChildren && isResponse && colConfig.response) { 
-      cell.css = "xnd-view-expand xnd-view-response"; 
       cell.attr = "style='position: absolute; padding-left:" + indentPadding + ";'"; // TODO: need to figure out how to STYLE the cell
       if (nextViewentry) {
          var nextViewentryPosition = nextViewentry.attributes.getNamedItem('position').value;
          var nextViewentryLevel = nextViewentryPosition.split('.').length;
          if (nextViewentryLevel > viewentryLevel) {
+            cell.css = "xnd-view-collapse xnd-view-response"; 
             value = sCollapseImage + this.getValue(value, colConfig);
          } else {
+            cell.css = "xnd-view-expand xnd-view-response"; 
             value = sExpandImage + this.getValue(value, colConfig);
          }        
       } else { // should be a categorized column on the last row
+         cell.css = "xnd-view-expand xnd-view-response"; 
          value = sExpandImage + this.getValue(value, colConfig);
       }
     }  
@@ -846,8 +855,44 @@ Ext.nd.UIView.prototype = {
 
   // private
   gridHandleCellClick: function(grid, rowIndex, colIndex, e) {
-    var node, unid;
-    //alert('cell clicked')
+    var ecImg = Ext.get(e.getTarget());
+    var cell;
+    var options = {};
+    var record = grid.getStore().getAt(rowIndex);  
+    
+    if (ecImg.dom.tagName == 'IMG') {
+      cell = ecImg.findParent('td.xnd-view-category');
+      if (cell) {
+        var cellEl = Ext.get(cell);
+        var isExpand = cellEl.hasClass('xnd-view-expand');
+        if (isExpand) {
+          // need to expand (double the count so you can show some of the category detail rows)
+          options.params = Ext.apply({count: this.count+this.count},{expand: record.position});
+          this.grid.getStore().load(options);
+          // since we are loading the entire store above
+          // we do not need the remove/addClass methods
+          // add this back when we just remove/add to the grid
+          // the data for the category
+          //cellEl.removeClass('xnd-view-expand');
+          //cellEl.addClass('xnd-view-collapse');
+        } else {
+          var isCollapse = cellEl.hasClass('xnd-view-collapse');
+          if (isCollapse) {
+            // need to collapse
+            options.params = Ext.apply({count: this.count},{collapse: record.position});
+            this.grid.getStore().load(options);
+            // since we are loading the entire store above
+            // we do not need the remove/addClass methods
+            // add this back when we just remove/add to the grid
+            // the data for the category
+            //cellEl.removeClass('xnd-view-collapse');
+            //cellEl.addClass('xnd-view-expand');
+          }
+        }
+      } // if (cell)
+    } else {
+      return; // not interested in click on images that are not in categories
+    }
   },
 
   // private
