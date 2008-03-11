@@ -32,8 +32,8 @@ new Ext.nd.UIView({
  * If you do not set this property, then the view's 'name' as defined in Domino Designer will be used.
  * @ cfg {String} noDocumentsFound
  * Use this property to set the text to display when the view is empty. The default is 'No Documents Found'.
- * @ cfg {String} nonCategorizedText
- * Use this property to set the text of a non-categorized column.  The default is '(Non Categorized)'.
+ * @ cfg {String} notCategorizedText
+ * Use this property to set the text of a not-categorized column.  The default is '(Not Categorized)'.
  * @ cfg {String} collapseIcon
  * Use this property to set the collapse icon location.  The default is "/icons/collapse.gif".
  * @ cfg {String} expandIcon
@@ -101,7 +101,7 @@ Ext.nd.UIView = function(config) {
    this.toolbar = false;
 
    this.noDocumentsFoundText = "No Documents Found";
-   this.nonCategorizedText = "(Non Categorized)";
+   this.notCategorizedText = "(Not Categorized)";
    this.collapseIcon = "/icons/collapse.gif";
    this.expandIcon = "/icons/expand.gif";
    
@@ -713,7 +713,7 @@ Ext.nd.UIView.prototype = {
       
       // handle non-categorized columns
       if (colConfig.sortcategorize && (tmpValue == null || tmpValue == "")) {
-        tmpValue = this.nonCategorizedText;
+        tmpValue = this.notCategorizedText;
       }
       
       // handle columns set to show an icon a little differently
