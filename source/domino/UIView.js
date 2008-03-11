@@ -30,6 +30,14 @@ new Ext.nd.UIView({
  * @ cfg {String} viewTitle
  * Use this property to set a custom view title.  On a tab panel, this is the name shown on the tab. 
  * If you do not set this property, then the view's 'name' as defined in Domino Designer will be used.
+ * @ cfg {String} noDocumentsFound
+ * Use this property to set the text to display when the view is empty. The default is 'No Documents Found'.
+ * @ cfg {String} nonCategorizedText
+ * Use this property to set the text of a non-categorized column.  The default is '(Non Categorized)'.
+ * @ cfg {String} collapseIcon
+ * Use this property to set the collapse icon location.  The default is "/icons/collapse.gif".
+ * @ cfg {String} expandIcon
+ * Use this property to set the expand icon location.  The default is "/icons/expand.gif".
  * @cfg {Object} viewport
  * If you are utilizing an {@link Ext.Viewport}, make sure to pass it into UIView so that it can fix 
  * sizing issues that can occur
@@ -91,10 +99,15 @@ Ext.nd.UIView = function(config) {
    // defaults for actionbar/toolbar
    this.showActionbar = true;
    this.toolbar = false;
+
+   this.noDocumentsFoundText = "No Documents Found";
+   this.nonCategorizedText = "(Non Categorized)";
+   this.collapseIcon = "/icons/collapse.gif";
+   this.expandIcon = "/icons/expand.gif";
    
    // defaults for single category options
    this.showSingleCategory = null;
-   this.emptyText = 'Select a category...';
+   this.categoryComboBoxEmptyText = 'Select a category...';
    this.showCategoryComboBox = true;
    this.categoryComboBoxCount = -1;
    
@@ -457,7 +470,7 @@ Ext.nd.UIView.prototype = {
         typeAhead: true,
         mode: 'local',
         triggerAction: 'all',
-        emptyText: this.emptyText,
+        emptyText: this.categoryComboBoxEmptyText,
         value: this.showSingleCategory,
         selectOnFocus:true,
         grow: true,
@@ -566,6 +579,16 @@ Ext.nd.UIView.prototype = {
 
   // private
   dominoRenderer: function(value, cell, row, rowIndex, colIndex,dataStore) {
+  
+    // if value.data has a length of zero, assume this is a column in domino that is not 
+    // currently displaying any data (like a 'show response only' column, or a multi-categorized
+    // view that is collapsed and you can't see the data for the other columns
+    
+    if (value.data.length == 0) {
+      return "";
+    }
+    
+    
     var args = arguments;
     var colConfig = this.cm.config[colIndex];
 
@@ -585,8 +608,8 @@ Ext.nd.UIView.prototype = {
     var viewentryLevel = viewentryPosition.split('.').length;
 
     // for the expand/collapse icon width + indent width
-    var sCollapseImage = '<img src="/icons/collapse.gif" style="vertical-align:bottom; padding-right:4px;"/>';
-    var sExpandImage = '<img src="/icons/expand.gif" style="vertical-align:bottom; padding-right:4px;"/>';
+    var sCollapseImage = '<img src="' + this.collapseIcon + '" style="vertical-align:bottom; padding-right:4px;"/>';
+    var sExpandImage = '<img src="' + this.expandIcon + '" style="vertical-align:bottom; padding-right:4px;"/>';
     var indentPadding = (20 * viewentryLevel) + "px";
     var indentPaddingNoIcon = (20 + (20 * viewentryLevel)) + "px"; 
 
@@ -687,6 +710,11 @@ Ext.nd.UIView.prototype = {
       var sep = (i+1 < len) ? separator : '';
       dataType = value.type; // set in the DominoViewXmlReader.getNamedValue method
       var tmpValue = value.data[i];
+      
+      // handle non-categorized columns
+      if (colConfig.sortcategorize && (tmpValue == null || tmpValue == "")) {
+        tmpValue = this.nonCategorizedText;
+      }
       
       // handle columns set to show an icon a little differently
       if (colConfig.icon) {

@@ -83,13 +83,18 @@ Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
     } 
     this.afterTextEl.el.innerHTML = String.format(this.afterPageText, d.pages);
     this.field.dom.value = ap;
-    this.first.setDisabled(ap == 1);
-    this.prev.setDisabled(ap == 1);
+
     
+    //this.first.setDisabled(ap == 1);
+    //this.prev.setDisabled(ap == 1);
     //this.next.setDisabled(ap == ps); 
     //this.last.setDisabled(ap == ps);
     
-    // for now, always show 'next' and last so we can handle categories
+    // for now, always show the 'first, 'prev', 'next' and 'last' so we can handle categories
+    // if the paging toolbar can figure out whether or not the view is flat or categorized,
+    // then perhaps we change this back for flat views and only display all buttons for cat views
+    this.first.setDisabled(false);
+    this.prev.setDisabled(false);
     this.next.setDisabled(false); 
     this.last.setDisabled(false);
     
