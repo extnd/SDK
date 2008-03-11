@@ -61,7 +61,8 @@ Ext.extend(Ext.nd.data.DominoViewXmlReader, Ext.data.XmlReader, {
       record.hasChildren = n.attributes.getNamedItem('children');
       record.isResponse = n.attributes.getNamedItem('response');
       record.position = n.attributes.getNamedItem('position').value;
-      record.unid = n.attributes.getNamedItem('unid').value;
+      record.noteid = n.attributes.getNamedItem('noteid').value;
+      record.unid = (n.attributes.getNamedItem('unid')) ? n.attributes.getNamedItem('unid').value : null;
     }
 
     return {
