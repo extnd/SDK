@@ -24,7 +24,7 @@ html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,p,bloc
    z-index:2; 
 }
 /* to allow for rows to grow in height */
-.x-grid-row td {
+.x-grid-row td, .x-grid3-row td, .x-grid3-cell-inner {
   white-space: normal;
 }
 /* Ext didn't have this class defined for some reason */
