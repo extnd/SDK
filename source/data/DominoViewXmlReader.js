@@ -98,6 +98,11 @@ Ext.extend(Ext.nd.data.DominoViewXmlReader, Ext.data.XmlReader, {
 
         // now get the data
         oValue = this.getValue(lc, lc.nodeName);
+        
+        // now get the other needed attributes
+        // category and indent are needed for categories built with the backslash
+        oValue.category = (q.select('@category', entryDataNodes[i])) ? true : false;
+        oValue.indent = (q.select('@indent', entryDataNodes[i])) ? q.selectNumber('@indent', entryDataNodes[i]) : 0;
 
       } // end if(cn == colNbr)
     } // end for
