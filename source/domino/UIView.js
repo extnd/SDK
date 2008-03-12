@@ -597,12 +597,6 @@ Ext.nd.UIView.prototype = {
     var dsItem = dataStore.data.items[rowIndex + 1]
     var nextViewentry = (dsItem) ? dsItem.node : null;
 
-    // does this row have 'children' - would mean that it is a category or has response docs under it
-    var hasChildren = viewentry.attributes.getNamedItem('children');
-
-    // is this row a response 
-    var isResponse = viewentry.attributes.getNamedItem('response');
-
     // indent padding
     var viewentryPosition = viewentry.attributes.getNamedItem('position').value;
     var viewentryLevel = viewentryPosition.split('.').length;
@@ -614,8 +608,9 @@ Ext.nd.UIView.prototype = {
     var indentPaddingNoIcon = (20 + (20 * viewentryLevel)) + "px"; 
 
     // has children and is a categorized column
-    if (hasChildren && colConfig.sortcategorize) {
-      cell.attr = "style='position: absolute;'";
+    if (row.hasChildren && colConfig.sortcategorize) {
+      var extraIndent = (value.indent) ? ((value.indent > 0) ? "padding-left:" + value.indent * 20 + "px;" : "") : "";
+      cell.attr = "style='position: absolute; " + extraIndent + "'";
       if (nextViewentry) {
          var nextViewentryPosition = nextViewentry.attributes.getNamedItem('position').value;
          var nextViewentryLevel = nextViewentryPosition.split('.').length;
@@ -632,7 +627,7 @@ Ext.nd.UIView.prototype = {
       }
     } 
     // has children but is NOT a response, so therefore, must be a regular doc with response docs
-    else if (hasChildren && !isResponse && colConfig.response) {
+    else if (row.hasChildren && !row.isResponse && colConfig.response) {
       cell.attr = "style='position: absolute;'";
       if (nextViewentry) {
          var nextViewentryPosition = nextViewentry.attributes.getNamedItem('position').value;
@@ -650,7 +645,7 @@ Ext.nd.UIView.prototype = {
       }
     }  
     // has children and IS a response doc
-    else if (hasChildren && isResponse && colConfig.response) { 
+    else if (row.hasChildren && row.isResponse && colConfig.response) { 
       cell.attr = "style='position: absolute; padding-left:" + indentPadding + ";'"; // TODO: need to figure out how to STYLE the cell
       if (nextViewentry) {
          var nextViewentryPosition = nextViewentry.attributes.getNamedItem('position').value;
@@ -668,7 +663,7 @@ Ext.nd.UIView.prototype = {
       }
     }  
     // does NOT have children and IS a response doc
-    else if (!hasChildren && isResponse && colConfig.response) { 
+    else if (!row.hasChildren && row.isResponse && colConfig.response) { 
       cell.css = "xnd-view-response";  
       cell.attr = "style='position: absolute; padding-left:" + indentPaddingNoIcon + ";'"; // notice we use the padding that has the extra 19px since no icon is shown
       value = this.getValue(value, colConfig);
