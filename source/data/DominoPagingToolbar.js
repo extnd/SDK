@@ -7,8 +7,8 @@
  * @param {Ext.nd.DominoViewStore} store The underlying data store providing the paged data
  * @param {Object} config The config object
  */
-Ext.nd.DominoPagingToolbar = function(el, ds, config){
-    Ext.nd.DominoPagingToolbar.superclass.constructor.call(this, el, ds, config);
+Ext.nd.DominoPagingToolbar = function(config){
+    Ext.nd.DominoPagingToolbar.superclass.constructor.call(this, config);
     this.previousCursor = 1;
     this.previousStart = [];
 };
@@ -38,7 +38,6 @@ Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
         break;
       case 'next':
         if (store.data.length > 0) {
-          //start = parseInt(store.data.last().node.attributes.getNamedItem('position').value,10);
           start = store.data.last().node.attributes.getNamedItem('position').value;
         } else {
           start = 1;
