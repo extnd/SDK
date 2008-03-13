@@ -269,6 +269,10 @@ Ext.nd.UIOutline.prototype = {
         viewUrl: viewUrl
       });
       this.tabPanel.setActiveTab(this.uiView.container);
+      
+      if (this.dominoUI) { // If in a DominoUI update it's uiView reference
+        this.dominoUI.uiView = this.uiView;
+      }
     } else if (extndHref != "") {
       var entry = this.tabPanel.getItem(panelId);
       if(!entry){ 

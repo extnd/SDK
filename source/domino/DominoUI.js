@@ -60,7 +60,8 @@ Ext.nd.DominoUI.prototype = {
         outlinePanel: this.outlinePanel,
         tabPanel : this.tabPanel,
         uiView : this.uiView,
-        statusPanel: this.statusPanel
+        statusPanel: this.statusPanel,
+        dominoUI: this
       },this.uiOutline));
     }
   },
