@@ -414,7 +414,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.util.Observable, {
           // @Command([Compose];"profile")
           // runagent, openview, delete, saveoptions := "0"
           if (formula) {
-            var cmdFrm = formula.match(/\@Command\(\[(\w+)\];*"*(\w+)*"*\)/);
+            var cmdFrm = formula.match(/\@Command\(\[(\w+)\](?:;"(.+?)")*\)/);
             if (cmdFrm && cmdFrm.length) {
               switch(cmdFrm[1]) {
                 case 'Compose': 
