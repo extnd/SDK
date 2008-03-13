@@ -15,8 +15,7 @@
  * Ext.data.Record.create.  See the {@link Ext.data.Record} class for more details.
  */
 Ext.nd.data.DominoViewXmlReader = function(meta, recordType) {
-  Ext.nd.data.DominoViewXmlReader.superclass.constructor.call(this, meta,
-      recordType);
+  Ext.nd.data.DominoViewXmlReader.superclass.constructor.call(this, meta, recordType);
 };
 
 Ext.extend(Ext.nd.data.DominoViewXmlReader, Ext.data.XmlReader, {
@@ -82,7 +81,7 @@ Ext.extend(Ext.nd.data.DominoViewXmlReader, Ext.data.XmlReader, {
     var q = Ext.DomQuery;
     var type;
     var data;
-    //var oValue = {type:'text',data:[defaultValue]};
+    
     var oValue = {
       type : 'text',
       data : []
@@ -119,19 +118,17 @@ Ext.extend(Ext.nd.data.DominoViewXmlReader, Ext.data.XmlReader, {
     
     var node = valNode.firstChild;
     if (!node) {
-      oValue.data.push(null);
+      oValue.data.push('');
     } else if (node.hasChildNodes()) {
       for (var i = 0; i < node.childNodes.length; i++) {
         oValue.type = node.nodeName;
         oValue.data.push(node.childNodes[i].nodeValue);
-//        console.log(['mult',node.childNodes[i], oValue.type, oValue.data]);
       }
     } else {
       if (node.nodeName != '#text') {
         oValue.type = node.nodeName;
       }
       oValue.data.push(node.nodeValue);
-//      console.log(['single',node, oValue.type, oValue.data]);
     }
 
     return oValue;
