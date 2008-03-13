@@ -61,7 +61,14 @@ Ext.nd.DominoUI.prototype = {
         tabPanel : this.tabPanel,
         uiView : this.uiView,
         statusPanel: this.statusPanel,
-        dominoUI: this
+        listeners: {
+          'openentry': function(uio, type, o) {
+            if (type==1) {
+              this.uiView = o;
+            }
+          },
+          scope: this
+        }
       },this.uiOutline));
     }
   },

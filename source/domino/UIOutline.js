@@ -20,29 +20,57 @@ new Ext.nd.UIOutline({
  * Create a new UIOutline component
  * @param {Object} config Configuration options
  */
+
 Ext.nd.UIOutline = function(config) {
+  var sess = Ext.nd.Session; // should we assume that there will always be a session?
+  var db = sess.currentDatabase;
 
-   var sess = Ext.nd.Session; // should we assume that there will always be a session?
-   var db = sess.currentDatabase;
+  // defaults
+  this.dbPath = db.webFilePath;
+  this.filePath = db.filePath;
+  this.outlineName = '';
+  this.showIcons = true;
+  this.useOutlineIcons = false;
 
-   // defaults      
-   this.dbPath = db.webFilePath;
-   this.filePath = db.filePath;
-   this.outlineName = '';
-   this.showIcons = true;
-   this.useOutlineIcons = false;
+  // Set any config params passed in to override defaults
+  Ext.apply(this, config);
 
-   // Set any config params passed in to override defaults
-   Ext.apply(this, config);
-   
-   // outlineUrl is either passed in or built from dbPath and outlineName
-   this.outlineUrl = (this.outlineUrl) ? this.outlineUrl : this.dbPath + this.outlineName;
+  // outlineUrl is either passed in or built from dbPath and outlineName
+  this.outlineUrl = (this.outlineUrl) ? this.outlineUrl : this.dbPath + this.outlineName;
 
-   // init the outline, which creates it in the container passed in the config object
-   this.init();
-};
+  this.addEvents(
+    /**
+     * @event readentries Fires when the Ajax request to ?ReadEntries returns
+     * @param {Ext.nd.UIOutline} this
+     * @param {XMLNode} responseXml
+     */
+    'readentries',
+    /**
+     * @event beforeopenentry Fires before the openEntry function is executed,
+     *        return false to stop the opening
+     * @param {Ext.nd.UIOutline} this
+     * @param {Node} node
+     */
+    'beforeopenentry',
+    /**
+     * @event openentry Fires after openEntry
+     * @param {Ext.nd.UIOutline} this
+     * @param {Integer} type An indicator of what type of node was opened.
+     *  0 = Nothing opened 
+     *  1 = View opened 
+     *  2 = Link opened
+     * @param {Ext.nd.UIView|Ext.Component} obj The view or component that was created
+     * @param {Node} node
+     */
+    'openentry'
+  );
 
-Ext.nd.UIOutline.prototype = {
+  Ext.nd.UIOutline.superclass.constructor.call(this);
+  this.init();
+}
+
+Ext.extend(Ext.nd.UIOutline, Ext.util.Observable, {
+  
   init: function() {
     Ext.Ajax.request({
       method: 'GET',
@@ -57,6 +85,8 @@ Ext.nd.UIOutline.prototype = {
   // Private
   init2: function(o) {
     var response = o.responseXML;
+    this.fireEvent('readentries', this, response);
+    
     var arEntries = response.getElementsByTagName('outlineentry');  
     var Tree = Ext.tree;
 
@@ -83,7 +113,7 @@ Ext.nd.UIOutline.prototype = {
           id : 'xnd-outline-root'+Ext.id()
         }),
         rootVisible : false
-    },this.treeConfig));
+    }, this.treeConfig));
     
     if (this.container) {
       this.container.add(this.tree);
@@ -243,59 +273,64 @@ Ext.nd.UIOutline.prototype = {
   
   // Private
   openEntry: function(node, e) {
-    var attributes, extndType, extndHref, extndPosition, panelId, title;
-    attributes = node.attributes;
-    extndHref = attributes.extndHref;
-    extndType = attributes.extndType;
-    extndPosition = attributes.extndPosition;
-    panelId = 'xnd-pnl' + extndPosition;
-    iframeId = 'xnd-ifrm' + extndPosition;
-    title = node.text;
-    
-    if (extndType == "2" || extndType == "20") {
-      // delete the current grid
+    if (this.fireEvent('beforeopenentry', this, node) !== false) {
+      var attributes, extndType, extndHref, extndPosition, panelId, title;
+      attributes = node.attributes;
+      extndHref = attributes.extndHref;
+      extndType = attributes.extndType;
+      extndPosition = attributes.extndPosition;
+      panelId = 'xnd-pnl' + extndPosition;
+      iframeId = 'xnd-ifrm' + extndPosition;
+      title = node.text;
       
-      this.uiView.removeFromContainer();
-
-      var viewUrl = (extndHref.indexOf('?') > 0) ? extndHref.split('?')[0] : extndHref.split('!')[0];       
-      // now create our new view/folder 
-      this.uiView = new Ext.nd.UIView({
-        viewport: this.viewport,
-        tabPanel: this.tabPanel,
-        container: this.uiView.container,
-        statusPanel: this.statusPanel,
-        showActionBar: false,
-        toolbar: false,
-        viewUrl: viewUrl
-      });
-      this.tabPanel.setActiveTab(this.uiView.container);
+      var opened = 0;
       
-      if (this.dominoUI) { // If in a DominoUI update it's uiView reference
-        this.dominoUI.uiView = this.uiView;
-      }
-    } else if (extndHref != "") {
-      var entry = this.tabPanel.getItem(panelId);
-      if(!entry){ 
-        var iframe = Ext.DomHelper.append(document.body, {
-          tag: 'iframe',
-          id: iframeId,
-          frameBorder: 0, 
-          src: extndHref,
-          style: {width:'100%', height:'100%'}
+      if (extndType == "2" || extndType == "20") {
+        // delete the current grid
+        
+        this.uiView.removeFromContainer();
+  
+        var viewUrl = (extndHref.indexOf('?') > 0) ? extndHref.split('?')[0] : extndHref.split('!')[0];       
+        // now create our new view/folder 
+        this.uiView = new Ext.nd.UIView({
+          viewport: this.viewport,
+          tabPanel: this.tabPanel,
+          container: this.uiView.container,
+          statusPanel: this.statusPanel,
+          showActionBar: false,
+          toolbar: false,
+          viewUrl: viewUrl
         });
-        this.tabPanel.add({
-          contentEl: iframe.id,
-          title: Ext.util.Format.ellipsis(title,16),
-          layout: 'fit',
-          id : panelId,
-          closable:true
-        }).show();
-      } else { // we've already opened this entry
-        entry.show();
+        this.tabPanel.setActiveTab(this.uiView.container);
+        opened = 1;
+      } else if (extndHref != "") {
+        var entry = this.tabPanel.getItem(panelId);
+        if(!entry){ 
+          var iframe = Ext.DomHelper.append(document.body, {
+            tag: 'iframe',
+            id: iframeId,
+            frameBorder: 0, 
+            src: extndHref,
+            style: {width:'100%', height:'100%'}
+          });
+          entry = this.tabPanel.add({
+            contentEl: iframe.id,
+            title: Ext.util.Format.ellipsis(title,16),
+            layout: 'fit',
+            id : panelId,
+            closable:true
+          }).show();
+          opened = 2;
+        } else { // we've already opened this entry
+          entry.show();
+          opened = 2;
+        }
       }
+      var o = (opened == 1) ? this.uiView : (opened == 2) ? entry : null;
+      this.fireEvent('openentry', this, opened, o, node);
     }
   }
-};
+});
 
 // TODO: need to create custom DominoNode class that extends Node so that we don't need to override hadChildNodes method of Node
 Ext.data.Node.prototype.hasChildNodes = function() {
