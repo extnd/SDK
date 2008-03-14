@@ -221,7 +221,7 @@ Ext.nd.UIView.prototype = {
         var resizeValue = (resize) ? true : false;
         
         // sortcategorize (category column)
-        var sortcategorize = q.selectValue('@sortcategorize',col,false)
+        var sortcategorize = q.selectValue('@sortcategorize',col,false);
         var sortcategorizeValue = (sortcategorize) ? true : false;
         
         // resort asc
@@ -437,7 +437,7 @@ Ext.nd.UIView.prototype = {
   // private
   addToolbarItems: function() {
     if (this.showSingleCategory && this.showCategoryComboBox) {
-      this.createSingleCategoryComboBox(this.toolbar)
+      this.createSingleCategoryComboBox(this.toolbar);
     }
 
     if (this.showSearch && !this.searchInPagingToolbar) {
@@ -594,7 +594,7 @@ Ext.nd.UIView.prototype = {
 
     // get the viewentry for this row
     var viewentry = row.node;
-    var dsItem = dataStore.data.items[rowIndex + 1]
+    var dsItem = dataStore.data.items[rowIndex + 1];
     var nextViewentry = (dsItem) ? dsItem.node : null;
 
     // indent padding
@@ -768,7 +768,8 @@ Ext.nd.UIView.prototype = {
     var charCode = e.charCode;
    
     target = e.getTarget();
-    row = this.grid.selModel.getSelected();
+    var sm = this.grid.getSelectionModel();
+    row = sm.getSelected();
     rowIndex = this.grid.getStore().indexOf(row);
 
     // for now, we won't worry about the altKey
@@ -818,9 +819,16 @@ Ext.nd.UIView.prototype = {
       case e.UP :
       case e.TAB :
         break; 
+        
+      // in the Notes client toggling the space bar 
+      // will toggle whether the doc is selected or not in a view
       case e.SPACE :
         if (row) {
-          Ext.MessageBox.alert("Coming Soon","In a future release, the space bar will toggle the selection of the document.");
+          if (sm.isSelected(rowIndex)) {
+            sm.deselectRow(rowIndex);
+          } else {
+            sm.selectRow(rowIndex);
+          }
         }
         break;
       default :
@@ -983,7 +991,7 @@ Ext.nd.UIView.prototype = {
   
   // private
   gridDeleteDocumentFailure: function(o) {
-    Ext.MessageBox.alert('Delete Error','The document could not be deleted.  Please check your access.')
+    Ext.MessageBox.alert('Delete Error','The document could not be deleted.  Please check your access.');
   },
   
   // private
@@ -1033,10 +1041,10 @@ Ext.nd.UIView.prototype = {
       unid = unid.value;
     }
     var panelId = 'pnl-' + unid;
-    var link = this.viewUrl + '/' + unid + mode     
+    var link = this.viewUrl + '/' + unid + mode;    
 
     if (!this.tabPanel) {
-      window.open(link)
+      window.open(link);
       return;
     }
       
@@ -1102,7 +1110,7 @@ Ext.nd.UIView.prototype = {
       unid = unid.value;
     }
 
-    var deleteDocUrl = this.viewUrl + '/' + unid + '?DeleteDocument'
+    var deleteDocUrl = this.viewUrl + '/' + unid + '?DeleteDocument';
     var docExists = this.layout.getRegion('center').getPanel(unid);
    
     if (docExists) {

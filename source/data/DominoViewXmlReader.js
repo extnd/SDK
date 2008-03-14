@@ -133,14 +133,6 @@ Ext.extend(Ext.nd.data.DominoViewXmlReader, Ext.data.XmlReader, {
 
     return oValue;
 
-  }, // end getValue
-
-  expand : function(url, params, callback, insertIndex) {
-    Ext.MessageBox.alert('Coming Soon', 'expand')
-  },
-
-  collapse : function(url, params, callback, insertIndex) {
-    Ext.MessageBox.alert('Coming Soon', 'collapse')
-  }
+  } // end getValue
 
 });

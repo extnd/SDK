@@ -48,7 +48,7 @@ Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
       case 'last':
         var total = store.getTotalCount();
         var extra = total % this.pageSize;
-        var lastStart = extra ? (total - extra) : total-this.pageSize
+        var lastStart = extra ? (total - extra) : total-this.pageSize;
         store.load({params: Ext.apply(store.lastOptions.params, {start: lastStart, count: this.pageSize})});
         this.activePagePrev = d.activePage;
         break;
@@ -111,7 +111,7 @@ Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
     } else if (this.cursor == 1) {
       activePage = 1;
     } else {
-      activePage = Math.ceil((this.cursor+this.pageSize)/this.pageSize)
+      activePage = Math.ceil((this.cursor+this.pageSize)/this.pageSize);
     }
 
     // reset this.which

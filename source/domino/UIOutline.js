@@ -67,7 +67,8 @@ Ext.nd.UIOutline = function(config) {
 
   Ext.nd.UIOutline.superclass.constructor.call(this);
   this.init();
-}
+  
+};
 
 Ext.extend(Ext.nd.UIOutline, Ext.util.Observable, {
   
@@ -164,7 +165,7 @@ Ext.extend(Ext.nd.UIOutline, Ext.util.Observable, {
             break;
          default :
             cls = "file";
-      };
+      }
 
       var curNode = new Tree.TreeNode({
         text : extndTitle, 

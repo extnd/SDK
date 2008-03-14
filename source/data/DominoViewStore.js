@@ -77,7 +77,7 @@ Ext.extend(Ext.nd.data.DominoViewStore, Ext.data.Store, {
               p.resortascending = sortColumn;
               if (p.start ) {
                 delete p.start;
-                delete p.startkey
+                delete p.startkey;
               }
               if (p.resortdescending) { 
                 delete p.resortdescending;
@@ -89,7 +89,7 @@ Ext.extend(Ext.nd.data.DominoViewStore, Ext.data.Store, {
             }
           // else part of - p.resortascending
           } else {
-            p["resortascending"] = sortColumn;
+            p.resortascending = sortColumn;
             delete p.start;
             delete p.startkey;
             delete p.resortdescending;
@@ -114,7 +114,7 @@ Ext.extend(Ext.nd.data.DominoViewStore, Ext.data.Store, {
             }
           // else part of p.resortdescending
           } else {
-            p["resortdescending"] = sortColumn;
+            p.resortdescending = sortColumn;
             delete p.start;
             delete p.startkey;
             delete p.resortascending;
