@@ -115,6 +115,7 @@ ws.PickList({
           id: 'xnd-picklist-prompt'
         },{
           region: 'center',
+          header: false,
           layout:'fit',
           id:'xnd-picklist-view',
           title : this.title
