@@ -301,12 +301,17 @@ Ext.extend(Ext.nd.Actionbar, Ext.util.Observable, {
   // this is a hack to set the view name on the tab since view?ReadDesign doesn't give the view title
   setViewName : function(response) {
       var q = Ext.DomQuery;
-      var vwName = q.selectValue('//@name', response);
+      //var vwName = q.selectValue('view[name]', response); // for somre reason this returns \n
       
-      // if any backslashes then only show the text after the last backslash
-      var bsLoc = vwName.lastIndexOf('\\');
-      if (bsLoc != -1) {
-        vwName = vwName.substring(bsLoc + 1);
+      //var vwName = q.select('view',response)[0].getAttribute('name'); // this works
+      var vwName = q.selectValue('view/@name',response); // and so does this
+      
+      if (!this.uiView.showFullCascadeName) {
+        // if any backslashes then only show the text after the last backslash
+        var bsLoc = vwName.lastIndexOf('\\');
+        if (bsLoc != -1) {
+          vwName = vwName.substring(bsLoc + 1);
+        }
       }
       
       // now set the tab's title
