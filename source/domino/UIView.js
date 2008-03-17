@@ -30,6 +30,9 @@ new Ext.nd.UIView({
  * @ cfg {String} viewTitle
  * Use this property to set a custom view title.  On a tab panel, this is the name shown on the tab. 
  * If you do not set this property, then the view's 'name' as defined in Domino Designer will be used.
+ * @ cfg {String} showFullCascadeName
+ * For cascading views you can set this property to false so that only the last name in the hierarchy is displayed.  
+ * Setting this property to true will display the full hierarchial name. The default value is false. 
  * @ cfg {String} noDocumentsFound
  * Use this property to set the text to display when the view is empty. The default is 'No Documents Found'.
  * @ cfg {String} notCategorizedText
@@ -93,6 +96,7 @@ Ext.nd.UIView = function(config) {
    this.singleSelect = false;
    this.viewName = '';
    this.viewTitle = '';
+   this.showFullCascadeName = false;
    this.baseParams = {};
    this.adjustedHeight = false;
    
@@ -610,7 +614,7 @@ Ext.nd.UIView.prototype = {
     // has children and is a categorized column
     if (row.hasChildren && colConfig.sortcategorize) {
       var extraIndent = (value.indent) ? ((value.indent > 0) ? "padding-left:" + value.indent * 20 + "px;" : "") : "";
-      cell.attr = "style='position: absolute; " + extraIndent + "'";
+      cell.attr = "style='position: absolute; width: auto; white-space: nowrap; " + extraIndent + "'";
       if (nextViewentry) {
          var nextViewentryPosition = nextViewentry.attributes.getNamedItem('position').value;
          var nextViewentryLevel = nextViewentryPosition.split('.').length;
