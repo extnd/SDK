@@ -337,7 +337,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.util.Observable, {
       var show = true;
       var action = arActions[i];
 
-      var title = q.selectValue('@title',action,null);
+      var title = q.selectValue('@title',action,"");
       var hidewhen = q.selectValue('@hide',action,null);
       var showinbar = q.selectValue('@showinbar',action,null);
       var iconOnly = q.select('@onlyiconinbar',action);
