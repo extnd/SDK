@@ -205,9 +205,14 @@ Ext.nd.UIView.prototype = {
         var tmpName = q.selectValue('@name',col,'');
         var name = (tmpName == undefined) ? 'columnnumber_' + columnnumber : tmpName;
         
+        
         var tmpTitle = q.selectValue('@title',col,"&nbsp;");
         var title = (tmpTitle == undefined) ? "&nbsp;" : tmpTitle;
         var width = q.selectNumber('@width',col) * 1.41; // multiplying by 1.41 converts the width to pixels
+        
+        // now make sure the col width is at least 22px for all columns
+        width = (width < 22) ? 22 : width;
+        
         
         // response
         var response = q.selectValue('@response',col,false);
@@ -588,13 +593,17 @@ Ext.nd.UIView.prototype = {
     // currently displaying any data (like a 'show response only' column, or a multi-categorized
     // view that is collapsed and you can't see the data for the other columns
     
-    if (value.data.length == 0) {
+    var colConfig = this.cm.config[colIndex];
+    
+    // if we don't have any data and this is not a response column then just return a blank
+    if (value.data.length == 0 && !colConfig.response) {
       return "";
     }
     
     
     var args = arguments;
     var colConfig = this.cm.config[colIndex];
+    var prevColConfig = (colIndex > 0) ? this.cm.config[colIndex-1] : null;
 
     // get the viewentry for this row
     var viewentry = row.node;
@@ -630,27 +639,27 @@ Ext.nd.UIView.prototype = {
          value = sExpandImage + this.getValue(value, colConfig);
       }
     } 
-    // has children but is NOT a response, so therefore, must be a regular doc with response docs
-    else if (row.hasChildren && !row.isResponse && colConfig.response) {
-      cell.attr = "style='position: absolute;'";
+    // has children and IS NOT a response doc BUT IS a response COLUMN
+    else if (row.hasChildren && !row.isResponse && colConfig.response) { 
       if (nextViewentry) {
          var nextViewentryPosition = nextViewentry.attributes.getNamedItem('position').value;
          var nextViewentryLevel = nextViewentryPosition.split('.').length;
          if (nextViewentryLevel > viewentryLevel) {
-            cell.css = "xnd-view-collapse xnd-view-category"; 
-            value = sCollapseImage + this.getValue(value, colConfig);
+            cell.css = "xnd-view-collapse xnd-view-response"; 
+            value = sCollapseImage;
          } else {
-            cell.css = "xnd-view-expand xnd-view-category"; 
-            value = sExpandImage + this.getValue(value, colConfig);
+            cell.css = "xnd-view-expand xnd-view-response"; 
+            value = sExpandImage;
          }        
       } else { // should be a categorized column on the last row
-         cell.css = "xnd-view-expand xnd-view-category"; 
-         value = sExpandImage + this.getValue(value, colConfig);
-      }
-    }  
+         cell.css = "xnd-view-expand xnd-view-response"; 
+         value = sExpandImage;
+      }    
+    }
     // has children and IS a response doc
     else if (row.hasChildren && row.isResponse && colConfig.response) { 
-      cell.attr = "style='position: absolute; padding-left:" + indentPadding + ";'"; // TODO: need to figure out how to STYLE the cell
+      var extraIndent = (value.indent) ? ((value.indent > 0) ? "padding-left:" + (20 + (value.indent * 20)) + "px;" : "") : "";
+      cell.attr = "style='position: absolute; width: auto; white-space: nowrap; " + extraIndent + "'";
       if (nextViewentry) {
          var nextViewentryPosition = nextViewentry.attributes.getNamedItem('position').value;
          var nextViewentryLevel = nextViewentryPosition.split('.').length;
@@ -669,7 +678,8 @@ Ext.nd.UIView.prototype = {
     // does NOT have children and IS a response doc
     else if (!row.hasChildren && row.isResponse && colConfig.response) { 
       cell.css = "xnd-view-response";  
-      cell.attr = "style='position: absolute; padding-left:" + indentPaddingNoIcon + ";'"; // notice we use the padding that has the extra 19px since no icon is shown
+      var extraIndent = (value.indent) ? ((value.indent > 0) ? "padding-left:" + (20 + (value.indent * 20)) + "px;" : "") : "";
+      cell.attr = "style='position: absolute; width: auto; white-space: nowrap; " + extraIndent + "'";
       value = this.getValue(value, colConfig);
     }  
     // just normal data
@@ -891,12 +901,18 @@ Ext.nd.UIView.prototype = {
   // private
   gridHandleCellClick: function(grid, rowIndex, colIndex, e) {
     var ecImg = Ext.get(e.getTarget());
-    var cell;
+    var cellCat, cellResponse;
+    var cell = false;
     var options = {};
     var record = grid.getStore().getAt(rowIndex);  
     
     if (ecImg.dom.tagName == 'IMG') {
-      cell = ecImg.findParent('td.xnd-view-category');
+      cellCat = ecImg.findParent('td.xnd-view-category');
+      cell = cellCat;
+      if (!cellCat) { 
+        cellResponse = ecImg.findParent('td.xnd-view-response');
+        cell = cellResponse;
+      }
       if (cell) {
         var cellEl = Ext.get(cell);
         var isExpand = cellEl.hasClass('xnd-view-expand');
