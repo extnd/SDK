@@ -420,9 +420,7 @@ Ext.nd.UIView.prototype = {
     }
    
     // This is a pretty bad hack.  We need to dig into the root cause of the grid height issues
-    if (this.viewport) {
-      ds.on('load', this.fixViewHeight, this);
-    }
+    ds.on('load', this.fixViewHeight, this);
     
     // trigger the data store load
     ds.load({params:{count: this.count, start: 1}});
@@ -431,15 +429,29 @@ Ext.nd.UIView.prototype = {
 
   // private
   fixViewHeight: function() {
-    var adj = this.toolbar.getEl().getHeight() + 7;
-    if(this.paging && this.toolbar && !this.adjustedHeight) {
-      var grd = this.grid.getEl().child('.x-grid3');
-      grd.setHeight(grd.getHeight()-adj);
-      var par = grd.parent();
-      par.setHeight(par.getHeight()-adj);
-      var scroller = this.grid.getEl().child('.x-grid3-scroller');
-      scroller.setHeight(scroller.getHeight()-adj);
-      this.adjustedHeight = true;
+    if (this.viewport) { // this seems to work best for views in DominoUI
+      if(this.paging && this.toolbar && !this.adjustedHeight) {
+        var adj = this.toolbar.getEl().getHeight() + 7;
+        var grd = this.grid.getEl().child('.x-grid3');
+        grd.setHeight(grd.getHeight()-adj);
+        var par = grd.parent();
+        par.setHeight(par.getHeight()-adj);
+        var scroller = this.grid.getEl().child('.x-grid3-scroller');
+        scroller.setHeight(scroller.getHeight()-adj);
+        this.adjustedHeight = true;
+      }
+    } else { // this seems to work best for views in divs and the PickList
+        if(this.paging && this.toolbar && !this.adjustedHeight) {
+          var grdEl = this.grid.getEl();
+          var adj = grdEl.getHeight() - grdEl.parent().getHeight();
+          var grd = grdEl.child('.x-grid3');
+          grd.setHeight(grd.getHeight()-adj);
+          var par = grd.parent();
+          par.setHeight(par.getHeight()-adj);
+          var scroller = grdEl.child('.x-grid3-scroller');
+          scroller.setHeight(scroller.getHeight()-adj);
+          this.adjustedHeight = true;
+        }
     }
   },
 
