@@ -113,12 +113,6 @@ ws.PickList({
           titlebar: true,
           title : this.prompt,
           id: 'xnd-picklist-prompt'
-        },{
-          region: 'center',
-          header: false,
-          layout:'fit',
-          id:'xnd-picklist-view',
-          title : this.title
         }]
       });
       //dialog.addKeyListener(27, handleOK, this);
@@ -128,7 +122,7 @@ ws.PickList({
 
       // now create the view
       this.uiView = new Ext.nd.UIView(Ext.apply({
-        container : Ext.getCmp('xnd-picklist-view'),
+        container : Ext.getCmp('xnd-picklist),
         header: false,
         viewUrl : this.viewUrl,
         gridHandleRowDblClick : handleOK.createDelegate(this),
@@ -139,7 +133,9 @@ ws.PickList({
         
         showActionbar : this.showActionbar,
         showSearch : this.showSearch
-        
+        gridConfig: {
+          region: 'center'
+        }
       },this.viewOptions));
       
     } // end if(!dialog)
