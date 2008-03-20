@@ -122,7 +122,7 @@ ws.PickList({
 
       // now create the view
       this.uiView = new Ext.nd.UIView(Ext.apply({
-        container : Ext.getCmp('xnd-picklist),
+        container : Ext.getCmp('xnd-picklist'),
         header: false,
         viewUrl : this.viewUrl,
         gridHandleRowDblClick : handleOK.createDelegate(this),
@@ -132,7 +132,7 @@ ws.PickList({
         categoryComboBoxCount : this.categoryComboBoxCount,
         
         showActionbar : this.showActionbar,
-        showSearch : this.showSearch
+        showSearch : this.showSearch,
         gridConfig: {
           region: 'center'
         }
