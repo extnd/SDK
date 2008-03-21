@@ -106,8 +106,8 @@ Ext.nd.UIView = function(config) {
 
    this.noDocumentsFoundText = "No Documents Found";
    this.notCategorizedText = "(Not Categorized)";
-   this.collapseIcon = "/icons/collapse.gif";
-   this.expandIcon = "/icons/expand.gif";
+   this.collapseIcon = Ext.nd.extndUrl + "/resources/images/minus.gif";
+   this.expandIcon = Ext.nd.extndUrl + "/resources/images/plus.gif";
    
    // defaults for single category options
    this.showSingleCategory = null;
@@ -929,8 +929,8 @@ Ext.nd.UIView.prototype = {
         var cellEl = Ext.get(cell);
         var isExpand = cellEl.hasClass('xnd-view-expand');
         if (isExpand) {
-          // need to expand (double the count so you can show some of the category detail rows)
-          options.params = Ext.apply({count: this.count+this.count},{expand: record.position});
+          // need to expand (count is determined by taking the rowIndex and adding this.count)
+          options.params = Ext.apply({count: rowIndex+this.count},{expand: record.position});
           this.grid.getStore().load(options);
           // since we are loading the entire store above
           // we do not need the remove/addClass methods
@@ -941,8 +941,8 @@ Ext.nd.UIView.prototype = {
         } else {
           var isCollapse = cellEl.hasClass('xnd-view-collapse');
           if (isCollapse) {
-            // need to collapse
-            options.params = Ext.apply({count: this.count},{collapse: record.position});
+            // need to collapse (count is determined by the lastOptions.params.count)
+            options.params = Ext.apply({count: this.grid.getStore().lastOptions.params.count},{collapse: record.position});
             this.grid.getStore().load(options);
             // since we are loading the entire store above
             // we do not need the remove/addClass methods
