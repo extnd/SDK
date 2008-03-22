@@ -553,10 +553,13 @@ Ext.nd.UIView.prototype = {
   handleViewSearch: function() {
     var qry = this.searchField.getValue();
     var tb = (this.searchInPagingToolbar && this.paging)?this.paging:this.toolbar;
+    var baseParams = {db: this.dbPath, vw: this.viewName }
     
     if (!this.isSearching) {
       this.oldDataSource = this.grid.getStore(); // Save the current DS so we can restore it when search is cleared
-      
+      if (this.oldDataSource.baseParams.RestrictToCategory) {
+        baseParams = Ext.apply(baseParams,{RestrictToCategory,this.oldDataSource.baseParams.RestrictToCategory});
+        
       // define the Domino viewEntry record
       var viewEntry = Ext.data.Record.create(this.dominoView.recordConfig);
 
@@ -568,7 +571,7 @@ Ext.nd.UIView.prototype = {
               url: Ext.nd.extndUrl+'SearchView?OpenAgent',
               method: "GET"
           }),
-          baseParams: {db: "/"+Ext.nd.Session.currentDatabase.filePath, vw: this.viewName },
+          baseParams: baseParams,
           reader: viewEntryReader,
           remoteSort: false
       });
