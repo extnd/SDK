@@ -360,7 +360,7 @@ Ext.nd.UIView.prototype = {
         //forceFit: true
       },
       loadMask: true,
-      tbar: (this.toolbar || this.showActionbar || this.showCategoryComboBox) ? new Ext.Toolbar({
+      tbar: (this.toolbar || this.showActionbar || (this.showSingleCategory && this.showCategoryComboBox)) ? new Ext.Toolbar({
         id:'xnd-view-toolbar-'+Ext.id(),
         plugins: new Ext.nd.Actionbar({
           noteType: 'view', 
@@ -387,7 +387,7 @@ Ext.nd.UIView.prototype = {
       this.container.setTitle(this.viewTitle);
       this.container.doLayout();
     }
-    
+
     this.toolbar = this.grid.getTopToolbar();
     if (this.showPagingToolbar) {
       this.paging = this.grid.getBottomToolbar();
@@ -429,6 +429,23 @@ Ext.nd.UIView.prototype = {
 
   // private
   fixViewHeight: function() {
+    if(this.paging && this.toolbar && !this.adjustedHeight) {
+      var grdEl = this.grid.getEl();
+      var adj = grdEl.getHeight() - grdEl.parent().getHeight();
+      if (adj > 0) {
+        var grd = grdEl.child('.x-grid3');
+        grd.setHeight(grd.getHeight()-adj);
+        var par = grd.parent();
+        par.setHeight(par.getHeight()-adj);
+        var scroller = grdEl.child('.x-grid3-scroller');
+        scroller.setHeight(scroller.getHeight()-adj);
+      }
+      this.adjustedHeight = true;
+    }
+  },
+
+  // private
+  fixViewHeight_OLD: function() {
     if (this.viewport) { // this seems to work best for views in DominoUI
       if(this.paging && this.toolbar && !this.adjustedHeight) {
         var adj = this.toolbar.getEl().getHeight() + 7;
@@ -531,6 +548,7 @@ Ext.nd.UIView.prototype = {
       this.handleViewSearch();
     }
   },
+  
   // private
   handleViewSearch: function() {
     var qry = this.searchField.getValue();
@@ -1006,7 +1024,7 @@ Ext.nd.UIView.prototype = {
   gridDeleteDocumentSuccess: function(o) {
     var row = o.argument;
     var ds = this.grid.getStore();
-    var sm = this.grid.selModel;
+    var sm = this.grid.getSelectionModel()
     var rowIndex = ds.indexOf(row);
     if (rowIndex == ds.data.length) {
       sm.selectRow(rowIndex);
