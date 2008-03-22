@@ -62,6 +62,7 @@ Ext.extend(Ext.nd.data.DominoViewXmlReader, Ext.data.XmlReader, {
       record.position = n.attributes.getNamedItem('position').value;
       record.noteid = n.attributes.getNamedItem('noteid').value;
       record.unid = (n.attributes.getNamedItem('unid')) ? n.attributes.getNamedItem('unid').value : null;
+      record.isCategory = (record.hasChildren && !n.attributes.getNamedItem('unid')) ? true : false;
     }
 
     return {
@@ -100,7 +101,7 @@ Ext.extend(Ext.nd.data.DominoViewXmlReader, Ext.data.XmlReader, {
         
         // now get the other needed attributes
         // category and indent are needed for categories built with the backslash
-        oValue.category = (q.select('@category', entryDataNodes[i])) ? true : false;
+        oValue.category = (q.selectValue('@category', entryDataNodes[i]) == 'true') ? true : false;
         oValue.indent = (q.select('@indent', entryDataNodes[i])) ? q.selectNumber('@indent', entryDataNodes[i]) : 0;
 
       } // end if(cn == colNbr)
