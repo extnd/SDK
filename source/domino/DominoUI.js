@@ -95,7 +95,8 @@ Ext.nd.DominoUI.prototype = {
         activeTab:0,
         items: [{
           id: 'xnd-grid-panel',
-          layout: 'fit'
+          layout: 'fit',
+          title: 'Loading view...'
         }]
       }]
     });
