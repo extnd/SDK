@@ -669,8 +669,8 @@ Ext.nd.UIView.prototype = {
          value = sExpandImage + this.getValue(value, colConfig);
       }
     } 
-    // has children and IS NOT a response doc BUT IS a response COLUMN
-    else if (row.hasChildren && !row.isResponse && colConfig.response) { 
+    // is NOT a category but has children and IS NOT a response doc BUT IS a response COLUMN
+    else if (!row.isCategory && row.hasChildren && !row.isResponse && colConfig.response) { 
       if (nextViewentry) {
          var nextViewentryPosition = nextViewentry.attributes.getNamedItem('position').value;
          var nextViewentryLevel = nextViewentryPosition.split('.').length;
