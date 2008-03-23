@@ -121,7 +121,7 @@ Ext.nd.Form.prototype = {
       switch(el.tagName) {
         case 'SELECT' :
           if (!this.convertFromClassName(el,false)) {
-            this.convertSelectToComboBox(el);
+            this.convertSelectToComboBox(el, true);
           }
           break;
 
@@ -190,7 +190,16 @@ Ext.nd.Form.prototype = {
       switch (cls) {
         case 'xnd-combobox' :
           if (doConvert) {
-            this.convertSelectToComboBox(el);
+            this.convertSelectToComboBox(el, true);
+          }
+          converted = true;
+          break;
+
+        // doesn't work since domino sends a text field instead of a select when
+        // the option for 'allow values not in list' is selected
+        case 'xnd-combobox-appendable' :
+          if (doConvert) {
+            this.convertSelectToComboBox(el, false);
           }
           converted = true;
           break;
@@ -205,6 +214,25 @@ Ext.nd.Form.prototype = {
           converted = true;
           break;
 
+        case 'xnd-number' :
+          if (doConvert) {
+            var nbr = new Ext.form.NumberField({
+              selectOnFocus : true
+            });      
+            nbr.applyToMarkup(el);
+          }
+          converted = true;
+          break;
+
+        case 'xnd-time' :
+          if (doConvert) {
+            var tm = new Ext.form.TimeField({
+              selectOnFocus : true
+            });      
+            tm.applyToMarkup(el);
+          }
+          converted = true;
+          break;
         case 'xnd-htmleditor' :
           if (doConvert) {
             this.convertToHtmlEditor(el);
@@ -262,12 +290,12 @@ Ext.nd.Form.prototype = {
             
   },
   
-  convertSelectToComboBox : function(el) {
+  convertSelectToComboBox : function(el,forceSelection) {
     var cb = new Ext.form.ComboBox({
       typeAhead : true,
       triggerAction : 'all',
       transform : el,
-      forceSelection : true,
+      forceSelection : forceSelection,
       resizable: true
     });
 
@@ -278,29 +306,29 @@ Ext.nd.Form.prototype = {
       var attr = el.attributes;
       if (attr) {
         var onChange = attr['onchange'];
-        if (onChange) {
+        if (onChange && onChange.nodeValue != null) { // for some reason IE returns an onchange of null if one isn't explicitly set
           var sOnChange = onChange.nodeValue;
           var extcallback = function(bleh) { eval(bleh);}.createCallback(sOnChange);
-        }
-      }
 
-      // to fix a bug with DomHelper not liking domino sometimes wrapping a SELECT within a FONT tag 
-      // we need to handle setting the value of the hiddenField ourselves
-      var value = (cb.getValue()) ? cb.getValue() : cb.getRawValue();
-      var field = Ext.get(cb.hiddenName);
-      field.dom.value = value;
+          // to fix a bug with DomHelper not liking domino sometimes wrapping a SELECT within a FONT tag 
+          // we need to handle setting the value of the hiddenField ourselves
+          var value = (cb.getValue()) ? cb.getValue() : cb.getRawValue();
+          var field = Ext.get(cb.hiddenName);
+          field.dom.value = value;
 
-      // we must also define a listener to change the value of the hidden field when the selection in the combobox changes
-      cb.on('select',function(){
-         /* value is the selection value if set, otherwise is the raw typed text */
-         var value = (this.getValue()) ? this.getValue() : this.getRawValue();
-         var field = Ext.get(this.hiddenName);
-         field.dom.value = value;
-         if (typeof extcallback == 'function') {
-            Ext.MessageBox.wait("Refreshing document...");
-            extcallback(); 
-         }
-      });
+          // we must also define a listener to change the value of the hidden field when the selection in the combobox changes
+          cb.on('select',function(){
+             /* value is the selection value if set, otherwise is the raw typed text */
+             var value = (this.getValue()) ? this.getValue() : this.getRawValue();
+             var field = Ext.get(this.hiddenName);
+             field.dom.value = value;
+             if (typeof extcallback == 'function') {
+                Ext.MessageBox.wait("Refreshing document...");
+                extcallback(); 
+             }
+          });
+        } // end if (onChange)
+      } // end if (attr)
     } // end if (this.applyDominoKeywordRefresh) 
   } // end convertSelectToComboBox
 
