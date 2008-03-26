@@ -29,6 +29,9 @@ Ext.nd.DominoUI = function(config) {
    // init the DominoUI
    this.init();
    
+   // load any links
+   this.loadLink();
+   
 }; // end Ext.nd.DominoUI
 
 Ext.nd.DominoUI.prototype = {
@@ -107,6 +110,65 @@ Ext.nd.DominoUI.prototype = {
     this.tabPanel.on('beforeremove',this.fixIFrame,this);
   },
 
+  // TODO: need to consolidate this with UIOutline.openEntry() and UIView.openDocument()
+  loadLink: function() {
+  
+    // allow for link in
+    var href = window.location.href;
+    
+    if (href.indexOf('?') > 0 || href.indexOf('!') > 0) {
+      var qs = (href.indexOf('?') > 0) ? href.split('?')[1] : href.split('!')[1];
+      var ps = Ext.urlDecode(qs);
+      var link = ps['link'];
+      var title = link;
+      
+      if (link) {
+        var unid = (link.indexOf('?') > 0) ? href.split('?')[0] : link;      
+        var panelId = 'pnl-' + unid;
+        var entry = this.tabPanel.getItem(panelId);
+
+        if(!entry){ 
+          var iframe = Ext.DomHelper.append(document.body, {
+              tag: 'iframe', 
+              frameBorder: 0, 
+              src: link,
+              id: unid,
+              style: {width: '100%', height: '100%'}
+          });
+          this.tabPanel.add({
+            id: panelId,
+            contentEl: iframe.id,
+            title: Ext.util.Format.ellipsis(title,16), 
+            layout: 'fit',
+            closable: true
+          }).show();
+
+          var panel = Ext.getCmp(panelId);
+
+          var dom = Ext.get(unid).dom;
+          var event = Ext.isIE ? 'onreadystatechange' : 'onload';
+          dom[event] = (function() {
+            var cd = this.contentWindow || window.frames[this.name];
+            var title;
+            // try to get the title from within the iframe
+            try {
+              title = cd.document.title;
+              if (title != "") {
+                panel.setTitle(Ext.util.Format.ellipsis(title,16));
+              } else {
+                panel.setTitle("Untitled");
+              }
+            } catch(ignore){}
+            
+          }).createDelegate(dom);
+
+        } else { // we've already opened this document
+          entry.show();
+        }
+      }
+    }
+  },
+  
   // This is a hack to fix the memory issues that occur when opening and closing stuff within iFrames
   fixIFrame: function(container, panel) {
     var iFrame = panel.getEl().dom;
