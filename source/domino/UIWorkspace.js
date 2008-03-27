@@ -110,9 +110,16 @@ ws.PickList({
         title:this.title,
         items: [{
           region: 'north',
-          titlebar: true,
+          height: 27,
+          xtype:'panel',
           title : this.prompt,
           id: 'xnd-picklist-prompt'
+        },{
+          region: 'center',
+          layout:'fit',
+          xtype:'panel',
+          header: false,
+          id:'xnd-picklist-view'
         }]
       });
       //dialog.addKeyListener(27, handleOK, this);
@@ -122,7 +129,7 @@ ws.PickList({
 
       // now create the view
       this.uiView = new Ext.nd.UIView(Ext.apply({
-        container : Ext.getCmp('xnd-picklist'),
+        container : Ext.getCmp('xnd-picklist-view'),
         header: false,
         viewUrl : this.viewUrl,
         gridHandleRowDblClick : handleOK.createDelegate(this),
@@ -132,10 +139,8 @@ ws.PickList({
         categoryComboBoxCount : this.categoryComboBoxCount,
         
         showActionbar : this.showActionbar,
-        showSearch : this.showSearch,
-        gridConfig: {
-          region: 'center'
-        }
+        showSearch : this.showSearch
+        
       },this.viewOptions));
       
     } // end if(!dialog)
