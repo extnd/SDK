@@ -126,6 +126,13 @@ Ext.nd.UIView = function(config) {
    // Set any config params passed in to override defaults
    Ext.apply(this,config);
    
+   // did a shorthand reference to a different selection model get passsed in?
+   // if so, get rid of the shorthand reference
+   if (this.sm) {
+      this.selModel = this.sm;
+      delete this.sm;
+   }
+   
    // set single category if required
    if (this.showSingleCategory) {
       this.baseParams.RestrictToCategory = this.showSingleCategory;
@@ -317,9 +324,6 @@ Ext.nd.UIView.prototype = {
   createGrid: function() {
     var sViewParams = (this.viewParams == undefined) ? "" : this.viewParams;
    
-    // define the column model
-    this.cm = new Ext.grid.DefaultColumnModel(this.dominoView.meta.columnConfig);
-      
     // define the Domino viewEntry record
     var viewEntry = Ext.data.Record.create(this.dominoView.recordConfig);
 
@@ -344,15 +348,23 @@ Ext.nd.UIView.prototype = {
       } catch (e) {}
     }
 
-
+    // create the selection model and column model
+    if (!this.selModel) {
+      this.selModel = new Ext.grid.RowSelectionModel({singleSelect: this.singleSelect});
+      this.colModel = new Ext.grid.DefaultColumnModel(this.dominoView.meta.columnConfig);
+    } else {
+      var tmpArray = [this.selModel];
+      this.colModel = new Ext.grid.DefaultColumnModel(tmpArray.concat(this.dominoView.meta.columnConfig));
+    }
+    
     // create a DominoGrid        
     var panId = "xnd-view-"+Ext.id();
     this.grid = new Ext.grid.GridPanel(Ext.apply({
       id: panId,
       layout: 'fit',
       store: ds,
-      cm: this.cm,
-      sm: new Ext.grid.RowSelectionModel({singleSelect: this.singleSelect}),
+      colModel: this.colModel,
+      selModel: this.selModel,
       enableDragDrop : true,
       ddGroup: 'TreeDD',
       viewName: this.viewName,
@@ -627,7 +639,7 @@ Ext.nd.UIView.prototype = {
     // currently displaying any data (like a 'show response only' column, or a multi-categorized
     // view that is collapsed and you can't see the data for the other columns
     
-    var colConfig = this.cm.config[colIndex];
+    var colConfig = this.colModel.config[colIndex];
     
     // if we don't have any data and this is not a response column then just return a blank
     if (value.data.length == 0 && !colConfig.response) {
@@ -636,8 +648,8 @@ Ext.nd.UIView.prototype = {
     
     
     var args = arguments;
-    var colConfig = this.cm.config[colIndex];
-    var prevColConfig = (colIndex > 0) ? this.cm.config[colIndex-1] : null;
+    var colConfig = this.colModel.config[colIndex];
+    var prevColConfig = (colIndex > 0) ? this.colModel.config[colIndex-1] : null;
 
     // get the viewentry for this row
     var viewentry = row.node;
@@ -899,7 +911,7 @@ Ext.nd.UIView.prototype = {
   
   // private
   gridHandleHeaderClick: function(grid, colIndex, e) {
-    var colConfig = this.cm.config[colIndex];
+    var colConfig = this.colModel.config[colIndex];
     if (colConfig.resortviewunid != "") {
       // first, let's stop the propagation of this event so that the sort events don't try and run as well
       e.stopPropagation();
