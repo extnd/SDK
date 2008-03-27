@@ -138,12 +138,13 @@ Ext.extend(Ext.nd.UIOutline, Ext.util.Observable, {
       var tmpextndHref = entry.attributes.getNamedItem('url');
       var extndHref = (tmpextndHref) ? tmpextndHref.value : "";
       
-      // is expandable?
+      // is currently expanded?
       // if the attribute 'expandable' exists, then it is expandable
       // don't be confused by expandable='true' or expandable='false'
       // the true and false just tells you their initial state (either already expanded or already collapsed)
       var expandable = entry.attributes.getNamedItem('expandable');
       var isExpandable = (expandable) ? true : false;
+      var isExpanded = (expandable && expandable.value == 'true') ? true : false;
          
       var tmpextndIcon = entry.attributes.getNamedItem('icon');
       var extndIcon = (tmpextndIcon) ? tmpextndIcon.value : "";
@@ -175,6 +176,7 @@ Ext.extend(Ext.nd.UIOutline, Ext.util.Observable, {
         allowDrop : (extndType == "20") ? true : false,
         isTarget : true,
         leaf : false,
+        expanded : isExpanded,
         extndHref : extndHref,
         extndType : extndType,
         extndUNID : extndUNID,
