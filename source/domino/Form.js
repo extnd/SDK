@@ -42,10 +42,10 @@ Ext.nd.Form = function(config) {
   // we do this since the UIDocument.js agent couldn't get this info and 
   // domino does not send the page name in the form tag like it does for forms
   if (typeof this.formName == 'undefined' || this.formName == "") {
-    var href = location.href;
+    var href = location.href.toLowerCase();
     var search = location.search
-    var start = href.indexOf(this.dbPath) + this.dbPath.length;
-    var end = href.indexOf(search)
+    var start = href.indexOf(this.dbPath.toLowerCase()) + this.dbPath.length;
+    var end = (search != "") ? href.indexOf(search) : href.length;
     this.formName = href.substring(start,end);
   }
  
