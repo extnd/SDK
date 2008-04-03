@@ -370,7 +370,6 @@ Ext.extend(Ext.nd.Actionbar, Ext.util.Observable, {
         show = false;
       }
       
-      
       if (icon) {
         if (icon < 10) {
           imageRef = "00"+icon;
@@ -446,7 +445,8 @@ Ext.extend(Ext.nd.Actionbar, Ext.util.Observable, {
                 case 'OpenView':
                 case 'RunAgent':
                 default:
-                  handler = this.unsupportedAtCommand.createDelegate(this,[formula]);
+                  show = false; // For now hide unsupported commands
+                  //handler = this.unsupportedAtCommand.createDelegate(this,[formula]);
               } // end switch
             } // end if (cmdFrm.length)
           } // end if (formula)
