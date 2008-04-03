@@ -421,7 +421,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.util.Observable, {
           // @Command([Compose];"profile")
           // runagent, openview, delete, saveoptions := "0"
           if (formula) {
-            var cmdFrm = formula.match(/\@Command\(\[(\w+)\](?:;"(.+?)")*\)/);
+            var cmdFrm = formula.match(/\@Command\(\[(\w+)\](?:;"")*(?:;"(.+?)")*\)/);
             if (cmdFrm && cmdFrm.length) {
               switch(cmdFrm[1]) {
                 case 'Compose': 
@@ -430,7 +430,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.util.Observable, {
                 case 'EditDocument':
                   // EditDocument @Command has an optional 2nd param that defines the mode, 1=edit, 2=read   
                   // if this 2nd param is missing, FF returns undefined and IE returns an empty string
-                  handler = this.openDocument.createDelegate(this, [(cmdFrm[2] == undefined || cmdFrm[2] == "") ? true : (cmdFrm[2] == "1") ? true : false]);
+                  handler = this.openDocument.createDelegate(this, [cmdFrm[2] ? ((cmdFrm[2] == "1") ? true : false): true]);
                   break;
                 case 'FileCloseWindow':
                   handler = this.closeDocument.createDelegate(this);
