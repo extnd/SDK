@@ -87,11 +87,11 @@ new Ext.nd.UIView({
  */
 Ext.nd.UIView = function(config) {
 
-   var sess = Ext.nd.Session; 
-   var db = sess.currentDatabase;
+   this.sess = Ext.nd.Session; 
+   this.db = this.sess.currentDatabase;
    
    // defaults
-   this.dbPath = db.webFilePath;
+   this.dbPath = this.db.webFilePath;
    this.count = 40;
    this.singleSelect = false;
    this.viewName = '';
@@ -555,7 +555,7 @@ Ext.nd.UIView.prototype = {
 
   // private:
   handleViewSearchKey: function(field, e) {
-    e.preventDefault();
+    e.preventDefault();   
     if (e.getKey() == Ext.EventObject.ENTER) {
       this.handleViewSearch();
     }
@@ -563,6 +563,13 @@ Ext.nd.UIView.prototype = {
   
   // private
   handleViewSearch: function() {
+  
+    //if (!this.db.isFTIndexed) {
+      //Ext.MessageBox.alert('Search View Error', 'A full text index must be created in order to search.');
+      //return;
+    //}
+    
+    
     var qry = this.searchField.getValue();
     var tb = (this.searchInPagingToolbar && this.paging)?this.paging:this.toolbar;
     var baseParams = {db: this.dbPath.substring(0,this.dbPath.length-1), vw: this.viewName };
@@ -1037,8 +1044,8 @@ Ext.nd.UIView.prototype = {
   },
   
   // private
-  gridDeleteDocumentSuccess: function(o) {
-    var row = o.argument;
+  gridDeleteDocumentSuccess: function(response, options) {
+    var row = options.row;
     var ds = this.grid.getStore();
     var sm = this.grid.getSelectionModel()
     var rowIndex = ds.indexOf(row);
@@ -1177,7 +1184,7 @@ Ext.nd.UIView.prototype = {
     }
 
     var deleteDocUrl = this.viewUrl + '/' + unid + '?DeleteDocument';
-    var docExists = this.layout.getRegion('center').getPanel(unid);
+    var docExists = (this.tabPanel) ? this.tabPanel.findById("pnl-" + unid) : null;
    
     if (docExists) {
       Ext.MessageBox.alert("Delete Error","You have this document open in another tab.  Please close the document first before deleting.");
@@ -1187,6 +1194,7 @@ Ext.nd.UIView.prototype = {
         disableCaching: true,
         success : this.gridDeleteDocumentSuccess, 
         failure : this.gridDeleteDocumentFailure,
+        row: row,
         scope: this,
         url: deleteDocUrl
       });
