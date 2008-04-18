@@ -14,6 +14,46 @@ Ext.nd.DominoPagingToolbar = function(config){
 };
 
 Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
+
+  // change the displayed text
+  beforePageText : "Showing entries ",
+  afterPageText : " - {0}",
+  
+  readPage : function(d){
+      var pageNum = this.field.dom.value;
+      if (!pageNum) {
+          this.field.dom.value = d.activePage;
+          return false;
+      }
+      return pageNum;
+  },
+
+  // private
+  onPagingKeydown : function(e){
+      var k = e.getKey(), d = this.getPageData(), pageNum;
+      if (k == e.RETURN) {
+          e.stopEvent();
+          pageNum = this.readPage(d);
+          this.doLoad(pageNum);
+      }else if (k == e.HOME || k == e.END){
+          e.stopEvent();
+          pageNum = k == e.HOME ? 1 : d.pages;
+          this.field.dom.value = pageNum;
+      }else if (k == e.UP || k == e.PAGEUP || k == e.DOWN || k == e.PAGEDOWN){
+          e.stopEvent();
+          if(pageNum = this.readPage(d)){
+              var increment = e.shiftKey ? 10 : 1;
+              if(k == e.DOWN || k == e.PAGEDOWN){
+                  increment *= -1;
+              }
+              pageNum += increment;
+              if(pageNum >= 1 & pageNum <= d.pages){
+                  this.field.dom.value = pageNum;
+              }
+          }
+      }
+  },
+
   // private
   onClick : function(which){
     var store = this.store;
@@ -103,7 +143,8 @@ Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
   // private
   getPageData : function(){
     var total = this.store.getTotalCount();
-    var activePage;
+    var activePage, firstEntry, lastEntry;
+    
     if (this.which == 'next') {
       activePage = this.activePagePrev ? this.activePagePrev + 1 : 1;
     } else if (this.which == 'prev') {
@@ -117,10 +158,21 @@ Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
     // reset this.which
     this.which = "";
 
+    // for the new way of showing where within a view you are
+    if (this.store.data.length > 0) {
+      firstEntry = this.store.data.first().node.attributes.getNamedItem('position').value;
+      lastEntry = this.store.data.last().node.attributes.getNamedItem('position').value;
+    } else {
+      firstEntry = 1;
+      lastEntry = 1;
+    }
+    
     return {
       total : total,
-      activePage : activePage,
-      pages : total < this.pageSize ? 1 : Math.ceil(total/this.pageSize)
+      //activePage : activePage,
+      activePage : firstEntry,
+      //pages : total < this.pageSize ? 1 : Math.ceil(total/this.pageSize)
+      pages : lastEntry + " of " + total
     };
   }
   
