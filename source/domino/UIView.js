@@ -191,7 +191,9 @@ Ext.nd.UIView.prototype = {
   getViewDesignCB: function(o) {
     var q = Ext.DomQuery;
     var arColumns = q.select('column',o.responseXML);
-  
+    var isCategorized = q.selectNumber('viewdesign/@categories',o.responseXML,0);
+    isCategorized = (isCategorized > 0) ? true : false;
+      
     var arColumnConfig = [];
     var arRecordConfig = [];
   
@@ -296,7 +298,7 @@ Ext.nd.UIView.prototype = {
   
         var recordConfig = {
            name: name, 
-           mapping: columnnumber
+           mapping: columnnumber,
         };          
   
         arColumnConfig.push(columnConfig);
@@ -311,7 +313,8 @@ Ext.nd.UIView.prototype = {
            record : 'viewentry',
            totalRecords : '@toplevelentries',
            id : '@position',
-           columnConfig : arColumnConfig
+           columnConfig : arColumnConfig,
+           isCategorized : isCategorized
         },
         recordConfig : arRecordConfig
     };
@@ -386,6 +389,7 @@ Ext.nd.UIView.prototype = {
       bbar: (this.showPagingToolbar) ? new Ext.nd.DominoPagingToolbar({
         store: ds,
         pageSize: this.count,
+        isCategorized : this.dominoView.meta.isCategorized,
         paramNames: {start: 'start',limit:'count'}
       }) : null
     },this.gridConfig));
