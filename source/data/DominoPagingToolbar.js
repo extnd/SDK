@@ -11,6 +11,7 @@ Ext.nd.DominoPagingToolbar = function(config){
     Ext.nd.DominoPagingToolbar.superclass.constructor.call(this, config);
     this.previousCursor = 1;
     this.previousStart = [];
+    this.previousStartMC = new Ext.util.MixedCollection();
 };
 
 Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
@@ -60,42 +61,61 @@ Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
     var d = this.getPageData();
     var start;
     this.which = which;
-      
+    
     switch(which){
       case 'first':
         store.load({params: Ext.apply(store.lastOptions.params, {start: 1,count: this.pageSize})});
-        this.activePagePrev = d.activePage;
         break;
       case 'prev':
+        var first = store.data.first();
+        var firstPosition = first.node.attributes.getNamedItem('position').value;
         // if the previous page exists in cache, use it
-        if (this.previousStart[d.activePage - 1]) {
-          start = this.previousStart[d.activePage - 1];
+        var indexFirst = this.previousStartMC.indexOfKey(firstPosition)
+        if (indexFirst != -1) {
+          if (indexFirst == 0) {
+            start = 1;
+          } else {
+            start = this.previousStartMC.get(indexFirst-1);
+          }
         } else {
-          start = Math.max(1,this.cursor-this.pageSize);
+          if (this.prevWhich == 'last') {
+            start = this.previousStartMC.last();
+          } else {
+            start = 1;
+            this.previousStartMC.clear(); // clear everything and start over
+          }
         }
         store.load({params: Ext.apply(store.lastOptions.params, {start: start,count: this.pageSize})});
-        this.activePagePrev = d.activePage;
         break;
       case 'next':
+        var last = store.data.last();
+        var lastIndex = store.data.indexOf(last);
         if (store.data.length > 0) {
-          start = store.data.last().node.attributes.getNamedItem('position').value;
+          if (last.isCategoryTotal) {
+            var previous = store.getAt(lastIndex-1);
+            start = previous.node.attributes.getNamedItem('position').value;
+          } else {
+            start = last.node.attributes.getNamedItem('position').value;
+          }
+          this.previousStartMC.add(start,start);
         } else {
           start = 1;
         }
         store.load({params: Ext.apply(store.lastOptions.params, {start: start,count: this.pageSize})});
-            this.activePagePrev = d.activePage;
         break;
       case 'last':
         var total = store.getTotalCount();
         var extra = total % this.pageSize;
         var lastStart = this.isCategorized ? total : extra ? (total - extra) : total-this.pageSize;
         store.load({params: Ext.apply(store.lastOptions.params, {start: lastStart, count: this.pageSize})});
-        this.activePagePrev = d.activePage;
         break;
       case 'refresh':
         store.load({params: Ext.apply(store.lastOptions.params, {start: this.cursor, count: this.pageSize})});
         break;
+  
     }
+    // capture the 'which' to check for later
+    this.prevWhich = which;
   },
 
   // private
@@ -111,31 +131,21 @@ Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
       ap = 1;
     }
     
-    // update our paging cache if the current active page is greater that the previous active page
-    if (d.activePage == 1 || d.activePage > this.activePagePrev) {
-      if (store.data.length > 0) {
-        this.previousStart[d.activePage] = parseInt(store.data.first().node.attributes.getNamedItem('position').value,10);
-        this.previousStart[d.activePage + 1] = parseInt(store.data.last().node.attributes.getNamedItem('position').value,10);
-      }
-    } else {
-      // not sure if we should doing anything with cache if we are paging backwards....
-    } 
+    
     this.afterTextEl.el.innerHTML = String.format(this.afterPageText, d.pages);
     this.field.dom.value = ap;
 
-    
+    // the normal way
     //this.first.setDisabled(ap == 1);
     //this.prev.setDisabled(ap == 1);
     //this.next.setDisabled(ap == ps); 
     //this.last.setDisabled(ap == ps);
     
-    // for now, always show the 'first, 'prev', 'next' and 'last' so we can handle categories
-    // if the paging toolbar can figure out whether or not the view is flat or categorized,
-    // then perhaps we change this back for flat views and only display all buttons for cat views
-    this.first.setDisabled(false);
-    this.prev.setDisabled(false);
-    this.next.setDisabled(false); 
-    this.last.setDisabled(false);
+    // the Ext.nd way that works for categorized views and views with reader fields
+    this.first.setDisabled(store.baseParams.start == 1);
+    this.prev.setDisabled(store.baseParams.start == 1);
+    this.next.setDisabled(store.data.length < store.baseParams.count); 
+    this.last.setDisabled(store.data.length < store.baseParams.count);
     
     this.loading.enable();
   },
@@ -143,36 +153,32 @@ Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
   // private
   getPageData : function(){
     var total = this.store.getTotalCount();
-    var activePage, firstEntry, lastEntry;
+    var activePage, first, firstText, last, lastText;
     
-    if (this.which == 'next') {
-      activePage = this.activePagePrev ? this.activePagePrev + 1 : 1;
-    } else if (this.which == 'prev') {
-      activePage = this.activePagePrev ? this.activePagePrev - 1 : 1;
-    } else if (this.cursor == 1) {
-      activePage = 1;
-    } else {
-      activePage = Math.ceil((parseInt(this.cursor,10)+this.pageSize)/this.pageSize);
-    }
-
     // reset this.which
     this.which = "";
 
     // for the new way of showing where within a view you are
     if (this.store.data.length > 0) {
-      firstEntry = this.store.data.first().node.attributes.getNamedItem('position').value;
-      lastEntry = this.store.data.last().node.attributes.getNamedItem('position').value;
+      first = this.store.data.first();
+      firstText = first.node.attributes.getNamedItem('position').value;
+      last = this.store.data.last();
+      if (last.isCategoryTotal) {
+        var lastIndex = this.store.data.indexOf(last);
+        var previous = this.store.getAt(lastIndex-1);
+        lastText = previous.node.attributes.getNamedItem('position').value;
+      } else {
+        lastText = last.node.attributes.getNamedItem('position').value;
+      }
     } else {
-      firstEntry = 1;
-      lastEntry = 1;
+      firstText = "1";
+      lastText = "1";
     }
     
     return {
       total : total,
-      //activePage : activePage,
-      activePage : firstEntry,
-      //pages : total < this.pageSize ? 1 : Math.ceil(total/this.pageSize)
-      pages : lastEntry + " of " + total
+      activePage : firstText,
+      pages : lastText + " of " + total
     };
   }
   

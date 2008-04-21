@@ -63,6 +63,7 @@ Ext.extend(Ext.nd.data.DominoViewXmlReader, Ext.data.XmlReader, {
       record.noteid = n.attributes.getNamedItem('noteid').value;
       record.unid = (n.attributes.getNamedItem('unid')) ? n.attributes.getNamedItem('unid').value : null;
       record.isCategory = (record.hasChildren && !n.attributes.getNamedItem('unid')) ? true : false;
+      record.isCategoryTotal = n.attributes.getNamedItem('categorytotal');
     }
 
     return {
