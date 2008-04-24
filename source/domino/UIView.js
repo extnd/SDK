@@ -298,7 +298,7 @@ Ext.nd.UIView.prototype = {
   
         var recordConfig = {
            name: name, 
-           mapping: columnnumber,
+           mapping: columnnumber
         };          
   
         arColumnConfig.push(columnConfig);
