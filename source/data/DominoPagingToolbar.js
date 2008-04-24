@@ -131,7 +131,10 @@ Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
       ap = 1;
     }
     
-    
+    // resize the text field to hold the starting entry value
+    var tm = Ext.util.TextMetrics.createInstance(this.field.dom,100);
+    this.field.applyStyles({'width':Math.max(tm.getWidth(ap)+10,20), 'textAlign' : 'right'});
+ 
     this.afterTextEl.el.innerHTML = String.format(this.afterPageText, d.pages);
     this.field.dom.value = ap;
 
