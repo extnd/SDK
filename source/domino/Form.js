@@ -96,7 +96,7 @@ Ext.nd.Form.prototype = {
             noteName: this.formName,
             uiDocument: this.uidoc,
             useDxl: true,
-            tabPanel: (window.parent)? window.parent.Ext.getCmp('xnd-center-panel') : undefined
+            tabPanel: (window.parent && window.parent.Ext)? window.parent.Ext.getCmp('xnd-center-panel') : undefined
           })
         }) : null,
         autoScroll: true
