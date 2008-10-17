@@ -36,17 +36,18 @@ Ext.nd.Form = function(config) {
   this.toolbarContainer; // developer can specify where the toolbar should appear
   this.headerContainer; // developer can specify the header of the form
   this.form = this.uidoc.form;
-  this.formName = this.uidoc.formName || document.forms[0].name.substring(1)
-  
+    
   // for a page we need this hack to get the page name (that we store in the formName variable)
   // we do this since the UIDocument.js agent couldn't get this info and 
   // domino does not send the page name in the form tag like it does for forms
-  if (typeof this.formName == 'undefined' || this.formName == "") {
+  if (typeof this.uidoc.formName == 'undefined' && document.forms.length == 0) {
     var href = location.href.toLowerCase();
-    var search = location.search
+    var search = location.search.toLowerCase();
     var start = href.indexOf(this.dbPath.toLowerCase()) + this.dbPath.length;
     var end = (search != "") ? href.indexOf(search) : href.length;
     this.formName = href.substring(start,end);
+  } else {
+    this.formName = this.uidoc.formName || document.forms[0].name.substring(1)
   }
  
   
@@ -61,14 +62,19 @@ Ext.nd.Form = function(config) {
 Ext.nd.Form.prototype = {
 
   render: function() {
-    document.body.style.visibility = "hidden";
+    // this check should not be needed if method is called in Ext.onReady block
+    if (document && document.body) {
+        document.body.style.visibility = "hidden";
+    }
     var msg = Ext.MessageBox.wait("Loading document...");
     this.buildLayout();
     if (this.convertFields) {
       this.doConvertFields();
     }
     msg.hide();
-    document.body.style.visibility = "";
+    if (document && document.body) {
+        document.body.style.visibility = "";
+    }
   },
  
   buildLayout: function() {
