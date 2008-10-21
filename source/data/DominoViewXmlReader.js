@@ -112,25 +112,41 @@ Ext.extend(Ext.nd.data.DominoViewXmlReader, Ext.data.XmlReader, {
 
   }, // end getViewColumnValue
 
-  getValue : function(valNode, type) {
+  getValue : function(node, type) {
     var oValue = {
       type : type,
       data : []
     };
     
-    var node = valNode.firstChild;
     if (!node) {
       oValue.data.push('');
-    } else if (node.hasChildNodes()) {
+      
+      // now check to see if the childNodes have childNodes 
+      // if they do then this is a multi-value column
+    } else if (node.childNodes && node.childNodes.length > 0 && node.childNodes[0].hasChildNodes()) { 
+      
+      // what we are doing here is processing the values
+      // in the multi-value column
       for (var i = 0; i < node.childNodes.length; i++) {
-        oValue.type = node.nodeName;
-        oValue.data.push(node.childNodes[i].nodeValue);
+        if (node.childNodes[i].firstChild.nodeName != '#text') {
+            oValue.type = node.childNodes[i].firstChild.nodeName;
+        } else {
+            oValue.type = type;
+        }
+        oValue.data.push(node.childNodes[i].firstChild.nodeValue);
       }
     } else {
-      if (node.nodeName != '#text') {
-        oValue.type = node.nodeName;
+      
+      // here is just a single value node
+      oValue.type = type;
+      
+      // if the single value node has data then it is in a childNode
+      // otherwise just send an empty string since there is not any data
+      if (node.childNodes && node.childNodes.length > 0) {
+        oValue.data.push(node.childNodes[0].nodeValue);
+      } else {
+        oValue.data.push('');
       }
-      oValue.data.push(node.nodeValue);
     }
 
     return oValue;
