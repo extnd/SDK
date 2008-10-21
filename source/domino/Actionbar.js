@@ -510,7 +510,9 @@ Ext.extend(Ext.nd.Actionbar, Ext.util.Observable, {
   openForm : function(form) {
     var src = this.db.webFilePath+form+'?OpenForm';
     if(this.tabPanel) {
-      var iframe = Ext.DomHelper.append(document.body, {
+      // if we have a tabPanel then add an iframe the dom it is loaded in
+      // and in this iframe load our form
+      var iframe = Ext.DomHelper.append(this.tabPanel.body.dom, {
         tag: 'iframe',
         frameBorder: 0, 
         src: src,
@@ -552,7 +554,9 @@ Ext.extend(Ext.nd.Actionbar, Ext.util.Observable, {
         }
         pnl.show();
       } else {
-        var iframe = Ext.DomHelper.append(document.body, {
+        // if we have a tabPanel then add an iframe the dom it is loaded in
+        // and in this iframe load our form
+        var iframe = Ext.DomHelper.append(this.tabPanel.body.dom, {
           tag: 'iframe',
           frameBorder: 0, 
           src: src,
