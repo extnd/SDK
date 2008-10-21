@@ -87,7 +87,12 @@ Ext.nd.Form.prototype = {
     // now append the form into the UI
     Ext.get(ui).dom.appendChild(this.form);
     
-    // define the layout
+    // define the layout, note tabPanel uses window.parent.parent since window.parent == window.parent.parent
+    // and window.parent.parent will get DominoUI when an action happens from an actionbar within
+    // a form/doc/view that has already been loaded in a tab and thus in an iframe
+    // otherwise, window.parent will only tell you the previous form where the @compose action occurred
+    // and will not tell you the DominoUI
+    
     this.layout = new Ext.Viewport({
       layout: 'border',
       items: [{
@@ -102,7 +107,7 @@ Ext.nd.Form.prototype = {
             noteName: this.formName,
             uiDocument: this.uidoc,
             useDxl: true,
-            tabPanel: (window.parent && window.parent.Ext)? window.parent.Ext.getCmp('xnd-center-panel') : undefined
+            tabPanel: (window.parent && window.parent.parent && window.parent.parent.Ext)? window.parent.parent.Ext.getCmp('xnd-center-panel') : undefined
           })
         }) : null,
         autoScroll: true
