@@ -36,7 +36,9 @@ Ext.nd.Form = function(config) {
   this.toolbarContainer; // developer can specify where the toolbar should appear
   this.headerContainer; // developer can specify the header of the form
   this.form = this.uidoc.form;
-    
+  this.formName = this.uidoc.formName || document.forms[0].name.substring(1)
+  this.dateTimeFormats = Ext.nd.dateTimeFormats;
+  
   // for a page we need this hack to get the page name (that we store in the formName variable)
   // we do this since the UIDocument.js agent couldn't get this info and 
   // domino does not send the page name in the form tag like it does for forms
@@ -218,7 +220,8 @@ Ext.nd.Form.prototype = {
         case 'xnd-date' :
           if (doConvert) {
             var dt = new Ext.form.DateField({
-              selectOnFocus : true
+              selectOnFocus : true,
+              format : this.dateTimeFormats.dateFormat
             });      
             dt.applyToMarkup(el);
           }

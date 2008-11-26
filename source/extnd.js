@@ -1,8 +1,5 @@
 Ext.namespace("Ext.nd", "Ext.nd.form", "Ext.nd.data");
 
-Ext.nd.extUrl = "/extnd.nsf/ext/";  // default
-Ext.nd.extndUrl = "/extnd.nsf/extnd/";  // default
-
 Ext.nd.getBlankImageUrl = function() {
    return this.extndUrl + "resources/images/s.gif";
 };

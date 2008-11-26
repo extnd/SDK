@@ -99,10 +99,12 @@ Ext.nd.UIView = function(config) {
    this.showFullCascadeName = false;
    this.baseParams = {};
    this.adjustedHeight = false;
+   this.dateTimeFormats = Ext.nd.dateTimeFormats;
    
    // defaults for actionbar/toolbar
    this.showActionbar = true;
    this.toolbar = false;
+   this.actionBarBuildFromDXL = true;
 
    this.noDocumentsFoundText = "No Documents Found";
    this.notCategorizedText = "(Not Categorized)";
@@ -381,7 +383,7 @@ Ext.nd.UIView.prototype = {
           noteType: 'view', 
           noteName: this.viewName,
           uiView: this,
-          useDxl: true,
+          useDxl: this.actionBarBuildFromDXL,
           useViewTitleFromDxl: this.useViewTitleFromDxl,
           tabPanel: this.tabPanel || null
         })
@@ -806,10 +808,10 @@ Ext.nd.UIView.prototype = {
             var d = new Date(Date.parseDate(tmpDate,tmpDateFmt));
             switch (dtf.show) {
               case 'date':
-                tmpValue = d ? d.dateFormat("m/d/Y") : '';
+                tmpValue = d ? d.dateFormat(this.dateTimeFormats.dateFormat) : '';
                 break;
               case 'datetime':
-                tmpValue = d ? d.dateFormat("m/d/Y h:i:s A") : '';
+                tmpValue = d ? d.dateFormat(this.dateTimeFormats.dateTimeFormat) : '';
                 break;
             }
             break;
