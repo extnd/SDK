@@ -114,7 +114,9 @@ Ext.extend(Ext.nd.Actionbar, Ext.util.Observable, {
       var title = action.lastChild.nodeValue;
       var slashLoc = (title) ? title.indexOf('\\') : -1;
       var imageRef = q.selectValue('img/@src',action, null);
-      imageRef = (imageRef && imageRef.indexOf('/') == 0) ? imageRef : this.dbPath + imageRef;
+      // if imageRef is null, leave it that way
+      // if not and the path is an absolute path, use that, otherwise build the path
+      imageRef = (imageRef == null) ? null : (imageRef && imageRef.indexOf('/') == 0) ? imageRef : this.dbPath + imageRef;
       var cls = (title == null) ? 'x-btn-icon' : (imageRef) ? 'x-btn-text-icon' : null;
       
       if (slashLoc > 0) { // we have a subaction
