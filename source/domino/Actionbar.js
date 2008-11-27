@@ -574,7 +574,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.util.Observable, {
         }).show();
       }
     } else {
-      window.open(src);
+      location.href = src;
     }
   },
   /**
