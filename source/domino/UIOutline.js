@@ -288,45 +288,57 @@ Ext.extend(Ext.nd.UIOutline, Ext.util.Observable, {
       
       var opened = 0;
       
+      // 2 = view and 20 = folder
       if (extndType == "2" || extndType == "20") {
-        // delete the current grid
         
-        this.uiView.removeFromContainer();
+        // only if uiOutline knows of a uiView do we continue here
+        // in Ext.nd Beta 2 and going forward, openEntry won'd do any of this ui work
+        // instead, openEntry will this fire the openentry event and a listener will
+        // have to be setup to listen for this event and then do the ui work
+        if (this.uiView){
+          // delete the current grid  
+          this.uiView.removeFromContainer();
   
-        var viewUrl = (extndHref.indexOf('?') > 0) ? extndHref.split('?')[0] : extndHref.split('!')[0];       
-        // now create our new view/folder 
-        this.uiView = new Ext.nd.UIView({
-          viewport: this.viewport,
-          tabPanel: this.tabPanel,
-          container: this.uiView.container,
-          statusPanel: this.statusPanel,
-          showActionBar: false,
-          toolbar: false,
-          viewUrl: viewUrl
-        });
-        this.tabPanel.setActiveTab(this.uiView.container);
-        opened = 1;
-      } else if (extndHref != "") {
-        var entry = this.tabPanel.getItem(panelId);
-        if(!entry){ 
-          var iframe = Ext.DomHelper.append(document.body, {
-            tag: 'iframe',
-            id: iframeId,
-            frameBorder: 0, 
-            src: extndHref,
-            style: {width:'100%', height:'100%'}
-          });
-          entry = this.tabPanel.add({
-            contentEl: iframe.id,
-            title: Ext.util.Format.ellipsis(title,16),
-            layout: 'fit',
-            id : panelId,
-            closable:true
-          }).show();
-          opened = 2;
-        } else { // we've already opened this entry
-          entry.show();
-          opened = 2;
+          var viewUrl = (extndHref.indexOf('?') > 0) ? extndHref.split('?')[0] : extndHref.split('!')[0];       
+          // now create our new view/folder doing an applyIf to bring over the original this.uiView config info only if we haven't
+          // already specified new values
+          this.uiView = new Ext.nd.UIView(Ext.applyIf({
+            //viewport: this.viewport,
+            //tabPanel: this.tabPanel,
+            //container: this.uiView.container,
+            //statusPanel: this.statusPanel,
+            //showActionBar: false,
+            //toolbar: false,
+            viewUrl: viewUrl
+            },this.uiView));
+        
+            this.tabPanel.setActiveTab(this.uiView.container);
+            opened = 1;
+        }
+      } 
+      else if (extndHref != "") {
+        if (this.tabPanel){
+            var entry = this.tabPanel.getItem(panelId);
+            if(!entry){ 
+              var iframe = Ext.DomHelper.append(document.body, {
+                tag: 'iframe',
+                id: iframeId,
+                frameBorder: 0, 
+                src: extndHref,
+                style: {width:'100%', height:'100%'}
+              });
+              entry = this.tabPanel.add({
+                contentEl: iframe.id,
+                title: Ext.util.Format.ellipsis(title,16),
+                layout: 'fit',
+                id : panelId,
+                closable:true
+              }).show();
+              opened = 2;
+            } else { // we've already opened this entry
+              entry.show();
+              opened = 2;
+            }
         }
       }
       var o = (opened == 1) ? this.uiView : (opened == 2) ? entry : null;
