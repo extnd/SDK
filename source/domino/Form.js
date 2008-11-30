@@ -315,6 +315,8 @@ Ext.nd.Form.prototype = {
 
     // only setup domino's onchange event for keyword refreshes if the user wants this
     // domino will do a postback to the server which may not be desired
+    
+    var extcallback = null;
     if (this.applyDominoKeywordRefresh) {
       // if domino sends an onchange attribute then grab it so we can later add it to the onSelect event of ComboBox
       var attr = el.attributes;
@@ -322,28 +324,29 @@ Ext.nd.Form.prototype = {
         var onChange = attr['onchange'];
         if (onChange && onChange.nodeValue != null) { // for some reason IE returns an onchange of null if one isn't explicitly set
           var sOnChange = onChange.nodeValue;
-          var extcallback = function(bleh) { eval(bleh);}.createCallback(sOnChange);
-
-          // to fix a bug with DomHelper not liking domino sometimes wrapping a SELECT within a FONT tag 
-          // we need to handle setting the value of the hiddenField ourselves
-          var value = (cb.getValue()) ? cb.getValue() : cb.getRawValue();
-          var field = Ext.get(cb.hiddenName);
-          field.dom.value = value;
-
-          // we must also define a listener to change the value of the hidden field when the selection in the combobox changes
-          cb.on('select',function(){
-             /* value is the selection value if set, otherwise is the raw typed text */
-             var value = (this.getValue()) ? this.getValue() : this.getRawValue();
-             var field = Ext.get(this.hiddenName);
-             field.dom.value = value;
-             if (typeof extcallback == 'function') {
-                Ext.MessageBox.wait("Refreshing document...");
-                extcallback(); 
-             }
-          });
-        } // end if (onChange)
-      } // end if (attr)
+          extcallback = function(bleh) { eval(bleh);}.createCallback(sOnChange);
+        }
+      }
     } // end if (this.applyDominoKeywordRefresh) 
+    
+    // to fix a bug with DomHelper not liking domino sometimes wrapping a SELECT within a FONT tag 
+    // we need to handle setting the value of the hiddenField ourselves
+    var value = (cb.getValue()) ? cb.getValue() : cb.getRawValue();
+    var field = Ext.get(cb.hiddenName);
+    field.dom.value = value;
+
+    // we must also define a listener to change the value of the hidden field when the selection in the combobox changes
+    cb.on('select',function(){
+       /* value is the selection value if set, otherwise is the raw typed text */
+       var value = (this.getValue()) ? this.getValue() : this.getRawValue();
+       var field = Ext.get(this.hiddenName);
+       field.dom.value = value;
+       if (typeof extcallback == 'function') {
+          Ext.MessageBox.wait("Refreshing document...");
+          extcallback(); 
+       }
+    });
+ 
   } // end convertSelectToComboBox
 
 
