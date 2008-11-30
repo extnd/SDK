@@ -104,7 +104,7 @@ Ext.nd.UIView = function(config) {
    // defaults for actionbar/toolbar
    this.showActionbar = true;
    this.toolbar = false;
-   this.actionBarBuildFromDXL = true;
+   this.buildActionBarFromDXL = true;
 
    this.noDocumentsFoundText = "No Documents Found";
    this.notCategorizedText = "(Not Categorized)";
@@ -383,7 +383,7 @@ Ext.nd.UIView.prototype = {
           noteType: 'view', 
           noteName: this.viewName,
           uiView: this,
-          useDxl: this.actionBarBuildFromDXL,
+          useDxl: this.buildActionBarFromDXL,
           useViewTitleFromDxl: this.useViewTitleFromDxl,
           tabPanel: this.tabPanel || null
         })
