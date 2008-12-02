@@ -299,6 +299,30 @@ Ext.nd.Form.prototype = {
       // now create the HtmlEditor and apply it to the textarea field
       ed = new Ext.form.HtmlEditor();
       ed.applyToMarkup(el);
+      
+      // strip off the passthru square brackets and div we add in order to have
+      // passthru html when in read mode
+      ed.on('beforepush', function(editor,html){
+        var htmlBefore = "[<div class='xnd-htmleditor-read'>";
+        var htmlAfter = "</div>]";
+        
+        var start = htmlBefore.length;
+        var end = html.length - htmlAfter.length;
+        
+        if (html.indexOf(htmlBefore) == 0) {
+            html = html.substring(start, end)
+        }
+        
+        editor.getEditorBody().innerHTML = html;
+        return false;
+      });
+      
+      // add back the passthru square brackets and div in order to have
+      // passthru html when in read mode
+      ed.on('beforesync', function(editor,html){
+        editor.el.dom.value = "[<div class='xnd-htmleditor-read'>" + html + "</div>]";
+        return false;       
+      });
      
     }
             

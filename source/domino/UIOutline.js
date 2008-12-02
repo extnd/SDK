@@ -302,18 +302,18 @@ Ext.extend(Ext.nd.UIOutline, Ext.util.Observable, {
           var viewUrl = (extndHref.indexOf('?') > 0) ? extndHref.split('?')[0] : extndHref.split('!')[0];       
           // now create our new view/folder doing an applyIf to bring over the original this.uiView config info only if we haven't
           // already specified new values
-          this.uiView = new Ext.nd.UIView(Ext.applyIf({
-            //viewport: this.viewport,
-            //tabPanel: this.tabPanel,
-            //container: this.uiView.container,
-            //statusPanel: this.statusPanel,
-            //showActionBar: false,
-            //toolbar: false,
+          this.uiView = new Ext.nd.UIView({
+            viewport: this.viewport,
+            tabPanel: this.tabPanel,
+            container: this.uiView.container,
+            statusPanel: this.statusPanel,
+            showActionBar: false,
+            toolbar: false,
             viewUrl: viewUrl
-            },this.uiView));
+          });
         
-            this.tabPanel.setActiveTab(this.uiView.container);
-            opened = 1;
+          this.tabPanel.setActiveTab(this.uiView.container);
+          opened = 1;
         }
       } 
       else if (extndHref != "") {
@@ -340,11 +340,11 @@ Ext.extend(Ext.nd.UIOutline, Ext.util.Observable, {
               opened = 2;
             }
         }
+      } 
       }
       var o = (opened == 1) ? this.uiView : (opened == 2) ? entry : null;
       this.fireEvent('openentry', this, opened, o, node);
     }
-  }
 });
 
 // TODO: need to create custom DominoNode class that extends Node so that we don't need to override hadChildNodes method of Node
