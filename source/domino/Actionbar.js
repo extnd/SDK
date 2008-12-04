@@ -79,7 +79,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.util.Observable, {
       success : this.createToolbarFromDxl, 
       failure : this.createToolbarFailure,
       scope: this,
-      url: Ext.nd.extndUrl + 'DXLExporter?OpenAgent&db=' + this.db.filePath + '&type=' + this.noteType + '&name=' + this.noteName
+      url: Ext.nd.extndUrl + 'DXLExporter?OpenAgent&db=' + this.dbPath + '&type=' + this.noteType + '&name=' + this.noteName
     });
   },
 
@@ -510,7 +510,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.util.Observable, {
   * @param {String} form the url accessible name for the form
   */
   openForm : function(form) {
-    var src = this.db.webFilePath+form+'?OpenForm';
+    var src = this.dbPath+form+'?OpenForm';
     if(this.tabPanel) {
       // if we have a tabPanel then add an iframe the dom it is loaded in
       // and in this iframe load our form

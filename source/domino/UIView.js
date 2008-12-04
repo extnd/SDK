@@ -61,7 +61,7 @@ new Ext.nd.UIView({
  * @cfg {Boolean} showActionbar
  * Whether or not UIView should read in the view DXL behind the scences and build an 
  * {@link Ext.Toolbar} from domino actions (Defaults to true)
- * @cfg {String} showSingleCategory
+ * @cfg {String} category
  * The name of the initial category to display.  As long as there is a value present UIView will
  * read in the list of categories and build a combobox that will list the categories and filter 
  * the grid based off of the selection
@@ -112,7 +112,7 @@ Ext.nd.UIView = function(config) {
    this.expandIcon = Ext.nd.extndUrl + "/resources/images/plus.gif";
    
    // defaults for single category options
-   this.showSingleCategory = null;
+   this.category = null;
    this.categoryComboBoxEmptyText = 'Select a category...';
    this.showCategoryComboBox = true;
    this.categoryComboBoxCount = -1;
@@ -135,9 +135,15 @@ Ext.nd.UIView = function(config) {
       delete this.sm;
    }
    
+   // leave support (for now) for old showSingleCategory property
+   if (this.showSingleCategory){
+      this.category = this.showSingleCategory;
+      delete this.showsSingleCategory;
+   }
+   
    // set single category if required
-   if (this.showSingleCategory) {
-      this.baseParams.RestrictToCategory = this.showSingleCategory;
+   if (this.category) {
+      this.baseParams.RestrictToCategory = this.category;
    }
    
    // viewUrl is either passed in or built from dbPath and viewName
@@ -200,8 +206,8 @@ Ext.nd.UIView.prototype = {
     var arRecordConfig = [];
   
     for (var i=0; i<arColumns.length; i++) {
-        // don't process first column if showSingleCategory is set
-        if (i==0 && this.showSingleCategory) {
+        // don't process first column if category is set
+        if (i==0 && this.category) {
            continue;
         }
         
@@ -210,7 +216,7 @@ Ext.nd.UIView.prototype = {
         var columnnumber = q.selectNumber('@columnnumber',col);
         
         // adjust columnnumber if only showing a single category (to fix a bug with domino not matching column numbers in readviewentries to readdesign)
-        columnnumber = (this.showSingleCategory) ? columnnumber - 1 : columnnumber;
+        columnnumber = (this.category) ? columnnumber - 1 : columnnumber;
         
         // if name is blank, give it a new unique name
         var tmpName = q.selectValue('@name',col,'');
@@ -372,15 +378,17 @@ Ext.nd.UIView.prototype = {
       selModel: this.selModel,
       enableDragDrop : true,
       ddGroup: 'TreeDD',
+      dbPath : this.dbPath,
       viewName: this.viewName,
       viewConfig: {
         //forceFit: true
       },
       loadMask: true,
-      tbar: (this.toolbar || this.showActionbar || (this.showSingleCategory && this.showCategoryComboBox)) ? new Ext.Toolbar({
+      tbar: (this.toolbar || this.showActionbar || (this.category && this.showCategoryComboBox)) ? new Ext.Toolbar({
         id:'xnd-view-toolbar-'+Ext.id(),
         plugins: new Ext.nd.Actionbar({
           noteType: 'view', 
+          dbPath: this.dbPath,
           noteName: this.viewName,
           uiView: this,
           useDxl: this.buildActionBarFromDXL,
@@ -492,7 +500,7 @@ Ext.nd.UIView.prototype = {
 
   // private
   addToolbarItems: function() {
-    if (this.showSingleCategory && this.showCategoryComboBox) {
+    if (this.category && this.showCategoryComboBox) {
       this.createSingleCategoryComboBox(this.toolbar);
     }
 
@@ -527,7 +535,7 @@ Ext.nd.UIView.prototype = {
         mode: 'local',
         triggerAction: 'all',
         emptyText: this.categoryComboBoxEmptyText,
-        value: this.showSingleCategory,
+        value: this.category,
         selectOnFocus:true,
         grow: true,
         resizable: true
@@ -945,7 +953,8 @@ Ext.nd.UIView.prototype = {
         viewUrl : dbUrl + colConfig.resortviewunid,
         viewParams : "",
         showActionbar : this.showActionbar,
-        statusPanel : this.statusPanel
+        statusPanel : this.statusPanel,
+        gridConfig : (this.gridConfig) ? this.gridConfig : null
       });
     } 
   },
@@ -953,7 +962,12 @@ Ext.nd.UIView.prototype = {
   // private
   removeFromContainer: function() {
     if (this.grid) {
-      this.container.remove(this.grid.id);
+      // first, try removing from the container if one exists, else, just destroy the grid
+      if (this.container) {
+        this.container.remove(this.grid.id);  
+      } else {
+        this.grid.destroy();  
+      }      
     }
   },
 
