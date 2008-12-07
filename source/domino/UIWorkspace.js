@@ -45,19 +45,18 @@ ws.PickList({
     this.shadow = true;
     this.minWidth = 500;
     this.minHeight = 400;
-    this.type = "custom";
-    this.select = "single";
     this.showActionbar = false;
     this.showSearch = true;
-
     this.viewOptions = "";
     
+    this.type = "custom";
+    this.multipleSelection = false;
     this.title = "PickList";
     this.prompt = "Please make your selection(s) and click <OK>.";
     this.column = 0;
 
     // defaults for single category options
-    this.showSingleCategory = null;
+    this.category = null;
     this.emptyText = 'Select a category...';
     this.showCategoryComboBox = false;
     this.categoryComboBoxCount = -1;
@@ -73,6 +72,8 @@ ws.PickList({
 
       case "names" :
         this.viewUrl = this.sess.addressBooks[0].webFilePath + '($PeopleGroupsFlat)';
+        this.title = "Select Name";
+        this.column = 1;
         break;
 
       default :
@@ -96,6 +97,28 @@ ws.PickList({
        }
     }
 
+    var namesPanel = new Ext.FormPanel({
+        id: 'xnd-picklist-prompt',
+        region: 'north',
+        frame : true,
+        height : 70,
+        labelWidth : 150,
+        bodyStyle : {padding : 5},
+        items :[{
+            xtype : 'combo', 
+            fieldLabel : 'Choose address book',
+            anchor : '95%'
+        }, {
+            xtype : 'textfield', 
+            fieldLabel : 'Find names starting with', 
+            anchor : '95%'
+        }]
+    });
+    
+    var east = {};
+    if (this.multipleSelection) {
+        east = {region: 'east', layout: 'fit', html: '&nbsp;', width: this.width/2} // temp for now in order to get some screen shots for LS09
+    }
     // build the dialog/PickList     
     if(!dialog){ 
       dialog = new Ext.Window({
@@ -108,7 +131,7 @@ ws.PickList({
         minWidth:this.minWidth,
         minHeight:this.minHeight,
         title:this.title,
-        items: [{
+        items: [(this.type == 'names') ? namesPanel : {
           region: 'north',
           height: 27,
           xtype:'panel',
@@ -120,7 +143,7 @@ ws.PickList({
           xtype:'panel',
           header: false,
           id:'xnd-picklist-view'
-        }]
+        },east]
       });
       //dialog.addKeyListener(27, handleOK, this);
       dialog.addButton('OK', handleOK, this);
@@ -133,7 +156,7 @@ ws.PickList({
         header: false,
         viewUrl : this.viewUrl,
         gridHandleRowDblClick : handleOK.createDelegate(this),
-        showSingleCategory : this.showSingleCategory,
+        category : this.category,
         emptyText : this.emptyText,
         showCategoryComboBox : this.showCategoryComboBox,
         categoryComboBoxCount : this.categoryComboBoxCount,
@@ -148,6 +171,7 @@ ws.PickList({
     // now show our custom dialog 
     dialog.show();
 
+    // private
     function handleOK() {
       var arSelections = this.uiView.grid.getSelections();
       var arReturn = new Array();
@@ -169,6 +193,7 @@ ws.PickList({
       }
     }
 
+    // private
     function handleCancel() {
       dialog.hide();
       if (cb) {
