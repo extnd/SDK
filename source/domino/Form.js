@@ -46,14 +46,19 @@ Ext.nd.Form = function(config) {
 	// for a page we need this hack to get the page name (that we store in the formName variable)
 	// we do this since the UIDocument.js agent couldn't get this info and
 	// domino does not send the page name in the form tag like it does for forms
-	if (typeof this.uidoc.formName == 'undefined' && document.forms.length == 0) {
-		var href = location.href.toLowerCase();
-		var search = location.search.toLowerCase();
-		var start = href.indexOf(this.dbPath.toLowerCase())	+ this.dbPath.length;
-		var end = (search != "") ? href.indexOf(search) : href.length;
-		this.formName = href.substring(start, end);
+    // ALSO - for special forms like $$ViewTemplate or $$SearchTemplae, '_DominoForm' is sent as the form name 
+	if (typeof this.uidoc.formName == 'undefined') {
+        if (document.forms.length == 0 || document.forms[0].name.substring(1) == '' || document.forms[0].name.substring(1) == 'DominoForm'){
+            var href = location.href.toLowerCase();
+            var search = location.search.toLowerCase();
+            var start = href.indexOf(this.dbPath.toLowerCase()) + this.dbPath.length;
+            var end = (search != "") ? href.indexOf(search) : href.length;
+            this.formName = href.substring(start, end);    
+        } else {
+            this.formName = document.forms[0].name.substring(1);
+        }
 	} else {
-		this.formName = this.uidoc.formName || document.forms[0].name.substring(1)
+		this.formName = this.uidoc.formName
 	}
 
 	// Set any config params passed in to override defaults
