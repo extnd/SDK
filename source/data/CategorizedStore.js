@@ -1,29 +1,32 @@
-Ext.nd.data.CategorizedStore = function(config) {
+Ext.nd.data.CategorizedStore = function(config){
     Ext.nd.data.CategorizedStore.superclass.constructor.call(this, config);
     
     this.addEvents('categoryload');
 };
 
 Ext.extend(Ext.nd.data.CategorizedStore, Ext.nd.data.DominoViewStore, {
-    loadCategory: function(position, options) {
+    loadCategory: function(position, options){
         var rec = this.findRecordByPosition(position);
         if (!rec.isCategory || rec.childrenRendered) {
             return;
         }
         
-        this.proxy.load({
-            expand: position
-        }, // params
- this.reader, // reader
- this.loadCategoryRecords, // callback
- this, // scope
- Ext.apply({
-            rec: rec
-        }, options) // options
-);
+        this.proxy.doRequest('load', 
+            null, // record
+            {
+                expand: position
+            }, // params
+            this.reader, // reader
+            null, // writer
+            this.loadCategoryRecords, // callback
+            this, // scope
+            Ext.apply({
+                rec: rec
+            }, options) // options
+        );
     },
     
-    loadCategoryRecords: function(o, options, success) {
+    loadCategoryRecords: function(o, options, success){
         if (!o || success === false || !options) {
             if (success !== false) {
                 this.fireEvent("categoryload", this, [], options);
@@ -55,7 +58,7 @@ Ext.extend(Ext.nd.data.CategorizedStore, Ext.nd.data.DominoViewStore, {
         }
     },
     
-    findRecordByPosition: function(position) {
+    findRecordByPosition: function(position){
         var pos = position.split('.');
         var rec = this.getAt(pos[0] - 1);
         pos.shift();
@@ -71,7 +74,7 @@ Ext.extend(Ext.nd.data.CategorizedStore, Ext.nd.data.DominoViewStore, {
         return rec;
     },
     
-    findRecordByIndex: function(index) {
+    findRecordByIndex: function(index){
         // console.log(['frbi', this.flatRecords()]);  
         var records = this.flatRecords();
         return records[index];
@@ -79,7 +82,7 @@ Ext.extend(Ext.nd.data.CategorizedStore, Ext.nd.data.DominoViewStore, {
     
     
     
-    flatRecords: function() {
+    flatRecords: function(){
         var recs = [];
         for (var i = 0; i < this.data.length; i++) {
             recs = recs.concat(this.findChildren(this.data.items[i]));
@@ -87,7 +90,7 @@ Ext.extend(Ext.nd.data.CategorizedStore, Ext.nd.data.DominoViewStore, {
         return recs;
     },
     
-    findChildren: function(rec) {
+    findChildren: function(rec){
         var buf = [rec];
         if (rec && rec.children) {
             for (var i = 0; i < rec.children.length; i++) {
@@ -98,7 +101,7 @@ Ext.extend(Ext.nd.data.CategorizedStore, Ext.nd.data.DominoViewStore, {
     },
     
     
-    getCount: function() {
+    getCount: function(){
         var ttl = 0;
         for (var i = 0; i < this.data.length; i++) {
             ttl += this.countChildRecords(this.data.items[i]);
@@ -106,14 +109,15 @@ Ext.extend(Ext.nd.data.CategorizedStore, Ext.nd.data.DominoViewStore, {
         return ttl;
     },
     
-    countChildRecords: function(rec) {
+    countChildRecords: function(rec){
         if (rec && rec.children) {
             var ttl = 1;
             for (var i = 0; i < rec.children.length; i++) {
                 ttl += this.countChildRecords(rec.children[i]);
             }
             return ttl;
-        } else {
+        }
+        else {
             return 1;
         }
     }
