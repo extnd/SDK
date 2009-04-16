@@ -21,9 +21,9 @@ Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
   afterPageText : " - {0}",
   
   readPage : function(d){
-      var pageNum = this.field.dom.value;
+      var pageNum = this.inputItem.el.dom.value;
       if (!pageNum) {
-          this.field.dom.value = d.activePage;
+          this.inputItem.el.dom.value = d.activePage;
           return false;
       }
       return pageNum;
@@ -39,7 +39,7 @@ Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
       }else if (k == e.HOME || k == e.END){
           e.stopEvent();
           pageNum = k == e.HOME ? 1 : d.pages;
-          this.field.dom.value = pageNum;
+          this.inputItem.el.dom.value = pageNum;
       }else if (k == e.UP || k == e.PAGEUP || k == e.DOWN || k == e.PAGEDOWN){
           e.stopEvent();
           if(pageNum == this.readPage(d)){
@@ -49,24 +49,24 @@ Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
               }
               pageNum += increment;
               if(pageNum >= 1 & pageNum <= d.pages){
-                  this.field.dom.value = pageNum;
+                  this.inputItem.el.dom.value = pageNum;
               }
           }
       }
   },
 
   // private
-  onClick : function(which){
+  onClick : function(button){
     var store = this.store;
     var d = this.getPageData();
     var start;
-    this.which = which;
+    this.button = button;
     
-    switch(which){
-      case 'first':
+    switch(button){
+      case this.first:
         store.load({params: Ext.apply(store.lastOptions.params, {start: 1,count: this.pageSize})});
         break;
-      case 'prev':
+      case this.prev:
         var first = store.data.first();
         var firstPosition = first.node.attributes.getNamedItem('position').value;
         // if the previous page exists in cache, use it
@@ -78,7 +78,7 @@ Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
             start = this.previousStartMC.get(indexFirst-1);
           }
         } else {
-          if (this.prevWhich == 'last') {
+          if (this.prevButton == 'last') {
             start = this.previousStartMC.last();
           } else {
             start = 1;
@@ -87,7 +87,7 @@ Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
         }
         store.load({params: Ext.apply(store.lastOptions.params, {start: start,count: this.pageSize})});
         break;
-      case 'next':
+      case this.next:
         var last = store.data.last();
         var lastIndex = store.data.indexOf(last);
         if (store.data.length > 0) {
@@ -103,19 +103,19 @@ Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
         }
         store.load({params: Ext.apply(store.lastOptions.params, {start: start,count: this.pageSize})});
         break;
-      case 'last':
+      case this.last:
         var total = store.getTotalCount();
         var extra = total % this.pageSize;
         var lastStart = this.isCategorized ? total : extra ? (total - extra) : total-this.pageSize;
         store.load({params: Ext.apply(store.lastOptions.params, {start: lastStart, count: this.pageSize})});
         break;
-      case 'refresh':
+      case this.refresh:
         store.load({params: Ext.apply(store.lastOptions.params, {start: this.cursor, count: this.pageSize})});
         break;
   
     }
-    // capture the 'which' to check for later
-    this.prevWhich = which;
+    // capture the 'button' to check for later
+    this.prevButton = button;
   },
 
   // private
@@ -132,11 +132,11 @@ Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
     }
     
     // resize the text field to hold the starting entry value
-    var tm = Ext.util.TextMetrics.createInstance(this.field.dom,100);
-    this.field.applyStyles({'width':Math.max(tm.getWidth(ap)+10,20), 'textAlign' : 'right'});
+    var tm = Ext.util.TextMetrics.createInstance(this.inputItem.el.dom,100);
+    this.inputItem.el.applyStyles({'width':Math.max(tm.getWidth(ap)+10,20), 'textAlign' : 'right'});
  
-    this.afterTextEl.el.innerHTML = String.format(this.afterPageText, d.pages);
-    this.field.dom.value = ap;
+    this.afterTextItem.setText(String.format(this.afterPageText, d.pages));
+    this.inputItem.el.dom.value = ap;
 
     // the normal way
     //this.first.setDisabled(ap == 1);
@@ -150,7 +150,9 @@ Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
     this.next.setDisabled(store.data.length < store.baseParams.count); 
     this.last.setDisabled(store.data.length < store.baseParams.count);
     
-    this.loading.enable();
+    this.refresh.enable();
+    
+    this.fireEvent('change', this, d);
   },
 
   // private
@@ -158,8 +160,8 @@ Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
     var total = this.store.getTotalCount();
     var activePage, first, firstText, last, lastText, previous;
     
-    // reset this.which
-    this.which = "";
+    // reset this.button
+    this.button = "";
 
     // for the new way of showing where within a view you are
     if (this.store.data.length > 0) {
