@@ -1,0 +1,140 @@
+/*----------------------------------------------------
+ * Domino Common CSS Rules
+ *----------------------------------------------------
+ */
+
+
+html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,p,blockquote,th,td {
+  font-family: tahoma,verdana,helvetica;
+  font-size: 11px;
+}
+ 
+ 
+ 
+/*----------------------------------------------------
+ * view styles 
+ *----------------------------------------------------
+ */
+ 
+.xnd-view-category{
+   width: 100%;
+}
+.xnd-view-response {
+   width: 100%;
+   z-index:2; 
+}
+/* to allow for rows to grow in height */
+.x-grid-row td, .x-grid3-row td, .x-grid3-cell-inner {
+  white-space: normal;
+}
+/* Ext didn't have this class defined for some reason */
+.x-view-selected {
+  background-color: #316ac5 !important;
+  color: white;
+}
+
+/* Categorized Styles */
+.xnd-category-hd .xnd-category-cell {
+  background:transparent url(../../../../ext/2x/resources/images/default/grid/group-expand-sprite.gif) no-repeat 3px -47px;
+  padding:0 0 0 17px;
+}
+
+.xnd-category-collapsed .xnd-category-hd .xnd-category-cell {
+  background-position: 3px 3px;
+}
+
+.xnd-category-collapsed .xnd-category-body {
+    display:none;
+}
+
+
+/*----------------------------------------------------
+ * Outline Styles
+ *----------------------------------------------------
+ */
+
+/* fix button padding for domino's larger buttons 
+ * domino's icons are 21px + add 2px for padding 
+ */
+.x-btn-text-icon .x-btn-center .x-btn-text{
+  padding-left:23px;
+}
+
+/* fix to allow outline icons to not have their
+ * widht and height skewed
+ */
+.xnd-icon {
+  width: auto!important;
+  height: auto!important;
+}
+
+/* use this class to not display any icons
+ * next to the nodes/entries in a tree/outline
+ */
+.xnd-no-icon {
+  display: none;
+  background-image:url(../images/s.gif);
+}
+
+/*----------------------------------------------------
+ * Form and Document Styles
+ *----------------------------------------------------
+ */
+
+/* give form and page contents a little margin since they
+ * are loaded in a viewport that has 0 margin 
+ */
+
+#xnd-form-ui {
+  margin: 5px;
+}
+
+/* hide form toolbar when printing */
+@media print {
+  #xnd-form-toolbar {display: none;}
+}
+
+/* need -1px shift to the left for the viewlink.gif */
+.x-form-field-wrap .xnd-form-picklist-trigger{
+    background : #C5D8C8 url(/icons/viewlink.gif) no-repeat scroll -1px 3px;
+    border: 1px solid #B5B8C8;
+    height: 20px;
+    cursor:pointer;
+}
+
+.x-form-field-wrap .x-form-trigger-over .xnd-form-picklist-trigger{
+    /*background-position: -17px 0;*/
+}
+
+.x-form-field-wrap .xnd-form-names-trigger{
+    background : #C5D8C8 url(/icons/vwicn003.gif) no-repeat scroll 1px 3px;
+    border: 1px solid #B5B8C8;
+    height: 20px;
+    cursor:pointer;
+}
+
+.x-form-field-wrap .x-form-trigger-over .xnd-form-names-trigger{
+    /*background-position: -17px 0;*/
+}
+
+.x-form-field-wrap .xnd-form-acl-trigger{
+    background : #C5D8C8 url(/icons/actn090.gif) no-repeat scroll 1px 3px;
+    border: 1px solid #B5B8C8;
+    height: 20px;
+    cursor:pointer;
+}
+
+.x-form-field-wrap .x-form-trigger-over .xnd-form-acl-trigger{
+    /*background-position: -17px 0;*/
+}
+
+.x-form-field-wrap .xnd-form-time-trigger{
+    background : #C5D8C8 url(/icons/vwicn064.gif) no-repeat scroll 1px 3px;
+    border: 1px solid #B5B8C8;
+    height: 20px;
+    cursor:pointer;
+}
+
+.x-form-field-wrap .x-form-trigger-over .xnd-form-time-trigger{
+    /*background-position: -17px 0;*/
+}
