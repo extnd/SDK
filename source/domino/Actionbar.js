@@ -110,9 +110,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
     
     // private
     initComponent: function(){
-    
-        this.addDummyAction();
-        
+ 
         this.addEvents(        /**
          * @event actionsloaded Fires after all actions have been added to toolbar
          * @param {Ext.nd.Actionbar} this
@@ -194,10 +192,6 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
             var arJSONActions = [];
             var curLevelTitle = '';
             var isFirst = false;
-            
-            // next, we make sure there is at at least one dummy action
-            // so that the toolbar will render correctly.  This action
-            // will be removed later as long as other actions get added
             
             for (var i = 0; i < arActions.length; i++) {
                 var show = true;
@@ -373,16 +367,16 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
             } // end: for arActions.length
             // now add the actions to the toolbar (this)
             
-            // if we didn't find any actions we could add
-            // then add a dummy action, otherwise,
-            // add the actions
             if (arJSONActions.length > 0) {
             
                 for (var i = 0; i < arJSONActions.length; i++) {
                     this.toolbar.add(arJSONActions[i]);
                 }
-                this.removeDummyAction();
-                
+                if (this.toolbar.ownerCt) {
+                    this.toolbar.ownerCt.doLayout();
+                } else {
+                    this.toolbar.doLayout();    
+                }
             } else {
                 if (this.removeEmptyActionbar) {
                     this.removeActionbar();
@@ -535,16 +529,19 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                     });
                 } // end if(isSubAction)
             } // end for arActions.length
-            // we didn't have any actions we could add
-            // so add a dummy action
+ 
             if (arJSONActions.length > 0) {
             
                 // now add the actions to the toolbar (this)
                 for (var i = 0; i < arJSONActions.length; i++) {
                     this.toolbar.add(arJSONActions[i]);
                 }
-                this.removeDummyAction();
-                
+                if (this.toolbar.ownerCt) {
+                    this.toolbar.ownerCt.doLayout();
+                } else {
+                    this.toolbar.doLayout();    
+                }
+
             } else {
                 if (this.removeEmptyActionbar) {
                     this.removeActionbar();
@@ -583,25 +580,6 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
         this.toolbar.destroy();
     },
 
-    // private
-    addDummyAction: function(){
-        this.items = this.items || [];
-        this.dmyBtnId = 'dmy-btn-' + Ext.id();
-        // add a blank button so that the actionbar will at least have the right height
-        this.items.push({
-            text: '&nbsp;',
-            id: this.dmyBtnId
-        });
-    },
-    
-    // private
-    removeDummyAction: function(){
-        var dmyBtn = Ext.getCmp(this.dmyBtnId);
-        if (dmyBtn && dmyBtn.destroy) {
-            dmyBtn.destroy();
-        }
-    },
-    
     // private
     getDominoActionbar: function(){
     
