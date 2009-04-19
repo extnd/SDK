@@ -51,7 +51,7 @@ Ext.nd.UIView = function(config){
 }
 
 Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
-    noteType : 'view',
+    noteType: 'view',
     showActionbar: true,
     showPagingToolbar: true,
     showSearch: true,
@@ -244,6 +244,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         
         // rightclick, to give a context menu for things like 'document properties, copy, paste, delete, etc'
         this.on('rowcontextmenu', this.gridHandleRowContextMenu, this, true);
+        
         
         Ext.nd.UIView.superclass.initComponent.call(this);
         
@@ -779,8 +780,8 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             var pg = this.getBottomToolbar();
             // now that we know if the view is categorized or not we need to let
             // the paging toolbar know
-            pg.isCategorized = this.isCategorized;
             if (pg) {
+                pg.isCategorized = this.isCategorized;
                 pg.unbind(this.dmyId);
                 pg.bind(this.store);
             }
@@ -804,7 +805,6 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         //this.isCategorized = q.selectNumber('viewdesign/@categories', dxml, 0);
         //this.isCategorized = !!this.isCategorized;
         this.isCategorized = false; // init value
-        
         var arColumnConfig = [];
         var arRecordConfig = [];
         var colCount = 0;
@@ -814,7 +814,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             if (i == 0 && this.category) {
                 continue;
             }
-
+            
             var col = arColumns[i];
             
             // must check for hidden columns since we now use DXLExporter
@@ -823,7 +823,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             hidden = (hidden === false) ? false : true;
             if (hidden) {
                 continue; // skip to next column if this is set to hidden
-            } 
+            }
             
             
             // old way when we used view?ReadDesign
@@ -833,9 +833,8 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             // and DXLExporter does not include columnnumber so just use
             // whatever the value of colCount is and hopefully all will 
             // still be good :)
-            var columnnumber = colCount; 
+            var columnnumber = colCount;
             colCount++; // not hidden so increment our column count
-
             // adjust columnnumber if only showing a single category (to fix a
             // bug with domino not matching column numbers in readviewentries to
             // readdesign)
@@ -926,7 +925,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                 datetimeformat.show = q.selectValue('@show', tmpDateTimeFormat);
                 datetimeformat.date = q.selectValue('@date', tmpDateTimeFormat);
                 datetimeformat.time = q.selectValue('@time', tmpDateTimeFormat);
-                datetimeformat.zone = q.selectValue('@zone', tmpDateTimeFormat);                
+                datetimeformat.zone = q.selectValue('@zone', tmpDateTimeFormat);
             }
             
             var rendr = (this.renderers[columnnumber]) ? this.renderers[columnnumber] : this.dominoRenderer.createDelegate(this);
@@ -1101,8 +1100,30 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                         returnValue = this.getValue(value, colConfig);
                     }
                     else {
-                        // just normal data
-                        returnValue = this.getValue(value, colConfig);
+                        if (colConfig.icon) {
+                            var tmpReturnValue = "";
+                            var tmpValue = "";
+                            for (var i = 0; i < value.data.length; i++) {
+                                tmpValue = value.data[i];
+                                
+                                if (isNaN(parseInt(tmpValue, 10)) || tmpValue == 0) {
+                                    return "";
+                                }
+                                else {
+                                    // I believe the domino only has view icon images from 1 to
+                                    // 186
+                                    newValue = (tmpValue < 10) ? "00" + tmpValue : (tmpValue < 100) ? "0" + tmpValue : (tmpValue > 186) ? "186" : tmpValue;
+                                    //cell.css = "xnd-icon-vw xnd-icon-vwicn" + newValue;
+                                    //returnValue = "<img src='/icons/vwicn" + newValue + ".gif'/>";
+                                    tmpReturnValue = "<div class='xnd-icon-vw xnd-icon-vwicn" + newValue + "'>&nbsp;</div>";
+                                    returnValue += tmpReturnValue;
+                                }
+                            }
+                        }
+                        else {
+                            // just normal data
+                            returnValue = this.getValue(value, colConfig);
+                        }
                     }
         
         // now return our domino formatted value
