@@ -198,37 +198,47 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             }) : null
         });
         
-        this.addEvents(        /**
+        this.addEvents(        
+        /**
+         * TODO
          * @event beforeaddtofolder Fires just before an add to folder (same as NotesUIView QueryAddToFolder)
          * @param {Ext.nd.UIView} this
          */
-        'beforeaddtofolder',        /**
-         * @event beforeclose Fires just before the current view is closed(same as NotesUIView QueryClose)
+        'beforeaddtofolder',        
+        /**
+         * TODO
+         * @event beforeclose Fires just before the current view is closed (same as NotesUIView QueryClose)
          * @param {Ext.nd.UIView} this
          */
-        'beforeclose',        /**
-         * @event beforeclose Fires just before the current view is closed(same as NotesUIView QueryClose)
+        'beforeclose',        
+        /**
+         * @event beforeopendocument Fires just before the currently selected document is opened (same as NotesUIView QueryOpenDocument)
          * @param {Ext.nd.UIView} this
          */
-        'beforeopendocument',        /**
-         * @event beforeopen Fires just before the current view is opened(same as NotesUIView QueryOpen)
+        'beforeopendocument',        
+        /**
+         * TODO
+         * @event beforeopen Fires just before the current view is opened (same as NotesUIView QueryOpen)
          * @param {Ext.nd.UIView} this
          */
-        'beforeopen',        /**
+        'beforeopen',        
+        /**
          * @event getdesignfailure Fires if the Ajax call to ?ReadDesign fails
          * @param {Ext.nd.UIView} this
          * @param {Object} res XHR response object
          * @param {Object} req XHR request object
          */
-        'getdesignfailure',        /**
-         * @event getdesignsuccess Fires after successfully parsing the ?ReadDesign return and creating an {@link Ext.grid.ColumnModel} and
+        'getdesignfailure',        
+        /**
+         * @event getdesignsuccess Fires after successfully parsing the Design of a View and creating an {@link Ext.grid.ColumnModel} and
          *        {@link Ext.nd.data.Store}
          * @param {Ext.nd.UIView} this
          * @param {Ext.nd.data.Store} store The newly created (and bound) DataStore
          * @param {Ext.grid.ColumnModel} colModel The newly created ColumnModel
          */
-        'getdesignsuccess',        /**
-         * @event open Fires just after the current view is opened(same as NotesUIView PostOpen)
+        'getdesignsuccess',        
+        /**
+         * @event open Fires just after the current view is opened (same as NotesUIView PostOpen)
          * @param {Ext.nd.UIView} this
          */
         'open');
@@ -835,10 +845,13 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             // still be good :)
             var columnnumber = colCount;
             colCount++; // not hidden so increment our column count
+
             // adjust columnnumber if only showing a single category (to fix a
             // bug with domino not matching column numbers in readviewentries to
             // readdesign)
-            columnnumber = (this.category) ? columnnumber - 1 : columnnumber;
+            // NOTE: this is no longer needed since we no longer use ?ReadDesign
+            // but instead use DXLExporter
+            //columnnumber = (this.category) ? columnnumber - 1 : columnnumber;
             
             
             // if name is blank, give it a new unique name

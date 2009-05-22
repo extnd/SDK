@@ -19,7 +19,7 @@ Ext.override(Ext.Button, {
 
 Ext.namespace("Ext.nd", "Ext.nd.form", "Ext.nd.data", "Ext.nd.util");
 
-Ext.nd.version = 'Beta 2';
+Ext.nd.version = 'pre-release 2 - Beta 2';
 
 Ext.nd.getBlankImageUrl = function() {
 	return this.extndUrl + "resources/images/s.gif";
