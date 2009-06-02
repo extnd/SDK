@@ -134,8 +134,9 @@ Ext.nd.util.addIFrame = function(config) {
         var dom = Ext.get(ifId).dom;
         var event = Ext.isIE ? 'onreadystatechange' : 'onload';
         dom[event] = (function() {
-            var cd = this.contentWindow || window.frames[this.name];
+            
             try {
+                var cd = this.contentWindow || window.frames[this.name];
                 cd.ownerCt = panel;
                 if (config.uiView) {
                     cd.uiView = config.uiView;
