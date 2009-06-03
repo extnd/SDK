@@ -561,7 +561,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
         if (this.toolbar.ownerCt) {
             this.toolbar.ownerCt.syncSize();
             if (this.toolbar.ownerCt.ownerCt) {
-                this.toolbar.ownerCt.ownerCt.sycnSize();
+                this.toolbar.ownerCt.ownerCt.syncSize();
             }
         }
         
