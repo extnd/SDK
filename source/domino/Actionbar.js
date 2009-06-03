@@ -72,6 +72,7 @@ Ext.nd.Actionbar = function(config){
     this.noteName = '';
     this.useDxl = true;
     this.actionbar = false;
+    this.actions = [];
     this.useViewTitleFromDxl = false;
     this.convertFormulas = true;
     
@@ -95,14 +96,15 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
     init: function(toolbar){
     
         this.toolbar = toolbar;
-
+        
         // if the parent toolbar is an Ext.nd.Actionbar
         // then we need to wait to add the actions 
         // until the parent is done with adding its actions
         
         if (this.toolbar.getXType() == 'xnd-actionbar') {
             this.toolbar.on('actionsloaded', this.addActions, this);
-        } else {
+        }
+        else {
             this.addActions();
         }
         
@@ -110,7 +112,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
     
     // private
     initComponent: function(){
- 
+    
         this.addEvents(        /**
          * @event actionsloaded Fires after all actions have been added to toolbar
          * @param {Ext.nd.Actionbar} this
@@ -157,7 +159,8 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
         if (!this.useDxl) {
             //this.toolbar.on('render', this.addActionsFromDocument, this);
             this.addActionsFromDocument();
-        } else {
+        }
+        else {
             //this.toolbar.on('render', this.addActionsFromDxl, this);
             this.addActionsFromDxl();
         }
@@ -187,202 +190,192 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
             this.setViewName(response);
         }
         
-        if (arActions.length > 0) {
+        var curLevelTitle = '';
+        var isFirst = false;
         
-            var arJSONActions = [];
-            var curLevelTitle = '';
-            var isFirst = false;
+        for (var i = 0; i < arActions.length; i++) {
+            var show = true;
+            var action = arActions[i];
             
-            for (var i = 0; i < arActions.length; i++) {
-                var show = true;
-                var action = arActions[i];
-                
-                var title = q.selectValue('@title', action, "");
-                var hidewhen = q.selectValue('@hide', action, null);
-                var showinbar = q.selectValue('@showinbar', action, null);
-                var iconOnly = q.select('@onlyiconinbar', action);
-                var icon = q.selectNumber('@icon', action, null);
-                var imageRef = q.selectValue('imageref/@name', action, null);
-                var syscmd = q.selectValue('@systemcommand', action, null);
-                
-                // SHOW? check hidewhen
-                if (hidewhen) {
-                    var arHide = hidewhen.split(' ');
-                    for (var h = 0; h < arHide.length; h++) {
-                        if (arHide[h] == 'web' ||
-                        (arHide[h] == 'edit' && Ext.nd.UIDocument.editMode) ||
-                        (arHide[h] == 'read' && !Ext.nd.UIDocument.editMode)) {
-                            show = false;
-                        }
+            var title = q.selectValue('@title', action, "");
+            var hidewhen = q.selectValue('@hide', action, null);
+            var showinbar = q.selectValue('@showinbar', action, null);
+            var iconOnly = q.select('@onlyiconinbar', action);
+            var icon = q.selectNumber('@icon', action, null);
+            var imageRef = q.selectValue('imageref/@name', action, null);
+            var syscmd = q.selectValue('@systemcommand', action, null);
+            
+            // SHOW? check hidewhen
+            if (hidewhen) {
+                var arHide = hidewhen.split(' ');
+                for (var h = 0; h < arHide.length; h++) {
+                    if (arHide[h] == 'web' ||
+                    (arHide[h] == 'edit' && Ext.nd.UIDocument.editMode) ||
+                    (arHide[h] == 'read' && !Ext.nd.UIDocument.editMode)) {
+                        show = false;
                     }
                 }
-                
-                // SHOW? check 'Include action in Action bar' option
-                if (showinbar == 'false') {
-                    show = false;
+            }
+            
+            // SHOW? check 'Include action in Action bar' option
+            if (showinbar == 'false') {
+                show = false;
+            }
+            
+            // SHOW? check lotusscript
+            var lotusscript = Ext.DomQuery.selectValue('lotusscript', action, null);
+            if (lotusscript) {
+                show = false;
+            }
+            
+            if (icon) {
+                if (icon < 10) {
+                    imageRef = "00" + icon;
                 }
-                
-                // SHOW? check lotusscript
-                var lotusscript = Ext.DomQuery.selectValue('lotusscript', action, null);
-                if (lotusscript) {
-                    show = false;
+                else 
+                    if (icon < 100) {
+                        imageRef = "0" + icon;
+                    }
+                    else {
+                        imageRef = "" + icon;
+                    }
+                imageRef = "/icons/actn" + imageRef + ".gif";
+            }
+            else {
+                if (imageRef) {
+                    imageRef = (imageRef.indexOf('/') == 0) ? imageRef : this.dbPath + imageRef;
                 }
+            }
+            
+            // now go ahead and handle the actions we can show
+            if (show && syscmd == null) { // for now we do not want to show system commands
+                var slashLoc = title.indexOf('\\');
+                var isSubAction;
                 
-                if (icon) {
-                    if (icon < 10) {
-                        imageRef = "00" + icon;
-                    } else 
-                        if (icon < 100) {
-                            imageRef = "0" + icon;
-                        } else {
-                            imageRef = "" + icon;
-                        }
-                    imageRef = "/icons/actn" + imageRef + ".gif";
-                } else {
-                    if (imageRef) {
-                        imageRef = (imageRef.indexOf('/') == 0) ? imageRef : this.dbPath + imageRef;
+                if (slashLoc > 0) { // we have a subaction
+                    isSubAction = true;
+                    var arLevels = title.split('\\');
+                    var iLevels = arLevels.length;
+                    
+                    var tmpCurLevelTitle = title.substring(0, slashLoc);
+                    title = title.substring(slashLoc + 1);
+                    
+                    if (tmpCurLevelTitle != curLevelTitle) {
+                        curLevelTitle = tmpCurLevelTitle
+                        isFirst = true;
+                    }
+                    else {
+                        isFirst = false;
                     }
                 }
+                else {
+                    isSubAction = false;
+                    curLevelTitle = '';
+                }
                 
-                // now go ahead and handle the actions we can show
-                if (show && syscmd == null) { // for now we do not want to show system commands
-                    var slashLoc = title.indexOf('\\');
-                    var isSubAction;
-                    
-                    if (slashLoc > 0) { // we have a subaction
-                        isSubAction = true;
-                        var arLevels = title.split('\\');
-                        var iLevels = arLevels.length;
-                        
-                        var tmpCurLevelTitle = title.substring(0, slashLoc);
-                        title = title.substring(slashLoc + 1);
-                        
-                        if (tmpCurLevelTitle != curLevelTitle) {
-                            curLevelTitle = tmpCurLevelTitle
-                            isFirst = true;
-                        } else {
-                            isFirst = false;
-                        }
-                    } else {
-                        isSubAction = false;
-                        curLevelTitle = '';
-                    }
-                    
-                    var tmpOnClick = Ext.DomQuery.selectValue('javascript', action, null);
-                    var handler;
-                    
-                    // the JavaScript onClick takes precendence
-                    if (tmpOnClick) {
-                        // note that we now use createDelegate so we can change the scope
-                        // to 'this' so that view actions can get a handle to the
-                        // grid by simply refering to 'this.uiView' and thus, such things as
-                        // getting a handle to the currently selected documents in the view
-                        // where this action was triggered is much easier
-                        // for a form/document you can also get a handle to the uiDocument
-                        // from this.uiDocument
-                        handler = function(bleh){
-                            eval(bleh)
-                        }.createDelegate(this, [tmpOnClick]);
-                    } else 
-                        if (this.convertFormulas) {
-                            // Handle known formulas
-                            var formula = Ext.DomQuery.selectValue('formula', action, null);
-                            // @Command([Compose];"profile")
-                            // runagent, openview, delete, saveoptions := "0"
-                            if (formula) {
-                                var cmdFrm = formula.match(/\@Command\(\[(\w+)\](?:;"")*(?:;"(.+?)")*\)/);
-                                if (cmdFrm && cmdFrm.length) {
-                                    switch (cmdFrm[1]) {
-                                        case 'Compose':
-                                            handler = this.openForm.createDelegate(this, [cmdFrm[2]]);
-                                            break;
-                                        case 'EditDocument':
-                                            // EditDocument @Command has an optional 2nd param that defines the mode, 1=edit, 2=read
-                                            // if this 2nd param is missing, FF returns undefined and IE returns an empty string
-                                            handler = this.openDocument.createDelegate(this, [cmdFrm[2] ? ((cmdFrm[2] == "1") ? true : false) : true]);
-                                            break;
-                                        case 'FileCloseWindow':
-                                            handler = this.closeDocument.createDelegate(this);
-                                            break;
-                                        case 'FileSave':
-                                            handler = this.saveDocument.createDelegate(this);
-                                            break;
-                                        case 'FilePrint':
-                                        case 'FilePrintSetup':
-                                            handler = this.print.createDelegate(this);
-                                            break;
-                                        case 'OpenView':
-                                        case 'RunAgent':
-                                        default:
-                                            show = false; // For now hide unsupported commands
-                                    // handler = this.unsupportedAtCommand.createDelegate(this,[formula]);
-                                    
-                                    } // end switch
-                                } // end if (cmdFrm.length)
-                            } // end if (formula)
-                        } // end if (tmpOnClick)
-                    if (isSubAction) {
-                        if (isFirst) {
-                            if (i > 0) {
-                                // add separator
-                                arJSONActions.push('-');
-                            }
-                            
-                            arJSONActions.push({
-                                text: curLevelTitle,
-                                menu: {
-                                    items: [{
-                                        text: title,
-                                        cls: (icon || imageRef) ? 'x-btn-text-icon' : null,
-                                        icon: imageRef,
-                                        handler: handler
-                                    }]
-                                }
-                            });
-                            
-                        } else {
-                            // length-1 so we can get back past the separator and to the top level of the dropdown
-                            arJSONActions[arJSONActions.length - 1].menu.items.push({
-                                text: title,
-                                cls: (icon || imageRef) ? 'x-btn-text-icon' : null,
-                                icon: imageRef,
-                                handler: handler
-                            });
-                        }
-                        
-                    } else {
+                var tmpOnClick = Ext.DomQuery.selectValue('javascript', action, null);
+                var handler;
+                
+                // the JavaScript onClick takes precendence
+                if (tmpOnClick) {
+                    // note that we now use createDelegate so we can change the scope
+                    // to 'this' so that view actions can get a handle to the
+                    // grid by simply refering to 'this.uiView' and thus, such things as
+                    // getting a handle to the currently selected documents in the view
+                    // where this action was triggered is much easier
+                    // for a form/document you can also get a handle to the uiDocument
+                    // from this.uiDocument
+                    handler = function(bleh){
+                        eval(bleh)
+                    }.createDelegate(this, [tmpOnClick]);
+                }
+                else 
+                    if (this.convertFormulas) {
+                        // Handle known formulas
+                        var formula = Ext.DomQuery.selectValue('formula', action, null);
+                        // @Command([Compose];"profile")
+                        // runagent, openview, delete, saveoptions := "0"
+                        if (formula) {
+                            var cmdFrm = formula.match(/\@Command\(\[(\w+)\](?:;"")*(?:;"(.+?)")*\)/);
+                            if (cmdFrm && cmdFrm.length) {
+                                switch (cmdFrm[1]) {
+                                    case 'Compose':
+                                        handler = this.openForm.createDelegate(this, [cmdFrm[2]]);
+                                        break;
+                                    case 'EditDocument':
+                                        // EditDocument @Command has an optional 2nd param that defines the mode, 1=edit, 2=read
+                                        // if this 2nd param is missing, FF returns undefined and IE returns an empty string
+                                        handler = this.openDocument.createDelegate(this, [cmdFrm[2] ? ((cmdFrm[2] == "1") ? true : false) : true]);
+                                        break;
+                                    case 'FileCloseWindow':
+                                        handler = this.closeDocument.createDelegate(this);
+                                        break;
+                                    case 'FileSave':
+                                        handler = this.saveDocument.createDelegate(this);
+                                        break;
+                                    case 'FilePrint':
+                                    case 'FilePrintSetup':
+                                        handler = this.print.createDelegate(this);
+                                        break;
+                                    case 'OpenView':
+                                    case 'RunAgent':
+                                    default:
+                                        show = false; // For now hide unsupported commands
+                                // handler = this.unsupportedAtCommand.createDelegate(this,[formula]);
+                                
+                                } // end switch
+                            } // end if (cmdFrm.length)
+                        } // end if (formula)
+                    } // end if (tmpOnClick)
+                if (isSubAction) {
+                    if (isFirst) {
                         if (i > 0) {
                             // add separator
-                            arJSONActions.push('-');
+                            this.actions.push('-');
                         }
                         
-                        arJSONActions.push({
+                        this.actions.push({
+                            text: curLevelTitle,
+                            menu: {
+                                items: [{
+                                    text: title,
+                                    cls: (icon || imageRef) ? 'x-btn-text-icon' : null,
+                                    icon: imageRef,
+                                    handler: handler
+                                }]
+                            }
+                        });
+                        
+                    }
+                    else {
+                        // length-1 so we can get back past the separator and to the top level of the dropdown
+                        this.actions[this.actions.length - 1].menu.items.push({
                             text: title,
                             cls: (icon || imageRef) ? 'x-btn-text-icon' : null,
                             icon: imageRef,
                             handler: handler
                         });
-                    } // end: if (isSubAction)
-                } // end: if (show && syscmd == null)
-            } // end: for arActions.length
-            // now add the actions to the toolbar (this)
-            
-            if (arJSONActions.length > 0) {
-            
-                for (var i = 0; i < arJSONActions.length; i++) {
-                    this.toolbar.add(arJSONActions[i]);
+                    }
+                    
                 }
-                if (this.toolbar.ownerCt) {
-                    this.toolbar.ownerCt.doLayout();
-                } else {
-                    this.toolbar.doLayout();    
-                }
-            } else {
-                if (this.removeEmptyActionbar) {
-                    this.removeActionbar();
-                }   
-            }// eo if (arJSONActions.length > 0)
-        }
+                else {
+                    if (i > 0) {
+                        // add separator
+                        this.actions.push('-');
+                    }
+                    
+                    this.actions.push({
+                        text: title,
+                        cls: (icon || imageRef) ? 'x-btn-text-icon' : null,
+                        icon: imageRef,
+                        handler: handler
+                    });
+                } // end: if (isSubAction)
+            } // end: if (show && syscmd == null)
+        } // end: for arActions.length
+        
+        // now process these actions by adding to the toolbar and syncing the grid's size
+        this.processActions();
         
         // now remove the domino actionbar        
         this.removeDominoActionbar();
@@ -401,155 +394,137 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
     
     // private
     addActionsFromDocument: function(o){
-        var arActions;
+        var arActions = [];
         var q = Ext.DomQuery;
         
         if (this.actionbar) {
-        
             arActions = q.select('a', this.actionbar);
+        }
+        
+        var curLevelTitle = '';
+        var isFirst = false;
+        
+        for (var i = 0; i < arActions.length; i++) {
+            var action = arActions[i];
+            var title = action.lastChild.nodeValue;
+            var slashLoc = (title) ? title.indexOf('\\') : -1;
+            var imageRef = q.selectValue('img/@src', action, null);
+            // if imageRef is null, leave it that way
+            // if not and the path is an absolute path, use that, otherwise build the path
+            imageRef = (imageRef == null) ? null : (imageRef && imageRef.indexOf('/') == 0) ? imageRef : this.dbPath + imageRef;
+            var cls = (title == null) ? 'x-btn-icon' : (imageRef) ? 'x-btn-text-icon' : null;
             
-            var arJSONActions = [];
-            var curLevelTitle = '';
-            var isFirst = false;
-            
-            for (var i = 0; i < arActions.length; i++) {
-                var action = arActions[i];
-                var title = action.lastChild.nodeValue;
-                var slashLoc = (title) ? title.indexOf('\\') : -1;
-                var imageRef = q.selectValue('img/@src', action, null);
-                // if imageRef is null, leave it that way
-                // if not and the path is an absolute path, use that, otherwise build the path
-                imageRef = (imageRef == null) ? null : (imageRef && imageRef.indexOf('/') == 0) ? imageRef : this.dbPath + imageRef;
-                var cls = (title == null) ? 'x-btn-icon' : (imageRef) ? 'x-btn-text-icon' : null;
+            if (slashLoc > 0) { // we have a subaction
+                isSubAction = true;
+                var arLevels = title.split('\\');
+                var iLevels = arLevels.length;
+                var tmpCurLevelTitle = title.substring(0, slashLoc);
+                title = title.substring(slashLoc + 1);
                 
-                if (slashLoc > 0) { // we have a subaction
-                    isSubAction = true;
-                    var arLevels = title.split('\\');
-                    var iLevels = arLevels.length;
-                    var tmpCurLevelTitle = title.substring(0, slashLoc);
-                    title = title.substring(slashLoc + 1);
-                    
-                    if (tmpCurLevelTitle != curLevelTitle) {
-                        curLevelTitle = tmpCurLevelTitle
-                        isFirst = true;
-                    } else {
-                        isFirst = false;
-                    }
-                } else {
-                    isSubAction = false;
-                    curLevelTitle = '';
+                if (tmpCurLevelTitle != curLevelTitle) {
+                    curLevelTitle = tmpCurLevelTitle
+                    isFirst = true;
+                }
+                else {
+                    isFirst = false;
+                }
+            }
+            else {
+                isSubAction = false;
+                curLevelTitle = '';
+            }
+            
+            // get the onclick and href attributes
+            var handler, sHref, tmpOnClick, oOnClick, arOnClick;
+            // sHref = q.selectValue('@href',action,''); // there's a bug in IE with getAttribute('href') so we can't use this
+            sHref = action.getAttribute('href', 2); // IE needs the '2' to tell it to get the actual href attribute value;
+            if (sHref != '') {
+                tmpOnClick = "location.href = '" + sHref + "';";
+            }
+            else {
+                // tmpOnClick = q.selectValue('@onclick',action,Ext.emptyFn);
+                // tmpOnClick = action.getAttribute('onclick');
+                // neither of the above ways worked in IE. IE kept wrapping the onclick code
+                // in function() anonymous { code }, instead of just returning the value of onclick
+                oOnClick = action.attributes['onclick'];
+                if (oOnClick) {
+                    tmpOnClick = oOnClick.nodeValue;
+                }
+                else {
+                    tmpOnClick = ''
                 }
                 
-                // get the onclick and href attributes
-                var sHref, sOnclick, oOnclick, arOnclick;
-                // sHref = q.selectValue('@href',action,''); // there's a bug in IE with getAttribute('href') so we can't use this
-                sHref = action.getAttribute('href', 2); // IE needs the '2' to tell it to get the actual href attribute value;
-                if (sHref != '') {
-                    sOnclick = "location.href = '" + sHref + "';";
-                } else {
-                    // sOnclick = q.selectValue('@onclick',action,Ext.emptyFn);
-                    // sOnclick = action.getAttribute('onclick');
-                    // neither of the above ways worked in IE. IE kept wrapping the onclick code
-                    // in function() anonymous { code }, instead of just returning the value of onclick
-                    oOnclick = action.attributes['onclick'];
-                    if (oOnclick) {
-                        sOnclick = oOnclick.nodeValue;
-                    } else {
-                        sOnclick = ''
-                    }
-                    
-                    // first, let's remove the beginning 'return' if it exists due to domino's 'return _doClick...' code that is generated to handle @formulas
-                    if (sOnclick.indexOf('return _doClick') == 0) {
-                        sOnclick = sOnclick.substring(7);
-                    }
-                    
-                    // now, let's remove the 'return false;' if it exists since this is what domino usually adds to the end of javascript actions
-                    arOnclick = sOnclick.split('\r'); // TODO: will \r work on all browsers and all platforms???
-                    var len = arOnclick.length;
-                    if (arOnclick[len - 1] == 'return false;') {
-                        arOnclick.splice(arOnclick.length - 1, 1); // removing the 'return false;' that domino adds
-                    }
-                    sOnclick = arOnclick.join('\r');
+                // first, let's remove the beginning 'return' if it exists due to domino's 'return _doClick...' code that is generated to handle @formulas
+                if (tmpOnClick.indexOf('return _doClick') == 0) {
+                    tmpOnClick = tmpOnClick.substring(7);
                 }
                 
-                // asign to a handler
-                // scoping to 'this' doesn't appear to work for some reason here
-                /*var handler = function(bleh){
-                 eval(bleh);
-                 }.createCallback(this, [sOnclick]);*/
-                var handler = function(bleh){
-                    eval(bleh);
-                }.createCallback(sOnclick);
-                
-                // handle subActions
-                if (isSubAction) {
-                    // special case for the first one
-                    if (isFirst) {
-                        if (i > 0) {
-                            // add separator
-                            arJSONActions.push('-');
-                        }
-                        
-                        // add action
-                        arJSONActions.push({
-                            text: curLevelTitle,
-                            menu: {
-                                items: [{
-                                    text: title,
-                                    cls: cls,
-                                    icon: imageRef,
-                                    handler: handler
-                                }]
-                            }
-                        });
-                        
-                        // subaction that is not the first one
-                    } else {
-                        // length-1 so we can get back past the separator and to the top level of the dropdown
-                        arJSONActions[arJSONActions.length - 1].menu.items.push({
-                            text: title,
-                            cls: cls,
-                            icon: imageRef,
-                            handler: handler
-                        });
-                    }
-                    // normal non-sub actions
-                } else {
+                // now, let's remove the 'return false;' if it exists since this is what domino usually adds to the end of javascript actions
+                arOnClick = tmpOnClick.split('\r'); // TODO: will \r work on all browsers and all platforms???
+                var len = arOnClick.length;
+                if (arOnClick[len - 1] == 'return false;') {
+                    arOnClick.splice(arOnClick.length - 1, 1); // removing the 'return false;' that domino adds
+                }
+                tmpOnClick = arOnClick.join('\r');
+            }
+            
+            // assigne a handler
+            handler = function(bleh){
+                eval(bleh)
+            }.createDelegate(this, tmpOnClick);
+            
+            // handle subActions
+            if (isSubAction) {
+                // special case for the first one
+                if (isFirst) {
                     if (i > 0) {
                         // add separator
-                        arJSONActions.push('-');
+                        this.actions.push('-');
                     }
                     
                     // add action
-                    arJSONActions.push({
+                    this.actions.push({
+                        text: curLevelTitle,
+                        menu: {
+                            items: [{
+                                text: title,
+                                cls: cls,
+                                icon: imageRef,
+                                handler: handler
+                            }]
+                        }
+                    });
+                    
+                    // subaction that is not the first one
+                }
+                else {
+                    // length-1 so we can get back past the separator and to the top level of the dropdown
+                    this.actions[this.actions.length - 1].menu.items.push({
                         text: title,
                         cls: cls,
                         icon: imageRef,
                         handler: handler
                     });
-                } // end if(isSubAction)
-            } // end for arActions.length
- 
-            if (arJSONActions.length > 0) {
-            
-                // now add the actions to the toolbar (this)
-                for (var i = 0; i < arJSONActions.length; i++) {
-                    this.toolbar.add(arJSONActions[i]);
                 }
-                if (this.toolbar.ownerCt) {
-                    this.toolbar.ownerCt.doLayout();
-                } else {
-                    this.toolbar.doLayout();    
+                // normal non-sub actions
+            }
+            else {
+                if (i > 0) {
+                    // add separator
+                    this.actions.push('-');
                 }
-
-            } else {
-                if (this.removeEmptyActionbar) {
-                    this.removeActionbar();
-                }   
-            }// eo if (arJSONActions.length > 0)
-            
-        }
-        
+                
+                // add action
+                this.actions.push({
+                    text: title,
+                    cls: cls,
+                    icon: imageRef,
+                    handler: handler
+                });
+            } // end if(isSubAction)
+        } // end for arActions.length
+        // now process these actions by adding to the toolbar and syncing the grid's size
+        this.processActions();
         
         // now delete the original actionbar (table) that was sent from domino
         this.removeDominoActionbar();
@@ -579,7 +554,40 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
     removeActionbar: function(){
         this.toolbar.destroy();
     },
-
+    
+    // private
+    syncGridSize: function(){
+        // now make sure the bbar shows by syncing the grid and the grid's parent
+        if (this.toolbar.ownerCt) {
+            this.toolbar.ownerCt.syncSize();
+            if (this.toolbar.ownerCt.ownerCt) {
+                this.toolbar.ownerCt.ownerCt.sycnSize();
+            }
+        }
+        
+    },
+    
+    // private
+    processActions: function(){
+    
+        var nbrActions = this.actions.length;
+        
+        if (nbrActions > 0) {
+            for (var i = 0; i < nbrActions; i++) {
+                this.toolbar.add(this.actions[i]);
+            }
+            // call doLayout so we can see our dynamically added actions
+            this.toolbar.doLayout();
+            // now make sure the bbar shows by syncing the grid and the grid's parent
+            this.syncGridSize();
+        }
+        else {
+            if (this.removeEmptyActionbar) {
+                this.removeActionbar();
+            }
+        }
+    },
+    
     // private
     getDominoActionbar: function(){
     
@@ -609,19 +617,23 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                         var arRows = q.select('tr', actionbar);
                         if (arRows.length != 1) {
                             break;
-                        } else {
+                        }
+                        else {
                             bTest1 = true;
                             bTest2 = true;
                             continue;
                         }
-                    } else 
+                    }
+                    else 
                         if ((c.tagName == 'INPUT' && q.selectValue('@type', c, '') == 'hidden') || c.tagName == 'LABEL') {
                             continue; // domino sometimes puts hidden input fields before the actionbar
                         // and we put in a hidden label field in certain cases
-                        } else {
+                        }
+                        else {
                             break; // didn't pass test 1 so bail
                         }
-                } else { // bTest1 == true
+                }
+                else { // bTest1 == true
                     if (c.tagName == 'HR') {
                         actionbarHr = c;
                         bTest3 = true;
@@ -680,12 +692,13 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
     openForm: function(form){
         var link = this.dbPath + form + '?OpenForm';
         var target = this.target || this.ownerCt;
-                
+        
         // if no target then just open in a new window
         if (target) {
             window.open(link);
-        } else {
-            
+        }
+        else {
+        
             // open form in an iframe
             // we set the 'uiView' property to 'this.uiView' since openForm
             // is running from so that from a doc, 
@@ -700,10 +713,10 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                 documentLoadingWindowTitle: this.uiView.documentLoadingWindowTitle,
                 documentUntitledWindowTitle: this.uiView.documentUntitledWindowTitle,
                 useDocumentWindowTitle: this.uiView.useDocumentWindowTitle,
-                documentWindowTitleMaxLength : this.uiView.documentWindowTitleMaxLength,                
+                documentWindowTitleMaxLength: this.uiView.documentWindowTitleMaxLength,
                 targetDefaults: this.uiView.targetDefaults
             });
-
+            
         }
     },
     
@@ -730,7 +743,8 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                     iframe.dom.src = src;
                 }
                 pnl.show();
-            } else {
+            }
+            else {
                 var iframe = Ext.DomHelper.append(document.body, {
                     tag: 'iframe',
                     frameBorder: 0,
@@ -749,7 +763,8 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                     closable: true
                 }).show();
             }
-        } else {
+        }
+        else {
             location.href = src;
         }
     },
@@ -782,10 +797,12 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
             if (oc.getXType() == 'tabpanel') {
                 oc.remove(oc.getActiveTab());
             }
-        } else {
+        }
+        else {
             try {
                 window.back();
-            } catch (e) {
+            } 
+            catch (e) {
                 window.close();
             }
         }
