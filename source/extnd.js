@@ -1,17 +1,39 @@
-// override is for a bug introduced with Ext 2.2.1 with tooltips
-Ext.override(Ext.Button, {
-    beforeDestroy: function(){
-        if(this.rendered){
-            var btnEl = this.el.child(this.buttonSelector);
-            if(btnEl){
-                if(typeof this.tooltip == 'object'){
-                    Ext.QuickTips.unregister(btnEl);
-                }
-                btnEl.removeAllListeners();
+/*  this override is to fix an issue where this.store doesn't get set soon enough
+    when the call to this.onLoad is done, it in turn calls this.getPageData 
+    and getPageData needs to know what this.store is  
+ */
+Ext.override(Ext.PagingToolbar, {
+        bindStore : function(store, initial){
+        if(!initial && this.store){
+            this.store.un("beforeload", this.beforeLoad, this);
+            this.store.un("load", this.onLoad, this);
+            this.store.un("loadexception", this.onLoadError, this);
+            this.store.un("exception", this.onLoadError, this);
+            if(store !== this.store && this.store.autoDestroy){
+                this.store.destroy();
             }
         }
-        if(this.menu){
-            Ext.destroy(this.menu);
+        if(store){
+            store = Ext.StoreMgr.lookup(store);
+            store.on({
+                scope: this,
+                beforeload: this.beforeLoad,
+                load: this.onLoad,
+                loadexception: this.onLoadError,
+                exception: this.onLoadError
+            });
+            this.paramNames.start = store.paramNames.start;
+            this.paramNames.limit = store.paramNames.limit;
+
+        }
+        // set this.store first
+        this.store = store;
+        
+        // now check count and call onLoad if needed
+        if (store){
+            if (store.getCount() > 0){
+                this.onLoad(store, null, {});
+            }
         }
     }
 });
@@ -19,7 +41,7 @@ Ext.override(Ext.Button, {
 
 Ext.namespace("Ext.nd", "Ext.nd.form", "Ext.nd.data", "Ext.nd.util");
 
-Ext.nd.version = 'pre-release 2 - Beta 2';
+Ext.nd.version = 'pre-release 2 - Beta 2 for ExtJS 3.x';
 
 Ext.nd.getBlankImageUrl = function() {
 	return this.extndUrl + "resources/images/s.gif";
