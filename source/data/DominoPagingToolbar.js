@@ -9,9 +9,6 @@
  */
 Ext.nd.DominoPagingToolbar = function(config){
     Ext.nd.DominoPagingToolbar.superclass.constructor.call(this, config);
-    this.previousCursor = 1;
-    this.previousStart = [];
-    this.previousStartMC = new Ext.util.MixedCollection();
 };
 
 Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
@@ -20,10 +17,19 @@ Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
   beforePageText : "Showing entries ",
   afterPageText : " - {0}",
   
+  initComponent : function() {
+    this.previousCursor = 1;
+    this.previousStart = [];
+    this.previousStartMC = new Ext.util.MixedCollection();
+    Ext.nd.DominoPagingToolbar.superclass.initComponent.call(this);
+  },
+  
+  // private override since pageNum could represent a deeply nested domino heirarchy (ie 3.22.1.2)
+  // and the normal Ext pageNum expects a number
   readPage : function(d){
-      var pageNum = this.inputItem.el.dom.value;
+      var pageNum = this.field.value;    
       if (!pageNum) {
-          this.inputItem.el.dom.value = d.activePage;
+          this.field.value = d.activePage;
           return false;
       }
       return pageNum;
@@ -39,7 +45,7 @@ Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
       }else if (k == e.HOME || k == e.END){
           e.stopEvent();
           pageNum = k == e.HOME ? 1 : d.pages;
-          this.inputItem.el.dom.value = pageNum;
+          this.field.value = pageNum;
       }else if (k == e.UP || k == e.PAGEUP || k == e.DOWN || k == e.PAGEDOWN){
           e.stopEvent();
           if(pageNum == this.readPage(d)){
@@ -49,7 +55,7 @@ Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
               }
               pageNum += increment;
               if(pageNum >= 1 & pageNum <= d.pages){
-                  this.inputItem.el.dom.value = pageNum;
+                  this.field.value = pageNum;
               }
           }
       }
@@ -118,7 +124,7 @@ Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
     this.prevButton = button;
   },
 
-  // private
+  // private override to deal with domino's categories and views with reader/author fields
   onLoad : function(store, r, o){
     this.cursor = o.params ? (o.params.start ? o.params.start : 1) : 1;
     var d = this.getPageData(), ap = d.activePage, ps = d.pages;
@@ -126,24 +132,23 @@ Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
     // reset activePage if no start param
     // start param is removed when user clicks on a column to resort
     // this is so that the paging will start over since we are taking the user back to the top of the view (sorted by the column they clicked)
-    if (!o.params.start) {
-      d.activePage = 1;
-      ap = 1;
+    if (o.params) {
+        if (!o.params.start) {
+            d.activePage = 1;
+            ap = 1;
+        }
+    } else {
+        d.activePage = 1;
+        ap = 1;        
     }
     
     // resize the text field to hold the starting entry value
-    var tm = Ext.util.TextMetrics.createInstance(this.inputItem.el.dom,100);
+    var tm = Ext.util.TextMetrics.createInstance(this.field,100);
     this.inputItem.el.applyStyles({'width':Math.max(tm.getWidth(ap)+10,20), 'textAlign' : 'right'});
  
     this.afterTextItem.setText(String.format(this.afterPageText, d.pages));
-    this.inputItem.el.dom.value = ap;
-
-    // the normal way
-    //this.first.setDisabled(ap == 1);
-    //this.prev.setDisabled(ap == 1);
-    //this.next.setDisabled(ap == ps); 
-    //this.last.setDisabled(ap == ps);
-    
+    this.field.value = ap;
+        
     // the Ext.nd way that works for categorized views and views with reader fields
     this.first.setDisabled(store.baseParams.start == 1);
     this.prev.setDisabled(store.baseParams.start == 1);

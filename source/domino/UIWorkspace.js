@@ -382,7 +382,7 @@ Ext.nd.UIWorkspace.prototype = {
         var cb;
         var opt = {};
         
-        // options can be an object or 
+        // options can be a single object or an argument list of strings 
         if (typeof arguments[0] == "string") {
             opt.type = arguments[0];
             opt.title = arguments[1];
@@ -393,8 +393,14 @@ Ext.nd.UIWorkspace.prototype = {
             opt = options;
         }
         
+        // make sure we have a 'type' property and
         // normalize type to all lowercase
-        opt.type = opt.type.toLowerCase();
+        if (opt.type) {
+            opt.type = opt.type.toLowerCase();    
+        } else {
+            opt.type = "ok"; 
+        }
+        
         
         switch (opt.type) {
             case "ok":
@@ -414,8 +420,7 @@ Ext.nd.UIWorkspace.prototype = {
     }
 }
 
-Ext.nd.UIWorkspace.prototype.PickList = Ext.nd.UIWorkspace.prototype.pickList;
-Ext.nd.UIWorkspace.prototype.PickListStrings = Ext.nd.UIWorkspace.prototype.pickList;
+// for now, let's let pickListStrings do the same thing as pickList
 Ext.nd.UIWorkspace.prototype.pickListStrings = Ext.nd.UIWorkspace.prototype.pickList;
+// and the Uppercase method names are for old Beta 1 users
 Ext.nd.UIWorkspace.prototype.Prompt = Ext.nd.UIWorkspace.prototype.prompt;
-
