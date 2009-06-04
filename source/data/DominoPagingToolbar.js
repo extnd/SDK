@@ -16,6 +16,7 @@ Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
   // change the displayed text
   beforePageText : "Showing entries ",
   afterPageText : " - {0}",
+  middlePageText: " of ",
   
   initComponent : function() {
     this.previousCursor = 1;
@@ -192,7 +193,7 @@ Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
     return {
       total : total,
       activePage : firstText,
-      pages : lastText + " of " + total
+      pages : lastText + this.middlePageText + total
     };
   }
   
