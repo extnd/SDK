@@ -564,7 +564,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         // adding it to the items array of the panel in the region
         if (!grid.region) {
             var colConfig = this.colModel.config[colIndex];
-            if (colConfig.resortviewunid != "") {
+            if (colConfig.resortviewunid && colConfig.resortviewunid != "") {
                 // first, let's stop the propagation of this event so that the
                 // sort events don't try and run as well
                 e.stopPropagation();
@@ -646,7 +646,8 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                 
             }
             else {
-                // ok, this column is not set to 'change view' so go ahead and
+                // ok, this column is not set to 'change view' OR this column
+                // could be for the checkbox selection model column czso go ahead and
                 // call Ext's onHeaderClick
                 return true;
             } // eo colConfig.resortviewunid
