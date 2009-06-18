@@ -61,7 +61,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
     buildActionBarFromDXL: true,
     editMode: true,
     isCategorized: false,
-    useMultiExpandView: false,
+    multiExpand: false,
     notCategorizedText: '(Not Categorized)',
     loadInitialData: true,
     documentWindowTitle: '',
@@ -103,16 +103,6 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                     singleSelect: this.singleSelect
                 });
             }
-        }
-        
-        // the grid cellclick will allow us to capture clicking on an
-        // expand/collapse icon
-        if (this.isCategorized && this.useMultiExpandView) {
-            // do nothing for multi expand views
-        }
-        else {
-            // for the classic domino way
-            this.on('cellclick', this.gridHandleCellClick, this, true);
         }
         
         // leave support (for now) for old showSingleCategory property
@@ -733,7 +723,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         // create the Data Store
         // TODO: check with Rich on the 'categorized' property since we already
         // have an 'isCategorized' property
-        this.store = new Ext.nd.data[(this.isCategorized && this.useMultiExpandView) ? 'CategorizedStore' : 'DominoViewStore'](Ext.apply({
+        this.store = new Ext.nd.data[(this.isCategorized && this.multiExpand) ? 'CategorizedStore' : 'DominoViewStore'](Ext.apply({
             // this.store = new Ext.nd.data.DominoViewStore({
             proxy: new Ext.data.HttpProxy({
                 url: this.viewUrl + '?ReadViewEntries',
@@ -744,15 +734,22 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             remoteSort: true
         }, this.storeConfig));
         
-        if (this.isCategorized && this.useMultiExpandView) {
-            //            this.selModel = new Ext.nd.CategorizedRowSelectionModel();
-            //            console.log(['categorized', this]);
+        if (this.isCategorized && this.multiExpand) {
+            //this.selModel = new Ext.nd.CategorizedRowSelectionModel();
+            //console.log(['categorized', this]);
             this.view = new Ext.nd.CategorizedView({});
             this.enableColumnMove = false;
             this.view.init(this);
             this.view.render();
         }
-        
+        else {
+            // the grid cellclick will allow us to capture clicking on an
+            // expand/collapse icon for the classic domino way
+            // but only do this if 'multiExpand' is set to false
+            this.on('cellclick', this.gridHandleCellClick, this, true);
+        }
+
+
         // make sure this.view is set, otherwise the reconfigure call will fail
         if (!this.view) {
             this.view = this.getView();
