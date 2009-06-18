@@ -69,6 +69,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
     documentUntitledWindowTitle: '(Untitled)',
     documentWindowTitleMaxLength: 16,
     useDocumentWindowTitle: true,
+    extendLastColumn: false,
     
     // categorized: false,// TODO: check with Rich on the 'categorized' property
     // since we already have an 'isCategorized' property
@@ -813,6 +814,8 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         //this.isCategorized = q.selectNumber('viewdesign/@categories', dxml, 0);
         //this.isCategorized = !!this.isCategorized;
         this.isCategorized = false; // init value
+
+        
         var arColumnConfig = [];
         var arRecordConfig = [];
         var colCount = 0;
@@ -973,6 +976,13 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             arColumnConfig.push(columnConfig);
             
         } // end for loop
+
+        // does this view need to have it's last column extended?
+        var extendlastcolumn = q.selectValue('view/@extendlastcolumn', dxml, false);
+        this.extendLastColumn = this.extendLastColumn || (extendlastcolumn == 'true') ? true : false;
+        this.autoExpandColumn = (this.extendLastColumn) ? colCount : false;
+
+
         // the dominoView object holds all of the design information for the
         // view
         this.dominoView = {
