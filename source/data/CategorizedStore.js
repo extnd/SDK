@@ -11,13 +11,13 @@ Ext.extend(Ext.nd.data.CategorizedStore, Ext.nd.data.DominoViewStore, {
             return;
         }
         
-        this.proxy.doRequest('load', 
-            null, // record
+        this.proxy.doRequest(
+        	'load', // action 
+        	null, // record
             {
                 expand: position
             }, // params
             this.reader, // reader
-            null, // writer
             this.loadCategoryRecords, // callback
             this, // scope
             Ext.apply({

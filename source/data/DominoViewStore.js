@@ -127,7 +127,13 @@ Ext.extend(Ext.nd.data.DominoViewStore, Ext.data.Store, {
                 }
             }
             
-            this.proxy.doRequest('load', null, p, this.reader, null, this.loadRecords, this, options);
+            this.proxy.doRequest(
+            		'load',
+            		null, 
+            		p, 
+            		this.reader, 
+            		this.loadRecords, 
+            		this, options);
         }
     },
     
