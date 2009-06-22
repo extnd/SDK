@@ -12,7 +12,7 @@ Ext.extend(Ext.nd.data.CategorizedStore, Ext.nd.data.DominoViewStore, {
         }
         
         this.proxy.doRequest(
-        	'load', // action 
+        	'read', // action 
         	null, // record
             {
                 expand: position
