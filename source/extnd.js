@@ -1,6 +1,7 @@
-/*  this override is to fix an issue where this.store doesn't get set soon enough
-    when the call to this.onLoad is done, it in turn calls this.getPageData 
-    and getPageData needs to know what this.store is  
+/*
+ * this override is to fix an issue where this.store doesn't get set soon enough
+ * when the call to this.onLoad is done, it in turn calls this.getPageData and
+ * getPageData needs to know what this.store is
  */
 Ext.override(Ext.PagingToolbar, {
         bindStore : function(store, initial){
@@ -54,9 +55,12 @@ Ext.nd.init = function(config) {
 
 /**
  * @class Ext.nd.util.addIFrame
- * @cfg {String} documentLoadingWindowTitle The loading text to display as the document is loading. 
- * @cfg {String} documentUntitledWindowTitle The text to title text to display if the loaded document does not have a window title defined.
- * @cfg {Boolean} useDocumentWindowTitle If set to true then an attempt will be made to get and set the title to the document's window title.
+ * @cfg {String} documentLoadingWindowTitle The loading text to display as the
+ *      document is loading.
+ * @cfg {String} documentUntitledWindowTitle The text to display if the loaded
+ *      document does not have a window title defined.
+ * @cfg {Boolean} useDocumentWindowTitle If set to true then an attempt will be
+ *      made to get and set the title to the document's window title.
  * @cfg {String/Componet} target Where the iframe should load
  * @singleton
  */
@@ -67,6 +71,22 @@ Ext.nd.util.addIFrame = function(config) {
 	var targetDiv = false; // if the target is simply a div
     var panel = false; // the panel that will contain the iframe
 	var iframe = false; // the iframe
+
+	var documentLoadingWindowTitle = config.documentLoadingWindowTitle || 
+		(config.uiDocument ? config.uiDocument.documentLoadingWindowTitle :
+		(config.uiView ? config.uiView.documentLoadingWindowTitle : "Opening"));
+    var documentUntitledWindowTitle = config.documentUntitledWindowTitle ||
+    	(config.uiDocument ? config.uiDocument.documentUntitledWindowTitle :
+    	(config.uiView ? config.uiView.documentUntitledWindowTitle : "(Untitled)"));
+    var useDocumentWindowTitle = config.useDocumentWindowTitle ||
+    	(config.uiDocument ? config.uiDocument.useDocumentWindowTitle :
+    	(config.uiView ? config.uiView.useDocumentWindowTitle : true));
+    var documentWindowTitleMaxLength = config.documentWindowTitleMaxLength ||
+    	(config.uiDocument ? config.uiDocument.documentWindowTitleMaxLength :
+    	(config.uiView ? config.uiView.documentWindowTitleMaxLength : 16));
+    var targetDefaults = config.targetDefaults ||
+    	(config.uiDocument ? config.uiDocument.targetDefaults :
+    	(config.uiView ? config.uiView.targetDefaults : {}));
 
     // first, determine the target
     // try and see if it is a component first
@@ -83,7 +103,8 @@ Ext.nd.util.addIFrame = function(config) {
 
 		// checking to see if a panel with this component id (not dom id)
 		// already exists in the 'target' panel
-		// if it does already exist, we'lll just show that panel later in the code
+		// if it does already exist, we'lll just show that panel later in the
+		// code
         if (targetPanel.items) {
             panel = targetPanel.items.get(config.id);
         }
@@ -122,7 +143,8 @@ Ext.nd.util.addIFrame = function(config) {
                 targetPanel.doLayout();
             }
 
-            // This is a hack to fix the memory issues that occur when opening and
+            // This is a hack to fix the memory issues that occur when opening
+			// and
             // closing stuff within iFrames
             targetPanel.on('beforeremove', function(container, panel) {
                 var iFrame = Ext.DomQuery.selectNode('iframe',panel.body.dom);
@@ -149,7 +171,7 @@ Ext.nd.util.addIFrame = function(config) {
         }
 
 
-        // this block sets the ownerCt attribute of the iframe to the panel 
+        // this block sets the ownerCt attribute of the iframe to the panel
         // and sets the panels title after the iframe loads
         // if there is an uiView property, it is set as well
         
@@ -171,7 +193,8 @@ Ext.nd.util.addIFrame = function(config) {
                 // an error usually means a x-domain security violation
             }
             
-            // replace the panel's title with the the window title from the iframe
+            // replace the panel's title with the the window title from the
+			// iframe
             // if the useDocumentWindowTitle is set to true
             if (config.useDocumentWindowTitle) {
                 try {
@@ -209,12 +232,12 @@ Ext.nd.util.addIFrame = function(config) {
 }
 
 Ext.nd.util.doLayoutAndShow = function(panel) {
-	// all component's owner Ext.Container should have a doLayout 
+	// all component's owner Ext.Container should have a doLayout
     // but check just in case
 	if (panel.ownerCt && panel.ownerCt.doLayout) {
 		panel.ownerCt.doLayout();
 	}
-	// and if the component has a show method, 
+	// and if the component has a show method,
     // call it so this newly added component is shown
 	if (panel.show) {
 		panel.show();

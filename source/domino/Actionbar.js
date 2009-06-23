@@ -691,32 +691,20 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
      */
     openForm: function(form){
         var link = this.dbPath + form + '?OpenForm';
-        var target = this.target || this.ownerCt;
+        var target = this.target || this.ownerCt.ownerCt;
         
         // if no target then just open in a new window
-        if (target) {
+        if (!target) {
             window.open(link);
         }
         else {
-        
-            // open form in an iframe
-            // we set the 'uiView' property to 'this.uiView' since openForm
-            // is running from so that from a doc, 
-            // we can easily get a handle to the view so we can do such 
-            // things as refresh, etc.
             Ext.nd.util.addIFrame({
                 target: target,
                 uiView: this.uiView,
                 uiDocument: this.uiDocument,
                 url: link,
-                id: Ext.id(),
-                documentLoadingWindowTitle: this.uiView.documentLoadingWindowTitle,
-                documentUntitledWindowTitle: this.uiView.documentUntitledWindowTitle,
-                useDocumentWindowTitle: this.uiView.useDocumentWindowTitle,
-                documentWindowTitleMaxLength: this.uiView.documentWindowTitleMaxLength,
-                targetDefaults: this.uiView.targetDefaults
+                id: Ext.id()
             });
-            
         }
     },
     
@@ -725,7 +713,8 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
      * @param {Boolean} editMode true for edit, false for read mode
      */
     openDocument: function(editMode){
-    
+        //var target = this.target || this.ownerCt.ownerCt;
+    	var target = this.target;
         if (this.noteType == 'view') {
             this.openDocumentFromView(editMode);
             return;
@@ -734,38 +723,19 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
         var mode = (editMode) ? '?EditDocument' : '?OpenDocument';
         var unid = Ext.nd.UIDocument.document.universalID;
         var pnlId = 'pnl-' + unid;
-        var src = this.dbPath + '0/' + unid + mode;
-        if (this.tabPanel) {
-            var pnl = this.tabPanel.getItem(pnlId);
-            if (pnl) {
-                var iframe = window.parent.Ext.get(unid);
-                if (iframe) {
-                    iframe.dom.src = src;
-                }
-                pnl.show();
-            }
-            else {
-                var iframe = Ext.DomHelper.append(document.body, {
-                    tag: 'iframe',
-                    frameBorder: 0,
-                    src: src,
-                    id: unid,
-                    style: {
-                        width: '100%',
-                        height: '100%'
-                    }
-                });
-                this.tabPanel.add({
-                    id: pnlId,
-                    contentEl: iframe.id,
-                    title: 'FixMe',
-                    layout: 'fit',
-                    closable: true
-                }).show();
-            }
+        var link = this.dbPath + '0/' + unid + mode;
+        // if no target then just location.href
+        if (!target) {
+            location.href = link;
         }
         else {
-            location.href = src;
+            Ext.nd.util.addIFrame({
+                target: target,
+                uiView: this.uiView,
+                uiDocument: this.uiDocument,
+                url: link,
+                id: Ext.id()
+            });
         }
     },
     
@@ -774,7 +744,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
      * Called when opening a document from a UIView.
      * @param {Boolean} editMode true for edit, false for read mode
      */
-    openDocumentFromView: function(editMode){
+    openDocumentFromView : function(editMode){
         var grid = this.uiView;
         var row = grid.getSelectionModel().getSelected();
         var rowIndex = grid.getStore().indexOf(row);

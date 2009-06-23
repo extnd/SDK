@@ -198,13 +198,14 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
                 disableCaching: true,
                 success : this.doConvertFieldsCB, 
                 failure : this.doConvertFieldsCB,
+                arguments : arguments,
                 scope: this,
                 url: Ext.nd.extndUrl + 'DXLExporter?OpenAgent&db=' + this.dbPath + '&type=form&name=' + this.formName
             });
 
         } else {
 
-            Ext.nd.Form.superclass.afterRender.apply(this, arguments);
+        	Ext.nd.Form.superclass.afterRender.apply(this, arguments);
 
             this.msgBox.hide();
             if (document && document.body) {
@@ -278,7 +279,8 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
         
         // need to call parent afterRender since this callback function
         // was called from this classes afterRender method
-        Ext.nd.Form.superclass.afterRender.call(this);  
+        //Ext.nd.Form.superclass.afterRender.call(this);  
+        Ext.nd.Form.superclass.afterRender.apply(this, options.arguments);
         
         this.msgBox.hide();
         if (document && document.body) {
