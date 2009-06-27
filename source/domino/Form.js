@@ -53,7 +53,7 @@ Ext.nd.Form = function(config){
     }
 
     // defaults
-    this.autoScroll = true;
+    //this.autoScroll = true;
     this.dbPath = db.webFilePath;
     this.showActionbar = true;
     this.convertFields = true;
@@ -63,6 +63,7 @@ Ext.nd.Form = function(config){
     this.toolbarRenderTo; 
     
     this.form = document.forms[0];
+    this.form.items = [];
     this.formName = this.uiDocument.formName || document.forms[0].name.substring(1)
     this.dateTimeFormats = Ext.nd.dateTimeFormats;
     
@@ -213,6 +214,10 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
             }
         }
 
+        // having issues with converted fields not showing up so
+        // maybe we need to do this at all times
+        //Ext.nd.Form.superclass.afterRender.apply(this, arguments);
+
     
 
     },
@@ -265,6 +270,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
     // of field info
     doConvertFieldsCB : function(response, options) {
 
+
         // load in our field defintions
         this.fieldDefinitions = new Ext.util.MixedCollection(false,this.getFieldDefinitionKey);
         this.fieldDefinitions.addAll(Ext.DomQuery.select('field', response.responseXML));
@@ -281,7 +287,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
         // was called from this classes afterRender method
         //Ext.nd.Form.superclass.afterRender.call(this);  
         Ext.nd.Form.superclass.afterRender.apply(this, options.arguments);
-        
+                
         this.msgBox.hide();
         if (document && document.body) {
             document.body.style.visibility = "";
@@ -319,6 +325,14 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
         
     }, // end function doConvertFields()
     
+    getFieldDefinition : function(el) {
+        if (el.name) {
+            return this.fieldDefinitions ? this.fieldDefinitions.get(el.name) : null;    
+        } else {
+            return null;
+        }
+    },
+    
     // private
     convertFromTagName: function(el) {
         
@@ -327,7 +341,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
                 // for a dialoglist set to use a view for choices, domino causes problems
                 // in that it will send a select tag down without any options
                 // so therefore, we have to check for that
-                var dfield = this.fieldDefinitions.get(el.name);
+                var dfield = this.getFieldDefinition(el.name);
                 if (dfield){
                     var allowMultiValues = (Ext.DomQuery.selectValue('@allowmultivalues',dfield) == 'true') ? true : false;
                     var allowNew = (Ext.DomQuery.selectValue('keywords/@allownew',dfield) == 'true') ? true : false;
@@ -381,7 +395,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
     //private
     convertFromDominoFieldType: function(el) {
         
-        var dfield = this.fieldDefinitions.get(el.name);
+        var dfield = this.getFieldDefinition(el);
         if (dfield) {
             var dtype = Ext.DomQuery.selectValue('@type',dfield);
             switch (dtype) {
@@ -402,7 +416,10 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
                     break;
                     
             } // eo switch
-        } // eo if (dfield)        
+        } // eo if (dfield)
+        else {
+            this.convertToTextField(el);
+        }        
     },
     
     // private
@@ -504,7 +521,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
         });
         tm.applyToMarkup(el);
         // now add to items
-        this.items.add(tm);                        
+        this.form.items.add(tm);                        
         
     },
     
@@ -517,14 +534,14 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
         });
         f.applyToMarkup(el);
         // now add to items
-        this.items.add(f);
+        this.form.items.add(f);
                                         
     },
 
     // private
     convertNamesField: function(el){
         
-        var dfield = this.fieldDefinitions.get(el.name);
+        var dfield = this.getFieldDefinition(el);
         if (dfield) {
             var allowMultiValues = (Ext.DomQuery.selectValue('@allowmultivalues',dfield) == 'true') ? true : false;
             var allowNew = (Ext.DomQuery.selectValue('keywords/@allownew',dfield) == 'true') ? true : false;
@@ -577,7 +594,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
         }, config));
         nm.applyToMarkup(el);
         // now add to items
-        this.items.add(nm);
+        this.form.items.add(nm);
 
     },
     
@@ -589,7 +606,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
         }, config));
         pl.applyToMarkup(el);
         // now add to items
-        this.items.add(pl);
+        this.form.items.add(pl);
         
     },
     
@@ -602,7 +619,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
         });
         ta.applyToMarkup(el);
         // now add to items
-        this.items.add(ta);                        
+        this.form.items.add(ta);                        
 
     },
     
@@ -682,7 +699,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
         }
         
         // now add to items
-        this.items.add(ed);
+        this.form.items.add(ed);
         
     },
     
@@ -694,13 +711,13 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
         });
         nbr.applyToMarkup(el);
         // now add to items
-        this.items.add(nbr);                        
+        this.form.items.add(nbr);                        
 
     },
     
     // private
     convertToDateTimeField: function(el) {
-        var dfield = this.fieldDefinitions.get(el.name);
+        var dfield = this.getFieldDefinition(el);
         if (dfield) {
             var show = Ext.DomQuery.selectValue('datetimeformat/@show',dfield);
             switch (show) {
@@ -725,12 +742,12 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
         
         dt.applyToMarkup(el);
         // now add to items
-        this.items.add(dt);
+        this.form.items.add(dt);
     },
     
     // private
     convertToCheckbox: function(el){
-        var dfield = this.fieldDefinitions.get(el.name);
+        var dfield = this.getFieldDefinition(el);
         var boxLabel = this.getDominoGeneratedBoxLabel(el, true);
         // TODO: figure out how to use columns and checkbox group
         var columns = Ext.DomQuery.selectValue('keywords/@columns');
@@ -739,13 +756,13 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
             boxLabel : boxLabel
         });
         ckb.applyToMarkup(el);
-        this.items.add(ckb);            
+        this.form.items.add(ckb);            
 
     },
     
     // private
     convertToRadio: function(el){
-        var dfield = this.fieldDefinitions.get(el.name);
+        var dfield = this.getFieldDefinition(el);
         var boxLabel = this.getDominoGeneratedBoxLabel(el, true);
         // TODO: figure out how to use columns and radio group
         var columns = Ext.DomQuery.selectValue('keywords/@columns');
@@ -761,7 +778,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
             boxLabel : boxLabel
         });
         rd.applyToMarkup(el);
-        this.items.add(rd);
+        this.form.items.add(rd);
 
     },
 
@@ -791,7 +808,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
     // private
     convertKeywordField: function(el){
 
-        var dfield = this.fieldDefinitions.get(el.name);
+        var dfield = this.getFieldDefinition(el);
         if (dfield) {
             var allowMultiValues = (Ext.DomQuery.selectValue('@allowmultivalues',dfield) == 'true') ? true : false;
             var allowNew = (Ext.DomQuery.selectValue('keywords/@allownew',dfield) == 'true') ? true : false;
@@ -890,7 +907,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
         combo.applyToMarkup(el);
         
         // now add to items
-        this.items.add(combo);
+        this.form.items.add(combo);
         
     },
     
@@ -948,7 +965,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
         });
         
         cb.applyToMarkup(el);
-        this.items.add(cb);
+        this.form.items.add(cb);
 },
     
     // private
@@ -1022,7 +1039,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
         });
 
         // now add to items
-        this.items.add(cb);
+        this.form.items.add(cb);
         
     } // end convertSelectToComboBox
 });
