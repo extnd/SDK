@@ -61,10 +61,6 @@ Ext.nd.Form = function(config){
     
     // developer can specify where the toolbar should appear
     this.toolbarRenderTo; 
-    
-    this.form = document.forms[0];
-    this.form.items = [];
-    this.formName = this.uiDocument.formName || document.forms[0].name.substring(1)
     this.dateTimeFormats = Ext.nd.dateTimeFormats;
     
     // for a page we need this hack to get the page name (that we store in the
@@ -91,12 +87,11 @@ Ext.nd.Form = function(config){
     }
 
     // since we use Ext.form.BasicForm we need to make sure initialConfig is set now
-    if (!config.initialConfig) {
-        config.initialConfig = {};    
+    if (!this.initialConfig) {
+        this.initialConfig = {};    
     }
-    Ext.apply(config.initialConfig, this); // first apply our defaults    
-    Ext.apply(config.initialConfig, config);  // now apply anything passed in
-
+    // now apply anything passed in
+    Ext.apply(this.initialConfig, config);  
     // and now set any config params passed in to override defaults
     Ext.apply(this, config);
     
@@ -152,7 +147,10 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
             // this is just something to make FormPanel happy
             this.items = {xtype: 'label', hidden: true};
         }
-        return new Ext.form.BasicForm(this.form, this.initialConfig);
+        // TODO: for now we use document.forms[0] since we currently only support
+        // loading forms/documents by themselves or in an iframe.  Eventually we want
+        // to provide support to open forms/documents without the need to be in an iframe
+        return new Ext.form.BasicForm(document.forms[0], this.initialConfig);
     },
     
     // to support users coming from older versions of Ext.nd where you did
@@ -214,14 +212,8 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
             }
         }
 
-        // having issues with converted fields not showing up so
-        // maybe we need to do this at all times
-        //Ext.nd.Form.superclass.afterRender.apply(this, arguments);
-
-    
-
     },
-    
+
 
     save: function(config) {
         this.getForm().submit(Ext.apply({
