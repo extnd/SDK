@@ -133,6 +133,33 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
             this.tbar.uiDocument = this
         }
 
+        this.addEvents(        
+                /**
+                 * @event beforeclose Fires just before the current document is closed (equivalent to the NotesUIDocument QueryClose event).
+                 * @param {Ext.nd.UIDocument} this
+                 */
+                'beforeclose',        
+                /**
+                 * @event beforemodechange (TODO: Not yet implemented) Fires just before the current document changes modes (from Read to Edit mode, or from Edit to Read mode) (equivalent to the NotesUIDocument QueryModeChange event).
+                 * @param {Ext.nd.UIDocument} this
+                 */
+                'beforemodechange',        
+                /**
+                 * @event beforeopen (TODO: Not yet implemented) Fires just before the current document is opened (equivalent to the NotesUIDocument QueryOpen event).
+                 * @param {Ext.nd.UIDocument} this
+                 */
+                'beforeopen',        
+                /**
+                 * @event beforesave Fires just before the current document is saved (equivalent to NotesUIDocument QuerySave)
+                 * @param {Ext.nd.UIDocument} this
+                 */
+                'beforesave',        
+                /**
+                 * @event open Fires just after the current document is opened (equivalent to NotesUIDocument PostOpen and OnLoad events.)
+                 * @param {Ext.nd.UIDocument} this
+                 */
+                'open');
+        
         // now call parent initComponent
         Ext.nd.Form.superclass.initComponent.call(this);   
 
@@ -205,7 +232,8 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
         } else {
 
         	Ext.nd.Form.superclass.afterRender.apply(this, arguments);
-
+        	this.fireEvent('open', this);
+        	
             this.msgBox.hide();
             if (document && document.body) {
                 document.body.style.visibility = "";
@@ -216,6 +244,12 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
 
 
     save: function(config) {
+    	if (this.fireEvent("beforesave", this) !== false) {
+            this.onSave(config);
+        }
+    },
+    
+    onSave: function(config) {
         this.getForm().submit(Ext.apply({
           success: Ext.emptyFn,
           failure: Ext.emptyFn,
@@ -224,6 +258,12 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
     },
         
     close: function(){
+    	if (this.fireEvent("beforeclose", this) !== false) {
+            this.onClose();
+        }
+    },
+    
+    onClose: function() {
         // return true means that we were able to call the component's remove/hide/close action
         // return false means that we couldn't find a component and thus couldn't do anything
         if (this.target) {
@@ -279,7 +319,8 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
         // was called from this classes afterRender method
         //Ext.nd.Form.superclass.afterRender.call(this);  
         Ext.nd.Form.superclass.afterRender.apply(this, options.arguments);
-                
+        this.fireEvent('open', this);
+        
         this.msgBox.hide();
         if (document && document.body) {
             document.body.style.visibility = "";
@@ -1033,6 +1074,48 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
         // now add to items
         this.form.items.add(cb);
         
-    } // end convertSelectToComboBox
+    }, // end convertSelectToComboBox
+    
+    fieldGetText : function(fld) {
+    	var oField = this.getForm().findField(fld);
+    	return (oField) ? oField.getValue() : "";
+    },
+
+    fieldSetText : function(fld, value) {
+    	var oField = this.getForm().findField(fld);
+    	if (oField) {
+    		try {
+    			oField.setValue(value);
+    		} catch(e){}
+    	}
+    },
+
+    fieldAppendText : function(fld, value) {
+    	var oField = this.getForm().findField(fld);
+    	if (oField) {
+    		try {
+    			oField.setValue(oField.getValue() + value);
+    		} catch(e){}
+    	}
+    },
+
+    fieldClear : function(fld) {
+    	var oField = this.getForm().findField(fld);
+    	if (oField) {
+    		try {
+    			oField.setValue("");
+    		} catch(e){}
+    	}
+    },
+
+    fieldContains : function(fld, searchString) {
+    	var oField = this.getForm().findField(fld);
+    	if (oField) {
+    		try {
+    			var test = oField.getValue().indexOf(searchString);
+				return (test === -1) ? false : true;
+    		} catch(e){}
+    	}
+    }
 });
 Ext.reg('xnd-form', Ext.nd.Form);
