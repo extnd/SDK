@@ -69,7 +69,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
     documentUntitledWindowTitle: '(Untitled)',
     documentWindowTitleMaxLength: 16,
     useDocumentWindowTitle: true,
-    extendLastColumn: false,
+    extendLastColumn: undefined,
     
     // categorized: false,// TODO: check with Rich on the 'categorized' property
     // since we already have an 'isCategorized' property
@@ -907,7 +907,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             //var resorttoviewValue = (resorttoview) ? true : false;
             var resorttoviewValue = (resort == 'toview') ? true : false;
             //var resortviewunidValue = (resorttoview) ? q.selectValue('@resortviewunid', col, "") : "";
-            var resortviewunidValue = (resorttoviewValue) ? q.selectValue('@resortview', col, "") : "";
+            var resortviewunidValue = (resorttoviewValue) ? q.selectValue('@resorttoview', col, "") : "";
             
             // check the storeConfig.remoteSort property to see if the user wants to do sorting from cache
             // if so then it will be set to false (true will do the sorting 'remotely' on the server)
@@ -945,6 +945,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             var rendr = (this.renderers[columnnumber]) ? this.renderers[columnnumber] : this.dominoRenderer.createDelegate(this);
             
             var columnConfig = {
+            	id : columnnumber,
                 header: (resorttoviewValue) ? title + "<img src='/icons/viewsort.gif' />" : title,
                 align: alignValue,
                 dataIndex: name,
@@ -975,13 +976,22 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             // this.dominoView.meta.columnConfig[index]
             arColumnConfig.push(columnConfig);
             
-        } // end for loop
+        } // end for loop that processed each column
 
-        // does this view need to have it's last column extended?
-        var extendlastcolumn = q.selectValue('view/@extendlastcolumn', dxml, false);
-        this.extendLastColumn = this.extendLastColumn || (extendlastcolumn == 'true') ? true : false;
-        this.autoExpandColumn = (this.extendLastColumn) ? colCount : false;
-
+        // does this view need to have it's last column extended? or did the developer specify an autoExpandColumn?
+        if (!this.autoExpandColumn) {
+            if (this.extendLastColumn === false) {
+            	this.autoExpandColumn = false;
+            } else {
+            	if (this.extendLastColumn === true) {
+            	   	this.autoExpandColumn = colCount-1;
+            	} else {
+                    var extendlastcolumn = q.selectValue('view/@extendlastcolumn', dxml, false);
+                    this.extendLastColumn = (extendlastcolumn == 'true') ? true : false;
+                    this.autoExpandColumn = (this.extendLastColumn) ? colCount-1 : false;		
+        	   }
+            }
+        }
 
         // the dominoView object holds all of the design information for the
         // view
@@ -1204,6 +1214,9 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                 switch (dataType) {
                     case 'datetime':
                         var dtf = colConfig.datetimeformat;
+                        if (typeof dtf.show == "undefined") {
+                        	dtf.show = this.dateTimeFormats.show;
+                        }
                         if (tmpValue.indexOf('T') > 0) {
                             tmpDate = tmpValue.split(',')[0].replace('T', '.');
                             tmpDateFmt = "Ymd.His";
