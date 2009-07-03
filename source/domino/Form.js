@@ -34,24 +34,10 @@ Ext.nd.Form = function(config){
     var sess = Ext.nd.Session;
     var db = sess.currentDatabase;
 
+    //TODO: this needs to go away soon (the use of Ext.nd.UIDocument.*)
     this.uiDocument = Ext.nd.UIDocument;
-    this.uidoc = this.uiDocument; // for backwards compatability
+	this.uidoc = this.uiDocument; // for backwards compatability
     
-    // if an uiView property is available then set it
-    if (window && window.uiView) {
-        this.uiView = window.uiView;
-    }
-
-    // if a target property is available then set it
-    if (window && window.target) {
-        this.target = window.target;
-    }
-
-    // if an ownerCt property is available then set it
-    if (window && window.ownerCt) {
-        this.iframeOwnerCt = window.ownerCt;
-    }
-
     // defaults
     //this.autoScroll = true;
     this.dbPath = db.webFilePath;
@@ -106,7 +92,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
 
     // for when we extend just Ext.Panel
     // tried extending Ext.form.FormPanel but it expects an items config       
-    initComponent: function(){
+    initComponent : function(){
 
         // show a loading mask to hide all of domino's default markup
         // while we pretty things up
@@ -121,7 +107,8 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
             this.tbar = (this.showActionbar) ? new Ext.nd.Actionbar({
                 noteType: 'form',
                 noteName: this.formName,
-                uiDocument: this,
+                uiView: this.getUIView(),
+                uiDocument: this.getUIDocument(),
                 useDxl: true,
                 renderTo : (this.toolbarRenderTo) ? this.toolbarRenderTo : null,
                 id: 'xnd-form-toolbar'
@@ -129,8 +116,10 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
         } else {
             // a tbar has been passed in so make sure we let it know about uiDocument
             // so that you can do a this.uiDocument.save(), this.uiDocument.close(), etc
-            // all from action buttons on the actionbar
-            this.tbar.uiDocument = this
+            // all from action buttons on the actionbar, also add a referece to uiView
+        	// so that a uiView.refresh(), etc. can be called
+            this.tbar.uiDocument = this.getUIDocument();
+            this.tbar.uiView = this.getUIView();
         }
 
         this.addEvents(        
@@ -168,7 +157,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
     // private
     // overriding the FormPanels createForm method with our own 
     // so we can reuse the domino generated form
-    createForm: function(){
+    createForm : function(){
         delete this.initialConfig.listeners;
         if (!this.items) {
             // this is just something to make FormPanel happy
@@ -184,7 +173,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
     // not have to specify 'where' to render to so we will render to
     // an Ext.Viewport like previous versions did when the render method
     // is called without any arguments
-    render: function(){
+    render : function(){
         if (arguments.length == 0) {
           //this.render(document.body);
           new Ext.Viewport({
@@ -197,7 +186,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
         
     },
     
-    onRender: function(ct, position){
+    onRender : function(ct, position){
     
         // make sure that body is already set to our domino form's Element (this.form.el)
         // we do this so that superclass.onRender call will not create a 
@@ -210,7 +199,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
                     
     },
     
-    afterRender: function(){
+    afterRender : function(){
     
     
         // make an Ajax call to our DXLExport agent 
@@ -243,13 +232,13 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
     },
 
 
-    save: function(config) {
+    save : function(config) {
     	if (this.fireEvent("beforesave", this) !== false) {
             this.onSave(config);
         }
     },
     
-    onSave: function(config) {
+    onSave : function(config) {
         this.getForm().submit(Ext.apply({
           success: Ext.emptyFn,
           failure: Ext.emptyFn,
@@ -257,17 +246,20 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
         },config));
     },
         
-    close: function(){
+    close : function(){
     	if (this.fireEvent("beforeclose", this) !== false) {
             this.onClose();
         }
     },
     
-    onClose: function() {
+    onClose : function() {
         // return true means that we were able to call the component's remove/hide/close action
         // return false means that we couldn't find a component and thus couldn't do anything
-        if (this.target) {
-            var target = this.target;
+    	
+    	var target = this.getTarget();
+    	
+    	if (target) {
+            
             switch (target.getXType()) {
                 case 'window':
                     if (target.closeAction == 'close') {
@@ -284,8 +276,13 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
                     break;
                 default:
                     if (target.remove) {
-                        target.remove(this.iframeOwnerCt);
-                        return true;
+                    	var iframeOwnerCt = this.getIframeOwnerCt();
+                    	if (iframeOwnerCt) {
+                    		target.remove(this.iframeOwnerCt);
+                    		return true;
+                    	} else {
+                    		return false;
+                    	}
                     } else {
                         return false;
                     }
@@ -328,7 +325,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
   
     },
 
-    doConvertFields: function(){
+    doConvertFields : function(){
     
         var dh = Ext.DomHelper;
         var el, arClasses, cls, id;
@@ -367,7 +364,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
     },
     
     // private
-    convertFromTagName: function(el) {
+    convertFromTagName : function(el) {
         
         switch (el.tagName) {
             case 'SELECT':
@@ -426,7 +423,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
     },
     
     //private
-    convertFromDominoFieldType: function(el) {
+    convertFromDominoFieldType : function(el) {
         
         var dfield = this.getFieldDefinition(el);
         if (dfield) {
@@ -456,12 +453,12 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
     },
     
     // private
-    getFieldDefinitionKey: function(theField){
+    getFieldDefinitionKey : function(theField){
         
         return Ext.DomQuery.selectValue('@name',theField);    
     },
     
-    convertFromClassName: function(el, doConvert){
+    convertFromClassName : function(el, doConvert){
     
         var arClasses = el.className.split(' ');
         var elHasXndClass = false;
@@ -544,7 +541,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
     },
     
     // private
-    convertToTimeField: function(el){
+    convertToTimeField : function(el){
     
         var tm = new Ext.form.TimeField({
             id: (el.id ? el.id : el.name),
@@ -572,7 +569,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
     },
 
     // private
-    convertNamesField: function(el){
+    convertNamesField : function(el){
         
         var dfield = this.getFieldDefinition(el);
         if (dfield) {
@@ -617,7 +614,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
     },
         
     // private
-    convertToNamePicker: function(el, config){
+    convertToNamePicker : function(el, config){
         
         config = config || {};
         
@@ -632,7 +629,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
     },
     
     // private
-    convertToPickList: function(el, config){
+    convertToPickList : function(el, config){
 
         var pl = new Ext.nd.form.PickListField(Ext.apply({
             id: (el.id ? el.id : el.name)
@@ -644,7 +641,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
     },
     
     // private
-    convertToTextAreaField: function(el){
+    convertToTextAreaField : function(el){
         
         var ta = new Ext.form.TextArea({
             id: (el.id ? el.id : el.name),
@@ -657,7 +654,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
     },
     
     // private
-    convertToHtmlEditor: function(el){
+    convertToHtmlEditor : function(el){
     
         // Html Editor needs QuickTips inorder to work
         Ext.QuickTips.init();
@@ -749,7 +746,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
     },
     
     // private
-    convertToDateTimeField: function(el) {
+    convertToDateTimeField : function(el) {
         var dfield = this.getFieldDefinition(el);
         if (dfield) {
             var show = Ext.DomQuery.selectValue('datetimeformat/@show',dfield);
@@ -766,7 +763,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
     },
     
     // private
-    convertToDateField: function(el) {
+    convertToDateField : function(el) {
         var dt = new Ext.form.DateField({
             id: (el.id ? el.id : el.name),
             selectOnFocus: true,
@@ -779,7 +776,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
     },
     
     // private
-    convertToCheckbox: function(el){
+    convertToCheckbox : function(el){
         var dfield = this.getFieldDefinition(el);
         var boxLabel = this.getDominoGeneratedBoxLabel(el, true);
         // TODO: figure out how to use columns and checkbox group
@@ -794,7 +791,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
     },
     
     // private
-    convertToRadio: function(el){
+    convertToRadio : function(el){
         var dfield = this.getFieldDefinition(el);
         var boxLabel = this.getDominoGeneratedBoxLabel(el, true);
         // TODO: figure out how to use columns and radio group
@@ -816,7 +813,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
     },
 
     // private
-    getDominoGeneratedBoxLabel: function(el, removeLabel){
+    getDominoGeneratedBoxLabel : function(el, removeLabel){
 
         var boxLabel = '';
         var boxLabelNode = el.nextSibling;
@@ -839,7 +836,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
     },
     
     // private
-    convertKeywordField: function(el){
+    convertKeywordField : function(el){
 
         var dfield = this.getFieldDefinition(el);
         if (dfield) {
@@ -945,14 +942,14 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
     },
     
     // private
-    convertToACLDialog: function(el){
+    convertToACLDialog : function(el){
         
         //TODO - create ACL dialog
         
     },
     
     // private
-    convertToSelectFromFormula: function(el, formula) {
+    convertToSelectFromFormula : function(el, formula) {
 
         // use the Evaluate agent that evaluates @formulas
         var url = Ext.nd.extndUrl + 'Evaluate?OpenAgent';
@@ -1002,18 +999,18 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
 },
     
     // private
-    convertToMultiSelect: function(el, forceSelection) {
+    convertToMultiSelect : function(el, forceSelection) {
         
     },
     
     // private 
-    convertToAllowMultiValueSelect: function(el, forceSelection){
+    convertToAllowMultiValueSelect : function(el, forceSelection){
         //alert('allow multi value')
         //alert(el.name);    
     },
     
     // private
-    convertSelectToComboBox: function(el, forceSelection){
+    convertSelectToComboBox : function(el, forceSelection){
         var cb = new Ext.form.ComboBox({
             id: (el.id ? el.id : el.name),
             typeAhead: true,
@@ -1116,6 +1113,52 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
 				return (test === -1) ? false : true;
     		} catch(e){}
     	}
+    },
+    
+    getTarget : function() {
+		if (this.target) {
+			return this.target;
+		} else {
+			// if a target property is available then set it
+			if (window && window.target) {
+				this.target = window.target;
+				return this.target;
+			} else {
+				return null;
+			}
+		}
+	},
+	
+    getIframeOwnerCt : function() {
+		if (this.iframeOwnerCt) {
+			return this.iframeOwnerCt;
+		} else {
+			// if a target property is available then set it
+			// if an ownerCt property is available then set it
+		    if (window && window.ownerCt) {
+		        this.iframeOwnerCt = window.ownerCt;
+		        return this.iframeOwnerCt;
+		    } else {
+				return null;
+			}
+		}
+	},
+
+    getUIView: function() {
+        if (this.uiView && this.uiView != null) {
+            return this.uiView;
+        } else {
+            if (window && window.uiView) {
+                this.uiView = window.uiView;
+                return this.uiView
+            } else {
+                return null;
+            }
+        }
+    },
+    
+    getUIDocument: function() {
+    	return this
     }
 });
 Ext.reg('xnd-form', Ext.nd.Form);
