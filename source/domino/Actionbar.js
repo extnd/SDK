@@ -701,7 +701,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
             Ext.nd.util.addIFrame({
                 target: target,
                 uiView: this.uiView,
-                uiDocument: this.uiDocument,
+                uiDocument: this.getUIDocument(),
                 url: link,
                 id: Ext.id()
             });
@@ -732,7 +732,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
             Ext.nd.util.addIFrame({
                 target: target,
                 uiView: this.uiView,
-                uiDocument: this.uiDocument,
+                uiDocument: this.getUIDocument(),
                 url: link,
                 id: Ext.id()
             });
@@ -804,6 +804,23 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
     unsupportedAtCommand: function(formula){
         Ext.Msg.alert('Error', 'Sorry, the @command "' + formula +
         '" is not currently supported by Ext.nd');
+    },
+    
+    getUIView: function() {
+        if (this.uiView && this.uiView != null) {
+            return this.uiView;
+        } else {
+            if (window && window.uiView) {
+                this.uiView = window.uiView;
+                return this.uiView
+            } else {
+                return null;
+            }
+        }
+    },
+    
+    getUIDocument: function() {
+        return (this.uiDocument) ? this.uiDocument : null;
     }
 });
 Ext.reg('xnd-actionbar', Ext.nd.Actionbar);
