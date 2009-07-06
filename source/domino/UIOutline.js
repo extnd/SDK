@@ -65,6 +65,7 @@ Ext.nd.UIOutline = function(config) {
     this.showIcons = true;
     this.useOutlineIcons = false;
     this.target = null;
+    this.viewDefaults = {}; //applied to each view during an openEntry call
 
     Ext.apply(this, config);
     // outlineUrl is either passed in or built from dbPath and outlineName
@@ -279,12 +280,16 @@ Ext.extend(Ext.nd.UIOutline, Ext.tree.TreePanel, {
                     } else {
 
                         //setup the uiview property of this new view
-                        var uiview = Ext.apply({
+                    	// apply whatever viewDefaults were define for the uioutline
+                    	// and then apply the targetDefaults
+                        var uiview = Ext.apply(
+                        				Ext.apply({
                                             xtype: 'xnd-uiview',
                                             layout: 'fit',
                                             title: title,
                                             viewUrl: viewUrl
-                                        }, targetDefaults);
+                                        }, this.viewDefaults), 
+                                     targetDefaults);
 
                                     
                         if (target.getXType && target.add) {
