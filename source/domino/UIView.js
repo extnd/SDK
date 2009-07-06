@@ -2,6 +2,7 @@ Ext.nd.UIView = function(config){
 
     this.storeConfig = {};
     this.viewConfig = {};
+    this.selModelConfig = {singleSelect : false, checkOnly : true};
     this.targetDefaults = {};
     
     // just for backwards compatability
@@ -56,8 +57,6 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
     showPagingToolbar: true,
     showSearch: true,
     showSearchPosition: 'bottom',
-    useCheckboxSm: false,
-    singleSelect: false,
     buildActionBarFromDXL: true,
     editMode: true,
     isCategorized: false,
@@ -86,25 +85,35 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         this.baseParams = {}
         this.renderers = [];
         
+        // if the 'sm' shortcut was used then move that to selModel
         if (this.sm) {
             this.selModel = this.sm;
             delete this.sm;
         }
-        
-        // if the developer hasn't specified their own selection model then we
-        // need to
-        // but first, if they used the 'sm' shortcut then move that to selModel
+
+        // if the developer hasn't specified their own selection model 
+        // then we need to
         if (!this.selModel) {
-            if (this.useCheckboxSm) {
-                this.selModel = new Ext.grid.CheckboxSelectionModel();
-                this.cols.push(this.selModel);
-            }
-            else {
-                this.selModel = new Ext.grid.RowSelectionModel({
-                    singleSelect: this.singleSelect
-                });
-            }
-        }
+            switch (this.selModelConfig.type) {
+                
+                case "checkbox":
+                  this.selModel = new Ext.grid.CheckboxSelectionModel(this.selModelConfig);
+                  this.cols.push(this.selModel);
+                  break;
+                case "cell":
+                  this.selModel = new Ext.grid.CellSelectionModel(this.selModelConfig);
+                  break;
+                case "row":
+                  this.selModel = new Ext.grid.RowSelectionModel(this.selModelConfig);
+                  break;
+                default:
+                  this.selModel = new Ext.grid.RowSelectionModel(this.selModelConfig);
+                  break;
+                  
+            } // eo switch
+        } // eo if
+
+
         
         // leave support (for now) for old showSingleCategory property
         if (this.showSingleCategory && typeof this.showSingleCategory == 'string' && !this.category) {
@@ -719,6 +728,31 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         var viewEntry = Ext.data.Record.create(this.dominoView.recordConfig);
         var viewEntryReader = new Ext.nd.data.DominoViewXmlReader(this.dominoView.meta, viewEntry);
         
+        // if the view is set to allow for docs to be selected with checkbox AND
+        // the developer has not explicity set this.selModelConfig.type 
+        // to something OTHER than'checkbox' then change the selMode to the 
+        // CheckboxSelectionModel and push that onto the cols array but don't do 
+        // this if useCheckboxSm was already true since this would have already been done
+        if (this.selModelConfig.type === 'checkbox') {
+            // do nothing if explicity set to 'checkbox' since by now in the code
+        	// the checkboxSelectionModel was already set and we do not
+        	// want to set it again
+        } else {
+            // don't do this if type was explicity set to something else
+            if (this.allowDocSelection && 
+                (typeof this.selModelConfig.type === 'undefined' ||
+                (typeof this.selModelConfig.type === 'string' && this.selModelConfig.type !== 'checkbox'))) {
+
+                this.selModel = new Ext.grid.CheckboxSelectionModel();
+                var newCols = [];
+                newCols.push(this.selModel);
+                Ext.each(this.cols, function(item, index, allItems){
+                    newCols.push(item);
+                }, this);
+                delete this.cols;
+                this.cols = newCols;
+            }
+        }
         this.colModel = new Ext.grid.ColumnModel(this.cols);
         
         // create the Data Store
@@ -992,7 +1026,11 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         	   }
             }
         }
-
+        
+        // on web access property to allow docs to be selected with a checkbox
+        var allowdocselection = q.selectValue('view/@allowdocselection', dxml, false);
+        this.allowDocSelection = (allowdocselection == 'true') ? true : false;
+        
         // the dominoView object holds all of the design information for the
         // view
         this.dominoView = {
