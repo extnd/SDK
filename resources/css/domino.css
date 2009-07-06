@@ -1,3 +1,5 @@
+@import url('xnd-view-icons-nd7.css');
+
 /*----------------------------------------------------
  * Domino Common CSS Rules
  *----------------------------------------------------
@@ -94,255 +96,38 @@ html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,p,bloc
   #xnd-form-toolbar {display: none;}
 }
 
-/* need -1px shift to the left for the viewlink.gif */
-.x-form-field-wrap .xnd-form-picklist-trigger{
-    background : #C5D8C8 url(/icons/viewlink.gif) no-repeat scroll -1px 3px;
+.x-form-field-wrap {
+    height: 23px;
+}
+/* fix an IE + Domino issue with form triggers */
+.ext-ie .x-form-field-wrap .x-form-trigger {
+    top: 1px;
+}
+
+.x-form-field-wrap .xnd-form-trigger{
     border: 1px solid #B5B8C8;
-    height: 20px;
+    height : 20px;
     cursor:pointer;
 }
 
-.x-form-field-wrap .x-form-trigger-over .xnd-form-picklist-trigger{
-    /*background-position: -17px 0;*/
+/* need -1px shift to the left for the viewlink.gif */
+.x-form-field-wrap .xnd-form-picklist-trigger{
+    background : #C5D8C8 url(/icons/viewlink.gif) no-repeat scroll -1px 3px;
 }
 
 .x-form-field-wrap .xnd-form-names-trigger{
     background : #C5D8C8 url(/icons/vwicn003.gif) no-repeat scroll 1px 3px;
-    border: 1px solid #B5B8C8;
-    height: 20px;
-    cursor:pointer;
-}
-
-.x-form-field-wrap .x-form-trigger-over .xnd-form-names-trigger{
-    /*background-position: -17px 0;*/
 }
 
 .x-form-field-wrap .xnd-form-acl-trigger{
     background : #C5D8C8 url(/icons/actn090.gif) no-repeat scroll 1px 3px;
-    border: 1px solid #B5B8C8;
-    height: 20px;
-    cursor:pointer;
-}
-
-.x-form-field-wrap .x-form-trigger-over .xnd-form-acl-trigger{
-    /*background-position: -17px 0;*/
 }
 
 .x-form-field-wrap .xnd-form-time-trigger{
     background : #C5D8C8 url(/icons/vwicn064.gif) no-repeat scroll 1px 3px;
-    border: 1px solid #B5B8C8;
-    height: 20px;
-    cursor:pointer;
 }
 
 .x-form-field-wrap .x-form-trigger-over .xnd-form-time-trigger{
     /*background-position: -17px 0;*/
 }
-
-
-.xnd-icon-vw {
-   background: url(../images/xnd-icon-vw.png) no-repeat top left;
-   height: 15px;
-   width: 15px;
-   float: left;
-}
-.xnd-icon-viewsort { background-position: 0 -30px; } 
-.xnd-icon-vwall { background-position: 0 -76px; } 
-.xnd-icon-vwcal { background-position: 0 -120px; } 
-.xnd-icon-vwdrafts { background-position: 0 -164px; } 
-.xnd-icon-vwicn001 { background-position: 0 -208px; } 
-.xnd-icon-vwicn002 { background-position: 0 -249px; } 
-.xnd-icon-vwicn003 { background-position: 0 -290px; } 
-.xnd-icon-vwicn004 { background-position: 0 -331px; } 
-.xnd-icon-vwicn005 { background-position: 0 -372px; } 
-.xnd-icon-vwicn006 { background-position: 0 -413px; } 
-.xnd-icon-vwicn007 { background-position: 0 -454px; } 
-.xnd-icon-vwicn008 { background-position: 0 -495px; } 
-.xnd-icon-vwicn009 { background-position: 0 -536px; } 
-.xnd-icon-vwicn010 { background-position: 0 -577px; } 
-.xnd-icon-vwicn011 { background-position: 0 -618px; } 
-.xnd-icon-vwicn012 { background-position: 0 -659px; } 
-.xnd-icon-vwicn013 { background-position: 0 -700px; } 
-.xnd-icon-vwicn014 { background-position: 0 -741px; } 
-.xnd-icon-vwicn015 { background-position: 0 -782px; } 
-.xnd-icon-vwicn016 { background-position: 0 -823px; } 
-.xnd-icon-vwicn017 { background-position: 0 -864px; } 
-.xnd-icon-vwicn018 { background-position: 0 -905px; } 
-.xnd-icon-vwicn019 { background-position: 0 -946px; } 
-.xnd-icon-vwicn020 { background-position: 0 -987px; } 
-.xnd-icon-vwicn021 { background-position: 0 -1028px; } 
-.xnd-icon-vwicn022 { background-position: 0 -1069px; } 
-.xnd-icon-vwicn023 { background-position: 0 -1110px; } 
-.xnd-icon-vwicn024 { background-position: 0 -1151px; } 
-.xnd-icon-vwicn025 { background-position: 0 -1192px; } 
-.xnd-icon-vwicn026 { background-position: 0 -1233px; } 
-.xnd-icon-vwicn027 { background-position: 0 -1274px; } 
-.xnd-icon-vwicn028 { background-position: 0 -1315px; } 
-.xnd-icon-vwicn029 { background-position: 0 -1356px; } 
-.xnd-icon-vwicn030 { background-position: 0 -1397px; } 
-.xnd-icon-vwicn031 { background-position: 0 -1438px; } 
-.xnd-icon-vwicn032 { background-position: 0 -1479px; } 
-.xnd-icon-vwicn033 { background-position: 0 -1520px; } 
-.xnd-icon-vwicn034 { background-position: 0 -1561px; } 
-.xnd-icon-vwicn035 { background-position: 0 -1602px; } 
-.xnd-icon-vwicn036 { background-position: 0 -1643px; } 
-.xnd-icon-vwicn037 { background-position: 0 -1684px; } 
-.xnd-icon-vwicn038 { background-position: 0 -1725px; } 
-.xnd-icon-vwicn039 { background-position: 0 -1766px; } 
-.xnd-icon-vwicn040 { background-position: 0 -1807px; } 
-.xnd-icon-vwicn041 { background-position: 0 -1848px; } 
-.xnd-icon-vwicn042 { background-position: 0 -1889px; } 
-.xnd-icon-vwicn043 { background-position: 0 -1930px; } 
-.xnd-icon-vwicn044 { background-position: -168px -30px; } 
-.xnd-icon-vwicn045 { background-position: -168px -71px; } 
-.xnd-icon-vwicn046 { background-position: -168px -112px; } 
-.xnd-icon-vwicn047 { background-position: -168px -153px; } 
-.xnd-icon-vwicn048 { background-position: -168px -194px; } 
-.xnd-icon-vwicn049 { background-position: -168px -235px; } 
-.xnd-icon-vwicn050 { background-position: -168px -276px; } 
-.xnd-icon-vwicn051 { background-position: -168px -317px; } 
-.xnd-icon-vwicn052 { background-position: -168px -358px; } 
-.xnd-icon-vwicn053 { background-position: -168px -399px; } 
-.xnd-icon-vwicn054 { background-position: -168px -440px; } 
-.xnd-icon-vwicn055 { background-position: -168px -481px; } 
-.xnd-icon-vwicn056 { background-position: -168px -522px; } 
-.xnd-icon-vwicn057 { background-position: -168px -563px; } 
-.xnd-icon-vwicn058 { background-position: -168px -604px; } 
-.xnd-icon-vwicn059 { background-position: -168px -645px; } 
-.xnd-icon-vwicn060 { background-position: -168px -686px; } 
-.xnd-icon-vwicn061 { background-position: -168px -727px; } 
-.xnd-icon-vwicn062 { background-position: -168px -768px; } 
-.xnd-icon-vwicn063 { background-position: -168px -809px; } 
-.xnd-icon-vwicn064 { background-position: -168px -850px; } 
-.xnd-icon-vwicn065 { background-position: -168px -891px; } 
-.xnd-icon-vwicn066 { background-position: -168px -932px; } 
-.xnd-icon-vwicn067 { background-position: -168px -973px; } 
-.xnd-icon-vwicn068 { background-position: -168px -1014px; } 
-.xnd-icon-vwicn069 { background-position: -168px -1055px; } 
-.xnd-icon-vwicn070 { background-position: -168px -1096px; } 
-.xnd-icon-vwicn071 { background-position: -168px -1137px; } 
-.xnd-icon-vwicn072 { background-position: -168px -1178px; } 
-.xnd-icon-vwicn073 { background-position: -168px -1219px; } 
-.xnd-icon-vwicn074 { background-position: -168px -1260px; } 
-.xnd-icon-vwicn075 { background-position: -168px -1301px; } 
-.xnd-icon-vwicn076 { background-position: -168px -1342px; } 
-.xnd-icon-vwicn077 { background-position: -168px -1383px; } 
-.xnd-icon-vwicn078 { background-position: -168px -1424px; } 
-.xnd-icon-vwicn079 { background-position: -168px -1465px; } 
-.xnd-icon-vwicn080 { background-position: -168px -1506px; } 
-.xnd-icon-vwicn081 { background-position: -168px -1547px; } 
-.xnd-icon-vwicn082 { background-position: -168px -1588px; } 
-.xnd-icon-vwicn083 { background-position: -168px -1629px; } 
-.xnd-icon-vwicn084 { background-position: -168px -1670px; } 
-.xnd-icon-vwicn085 { background-position: -168px -1711px; } 
-.xnd-icon-vwicn086 { background-position: -168px -1752px; } 
-.xnd-icon-vwicn087 { background-position: -168px -1793px; } 
-.xnd-icon-vwicn088 { background-position: -168px -1834px; } 
-.xnd-icon-vwicn089 { background-position: -168px -1875px; } 
-.xnd-icon-vwicn090 { background-position: -168px -1916px; } 
-.xnd-icon-vwicn091 { background-position: -168px -1957px; } 
-.xnd-icon-vwicn092 { background-position: -336px -30px; } 
-.xnd-icon-vwicn093 { background-position: -336px -71px; } 
-.xnd-icon-vwicn094 { background-position: -336px -112px; } 
-.xnd-icon-vwicn095 { background-position: -336px -153px; } 
-.xnd-icon-vwicn096 { background-position: -336px -194px; } 
-.xnd-icon-vwicn097 { background-position: -336px -235px; } 
-.xnd-icon-vwicn098 { background-position: -336px -276px; } 
-.xnd-icon-vwicn099 { background-position: -336px -317px; } 
-.xnd-icon-vwicn100 { background-position: -336px -358px; } 
-.xnd-icon-vwicn101 { background-position: -336px -399px; } 
-.xnd-icon-vwicn102 { background-position: -336px -440px; } 
-.xnd-icon-vwicn103 { background-position: -336px -481px; } 
-.xnd-icon-vwicn104 { background-position: -336px -522px; } 
-.xnd-icon-vwicn105 { background-position: -336px -563px; } 
-.xnd-icon-vwicn106 { background-position: -336px -604px; } 
-.xnd-icon-vwicn107 { background-position: -336px -645px; } 
-.xnd-icon-vwicn108 { background-position: -336px -686px; } 
-.xnd-icon-vwicn109 { background-position: -336px -727px; } 
-.xnd-icon-vwicn110 { background-position: -336px -768px; } 
-.xnd-icon-vwicn111 { background-position: -336px -809px; } 
-.xnd-icon-vwicn112 { background-position: -336px -850px; } 
-.xnd-icon-vwicn113 { background-position: -336px -891px; } 
-.xnd-icon-vwicn114 { background-position: -336px -932px; } 
-.xnd-icon-vwicn115 { background-position: -336px -973px; } 
-.xnd-icon-vwicn116 { background-position: -336px -1014px; } 
-.xnd-icon-vwicn117 { background-position: -336px -1055px; } 
-.xnd-icon-vwicn118 { background-position: -336px -1096px; } 
-.xnd-icon-vwicn119 { background-position: -336px -1137px; } 
-.xnd-icon-vwicn120 { background-position: -336px -1178px; } 
-.xnd-icon-vwicn121 { background-position: -336px -1219px; } 
-.xnd-icon-vwicn122 { background-position: -336px -1260px; } 
-.xnd-icon-vwicn123 { background-position: -336px -1301px; } 
-.xnd-icon-vwicn124 { background-position: -336px -1342px; } 
-.xnd-icon-vwicn125 { background-position: -336px -1383px; } 
-.xnd-icon-vwicn126 { background-position: -336px -1424px; } 
-.xnd-icon-vwicn127 { background-position: -336px -1465px; } 
-.xnd-icon-vwicn128 { background-position: -336px -1506px; } 
-.xnd-icon-vwicn129 { background-position: -336px -1547px; } 
-.xnd-icon-vwicn130 { background-position: -336px -1588px; } 
-.xnd-icon-vwicn131 { background-position: -336px -1629px; } 
-.xnd-icon-vwicn132 { background-position: -336px -1670px; } 
-.xnd-icon-vwicn133 { background-position: -336px -1711px; } 
-.xnd-icon-vwicn134 { background-position: -336px -1752px; } 
-.xnd-icon-vwicn135 { background-position: -336px -1793px; } 
-.xnd-icon-vwicn136 { background-position: -336px -1834px; } 
-.xnd-icon-vwicn137 { background-position: -336px -1875px; } 
-.xnd-icon-vwicn138 { background-position: -336px -1916px; } 
-.xnd-icon-vwicn139 { background-position: -336px -1957px; } 
-.xnd-icon-vwicn140 { background-position: -504px -30px; } 
-.xnd-icon-vwicn141 { background-position: -504px -71px; } 
-.xnd-icon-vwicn142 { background-position: -504px -112px; } 
-.xnd-icon-vwicn143 { background-position: -504px -153px; } 
-.xnd-icon-vwicn144 { background-position: -504px -194px; } 
-.xnd-icon-vwicn145 { background-position: -504px -235px; } 
-.xnd-icon-vwicn146 { background-position: -504px -276px; } 
-.xnd-icon-vwicn147 { background-position: -504px -317px; } 
-.xnd-icon-vwicn148 { background-position: -504px -358px; } 
-.xnd-icon-vwicn149 { background-position: -504px -399px; } 
-.xnd-icon-vwicn150 { background-position: -504px -440px; } 
-.xnd-icon-vwicn151 { background-position: -504px -481px; } 
-.xnd-icon-vwicn152 { background-position: -504px -522px; } 
-.xnd-icon-vwicn153 { background-position: -504px -563px; } 
-.xnd-icon-vwicn154 { background-position: -504px -604px; } 
-.xnd-icon-vwicn155 { background-position: -504px -645px; } 
-.xnd-icon-vwicn156 { background-position: -504px -686px; } 
-.xnd-icon-vwicn157 { background-position: -504px -727px; } 
-.xnd-icon-vwicn158 { background-position: -504px -768px; } 
-.xnd-icon-vwicn159 { background-position: -504px -809px; } 
-.xnd-icon-vwicn160 { background-position: -504px -850px; } 
-.xnd-icon-vwicn161 { background-position: -504px -891px; } 
-.xnd-icon-vwicn162 { background-position: -504px -932px; } 
-.xnd-icon-vwicn163 { background-position: -504px -973px; } 
-.xnd-icon-vwicn164 { background-position: -504px -1014px; } 
-.xnd-icon-vwicn165 { background-position: -504px -1055px; } 
-.xnd-icon-vwicn166 { background-position: -504px -1096px; } 
-.xnd-icon-vwicn167 { background-position: -504px -1137px; } 
-.xnd-icon-vwicn168 { background-position: -504px -1178px; } 
-.xnd-icon-vwicn169 { background-position: -504px -1219px; } 
-.xnd-icon-vwicn170 { background-position: -504px -1260px; } 
-.xnd-icon-vwicn171 { background-position: -504px -1301px; } 
-.xnd-icon-vwicn172 { background-position: -504px -1342px; } 
-.xnd-icon-vwicn173 { background-position: -504px -1383px; } 
-.xnd-icon-vwicn174 { background-position: -504px -1424px; } 
-.xnd-icon-vwicn175 { background-position: -504px -1465px; } 
-.xnd-icon-vwicn176 { background-position: -504px -1506px; } 
-.xnd-icon-vwicn177 { background-position: -504px -1547px; } 
-.xnd-icon-vwicn178 { background-position: -504px -1588px; } 
-.xnd-icon-vwicn179 { background-position: -504px -1629px; } 
-.xnd-icon-vwicn180 { background-position: -504px -1670px; } 
-.xnd-icon-vwicn181 { background-position: -504px -1711px; } 
-.xnd-icon-vwicn182 { background-position: -504px -1752px; } 
-.xnd-icon-vwicn183 { background-position: -504px -1793px; } 
-.xnd-icon-vwicn999 { background-position: -504px -1834px; } 
-.xnd-icon-vwicnsr1 { background-position: -504px -1875px; } 
-.xnd-icon-vwicnsr2 { background-position: -504px -1917px; } 
-.xnd-icon-vwicnsr3 { background-position: -504px -1959px; } 
-.xnd-icon-vwicnsr4 { background-position: -672px -30px; } 
-.xnd-icon-vwicnsr5 { background-position: -672px -72px; } 
-.xnd-icon-vwicnsr6 { background-position: -672px -114px; } 
-.xnd-icon-vwicnsr7 { background-position: -672px -156px; } 
-.xnd-icon-vwinbox { background-position: -672px -198px; } 
-.xnd-icon-vwmeet { background-position: -672px -242px; } 
-.xnd-icon-vwrules { background-position: -672px -286px; } 
-.xnd-icon-vwsent { background-position: -672px -330px; } 
-.xnd-icon-vwtrash { background-position: -672px -374px; } 
+ 
