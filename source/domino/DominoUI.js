@@ -136,3 +136,4 @@ Ext.nd.DominoUI.prototype = {
         } // eo if(href.indexOf...)
     } // eo loadLink
 };
+Ext.reg('xnd-dominoui', Ext.nd.DominoUI);
