@@ -535,7 +535,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
     },
         
     // private
-    convertToHiddenField: function(el){
+    convertToHiddenField : function(el){
         // not sure if we need to do anything more
         this.convertToTextField(el);
     },
@@ -556,7 +556,7 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
     },
     
     // private
-    convertToTextField: function(el){
+    convertToTextField : function(el){
         
         // for normal input fields
         var f = new Ext.form.Field({
@@ -1011,11 +1011,40 @@ Ext.extend(Ext.nd.Form, Ext.form.FormPanel, {
     
     // private
     convertSelectToComboBox : function(el, forceSelection){
+    	
+    	var s = Ext.getDom(el);
+        var d = [], opts = s.options;
+        var selectedValue = "";
+        
+        for(var i = 0, len = opts.length;i < len; i++){
+            var o = opts[i];
+            var value = (o.hasAttribute ? o.hasAttribute('value') : o.getAttribute('value') !== null) ? o.value : o.text;
+            
+            // correct the issue scene with IE when the option has an empty value tag
+            value = (value == '' && o.text != '') ? o.text : value;
+            if(o.selected) {
+                selectedValue = value;
+            }
+            d.push([value, o.text]);
+        }
+        var store = new Ext.data.ArrayStore({
+            'id': 0,
+            fields: ['value', 'text'],
+            data : d,
+            autoDestroy: true
+        });
+        
         var cb = new Ext.form.ComboBox({
+            transform: el,
             id: (el.id ? el.id : el.name),
+            store : store,
+            mode : 'local',
+            value : selectedValue,
+            valueField : 'value',
+            displayField : 'text',
             typeAhead: true,
             triggerAction: 'all',
-            transform: el,
+            lazyRender: false, // docs say must be true since we are in an FormPanel but we need it set to false
             forceSelection: forceSelection,
             resizable: true
         });
