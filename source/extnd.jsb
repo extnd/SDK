@@ -25,7 +25,6 @@
     <include name="domino\UIView.js" />
     <include name="domino\UIWorkspace.js" />
     <include name="domino\Actionbar.js" />
-    <include name="domino\Form.js" />
     <include name="widgets\ViewSuggest.js" />
     <include name="data\CategorizedStore.js" />
     <include name="domino\CategorizedView.js" />
@@ -34,9 +33,9 @@
     <include name="domino\SingleCategoryCombo.js" />
     <include name="domino\PickListField.js" />
     <include name="domino\PLTypeAhead.js" />
+    <include name="domino\UIDocument.js" />
   </target>
   <file name="domino\Actionbar.js" path="domino" />
-  <file name="domino\Form.js" path="domino" />
   <file name="widgets\ViewSuggest.js" path="widgets" />
   <file name="grid\DominoGridPanel.js" path="grid" />
   <file name="data\CategorizedStore.js" path="data" />
@@ -46,4 +45,5 @@
   <file name="domino\SingleCategoryCombo.js" path="domino" />
   <file name="domino\PickListField.js" path="domino" />
   <file name="domino\PLTypeAhead.js" path="domino" />
+  <file name="domino\UIDocument.js" path="domino" />
 </project>
