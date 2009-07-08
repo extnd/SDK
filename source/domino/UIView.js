@@ -131,13 +131,17 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         
         // if a tbar was passed in, just use that and add the plugins to it
         if (this.tbar && plugins.length > 0) {
-            if (typeof this.tbar == 'object' || Ext.isArray(this.tbar)) {
-                for (var i = 0; i < plugins.length; i++) {
-                    this.tbar = new Ext.Toolbar({
+            if (Ext.isArray(this.tbar)) {
+                //for (var i = 0; i < plugins.length; i++) {
+                    this.tbar = new Ext.nd.Actionbar({
+                    	id: 'xnd-view-toolbar-' + Ext.id(),
+                    	noteName: '', //intentional
+                        uiView: this,
+                        target: this.target || null,
                         items: this.tbar,
                         plugins: plugins
                     })
-                }
+                //}
             }
             else {
                 if (this.tbar.add) {
@@ -148,8 +152,8 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         
         // if an actionbar is wanted and the developer hasn't 
         // passed in a toolbar then create an actionbar    
-        if (this.showActionbar && !this.toolbar) {
-            this.toolbar = new Ext.nd.Actionbar({
+        if (this.showActionbar && !this.tbar) {
+            this.tbar = new Ext.nd.Actionbar({
                 id: 'xnd-view-toolbar-' + Ext.id(),
                 noteType: this.noteType,
                 dbPath: this.dbPath,
@@ -163,11 +167,13 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             })
         }
         
-        // if plugins are wanted but not the actionbar then create an Ext.Toolbar
-        // and add the plugins to it
-        if (!this.showActionbar && !this.toolbar && plugins.length > 0) {
-            this.toolbar = new Ext.Toolbar({
+        // if plugins are wanted but not the actionbar then create an Ext.nd.Actionbar
+        // anwyway but don't pass in a noteName so that the actions will not be created
+        // and then add the plugins to it
+        if (!this.showActionbar && !this.tbar && plugins.length > 0) {
+            this.tbar = new Ext.nd.Actionbar({
                 id: 'xnd-view-toolbar-' + Ext.id(),
+                noteName: '', //intentional
                 uiView: this,
                 target: this.target || null,
                 plugins: plugins
@@ -185,15 +191,11 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             collapseIcon: Ext.nd.extndUrl + "resources/images/minus.gif",
             expandIcon: Ext.nd.extndUrl + "resources/images/plus.gif",
             dateTimeFormats: Ext.nd.dateTimeFormats,
-            tbar: this.toolbar || null,
+            tbar: this.tbar || null,
             bbar: (this.showPagingToolbar) ? new Ext.nd.DominoPagingToolbar({
                 uiView: this,
                 store: this.store,
                 pageSize: this.count,
-                paramNames: {
-                    start: 'start',
-                    limit: 'count'
-                },
                 plugins: (this.showSearch && this.showSearchPosition == 'bottom') ? new Ext.nd.SearchPlugin(this) : null
             }) : null
         });
@@ -258,9 +260,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         
         Ext.nd.UIView.superclass.initComponent.call(this);
         
-        // fire the open event which corresponds to the
-        // NotesUIView PostOpen event
-        this.fireEvent('open', this);
+
         
     },
     
@@ -839,6 +839,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         }, this);
         
         this.fireEvent('getdesignsuccess', this, this.store, this.colModel);
+        this.fireEvent('open', this);
     },
     
     // private
@@ -1061,6 +1062,13 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
     
     // private
     dominoRenderer: function(value, cell, row, rowIndex, colIndex, dataStore){
+    	
+    	// first check to see if this is a 'phantom' (new record being dynamically added
+    	// like in the RowEditor example and if so, just let it pass
+    	if (row.phantom === true) {
+    		return (typeof value == 'undefined') ? '' : value;
+    	}
+    	
         // if value.data has a length of zero, assume this is a column in domino
         // that is not
         // currently displaying any data (like a 'show response only' column, or
