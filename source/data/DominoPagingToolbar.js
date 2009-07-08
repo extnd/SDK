@@ -17,6 +17,10 @@ Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
 	beforePageText : "Showing entries ",
 	afterPageText : " - {0}",
 	middlePageText: " of ",
+	paramNames: {
+        start: 'start',
+        limit: 'count'
+    },
 
 	initComponent : function() {
 
@@ -191,6 +195,18 @@ Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
 		this.fireEvent('change', this, d);
 	},
 
+
+    getUIView: function() {
+    	if (!this.uiView) {
+    		if (this.ownerCt && this.ownerCt.getXType() == 'xnd-uiview') {
+    			this.uiView = this.ownerCt;
+    		} else {
+    			this.uiView = null;
+    		}
+    	}
+    	return this.uiView;
+    },
+    
 	// private
 	getPageData : function(){
 		var total = this.store.getTotalCount();
@@ -229,3 +245,4 @@ Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
 	} // eo getPageData
 
 });
+Ext.reg('xnd-paging', Ext.nd.DominoPagingToolbar);
