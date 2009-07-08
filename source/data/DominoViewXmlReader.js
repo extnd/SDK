@@ -44,17 +44,24 @@ Ext.extend(Ext.nd.data.DominoViewXmlReader, Ext.data.XmlReader, {
     for (var i = 0, len = ns.length; i < len; i++) {
       var n = ns[i];
       var values = {};
+      var metadata = {};
       var id = sid ? q.selectValue(sid, n) : undefined;
       for (var j = 0, jlen = fields.length; j < jlen; j++) {
         var f = fields.items[j];
         //var v = q.selectValue(f.mapping || f.name, n, f.defaultValue);
         // we use '.mapping' since it is the columnnumber and '.name' may not have a value
-        var v = this.getViewColumnValue(n, f.mapping, f.defaultValue);
+        var valuePlusDominoMetaData = this.getViewColumnValue(n, f.mapping, f.defaultValue);
+        var v = valuePlusDominoMetaData.data;
+        delete valuePlusDominoMetaData.data;
+        metadata[f.name] = valuePlusDominoMetaData;
+        
         v = f.convert(v);
         values[f.name] = v;
+        
       }
       var record = new recordType(values, id);
       record.node = n;
+      record.metadata = metadata;
       records[records.length] = record;
 
       record.hasChildren = n.attributes.getNamedItem('children');
@@ -87,7 +94,7 @@ Ext.extend(Ext.nd.data.DominoViewXmlReader, Ext.data.XmlReader, {
     
     var oValue = {
       type : 'text',
-      data : []
+      data : ''
     };
     var entryDataNodes = q.select('entrydata', node);
     for (var i = 0; i < entryDataNodes.length; i++) {
@@ -116,11 +123,13 @@ Ext.extend(Ext.nd.data.DominoViewXmlReader, Ext.data.XmlReader, {
   getValue : function(node, type) {
     var oValue = {
       type : type,
-      data : []
+      //data : []
+      data : ''
     };
     
     if (!node) {
-      oValue.data.push('');
+    	//oValue.data.push('');
+    	oValue.data = '';
       
       // now check to see if the childNodes have childNodes 
       // if they do then this is a multi-value column
@@ -134,7 +143,20 @@ Ext.extend(Ext.nd.data.DominoViewXmlReader, Ext.data.XmlReader, {
         } else {
             oValue.type = type;
         }
-        oValue.data.push(node.childNodes[i].firstChild.nodeValue);
+        
+        /* old way was to make the the 'data' property an array and add to it
+         * however, this broke everywhere in Ext where you could process a 
+         * record such as in loadRecords(rec), etc.  Therefore, we no longer
+         * use an array and now separate the values with a newline character
+         * that we then convert to whatever the multi-value separator is for
+         * this column in the UIView dominoRenderer method
+         */
+        //oValue.data.push(node.childNodes[i].firstChild.nodeValue);
+        if (i == 0) {
+        	oValue.data = node.childNodes[i].firstChild.nodeValue;
+        } else {
+        	oValue.data += '\n' + node.childNodes[i].firstChild.nodeValue;
+        }
       }
     } else {
       
@@ -144,10 +166,9 @@ Ext.extend(Ext.nd.data.DominoViewXmlReader, Ext.data.XmlReader, {
       // if the single value node has data then it is in a childNode
       // otherwise just send an empty string since there is not any data --- maybe better not to send an empty sring
       if (node.childNodes && node.childNodes.length > 0) {
-        oValue.data.push(node.childNodes[0].nodeValue);
-      } /*else {
-        oValue.data.push('');
-      }*/
+        //oValue.data.push(node.childNodes[0].nodeValue);
+    	  oValue.data = node.childNodes[0].nodeValue;
+      } 
     }
 
     return oValue;
