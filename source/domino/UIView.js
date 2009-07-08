@@ -1061,36 +1061,42 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
     },
     
     // private
-    dominoRenderer: function(value, cell, row, rowIndex, colIndex, dataStore){
+    dominoRenderer: function(value, cell, record, rowIndex, colIndex, dataStore){
     	
     	// first check to see if this is a 'phantom' (new record being dynamically added
     	// like in the RowEditor example and if so, just let it pass
-    	if (row.phantom === true) {
+    	if (record.phantom === true) {
     		return (typeof value == 'undefined') ? '' : value;
     	}
     	
-        // if value.data has a length of zero, assume this is a column in domino
-        // that is not
-        // currently displaying any data (like a 'show response only' column, or
-        // a multi-categorized
-        // view that is collapsed and you can't see the data for the other
-        // columns
+        // next, let's split value into an array so that we can
+        // process the listseparator.  we use '\n' since that is how
+        // we stored multi-values in the DominoViewXmlReader.getValue
+        // method.
+    	if (value) {
+            value = value.split('\n');
+    	}
+
+        // if value has a length of zero, assume this is a column in domino
+        // that is not currently displaying any data like a 'show response only' 
+    	// column, or a multi-categorized view that is collapsed and you can't 
+    	// see the data for the other columns
         
         var returnValue = "";
         var colConfig = this.colModel.config[colIndex];
+        var metadata = record.metadata[colConfig.dataIndex];
         
         // if we don't have any data and this is not a response column 
         // nore a category column then just return a blank
-        if (value && value.data.length == 0 && !colConfig.response && !value.category) {
+        if (value && value.length == 0 && !colConfig.response && !metadata.category) {
             return "";
         }
         
         var args = arguments;
-        var colConfig = this.colModel.config[colIndex];
         var prevColConfig = (colIndex > 0) ? this.colModel.config[colIndex - 1] : null;
         
-        // get the viewentry for this row
-        var viewentry = row.node;
+        // get the viewentry for this record
+        var viewentry = record.node;
         var dsItem = dataStore.data.items[rowIndex + 1];
         var nextViewentry = (dsItem) ? dsItem.node : null;
         
@@ -1105,28 +1111,28 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         var indentPaddingNoIcon = (20 + (20 * viewentryLevel)) + "px";
         
         // has children and is a categorized column
-        if (row.hasChildren && colConfig.sortcategorize) {
-            var extraIndent = (value.indent) ? ((value.indent > 0) ? "padding-left:" + value.indent * 20 + "px;" : "") : "";
+        if (record.hasChildren && colConfig.sortcategorize) {
+            var extraIndent = (metadata.indent) ? ((metadata.indent > 0) ? "padding-left:" + metadata.indent * 20 + "px;" : "") : "";
             cell.attr = "style='position: absolute; width: auto; white-space: nowrap; " + extraIndent + "'";
             if (nextViewentry) {
                 var nextViewentryPosition = nextViewentry.attributes.getNamedItem('position').value;
                 var nextViewentryLevel = nextViewentryPosition.split('.').length;
                 if (nextViewentryLevel > viewentryLevel) {
                     cell.css = " xnd-view-collapse xnd-view-category";
-                    returnValue = sCollapseImage + this.getValue(value, colConfig);
+                    returnValue = sCollapseImage + this.getValue(value, colConfig, record);
                 }
                 else {
                     cell.css = " xnd-view-expand xnd-view-category";
-                    returnValue = sExpandImage + this.getValue(value, colConfig);
+                    returnValue = sExpandImage + this.getValue(value, colConfig, record);
                 }
             }
-            else { // should be a categorized column on the last row
+            else { // should be a categorized column on the last record
                 cell.css = " xnd-view-expand xnd-view-category";
-                returnValue = sExpandImage + this.getValue(value, colConfig);
+                returnValue = sExpandImage + this.getValue(value, colConfig, record);
             }
         }
         else 
-            if (!row.isCategory && row.hasChildren && !row.isResponse && colConfig.response) {
+            if (!record.isCategory && record.hasChildren && !record.isResponse && colConfig.response) {
                 // is NOT a category but has children and IS NOT a response doc BUT
                 // IS a response COLUMN
                 if (nextViewentry) {
@@ -1141,47 +1147,47 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                         returnValue = sExpandImage;
                     }
                 }
-                else { // should be a categorized column on the last row
+                else { // should be a categorized column on the last record
                     cell.css = "xnd-view-expand xnd-view-response";
                     returnValue = sExpandImage;
                 }
             }
             else 
-                if (row.hasChildren && row.isResponse && colConfig.response) {
+                if (record.hasChildren && record.isResponse && colConfig.response) {
                     // has children and IS a response doc
-                    var extraIndent = (value.indent) ? ((value.indent > 0) ? "padding-left:" + (20 + (value.indent * 20)) + "px;" : "") : "";
+                    var extraIndent = (metadata.indent) ? ((metadata.indent > 0) ? "padding-left:" + (20 + (metadata.indent * 20)) + "px;" : "") : "";
                     cell.attr = "style='position: absolute; width: auto; white-space: nowrap; " + extraIndent + "'";
                     if (nextViewentry) {
                         var nextViewentryPosition = nextViewentry.attributes.getNamedItem('position').value;
                         var nextViewentryLevel = nextViewentryPosition.split('.').length;
                         if (nextViewentryLevel > viewentryLevel) {
                             cell.css = "xnd-view-collapse xnd-view-response";
-                            returnValue = sCollapseImage + this.getValue(value, colConfig);
+                            returnValue = sCollapseImage + this.getValue(value, colConfig, record);
                         }
                         else {
                             cell.css = "xnd-view-expand xnd-view-response";
-                            returnValue = sExpandImage + this.getValue(value, colConfig);
+                            returnValue = sExpandImage + this.getValue(value, colConfig, record);
                         }
                     }
-                    else { // should be a categorized column on the last row
+                    else { // should be a categorized column on the last record
                         cell.css = "xnd-view-expand xnd-view-response";
-                        returnValue = sExpandImage + this.getValue(value, colConfig);
+                        returnValue = sExpandImage + this.getValue(value, colConfig, record);
                     }
                 }
                 else 
-                    if (!row.hasChildren && row.isResponse && colConfig.response) {
+                    if (!record.hasChildren && record.isResponse && colConfig.response) {
                         // does NOT have children and IS a response doc
                         cell.css = "xnd-view-response";
-                        var extraIndent = (value.indent) ? ((value.indent > 0) ? "padding-left:" + (20 + (value.indent * 20)) + "px;" : "") : "";
+                        var extraIndent = (metadata.indent) ? ((metadata.indent > 0) ? "padding-left:" + (20 + (metadata.indent * 20)) + "px;" : "") : "";
                         cell.attr = "style='position: absolute; width: auto; white-space: nowrap; " + extraIndent + "'";
-                        returnValue = this.getValue(value, colConfig);
+                        returnValue = this.getValue(value, colConfig, record);
                     }
                     else {
                         if (colConfig.icon) {
                             var tmpReturnValue = "";
                             var tmpValue = "";
-                            for (var i = 0; i < value.data.length; i++) {
-                                tmpValue = value.data[i];
+                            for (var i = 0; i < value.length; i++) {
+                                tmpValue = value[i];
                                 
                                 if (isNaN(parseInt(tmpValue, 10)) || tmpValue == 0) {
                                     return "";
@@ -1199,7 +1205,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                         }
                         else {
                             // just normal data
-                            returnValue = this.getValue(value, colConfig);
+                            returnValue = this.getValue(value, colConfig, record);
                         }
                     }
         
@@ -1209,8 +1215,10 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
     },
     
     // private
-    getValue: function(value, colConfig){
-        var dataType, newValue, tmpDate, tmpDateFmt, separator;
+    getValue: function(value, colConfig, record){
+        var dataType, newValue, tmpDate, tmpDateFmt, separator, metadata;
+        metadata = record.metadata[colConfig.dataIndex];
+        
         switch (colConfig.listseparator) {
             case "none":
                 separator = '';
@@ -1234,15 +1242,15 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         newValue = '';
         
         // handle non-categorized columns
-        if (colConfig.sortcategorize && value.data.length == 0) {
+        if (colConfig.sortcategorize && value.length == 0) {
             newValue = this.notCategorizedText;
         }
         
-        for (var i = 0, len = value.data.length; i < len; i++) {
+        for (var i = 0, len = value.length; i < len; i++) {
             var sep = (i + 1 < len) ? separator : '';
-            dataType = value.type; // set in the
+            dataType = metadata.type; // set in the
             // DominoViewXmlReader.getNamedValue method
-            var tmpValue = value.data[i];
+            var tmpValue = value[i];
             
             // handle columns set to show an icon a little differently
             if (colConfig.icon) {
@@ -1311,15 +1319,51 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         }
     },
     
-    // this mimics the NotesUIView.Documents property that returns the
-    // selected documents from a view as a NotesDocumentCollection
+    /**
+     * Returns the selected records.  This mimics the NotesUIView.Documents 
+     * property that returns the selected documents from a view as a 
+     * NotesDocumentCollection.
+     * @return {Array} Array of selected records
+     */    
     getDocuments: function(){
         return this.getSelectionModel().getSelections();
     },
-    
+
+    /**
+     * Returns the first selected record.
+     * @return {Record}
+     */
     getSelectedDocument: function(){
         return this.getSelectionModel().getSelected();
+    },
+    
+    /**
+     * Expands all levels of categories, subcategories, documents, 
+     * and responses within the view or folder. This mimics the 
+     * ViewExpandAll @Command
+     */    
+    expandAll : function() {
+    	this.ecAll('expandview'); 
+    },
+
+    /**
+     * Collapses all levels of categories, subcategories, documents, 
+     * and responses within the view or folder. This mimics the 
+     * ViewCollapseAll @Command
+     */    
+    collapseAll : function() {
+        this.ecAll('collapseview'); 	
+    },
+    
+    // private
+    ecAll : function(param) {
+        var ds = this.getStore();
+        delete ds.lastOptions.params[param];
+        ds.load({
+            params: Ext.apply(ds.lastOptions.params, {param: 'true'})
+        });     
     }
+    
     
 });
 Ext.reg('xnd-uiview', Ext.nd.UIView);
