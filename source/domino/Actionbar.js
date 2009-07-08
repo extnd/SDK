@@ -215,8 +215,8 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                 var arHide = hidewhen.split(' ');
                 for (var h = 0; h < arHide.length; h++) {
                     if (arHide[h] == 'web' ||
-                    (arHide[h] == 'edit' && Ext.nd.UIDocument.editMode) ||
-                    (arHide[h] == 'read' && !Ext.nd.UIDocument.editMode)) {
+                    (arHide[h] == 'edit' && Ext.nd.currentUIDocument.editMode) ||
+                    (arHide[h] == 'read' && !Ext.nd.currentUIDocument.editMode)) {
                         show = false;
                     }
                 }
@@ -279,7 +279,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                 }
                 
                 var tmpOnClick = Ext.DomQuery.selectValue('javascript', action, null);
-                var handler;
+                var handler = Ext.emptyFn;
                 
                 // the JavaScript onClick takes precendence
                 if (tmpOnClick) {
@@ -313,10 +313,17 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                                         handler = this.openDocument.createDelegate(this, [cmdFrm[2] ? ((cmdFrm[2] == "1") ? true : false) : true]);
                                         break;
                                     case 'FileCloseWindow':
-                                        handler = this.closeDocument.createDelegate(this);
+                                        //handler = this.closeDocument.createDelegate(this);
+                                        handler = this.getUIDocument().close.createDelegate(this.getUIDocument(), []);
                                         break;
                                     case 'FileSave':
-                                        handler = this.saveDocument.createDelegate(this);
+                                        handler = this.getUIDocument().save.createDelegate(this.getUIDocument(), [{}]);
+                                        break;
+                                    case 'ViewCollapseAll':
+                                        handler = this.getUIView().collapseAll.createDelegate(this.getUIView(), []);
+                                        break;
+                                    case 'ViewExpandAll':
+                                        handler = this.getUIView().expandAll.createDelegate(this.getUIView(), []);
                                         break;
                                     case 'FilePrint':
                                     case 'FilePrintSetup':
@@ -326,7 +333,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                                     case 'RunAgent':
                                     default:
                                         show = false; // For now hide unsupported commands
-                                // handler = this.unsupportedAtCommand.createDelegate(this,[formula]);
+                                        // handler = this.unsupportedAtCommand.createDelegate(this,[formula]);
                                 
                                 } // end switch
                             } // end if (cmdFrm.length)
@@ -727,7 +734,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
         }
         
         var mode = (editMode) ? '?EditDocument' : '?OpenDocument';
-        var unid = Ext.nd.UIDocument.document.universalID;
+        var unid = Ext.nd.currentUIDocument.document.universalID;
         var pnlId = 'pnl-' + unid;
         var link = this.dbPath + '0/' + unid + mode;
         // if no target then just location.href
@@ -757,40 +764,6 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
         var e = null; // not sure how to get the event so we'll just set it to null;
         // just call the UIView.openDocument method
         this.getUIView().openDocument(grid, rowIndex, e, editMode);
-    },
-    
-    /**
-     * Handler for @Command([FileCloseWindow])
-     * Will look for a ownerCt property in the window object that represents a component
-     * (like a tabpanel) that contains this document and if one exists will then try and
-     * close/remove Otherwise it attempts to call the browsers back function, if that fails
-     * then it closes the window since if we can't go back in the history then the doc must
-     * have been opened in a new window
-     */
-    closeDocument: function(){
-        if (window.ownerCt && window.ownerCt.ownerCt) {
-            var oc = window.ownerCt.ownerCt;
-            if (oc.getXType() == 'tabpanel') {
-                oc.remove(oc.getActiveTab());
-            }
-        }
-        else {
-            try {
-                window.back();
-            } 
-            catch (e) {
-                window.close();
-            }
-        }
-    },
-    
-    /**
-     * Handler for @Command([FileSave])
-     * Calls the underlying form's submit method. In the future will look into Ajaxifying the submit.
-     * Override saveDocument in order to customize the submitting of a form/document.
-     */
-    saveDocument: function(){
-        document.forms[0].submit();
     },
     
     /**
