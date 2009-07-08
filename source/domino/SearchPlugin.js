@@ -82,7 +82,7 @@ Ext.nd.SearchPlugin = Ext.extend(Ext.util.Observable, {
         
         // keyMap
         if (this.shortcutKey && this.shortcutModifier) {
-            var shortcutEl = this.toolbar.uiView.getEl();
+            var shortcutEl = this.toolbar.getUIView().getEl();
             var shortcutCfg = [{
                 key: this.shortcutKey,
                 scope: this,
@@ -96,7 +96,7 @@ Ext.nd.SearchPlugin = Ext.extend(Ext.util.Observable, {
         }
         
         if (true === this.autoFocus) {
-            this.toolbar.uiView.store.on({
+            this.toolbar.getUIView().getStore().on({
                 scope: this,
                 load: function(){
                     this.field.focus();
@@ -112,13 +112,13 @@ Ext.nd.SearchPlugin = Ext.extend(Ext.util.Observable, {
     },
     onTriggerClear: function(){
         if (this.isSearching) {
-            var paging = this.toolbar.uiView.getBottomToolbar();
+            var paging = this.toolbar.getUIView().getBottomToolbar();
             if (paging) {
-                paging.unbind(this.toolbar.uiView.getStore());
+                paging.unbind(this.toolbar.getUIView().getStore());
                 paging.bind(this.oldDataSource);
             }
-            this.toolbar.uiView.reconfigure(this.oldDataSource, this.toolbar.uiView.getColumnModel());
-            this.toolbar.uiView.getStore().load({
+            this.toolbar.getUIView().reconfigure(this.oldDataSource, this.toolbar.getUIView().getColumnModel());
+            this.toolbar.getUIView().getStore().load({
                 params: {
                     start: 1
                 }
@@ -139,11 +139,11 @@ Ext.nd.SearchPlugin = Ext.extend(Ext.util.Observable, {
             return;
         }
         var val = this.field.getValue();
-        var store = this.toolbar.uiView.store;
+        var store = this.toolbar.getUIView().getStore();
         
-        var vni = this.toolbar.uiView.viewUrl.lastIndexOf('/') + 1;
-        var dbPath = this.toolbar.uiView.viewUrl.substring(0, vni);
-        var viewName = this.toolbar.uiView.viewUrl.substring(vni);
+        var vni = this.toolbar.getUIView().viewUrl.lastIndexOf('/') + 1;
+        var dbPath = this.toolbar.getUIView().viewUrl.substring(0, vni);
+        var viewName = this.toolbar.getUIView().viewUrl.substring(vni);
         
         
         var baseParams = {
@@ -152,7 +152,7 @@ Ext.nd.SearchPlugin = Ext.extend(Ext.util.Observable, {
         };
         
         if (!this.isSearching) {
-            this.oldDataSource = this.toolbar.uiView.getStore(); // Save the current DS so we can restore it when search is cleared
+            this.oldDataSource = this.toolbar.getUIView().getStore(); // Save the current DS so we can restore it when search is cleared
             if (this.oldDataSource.baseParams.RestrictToCategory) {
                 baseParams = Ext.apply(baseParams, {
                     RestrictToCategory: this.oldDataSource.baseParams.RestrictToCategory
@@ -161,9 +161,9 @@ Ext.nd.SearchPlugin = Ext.extend(Ext.util.Observable, {
             
             
             // define the Domino viewEntry record
-            var viewEntry = Ext.data.Record.create(this.toolbar.uiView.dominoView.recordConfig);
+            var viewEntry = Ext.data.Record.create(this.toolbar.getUIView().dominoView.recordConfig);
             
-            var viewEntryReader = new Ext.nd.data.DominoViewXmlReader(this.toolbar.uiView.dominoView.meta, viewEntry);
+            var viewEntryReader = new Ext.nd.data.DominoViewXmlReader(this.toolbar.getUIView().dominoView.meta, viewEntry);
             // create reader that reads viewEntry records
             
             
@@ -178,8 +178,8 @@ Ext.nd.SearchPlugin = Ext.extend(Ext.util.Observable, {
             });
             
             
-            this.toolbar.uiView.reconfigure(ds, this.toolbar.uiView.colModel);
-            var paging = this.toolbar.uiView.getBottomToolbar();
+            this.toolbar.getUIView().reconfigure(ds, this.toolbar.getUIView().getColumnModel());
+            var paging = this.toolbar.getUIView().getBottomToolbar();
             
             if (paging) {
                 paging.unbind(this.oldDataSource);
@@ -187,7 +187,7 @@ Ext.nd.SearchPlugin = Ext.extend(Ext.util.Observable, {
             }
             this.isSearching = true; // Set this so we don't create the search datastore multiple times
         }
-        this.toolbar.uiView.getStore().load({
+        this.toolbar.getUIView().getStore().load({
             params: {
                 query: val,
                 count: this.searchCount,
@@ -206,4 +206,4 @@ Ext.nd.SearchPlugin = Ext.extend(Ext.util.Observable, {
         this.setDisabled(true);
     }
 });
-
+Ext.reg('xnd-view-search', Ext.nd.SearchPlugin);
