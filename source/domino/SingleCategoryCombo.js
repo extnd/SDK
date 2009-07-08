@@ -32,7 +32,7 @@ Ext.nd.SingleCategoryCombo = Ext.extend(Ext.util.Observable, {
         this.store = new Ext.data.Store({
             proxy: new Ext.data.HttpProxy({
                 method: 'GET',
-                url: this.toolbar.uiView.viewUrl + '?ReadViewEntries&CollapseView&count=' + this.count
+                url: this.toolbar.getUIView().viewUrl + '?ReadViewEntries&CollapseView&count=' + this.count
             }),
             reader: new Ext.data.XmlReader({
                 record: 'viewentry',
@@ -76,8 +76,9 @@ Ext.nd.SingleCategoryCombo = Ext.extend(Ext.util.Observable, {
     // private
     onCategoryChange: function(combo, record, index){
         var category = record.data.text;
-        this.toolbar.uiView.getStore().baseParams.RestrictToCategory = category;
-        this.toolbar.uiView.getStore().load({params: {start: 1} });
+        this.toolbar.getUIView().getStore().baseParams.RestrictToCategory = category;
+        this.toolbar.getUIView().getStore().load({params: {start: 1} });
     }
 
 });
+Ext.reg('xnd-view-singlecategorycombo', Ext.nd.SingleCategoryCombo);
