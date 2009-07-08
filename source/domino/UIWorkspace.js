@@ -416,7 +416,7 @@ Ext.nd.UIWorkspace.prototype = {
      * Returns the currently opened document
      */
     currentDocument: function(){
-        return Ext.nd.UIDocument;
+        return Ext.nd.currentUIDocument;
     }
 }
 
