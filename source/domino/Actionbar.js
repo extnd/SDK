@@ -154,14 +154,19 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
         // after we replace it with an Ext toolbar
         this.hideDominoActionbar();
         
-        // finally, we setup a listener for when the toolbar is rendered
-        // so that once rendered we call the code to add the actions
         if (!this.useDxl) {
-            //this.toolbar.on('render', this.addActionsFromDocument, this);
             this.addActionsFromDocument();
         }
-        else {
-            //this.toolbar.on('render', this.addActionsFromDxl, this);
+        else if(this.noteName === '') {
+        	// do nothing since we don't have a valid noteName
+        	// this could be unintentional or intentional in the case
+        	// that a tbar was passed to a UIView/UIDocument and we always wrap 
+        	// that in an Ext.nd.Actionbar so we can expose the
+        	// methods of Ext.nd.Actionbar like getUIView() and getUIDocument()
+        	
+        	// however, do need to call this event!
+            this.fireEvent('actionsloaded', this.toolbar);
+        } else {
             this.addActionsFromDxl();
         }
     },
@@ -280,7 +285,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                 if (tmpOnClick) {
                     // note that we now use createDelegate so we can change the scope
                     // to 'this' so that view actions can get a handle to the
-                    // grid by simply refering to 'this.uiView' and thus, such things as
+                    // grid by simply refering to 'this.getUIView()' and thus, such things as
                     // getting a handle to the currently selected documents in the view
                     // where this action was triggered is much easier
                     // for a form/document you can also get a handle to the uiDocument
@@ -592,7 +597,8 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
     getDominoActionbar: function(){
     
         // bail if a view since we only use dxl for views
-        if (this.noteType == 'view') {
+    	// also bail if there isn't a noteType
+        if (this.noteType == '' || this.noteType == 'view') {
             this.actionbar = false;
             return;
         }
@@ -671,7 +677,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
             vwName = q.selectValue('folder/@name', response);
         }
         
-        if (!this.uiView.showFullCascadeName) {
+        if (!this.getUIView().showFullCascadeName) {
             // if any backslashes then only show the text after the last backslash
             var bsLoc = vwName.lastIndexOf('\\');
             if (bsLoc != -1) {
@@ -700,7 +706,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
         else {
             Ext.nd.util.addIFrame({
                 target: target,
-                uiView: this.uiView,
+                uiView: this.getUIView(),
                 uiDocument: this.getUIDocument(),
                 url: link,
                 id: Ext.id()
@@ -731,7 +737,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
         else {
             Ext.nd.util.addIFrame({
                 target: target,
-                uiView: this.uiView,
+                uiView: this.getUIView(),
                 uiDocument: this.getUIDocument(),
                 url: link,
                 id: Ext.id()
@@ -745,12 +751,12 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
      * @param {Boolean} editMode true for edit, false for read mode
      */
     openDocumentFromView : function(editMode){
-        var grid = this.uiView;
+        var grid = this.getUIView();
         var row = grid.getSelectionModel().getSelected();
         var rowIndex = grid.getStore().indexOf(row);
         var e = null; // not sure how to get the event so we'll just set it to null;
         // just call the UIView.openDocument method
-        this.uiView.openDocument(grid, rowIndex, e, editMode);
+        this.getUIView().openDocument(grid, rowIndex, e, editMode);
     },
     
     /**
@@ -807,18 +813,26 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
     },
     
     getUIView: function() {
-        if (this.uiView && this.uiView != null) {
-            return this.uiView;
-        } else {
-            if (window && window.uiView) {
-                this.uiView = window.uiView;
-                return this.uiView
+        if (!this.uiView) {
+            if (this.ownerCt && this.ownerCt.getXType() == 'xnd-uiview') {
+                this.uiView = this.ownerCt;
             } else {
-                return null;
+                this.uiView = null;
             }
         }
+        return this.uiView;
     },
     
+    getUIDocument: function() {
+        if (!this.uiDocument) {
+            if (this.ownerCt && this.ownerCt.getXType() == 'xnd-uidocument') {
+                this.uiDocument = this.ownerCt;
+            } else {
+                this.uiDocument = null;
+            }
+        }
+        return this.uiDocument;
+    },
     getUIDocument: function() {
         return (this.uiDocument) ? this.uiDocument : null;
     }
