@@ -82,7 +82,7 @@ Ext.nd.util.addIFrame = function(config) {
         // our config options for the panel
         var panelConfig = Ext.apply({
             html: "<iframe id='" + ifId + "' src='" + config.url + "' frameBorder='0' width='100%' height='100%'/>",
-            title : config.title || config.documentLoadingWindowTitle,
+            title : config.title || documentLoadingWindowTitle,
             layout : 'fit',
             id : config.id,
             closable : true
@@ -154,30 +154,30 @@ Ext.nd.util.addIFrame = function(config) {
             // replace the panel's title with the the window title from the
 			// iframe
             // if the useDocumentWindowTitle is set to true
-            if (config.useDocumentWindowTitle) {
+            if (useDocumentWindowTitle) {
                 try {
                     var title = cd.document.title;
                     if (title != "") {
-                        if (config.documentWindowTitleMaxLength != -1) {
-                            panel.setTitle(Ext.util.Format.ellipsis(title, config.documentWindowTitleMaxLength));    
+                        if (documentWindowTitleMaxLength != -1) {
+                            panel.setTitle(Ext.util.Format.ellipsis(title, documentWindowTitleMaxLength));    
                         } else {
                             panel.setTitle(title);
                         }
                     
                     } else {
                         // there wasn't a title
-                        if (panel.title != config.title && config.title != config.documentLoadingWindowTitle) {
-                            panel.setTitle(config.documentUntitledWindowTitle); 
+                        if (panel.title != config.title && config.title != documentLoadingWindowTitle) {
+                            panel.setTitle(documentUntitledWindowTitle); 
                         }
                     }
 
                 } catch (e) {
                     // there was an error getting the iframe's title maybe
-                    if (panel.title != config.title && panel.title != config.documentLoadingWindowTitle) {
-                        panel.setTitle(config.documentUntitledWindowTitle); 
+                    if (panel.title != config.title && panel.title != documentLoadingWindowTitle) {
+                        panel.setTitle(documentUntitledWindowTitle); 
                     }
                 }
-            } // eo if (config.useDocumentWindowTitle)
+            } // eo if (useDocumentWindowTitle)
 
         }).createDelegate(dom);
 
