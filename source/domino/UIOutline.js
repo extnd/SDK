@@ -76,6 +76,10 @@ Ext.nd.UIOutline = function(config) {
 
 Ext.extend(Ext.nd.UIOutline, Ext.tree.TreePanel, {
     rootVisible: false, // Override default to false
+    animate: true,
+    enableDD: true,
+    ddGroup: 'TreeDD',
+
     initComponent: function() {
 
         // Using applyIf here to allow full developer control
@@ -83,9 +87,6 @@ Ext.extend(Ext.nd.UIOutline, Ext.tree.TreePanel, {
         // into UIOutline will override these
         Ext.applyIf(this, {
             id: 'xnd-outline-' + Ext.id(),
-            animate: true,
-            enableDD: true,
-            ddGroup: 'TreeDD',
             autoScroll: true,
             containerScroll: true,
             useEntryTitleAsTargetTitle: true,
@@ -195,6 +196,7 @@ Ext.extend(Ext.nd.UIOutline, Ext.tree.TreePanel, {
                         failure: this.addToFolderFailure,
                         scope: this,
                         params: unids,
+                        extraParams: data,
                         url: Ext.nd.extndUrl + 'FolderOperations?OpenAgent&db=' + this.filePath + '&operation=putinfolder' + '&folder=' + this.folderUNID + '&fromfolder=' + fromFolder
                     });
                     return true;
@@ -213,6 +215,12 @@ Ext.extend(Ext.nd.UIOutline, Ext.tree.TreePanel, {
 
     addToFolderSuccess: function(response, request) {
         this.fireEvent('addfoldersuccess', this, response, request);
+        var grid = request.extraParams.grid;
+        var selections = request.extraParams.selections;
+        Ext.each(selections, function(record, index, allItems){
+        	grid.getStore().remove(record);
+        });
+        
     },// eo addToFolderSuccess
 
     addToFolderFailure: function(response, request) {

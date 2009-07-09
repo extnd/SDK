@@ -69,6 +69,9 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
     documentWindowTitleMaxLength: 16,
     useDocumentWindowTitle: true,
     extendLastColumn: undefined,
+    enableDragDrop: true,
+    ddGroup: 'TreeDD',
+    loadMask: true,
     
     // categorized: false,// TODO: check with Rich on the 'categorized' property
     // since we already have an 'isCategorized' property
@@ -184,9 +187,6 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         // ApplyIf so that these can all be overridden if passed into the config
         Ext.applyIf(this, {
             selModel: this.selModel,
-            enableDragDrop: true,
-            ddGroup: 'TreeDD',
-            loadMask: true,
             title: this.viewName,
             collapseIcon: Ext.nd.extndUrl + "resources/images/minus.gif",
             expandIcon: Ext.nd.extndUrl + "resources/images/plus.gif",
