@@ -1061,12 +1061,18 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
     // private
     dominoRenderer: function(value, cell, record, rowIndex, colIndex, dataStore){
     	
+    	
     	// first check to see if this is a 'phantom' (new record being dynamically added
     	// like in the RowEditor example and if so, just let it pass
     	if (record.phantom === true) {
     		return (typeof value == 'undefined') ? '' : value;
     	}
     	
+        // TODO: need to figure out why we sometimes get a null for the value
+        if (value == null) {
+            return "";
+        }
+
         // next, let's split value into an array so that we can
         // process the listseparator.  we use '\n' since that is how
         // we stored multi-values in the DominoViewXmlReader.getValue
