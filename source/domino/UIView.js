@@ -1103,8 +1103,8 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         var viewentryLevel = viewentryPosition.split('.').length;
         
         // for the expand/collapse icon width + indent width
-        var sCollapseImage = '<img src="' + this.collapseIcon + '" style="vertical-align:bottom; padding-right:4px;"/>';
-        var sExpandImage = '<img src="' + this.expandIcon + '" style="vertical-align:bottom; padding-right:4px;"/>';
+        var sCollapseImage = '<img src="' + this.collapseIcon + '" style="vertical-align:bottom; margin-right:8px;"/>';
+        var sExpandImage = '<img src="' + this.expandIcon + '" style="vertical-align:bottom; margin-right:8px;"/>';
         var indentPadding = (20 * viewentryLevel) + "px";
         var indentPaddingNoIcon = (20 + (20 * viewentryLevel)) + "px";
         
