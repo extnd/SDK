@@ -35,9 +35,15 @@ Ext.nd.UIDocument = function(config){
     var db = sess.currentDatabase;
 
     //TODO: this needs to go away soon (the use of Ext.nd.currentUIDocument.*)
-    this.currentUIDocument = Ext.nd.currentUIDocument;
-	this.uidoc = this.currentUIDocument; // for backwards compatability
+    currentUIDocument = Ext.nd.currentUIDocument;
     
+	// now just apply currentUIDocument to 'this' so we get what the agent says
+	// about this uidocument (such as UNID, form name, etc.)
+	Ext.apply(this, currentUIDocument);
+
+	// for backwards compat (not sure if any devs are using this)
+	this.uidoc = currentUIDocument; 
+
     // defaults
     //this.autoScroll = true;
     this.dbPath = db.webFilePath;
@@ -55,7 +61,7 @@ Ext.nd.UIDocument = function(config){
     // domino does not send the page name in the form tag like it does for forms
     // ALSO - for special forms like $$ViewTemplate or $$SearchTemplae,
     // '_DominoForm' is sent as the form name
-    if (typeof this.currentUIDocument.formName == 'undefined') {
+    if (typeof this.formName == 'undefined') {
         if (document.forms.length == 0 ||
         document.forms[0].name.substring(1) == '' ||
         document.forms[0].name.substring(1) == 'DominoForm') {
@@ -69,7 +75,7 @@ Ext.nd.UIDocument = function(config){
             this.formName = document.forms[0].name.substring(1);
         }
     } else {
-        this.formName = this.currentUIDocument.formName
+        this.formName = this.formName
     }
 
     // since we use Ext.form.BasicForm we need to make sure initialConfig is set now
@@ -289,7 +295,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
                     break;
             } // eo switch
         } else {
-        	if (this.currentUIDocument.editMode) {
+        	if (this.editMode) {
         		// TODO: open in read mode if already in edit mode
         	} else {
         		return false;
@@ -622,7 +628,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         
         config = config || {};
         
-        var nm = new Ext.nd.UIDocument.PickListField(Ext.apply({
+        var nm = new Ext.nd.form.PickListField(Ext.apply({
             type: 'names',
             id: (el.id ? el.id : el.name)
         }, config));
@@ -635,7 +641,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
     // private
     convertToPickList : function(el, config){
 
-        var pl = new Ext.nd.UIDocument.PickListField(Ext.apply({
+        var pl = new Ext.nd.form.PickListField(Ext.apply({
             id: (el.id ? el.id : el.name)
         }, config));
         pl.applyToMarkup(el);
@@ -971,7 +977,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
             baseParams: {
                 formula : formula,
                 db : this.dbPath, 
-                unid : (this.currentUIDocument.document && this.currentUIDocument.document.universalID) ? this.currentUIDocument.document.universalID : "",
+                unid : (this.document && this.document.universalID) ? this.document.universalID : "",
                 form : this.formName,
                 outputformat : 'json',
                 convertresulttoarray : true
@@ -1195,3 +1201,11 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
     }
 });
 Ext.reg('xnd-uidocument', Ext.nd.UIDocument);
+
+//for backwards compat
+Ext.nd.Form = Ext.nd.UIDocument; 
+Ext.reg('xnd-form', Ext.nd.Form);
+
+//not sure why, but why not
+Ext.nd.Page = Ext.nd.UIDocument; 
+Ext.reg('xnd-page', Ext.nd.Page);
