@@ -307,12 +307,14 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         }
     },
     
+    // private - to handle expand/collapse of categories and responses
     gridHandleCellClick: function(grid, rowIndex, colIndex, e){
         var ecImg = Ext.get(e.getTarget());
         var cellCat, cellResponse;
         var cell = false;
-        var options = {};
-        var record = grid.getStore().getAt(rowIndex);
+        var newParams = {};
+        var ds = grid.getStore();
+        var record = ds.getAt(rowIndex);
         
         if (ecImg.dom.tagName == 'IMG') {
             cellCat = ecImg.findParent('td.xnd-view-category');
@@ -327,12 +329,11 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                 if (isExpand) {
                     // need to expand (count is determined by taking the
                     // rowIndex and adding this.count)
-                    options.params = Ext.apply({
-                        count: rowIndex + this.count
-                    }, {
+                    newParams = {
+                        count: rowIndex + this.count,
                         expand: record.position
-                    });
-                    this.getStore().load(options);
+                    };
+                    ds.load({params : newParams});
                     // since we are loading the entire store above
                     // we do not need the remove/addClass methods
                     // add this back when we just remove/add to the grid
@@ -345,12 +346,11 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                     if (isCollapse) {
                         // need to collapse (count is determined by the
                         // lastOptions.params.count)
-                        options.params = Ext.apply({
-                            count: this.getStore().lastOptions.params.count
-                        }, {
+                        newParams = {
+                            count: (ds.lastOptions.params.count) ? ds.lastOptions.params.count : this.count,
                             collapse: record.position
-                        });
-                        this.getStore().load(options);
+                        };
+                        ds.load({params : newParams});
                         // since we are loading the entire store above
                         // we do not need the remove/addClass methods
                         // add this back when we just remove/add to the grid
@@ -456,9 +456,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             delete ds.lastOptions.params.start;
             // next, load dataSrource, passing the startkey param
             ds.load({
-                params: Ext.apply(ds.lastOptions.params, {
-                    startkey: text
-                })
+                params: Ext.apply(ds.lastOptions.params, {startkey: text})
             }); // append the startkey param to the existing params (ds.lastOptions)
         }
     },
@@ -1088,7 +1086,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         
         // if we don't have any data and this is not a response column 
         // nore a category column then just return a blank
-        if (value && value.length == 0 && !colConfig.response && !metadata.category) {
+        if (typeof value == 'string' && value == '' && !colConfig.response && !metadata.category) {
             return "";
         }
         
@@ -1357,11 +1355,10 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
     
     // private
     ecAll : function(param) {
-        var ds = this.getStore();
-        delete ds.lastOptions.params[param];
-        ds.load({
-            params: Ext.apply(ds.lastOptions.params, {param: 'true'})
-        });     
+    	var ds = this.getStore();
+    	var config = {};
+        config[param] = 'true';
+        ds.load({params: config});     
     }
     
     
