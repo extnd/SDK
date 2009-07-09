@@ -38,20 +38,20 @@ Ext.extend(Ext.nd.data.DominoViewStore, Ext.data.Store, {
             this.storeOptions(options);
             
             // do some baseParams cleanup
-            if (options.params.expand || options.params.expandView) {
+            if (options.params.expand || options.params.expandview) {
                 if (this.baseParams.collapse) {
                     delete this.baseParams.collapse;
                 }
-                if (this.baseParams.collapseView) {
-                    delete this.baseParams.collapseView;
+                if (this.baseParams.collapseview) {
+                    delete this.baseParams.collapseview;
                 }
             }
-            if (options.params.collapse || options.params.collapseView) {
+            if (options.params.collapse || options.params.collapseview) {
                 if (this.baseParams.expand) {
                     delete this.baseParams.expand;
                 }
-                if (this.baseParams.expandView) {
-                    delete this.baseParams.expandView;
+                if (this.baseParams.expandview) {
+                    delete this.baseParams.expandview;
                 }
             }
             
