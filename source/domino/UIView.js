@@ -61,6 +61,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
     editMode: true,
     isCategorized: false,
     multiExpand: false,
+    multiExpandCount: 40,
     notCategorizedText: '(Not Categorized)',
     loadInitialData: true,
     documentWindowTitle: '',
@@ -72,16 +73,17 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
     enableDragDrop: true,
     ddGroup: 'TreeDD',
     loadMask: true,
+    count: 40,
     
     // categorized: false,// TODO: check with Rich on the 'categorized' property
     // since we already have an 'isCategorized' property
-    count: 40,
     
     initComponent: function(){
     
         // wait until the grid is rendered before making the Ajax call to get
         // the view's design from the domino server
-        this.on('render', this.getViewDesign, this);
+        //this.on('render', this.getViewDesign, this);
+    	this.getViewDesign();
         
         this.cols = [];
         this.recordConfig = [];
@@ -133,7 +135,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         var plugins = this.getPlugins();
         
         // if a tbar was passed in, just use that and add the plugins to it
-        if (this.tbar && plugins.length > 0) {
+        if (this.tbar) {
             if (Ext.isArray(this.tbar)) {
                 //for (var i = 0; i < plugins.length; i++) {
                     this.tbar = new Ext.nd.Actionbar({
@@ -142,7 +144,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                         uiView: this,
                         target: this.target || null,
                         items: this.tbar,
-                        plugins: plugins
+                        plugins: (plugins.length > 0) ? plugins : null
                     })
                 //}
             }
@@ -300,7 +302,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         // to continue
         // beforeopendocument corresponds to the NotesUIView QueryOpenDocument
         // event
-        if (row.unid) {
+        if (row && row.unid) {
             if (this.fireEvent("beforeopendocument", grid, rowIndex, e, bEditMode) !== false) {
                 this.openDocument(grid, rowIndex, e, bEditMode);
             }
@@ -728,9 +730,8 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         
         // if the view is set to allow for docs to be selected with checkbox AND
         // the developer has not explicity set this.selModelConfig.type 
-        // to something OTHER than'checkbox' then change the selMode to the 
-        // CheckboxSelectionModel and push that onto the cols array but don't do 
-        // this if useCheckboxSm was already true since this would have already been done
+        // to something OTHER than'checkbox' then change the selModel to the 
+        // CheckboxSelectionModel and push that onto the cols array
         if (this.selModelConfig.type === 'checkbox') {
             // do nothing if explicity set to 'checkbox' since by now in the code
         	// the checkboxSelectionModel was already set and we do not
@@ -741,7 +742,25 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                 (typeof this.selModelConfig.type === 'undefined' ||
                 (typeof this.selModelConfig.type === 'string' && this.selModelConfig.type !== 'checkbox'))) {
 
-                this.selModel = new Ext.grid.CheckboxSelectionModel();
+                if (this.selModel && this.selModel.destroy){
+                    this.selModel.destroy();
+                }
+                this.selModel = new Ext.grid.CheckboxSelectionModel(this.selModelConfig);
+                this.selModel.init(this);
+
+                /* 
+                 * this function is a copy/past from the CheckboxSelectionModel
+                 * and what it does it make sure that we have mousedown events
+                 * defined to capture clicking on the checkboxes 
+                 */
+                this.on('getdesignsuccess', function(){
+                    var view = this.grid.getView();
+                    view.mainBody.on('mousedown', this.onMouseDown, this);
+                    Ext.fly(view.innerHd).on('mousedown', this.onHdMouseDown, this);
+                }, this.selModel);
+        
+                this.un('rowclick');
+        
                 var newCols = [];
                 newCols.push(this.selModel);
                 Ext.each(this.cols, function(item, index, allItems){
@@ -835,6 +854,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         this.selModel.on('rowdeselect', function(){
             this.documents = this.getDocuments();
         }, this);
+        
         
         this.fireEvent('getdesignsuccess', this, this.store, this.colModel);
         this.fireEvent('open', this);
@@ -1011,7 +1031,14 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             
         } // end for loop that processed each column
 
+        // is this a view or a folder?
+        var isView = q.select('view', dxml);
+        this.isView = (isView.length > 0) ? true : false;
+        this.isFolder = !this.isView;
+        var root = (this.isView) ? 'view' : 'folder';
+        
         // does this view need to have it's last column extended? or did the developer specify an autoExpandColumn?
+        
         if (!this.autoExpandColumn) {
             if (this.extendLastColumn === false) {
             	this.autoExpandColumn = false;
@@ -1019,7 +1046,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             	if (this.extendLastColumn === true) {
             	   	this.autoExpandColumn = colCount-1;
             	} else {
-                    var extendlastcolumn = q.selectValue('view/@extendlastcolumn', dxml, false);
+                    var extendlastcolumn = q.selectValue(root+'/@extendlastcolumn', dxml, false);
                     this.extendLastColumn = (extendlastcolumn == 'true') ? true : false;
                     this.autoExpandColumn = (this.extendLastColumn) ? colCount-1 : false;		
         	   }
@@ -1027,7 +1054,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         }
         
         // on web access property to allow docs to be selected with a checkbox
-        var allowdocselection = q.selectValue('view/@allowdocselection', dxml, false);
+        var allowdocselection = q.selectValue(root+'/@allowdocselection', dxml, false);
         this.allowDocSelection = (allowdocselection == 'true') ? true : false;
         
         // the dominoView object holds all of the design information for the
@@ -1190,6 +1217,8 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                         if (colConfig.icon) {
                             var tmpReturnValue = "";
                             var tmpValue = "";
+                            var separator = this.getListSeparator(colConfig);
+                            var clearFloat = "";
                             for (var i = 0; i < value.length; i++) {
                                 tmpValue = value[i];
                                 
@@ -1202,8 +1231,13 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                                     newValue = (tmpValue < 10) ? "00" + tmpValue : (tmpValue < 100) ? "0" + tmpValue : (tmpValue > 186) ? "186" : tmpValue;
                                     //cell.css = "xnd-icon-vw xnd-icon-vwicn" + newValue;
                                     //returnValue = "<img src='/icons/vwicn" + newValue + ".gif'/>";
-                                    tmpReturnValue = "<div class='xnd-icon-vw xnd-icon-vwicn" + newValue + "'>&nbsp;</div>";
-                                    returnValue += tmpReturnValue;
+                                    clearFloat = (colConfig.listseparator == 'newline') ? "style='clear: left;'" : "";
+                                    tmpReturnValue = "<div class='xnd-icon-vw xnd-icon-vwicn" + newValue + "' " + clearFloat + ">&nbsp;</div>";
+                                    if (i == 0) {
+                                        returnValue = tmpReturnValue;
+                                    } else {
+                                    	returnValue = returnValue + separator + tmpReturnValue;
+                                    }
                                 }
                             }
                         }
@@ -1222,27 +1256,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
     getValue: function(value, colConfig, record){
         var dataType, newValue, tmpDate, tmpDateFmt, separator, metadata;
         metadata = record.metadata[colConfig.dataIndex];
-        
-        switch (colConfig.listseparator) {
-            case "none":
-                separator = '';
-                break;
-            case "space":
-                separator = ' ';
-                break;
-            case "comma":
-                separator = ',';
-                break;
-            case "newline":
-                separator = '<br/>';
-                break;
-            case "semicolon":
-                separator = ';';
-                break;
-            default:
-                separator = '';
-        }
-        
+        separator = this.getListSeparator(colConfig);
         newValue = '';
         
         // handle non-categorized columns
@@ -1309,6 +1323,33 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             } // end if (colConfig.icon)
         } // end for
         return newValue;
+    },
+
+    // private
+    getListSeparator : function(colConfig) {
+    	var separator = '';
+    	
+        switch (colConfig.listseparator) {
+            case "none":
+                separator = '';
+                break;
+            case "space":
+                separator = ' ';
+                break;
+            case "comma":
+                separator = ',';
+                break;
+            case "newline":
+                separator = '<br/>';
+                break;
+            case "semicolon":
+                separator = ';';
+                break;
+            default:
+                separator = '';
+        }
+        
+        return separator;
     },
     
     // private
