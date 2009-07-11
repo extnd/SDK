@@ -10,12 +10,14 @@ Ext.extend(Ext.nd.data.CategorizedStore, Ext.nd.data.DominoViewStore, {
         if (!rec.isCategory || rec.childrenRendered) {
             return;
         }
-        
+        // TODO: need to add multiExpandCount
         this.proxy.doRequest(
         	'read', // action 
         	null, // record
             {
-                expand: position
+                start: position,
+                expand: position,
+                count: 60
             }, // params
             this.reader, // reader
             this.loadCategoryRecords, // callback
