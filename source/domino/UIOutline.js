@@ -216,10 +216,15 @@ Ext.extend(Ext.nd.UIOutline, Ext.tree.TreePanel, {
     addToFolderSuccess: function(response, request) {
         this.fireEvent('addfoldersuccess', this, response, request);
         var grid = request.extraParams.grid;
-        var selections = request.extraParams.selections;
-        Ext.each(selections, function(record, index, allItems){
-        	grid.getStore().remove(record);
-        });
+        // can't remove from a view but a folder we can
+        // TODO: should really check to see if user has
+        // access to remove from the folder
+        if (grid.isFolder) {
+            var selections = request.extraParams.selections;
+            Ext.each(selections, function(record, index, allItems){
+                grid.getStore().remove(record);
+            });
+        }
         
     },// eo addToFolderSuccess
 
