@@ -248,7 +248,7 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
         
         // go ahead and setup our Record and our Reader
         this.ViewEntryRecord = Ext.data.Record.create(this.dominoView.recordConfig);
-        this.viewEntryReader = new Ext.nd.data.DominoViewXmlReader(this.dominoView.meta, this.ViewEntryRecord);
+        this.viewEntryReader = new Ext.nd.data.ViewXmlReader(this.dominoView.meta, this.ViewEntryRecord);
         this.setStore();
         
         if (this.scope) {
@@ -261,8 +261,8 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
     setStore : function() {
     
         // create the Data Store
-        this.store = new Ext.nd.data[(this.isCategorized && this.multiExpand) ? 'CategorizedStore' : 'DominoViewStore'](Ext.apply({
-            // this.store = new Ext.nd.data.DominoViewStore({
+        this.store = new Ext.nd.data[(this.isCategorized && this.multiExpand) ? 'CategorizedStore' : 'ViewStore'](Ext.apply({
+            // this.store = new Ext.nd.data.ViewStore({
             proxy: new Ext.data.HttpProxy({
                 url: this.viewUrl + '?ReadViewEntries',
                 method: "GET"
