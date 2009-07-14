@@ -14,26 +14,27 @@
   <file name="grid\DominoGridView.js" path="grid" />
   <file name="extnd.js" path="" />
   <target name="Extnd All" file="$output\extnd-all.js" debug="True" shorthand="False" shorthand-list="YAHOO.util.Dom.setStyle&#xD;&#xA;YAHOO.util.Dom.getStyle&#xD;&#xA;YAHOO.util.Dom.getRegion&#xD;&#xA;YAHOO.util.Dom.getViewportHeight&#xD;&#xA;YAHOO.util.Dom.getViewportWidth&#xD;&#xA;YAHOO.util.Dom.get&#xD;&#xA;YAHOO.util.Dom.getXY&#xD;&#xA;YAHOO.util.Dom.setXY&#xD;&#xA;YAHOO.util.CustomEvent&#xD;&#xA;YAHOO.util.Event.addListener&#xD;&#xA;YAHOO.util.Event.getEvent&#xD;&#xA;YAHOO.util.Event.getTarget&#xD;&#xA;YAHOO.util.Event.preventDefault&#xD;&#xA;YAHOO.util.Event.stopEvent&#xD;&#xA;YAHOO.util.Event.stopPropagation&#xD;&#xA;YAHOO.util.Event.stopEvent&#xD;&#xA;YAHOO.util.Anim&#xD;&#xA;YAHOO.util.Motion&#xD;&#xA;YAHOO.util.Connect.asyncRequest&#xD;&#xA;YAHOO.util.Connect.setForm&#xD;&#xA;YAHOO.util.Dom&#xD;&#xA;YAHOO.util.Event">
-    <include name="extnd.js" />
-    <include name="domino\Document.js" />
-    <include name="data\DominoPagingToolbar.js" />
-    <include name="domino\DominoUI.js" />
-    <include name="data\DominoViewStore.js" />
-    <include name="data\DominoViewXmlReader.js" />
-    <include name="domino\Formula.js" />
-    <include name="domino\UIOutline.js" />
-    <include name="domino\UIView.js" />
-    <include name="domino\UIWorkspace.js" />
-    <include name="domino\Actionbar.js" />
-    <include name="widgets\ViewSuggest.js" />
+    <include name="core\extnd.js" />
+    <include name="widgets\layout\DominoUI.js" />
+    <include name="data\ViewDesign.js" />
+    <include name="data\ViewStore.js" />
+    <include name="data\ViewXmlReader.js" />
     <include name="data\CategorizedStore.js" />
-    <include name="domino\CategorizedView.js" />
-    <include name="domino\CategorizedRSM.js" />
-    <include name="domino\SearchPlugin.js" />
-    <include name="domino\SingleCategoryCombo.js" />
-    <include name="domino\PickListField.js" />
-    <include name="domino\PLTypeAhead.js" />
-    <include name="domino\UIDocument.js" />
+    <include name="widgets\grid\CategorizedRowSelectionModel.js" />
+    <include name="widgets\grid\CategorizedView.js" />
+    <include name="widgets\grid\ViewSuggest.js" />
+    <include name="widgets\grid\UIView.js" />
+    <include name="widgets\Actionbar.js" />
+    <include name="widgets\form\Document.js" />
+    <include name="core\Formula.js" />
+    <include name="widgets\PagingToolbar.js" />
+    <include name="widgets\form\PickListField.js" />
+    <include name="widgets\form\PickListTypeAhead.js" />
+    <include name="widgets\grid\SearchPlugin.js" />
+    <include name="widgets\grid\SingleCategoryCombo.js" />
+    <include name="widgets\form\UIDocument.js" />
+    <include name="widgets\tree\UIOutline.js" />
+    <include name="widgets\UIWorkspace.js" />
   </target>
   <file name="domino\Actionbar.js" path="domino" />
   <file name="widgets\ViewSuggest.js" path="widgets" />
@@ -46,4 +47,26 @@
   <file name="domino\PickListField.js" path="domino" />
   <file name="domino\PLTypeAhead.js" path="domino" />
   <file name="domino\UIDocument.js" path="domino" />
+  <file name="data\ViewDesign.js" path="data" />
+  <file name="core\extnd.js" path="core" />
+  <file name="core\Formula.js" path="core" />
+  <file name="core\Session.js" path="core" />
+  <file name="data\ViewStore.js" path="data" />
+  <file name="data\ViewXmlReader.js" path="data" />
+  <file name="widgets\form\Document.js" path="widgets\form" />
+  <file name="widgets\form\PickListField.js" path="widgets\form" />
+  <file name="widgets\form\PickListTypeAhead.js" path="widgets\form" />
+  <file name="widgets\form\UIDocument.js" path="widgets\form" />
+  <file name="widgets\grid\CategorizedRowSelectionModel.js" path="widgets\grid" />
+  <file name="widgets\grid\CategorizedView.js" path="widgets\grid" />
+  <file name="widgets\grid\SearchPlugin.js" path="widgets\grid" />
+  <file name="widgets\grid\SingleCategoryCombo.js" path="widgets\grid" />
+  <file name="widgets\grid\UIView.js" path="widgets\grid" />
+  <file name="widgets\grid\uivw.js" path="widgets\grid" />
+  <file name="widgets\grid\ViewSuggest.js" path="widgets\grid" />
+  <file name="widgets\layout\DominoUI.js" path="widgets\layout" />
+  <file name="widgets\tree\UIOutline.js" path="widgets\tree" />
+  <file name="widgets\Actionbar.js" path="widgets" />
+  <file name="widgets\PagingToolbar.js" path="widgets" />
+  <file name="widgets\UIWorkspace.js" path="widgets" />
 </project>
