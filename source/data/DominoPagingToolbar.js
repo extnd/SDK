@@ -31,7 +31,7 @@ Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
 		 *	with Domino's hierarchical start params (i.e. 2.3.2.1, etc.) 
 		 */
 		Ext.each(this.items.items, function(item, index, allItems){
-			if (item.getXType && item.getXType() == 'numberfield'){
+			if (item.getXType && item.isXType('numberfield',true)){
 				allItems[index] = this.inputItem = new Ext.form.TextField({
 					cls: 'x-tbar-page-number',
 					enableKeyEvents: true,
@@ -198,7 +198,7 @@ Ext.extend(Ext.nd.DominoPagingToolbar, Ext.PagingToolbar, {
 
     getUIView: function() {
     	if (!this.uiView) {
-    		if (this.ownerCt && this.ownerCt.getXType() == 'xnd-uiview') {
+    		if (this.ownerCt && this.ownerCt.isXType('xnd-uiview',true)) {
     			this.uiView = this.ownerCt;
     		} else {
     			this.uiView = null;
