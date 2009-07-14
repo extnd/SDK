@@ -35,8 +35,18 @@ Ext.nd.form.PickListField = Ext.extend(Ext.form.TriggerField,  {
      */
     triggerClass : 'xnd-form-picklist-trigger',
     /**
+     * @cfg {Number} width
+     * The width of the input field (defaults to 100).
+     */
+    width : 100,
+    /**
+     * @cfg {Number} pickListWidth
+     * The width of the PickList dialog window (defaults to 300).
+     */
+    pickListWidth : 300,
+    /**
      * @cfg {Number} column
-     * The column whose values you want returned from the selected choices.
+     * The column whose values you want returned from the selected choices (defaults to 0).
      */
     column : 0,
     /**
@@ -47,6 +57,10 @@ Ext.nd.form.PickListField = Ext.extend(Ext.form.TriggerField,  {
 
     // private
     defaultAutoCreate : {tag: "input", type: "text", autocomplete: "off"},
+    category : undefined,
+    showCategoryComboBox : false,
+    categoryComboBoxCount: -1,
+    
 
     initComponent : function(){
         if (this.type == 'names') {
@@ -93,15 +107,19 @@ Ext.nd.form.PickListField = Ext.extend(Ext.form.TriggerField,  {
      * @hide
      */
     // private
-    // Implements the default empty TriggerField.onTriggerClick function to display the DatePicker
+    // Implements the default empty TriggerField.onTriggerClick function to display the PickList
     onTriggerClick : function(){
         var ws = new Ext.nd.UIWorkspace();
         ws.pickList({
             type : this.type,
+            width : this.pickListWidth,
             multipleSelection : this.multipleSelection,
             allowNew : this.allowNew,
             viewName : this.viewName,
             column : this.column,
+            category : this.category,
+            showCategoryComboBox : this.showCategoryComboBox,
+            categoryComboBoxCount: this.categoryComboBoxCount,
             callback: this.processReturnValues.createDelegate(this)
         })
     },
@@ -115,4 +133,4 @@ Ext.nd.form.PickListField = Ext.extend(Ext.form.TriggerField,  {
 });
 
 
-Ext.reg('xnd-picklist', Ext.nd.form.PickListField);
+Ext.reg('xnd-form-picklist', Ext.nd.form.PickListField);
