@@ -162,11 +162,11 @@ Ext.nd.SearchPlugin = Ext.extend(Ext.util.Observable, {
             // define the Domino viewEntry record
             var viewEntry = Ext.data.Record.create(this.toolbar.getUIView().dominoView.recordConfig);
             
-            var viewEntryReader = new Ext.nd.data.DominoViewXmlReader(this.toolbar.getUIView().dominoView.meta, viewEntry);
+            var viewEntryReader = new Ext.nd.data.ViewXmlReader(this.toolbar.getUIView().dominoView.meta, viewEntry);
             // create reader that reads viewEntry records
             
             
-            var ds = new Ext.nd.data.DominoViewStore({
+            var ds = new Ext.nd.data.ViewStore({
                 proxy: new Ext.data.HttpProxy({
                     url: Ext.nd.extndUrl + 'SearchView?OpenAgent',
                     method: "GET"

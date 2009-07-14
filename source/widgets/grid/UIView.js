@@ -202,7 +202,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             expandIcon: Ext.nd.extndUrl + "resources/images/plus.gif",
             dateTimeFormats: Ext.nd.dateTimeFormats,
             tbar: this.tbar || null,
-            bbar: (this.showPagingToolbar) ? new Ext.nd.DominoPagingToolbar({
+            bbar: (this.showPagingToolbar) ? new Ext.nd.PagingToolbar({
                 uiView: this,
                 store: this.store,
                 pageSize: this.count,
@@ -897,7 +897,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
 
         // next, let's split value into an array so that we can
         // process the listseparator.  we use '\n' since that is how
-        // we stored multi-values in the DominoViewXmlReader.getValue
+        // we stored multi-values in the XmlReader.getValue
         // method.
     	if (value) {
             value = value.split('\n');
@@ -1062,7 +1062,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         for (var i = 0, len = value.length; i < len; i++) {
             var sep = (i + 1 < len) ? separator : '';
             dataType = metadata.type; // set in the
-            // DominoViewXmlReader.getNamedValue method
+            // XmlReader.getNamedValue method
             var tmpValue = value[i];
             
             // handle columns set to show an icon a little differently

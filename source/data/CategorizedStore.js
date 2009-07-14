@@ -4,7 +4,7 @@ Ext.nd.data.CategorizedStore = function(config){
     this.addEvents('categoryload');
 };
 
-Ext.extend(Ext.nd.data.CategorizedStore, Ext.nd.data.DominoViewStore, {
+Ext.extend(Ext.nd.data.CategorizedStore, Ext.nd.data.ViewStore, {
     loadCategory: function(position, options){
         var rec = this.findRecordByPosition(position);
         if (!rec.isCategory || rec.childrenRendered) {
