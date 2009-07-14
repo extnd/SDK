@@ -40,7 +40,7 @@ Ext.nd.UIWorkspace.prototype = {
         var dialog, cb;
         var opt = {
             viewName: "f1",
-            width: (options.multipleSelection && !options.useCheckboxSm) ? 600 : 500,
+            width: (options.multipleSelection && !options.useCheckboxSelection) ? 600 : 500,
             height: 400,
             shadow: true,
             minWidth: 500,
@@ -49,7 +49,7 @@ Ext.nd.UIWorkspace.prototype = {
             multipleSelection: false,
             showActionbar: false,
             showSearch: true,
-            useCheckboxSm: false,
+            useCheckboxSelection: false,
             viewOptions: "",
             
             title: "PickListTest",
@@ -63,7 +63,7 @@ Ext.nd.UIWorkspace.prototype = {
             categoryComboBoxCount: -1
         }
         
-        // apply passed inn options to our opt object
+        // apply passed in options to our opt object
         Ext.apply(opt, options);
         
         // viewUrl is either passed in or built from dbPath and viewName
@@ -86,35 +86,20 @@ Ext.nd.UIWorkspace.prototype = {
         
             var cb = false;
             var arSelections, map, data;
-
-            if (opt.multipleSelection && !opt.useCheckboxSm) {
-                arSelections = opt.selections.root.childNodes; //[0].text[0];
-            } else {
-                arSelections = opt.choices.getDocuments();
-            }
-
-            
-            
+            arSelections = opt.choices.getDocuments();
             var arReturn = new Array();
             opt.dialog.close();
             
-            
             for (var i = 0; i < arSelections.length; i++) {
-                if (opt.multipleSelection && !opt.useCheckboxSm) {
-                    arReturn.push(arSelections[i].text[0]);    
-                } else {
-                    var map = arSelections[i].fields.keys[opt.column];
-                    var data = arSelections[i].data[map].data;
-                    for (var d = 0; d < data.length; d++) {
-                        arReturn.push(data[d]);
-                    }
-                }
+                var map = arSelections[i].fields.keys[opt.column];
+                var data = arSelections[i].data[map];
+                arReturn.push(data);                
             }
             
             // move the callback to a local variable
             if (opt.callback) {
                 cb = opt.callback;
-            //opt.callback = false;
+                //opt.callback = false;
             }
             
             // if a callback has been defined, call it and pass the array of return values to it
@@ -133,7 +118,7 @@ Ext.nd.UIWorkspace.prototype = {
             // move the callback to a local variable
             if (opt.callback) {
                 cb = opt.callback;
-            //opt.callback = false;
+                //opt.callback = false;
             }
             
             // close the window (actually destroys it so it is recreated each time and we're ok with that)
@@ -151,11 +136,11 @@ Ext.nd.UIWorkspace.prototype = {
 
 
         opt.choices = new Ext.nd.UIView({
-            //region: (opt.multipleSelection && !opt.useCheckboxSm) ? 'west' : 'center',
+            //region: (opt.multipleSelection && !opt.useCheckboxSelection) ? 'west' : 'center',
             region : 'center',
             layout : 'fit',
             singleSelect: !opt.multipleSelection,
-            useCheckboxSm: (opt.multipleSelection) ? opt.useCheckboxSm : false,
+            selModelConfig: (opt.multipleSelection) ? {type : 'checkbox', singSelect : false} : {},
             id: 'xnd-picklist-view',
             layout: 'fit',
             //width: (opt.multipleSelection && opt.useCheckboxSm) ? opt.width : ((opt.width / 2)),
@@ -217,14 +202,14 @@ Ext.nd.UIWorkspace.prototype = {
             // using the 2 panel layout with selections to the right
             // and therefore we need to add this doc or rather the column
             // to the selections tree
-            if (opt.multipleSelection && !opt.useCheckboxSm) {
+            if (opt.multipleSelection && !opt.useCheckboxSelection) {
                 var selected = opt.choices.getDocuments();
                 // just in case we somehow get here without really having dblclicked on a doc
                 if (selected.length > 0) {
                     for (var i=0; i<selected.length; i++){
 
                         map = selected[i].fields.keys[opt.column];
-                        data = selected[i].data[map].data;
+                        data = selected[i].data[map];
                     
                         newNode = new Ext.tree.TreeNode({
                             text : data 
@@ -248,7 +233,7 @@ Ext.nd.UIWorkspace.prototype = {
         
         // if mutli select and a checkbox selection model isn't wanted
         // then show the 2 pane selection layout
-        if (opt.multipleSelection && !opt.useCheckboxSm) {
+        if (opt.multipleSelection && !opt.useCheckboxSelection) {
 
             // we already have a view loaded in the west region so if the user want's to be able to
             // pick more than one item and the check box selection model is not wanted, then we
