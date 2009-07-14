@@ -1,6 +1,6 @@
 
 /**
- * @class Ext.nd.data.DominoViewStore
+ * @class Ext.nd.data.ViewStore
  * @extends Ext.data.Store
  * A specialized version of {@link Ext.data.Store} to deal with oddities from
  * reading a Domino view via ?ReadViewEntries.  Use for widgets such as the
@@ -10,11 +10,11 @@
  * @param {Object} config A config object containing the objects needed for the Store to access data,
  * and read the data into Records.
  */
-Ext.nd.data.DominoViewStore = function(config){
-    Ext.nd.data.DominoViewStore.superclass.constructor.call(this, config);
+Ext.nd.data.ViewStore = function(config){
+    Ext.nd.data.ViewStore.superclass.constructor.call(this, config);
 };
 
-Ext.extend(Ext.nd.data.DominoViewStore, Ext.data.Store, {
+Ext.extend(Ext.nd.data.ViewStore, Ext.data.Store, {
     /**
      * Loads the Record cache from the configured Proxy using the configured Reader.
      * <p>

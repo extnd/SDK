@@ -1,5 +1,5 @@
 /**
- * @class Ext.nd.data.DominoViewXmlReader
+ * @class Ext.nd.data.ViewXmlReader
  * @extends Ext.data.XmlReader
  * An expanded version of Ext's XmlReader to deal with Domino's funky ReadViewEntries format
  * @cfg {String} totalRecords - override domino's toplevelentries
@@ -14,15 +14,15 @@
  * Record subclass created with {@link Ext.data.Record#create}, or an array of objects with which to call
  * Ext.data.Record.create.  See the {@link Ext.data.Record} class for more details.
  */
-Ext.nd.data.DominoViewXmlReader = function(meta, recordType) {
-  Ext.nd.data.DominoViewXmlReader.superclass.constructor.call(this, meta, recordType);
+Ext.nd.data.ViewXmlReader = function(meta, recordType) {
+  Ext.nd.data.ViewXmlReader.superclass.constructor.call(this, meta, recordType);
 };
 
-Ext.extend(Ext.nd.data.DominoViewXmlReader, Ext.data.XmlReader, {
+Ext.extend(Ext.nd.data.ViewXmlReader, Ext.data.XmlReader, {
   /**
    * Create a data block containing Ext.data.Records from an XML document.
    * @param {Object} doc A parsed XML document.
-   * @return {Object} records A data block which is used by an {@link Ext.nd.DominoViewStore} as
+   * @return {Object} records A data block which is used by an {@link Ext.nd.ViewStore} as
    * a cache of Ext.data.Records.
    */
   readRecords : function(doc) {
