@@ -96,24 +96,19 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
             
             
             // if name is blank, give it a new unique name
-            //var name = q.selectValue('@name', col, 'columnnumber_' + columnnumber);
             var name = q.selectValue('@itemname', col, 'columnnumber_' + columnnumber);
+            name = name.replace('$', '_'); // Ext doesn't like '$'
             
-            //var title = q.selectValue('columnheader/@title', col, "&nbsp;");
             var title = q.selectValue('columnheader/@title', col, "&nbsp;");
             
-            // multiplying by 1.41 converts the width to pixels
-            //var width = Math.max(q.selectNumber('@width', col) * 1.41, 22);
             // multiplying by 11.28 converts the inch width to pixels
             var width = Math.max(q.selectNumber('@width', col) * 11.28, 22);
             
             // response
-            //var response = q.selectValue('@response', col, false);
             var response = q.selectValue('@responsesonly', col, false);
             var responseValue = (response) ? true : false;
             
             // twistie
-            //var twistie = q.selectValue('@twistie', col, false);
             var twistie = q.selectValue('@twisties', col, false);
             var twistieValue = (twistie) ? true : false;
             
@@ -121,26 +116,18 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
             var listseparatorValue = q.selectValue('@listseparator', col, 'none');
             
             // resize
-            var resize = q.selectValue('@resize', col, false);
             var resize = q.selectValue('@resizable', col, false);
             var resizeValue = (resize) ? true : false;
                         
             // resort asc
-            //var resortascending = q.selectValue('@resortascending', col, false);
             var resort = q.selectValue('@resort', col, false);
-            //var resortascendingValue = (resortascending) ? true : false;
             var resortascendingValue = (resort == 'ascending' || resort == 'both') ? true : false;
             
             // resort desc
-            //var resortdescending = q.selectValue('@resortdescending', col, false);
-            //var resortdescendingValue = (resortdescending) ? true : false;
             var resortdescendingValue = (resort == 'descending' || resort == 'both') ? true : false;
             
             // jump to view
-            //var resorttoview = q.selectValue('@resorttoview', col, false);
-            //var resorttoviewValue = (resorttoview) ? true : false;
             var resorttoviewValue = (resort == 'toview') ? true : false;
-            //var resortviewunidValue = (resorttoview) ? q.selectValue('@resortviewunid', col, "") : "";
             var resortviewunidValue = (resorttoviewValue) ? q.selectValue('@resorttoview', col, "") : "";
             
             // check the storeConfig.remoteSort property to see if the user wants to do sorting from cache
@@ -150,20 +137,15 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
             var isSortable = (this.storeConfig.remoteSort === false) ? true : (resortascendingValue || resortdescendingValue) ? true : false;
             
             // icon
-            //var icon = q.selectValue('@icon', col, false);
             var icon = q.selectValue('@showasicons', col, false);
             var iconValue = (icon) ? true : false;
             
-            // align (1=right, 2=center, null=left)
+            // align
             var align = q.selectValue('@align', col, false);
-            //var alignValue = (align) ? ((align == "2") ? 'center' : 'right') : 'left';
             var alignValue = (align) ? align : 'left';
             
-            // headerAlign (1=right, 2=center, null=left) - TODO - need to
-            // figure out how to update the header with this
-            //var headerAlign = q.selectValue('@headeralign', col, false);
+            // headerAlign
             var headerAlign = q.selectValue('columnheader/@align', col, false);
-            //var headerAlignValue = (headerAlign) ? ((headerAlign == "2") ? 'center' : 'right') : 'left';
             var headerAlignValue = (headerAlign) ? headerAlign : 'left';
             
             // date formatting
@@ -212,8 +194,7 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
         this.isFolder = !this.isView;
         var root = (this.isView) ? 'view' : 'folder';
         
-        // does this view need to have it's last column extended? or did the developer specify an autoExpandColumn?
-        
+        // does this view need to have it's last column extended? or did the developer specify an autoExpandColumn?        
         if (!this.autoExpandColumn) {
             if (this.extendLastColumn === false) {
                 this.autoExpandColumn = false;
