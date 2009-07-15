@@ -11,10 +11,21 @@
  * and read the data into Records.
  */
 Ext.nd.data.ViewStore = function(config){
+    
+    // remap paramNames to work with Domino views
+    Ext.apply(config, {paramNames : {
+        start: 'start',
+        limit: 'count', // domino uses count
+        sort: 'sort',
+        dir: 'dir'
+    }});
+    
     Ext.nd.data.ViewStore.superclass.constructor.call(this, config);
 };
 
 Ext.extend(Ext.nd.data.ViewStore, Ext.data.Store, {
+
+    
     /**
      * Loads the Record cache from the configured Proxy using the configured Reader.
      * <p>
