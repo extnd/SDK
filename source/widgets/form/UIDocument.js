@@ -553,12 +553,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
     // private
     convertToTimeField : function(el){
     
-        var tm = new Ext.form.TimeField({
-            id: (el.id ? el.id : el.name),
-            increment: 60,
-            selectOnFocus: true,
-            triggerClass: 'xnd-form-time-trigger'
-        });
+        var tm = new Ext.nd.form.TimeField();
         tm.applyToMarkup(el);
         // now add to items
         this.form.items.add(tm);                        
@@ -745,10 +740,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
     
     convertToNumberField : function(el){
         
-        var nbr = new Ext.form.NumberField({
-            id: (el.id ? el.id : el.name),
-            selectOnFocus: true
-        });
+        var nbr = new Ext.form.NumberField();
         nbr.applyToMarkup(el);
         // now add to items
         this.form.items.add(nbr);                        
@@ -898,19 +890,9 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
                 this.convertToSelectFromFormula(el, formula);
                 return;
             }
-            
-            
+           
             return; //the below shouldn't be needed
-            
-            if (!allowMultiValues && !allowNew) {
-                this.convertSelectToComboBox(el, false);    
-            } else if (!allowMultiValues && allowNew) {
-                this.convertToAllowNewSelect(el, allowNew);
-            } else if (allowMultiValues) {
-                this.convertToAllowMultiValueSelect(el);
-            }
-            
-            
+       
         }
         
     },
@@ -1146,12 +1128,14 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
 
     fieldContains : function(fld, searchString) {
     	var oField = this.getForm().findField(fld);
+    	var bContains = false;
     	if (oField) {
     		try {
     			var test = oField.getValue().indexOf(searchString);
-				return (test === -1) ? false : true;
+				bContains = (test === -1) ? false : true;
     		} catch(e){}
     	}
+    	return bContains;
     },
     
     getTarget : function() {
