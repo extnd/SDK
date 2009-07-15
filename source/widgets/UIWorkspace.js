@@ -91,8 +91,8 @@ Ext.nd.UIWorkspace.prototype = {
             opt.dialog.close();
             
             for (var i = 0; i < arSelections.length; i++) {
-                var map = arSelections[i].fields.keys[opt.column];
-                var data = arSelections[i].data[map];
+                map = (typeof opt.column == 'string') ? opt.column : arSelections[i].fields.keys[opt.column];
+                data = arSelections[i].data[map];
                 arReturn.push(data);                
             }
             
@@ -207,8 +207,7 @@ Ext.nd.UIWorkspace.prototype = {
                 // just in case we somehow get here without really having dblclicked on a doc
                 if (selected.length > 0) {
                     for (var i=0; i<selected.length; i++){
-
-                        map = selected[i].fields.keys[opt.column];
+                        map = (typeof opt.column == 'string') ? opt.column : selectioned[i].fields.keys[opt.column];
                         data = selected[i].data[map];
                     
                         newNode = new Ext.tree.TreeNode({
