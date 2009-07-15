@@ -140,4 +140,4 @@ Ext.extend(Ext.nd.form.ComboBox, Ext.form.ComboBox,  {
     
 });
 
-Ext.reg('xnd-form-combo', Ext.nd.form.ComboBox);
+Ext.reg('xnd-combo', Ext.nd.form.ComboBox);
