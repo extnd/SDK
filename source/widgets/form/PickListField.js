@@ -6,7 +6,14 @@
  * Create a new PickListField
  * @param {Object} config
  */
-Ext.nd.form.PickListField = Ext.extend(Ext.form.TriggerField,  {
+Ext.nd.form.PickListField = function(config){
+    
+    config = Ext.nd.util.cleanUpConfig(config);
+    Ext.nd.form.PickListField.superclass.constructor.call(this, config);
+    
+}
+
+Ext.extend(Ext.nd.form.PickListField, Ext.form.TriggerField, {
     /**
      * @cfg {String} type
      * The picklist type (custom or names)
@@ -115,7 +122,9 @@ Ext.nd.form.PickListField = Ext.extend(Ext.form.TriggerField,  {
             width : this.pickListWidth,
             multipleSelection : this.multipleSelection,
             allowNew : this.allowNew,
+            dbPath : this.dbPath,
             viewName : this.viewName,
+            viewUrl : this.viewUrl,
             column : this.column,
             category : this.category,
             showCategoryComboBox : this.showCategoryComboBox,
