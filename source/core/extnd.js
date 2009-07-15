@@ -270,7 +270,8 @@ Ext.nd.util.addIFrame = function(config) {
 			panel.show();
 		}
 	}
-}
+    
+} // eo addIFrame
 
 Ext.nd.util.doLayoutAndShow = function(panel) {
 	// all component's owner Ext.Container should have a doLayout
@@ -284,4 +285,24 @@ Ext.nd.util.doLayoutAndShow = function(panel) {
 		panel.show();
 	}
 
-}
+} // eo doLayoutAndShow
+
+Ext.nd.util.cleanUpConfig = function(config) {
+    
+    // viewUrl is either passed in or built from dbPath and viewName
+    if (typeof config.viewName == 'string') {
+        if (!config.dbPath && Ext.nd.Session) {
+             config.dbPath = Ext.nd.Session.currentDatabase.webFilePath;
+        }
+        config.viewUrl = config.dbPath + config.viewName;
+    }
+    // ok, no viewName but do we have the viewUrl?
+    else if (config.viewUrl) {
+        var vni = config.viewUrl.lastIndexOf('/') + 1;
+        config.dbPath = config.viewUrl.substring(0, vni);
+        config.viewName = config.viewUrl.substring(vni);
+    }
+
+    return config;
+
+} // eo cleanUpConfig
