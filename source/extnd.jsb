@@ -16,6 +16,7 @@
     <include name="widgets\grid\SingleCategoryCombo.js" />
     <include name="widgets\form\UIDocument.js" />
     <include name="widgets\form\Combo.js" />
+    <include name="widgets\form\TimeField.js" />
     <include name="widgets\form\Document.js" />
     <include name="widgets\form\PickListField.js" />
     <include name="widgets\form\PickListTypeAhead.js" />
@@ -47,4 +48,7 @@
   <file name="widgets\Actionbar.js" path="widgets" />
   <file name="widgets\PagingToolbar.js" path="widgets" />
   <file name="widgets\UIWorkspace.js" path="widgets" />
+  <file name="data\CategorizedStore.js" path="data" />
+  <file name="data\ViewDesign.js" path="data" />
+  <file name="widgets\form\TimeField.js" path="widgets\form" />
 </project>
