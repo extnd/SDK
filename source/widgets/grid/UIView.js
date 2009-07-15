@@ -14,29 +14,7 @@ Ext.nd.UIView = function(config){
         delete config.gridConfig;
     }
     
-    // viewUrl is either passed in or built from dbPath and viewName
-    if (config.viewName) {
-        if (config.dbPath) {
-            config.viewUrl = config.dbPath + config.viewName;
-        }
-        else 
-            if (Ext.nd.Session) {
-                config.dbPath = Ext.nd.Session.currentDatabase.webFilePath;
-                config.viewUrl = config.dbPath + config.viewName;
-            }
-            else {
-                Ext.Msg.alert('Error', 'UIView must have access to Ext.nd.Session or a dbPath must be defined if viewName is defined')
-            }
-    }
-    else 
-        if (config.viewUrl) {
-            var vni = config.viewUrl.lastIndexOf('/') + 1;
-            config.dbPath = config.viewUrl.substring(0, vni);
-            config.viewName = config.viewUrl.substring(vni);
-        }
-        else {
-            Ext.Msg.alert('Error', 'UIView must have viewUrl or access to Ext.nd.Session and viewName defined');
-        }
+    config = Ext.nd.util.cleanUpConfig(config);
     
     // We need some dummy colConfig and datastore definitions
     // so that Ext can render the grid, these get replaced once we
@@ -95,7 +73,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         
         this.cols = [];
         this.recordConfig = [];
-        this.baseParams = {}
+        this.baseParams = {};
         this.renderers = [];
         
         // if the 'sm' shortcut was used then move that to selModel
