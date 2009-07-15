@@ -142,4 +142,4 @@ Ext.extend(Ext.nd.form.PickListField, Ext.form.TriggerField, {
 });
 
 
-Ext.reg('xnd-form-picklist', Ext.nd.form.PickListField);
+Ext.reg('xnd-picklist', Ext.nd.form.PickListField);
