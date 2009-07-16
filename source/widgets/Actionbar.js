@@ -78,11 +78,10 @@ Ext.nd.Actionbar = function(config){
     
     Ext.apply(this, config);
     Ext.nd.Actionbar.superclass.constructor.call(this);
-    
-    // noteUrl is either passed in or built from dbPath and noteName
+
     this.noteUrl = (this.noteUrl) ? this.noteUrl : this.dbPath + this.noteName;
     
-    // make sure we have a noteName
+    /* make sure we have a noteName */
     if (this.noteName == '') {
         var vni = this.noteUrl.lastIndexOf('/') + 1;
         this.dbPath = this.noteUrl.substring(0, vni);
@@ -92,14 +91,15 @@ Ext.nd.Actionbar = function(config){
 
 Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
 
-    // plugins call init
+    /* plugins call init */
     init: function(toolbar){
     
         this.toolbar = toolbar;
         
-        // if the parent toolbar is an Ext.nd.Actionbar
-        // then we need to wait to add the actions 
-        // until the parent is done with adding its actions
+        /* if the parent toolbar is an Ext.nd.Actionbar
+         * then we need to wait to add the actions 
+         * until the parent is done with adding its actions
+         */
         
         if (this.toolbar.getXType() == 'xnd-actionbar') {
             this.toolbar.on('actionsloaded', this.addActions, this);
@@ -120,14 +120,16 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
         'actionsloaded');
         
         
-        // do this so that if used as a plugin or not
-        // both ways will have a 'toolbar' property that 
-        // references the toolbar, but only call the 
-        // addActions method if the isPlugin property
-        // is not set to true.  Otherwise, this actionbar
-        // is being used as a plugin and the init method
-        // will be called and the actions added to the
-        // existing toolbar 
+        /* 
+         * do this so that if used as a plugin or not
+         * both ways will have a 'toolbar' property that 
+         * references the toolbar, but only call the 
+         * addActions method if the isPlugin property
+         * is not set to true.  Otherwise, this actionbar
+         * is being used as a plugin and the init method
+         * will be called and the actions added to the
+         * existing toolbar
+         */ 
         
         if (!this.isPlugin) {
             Ext.nd.Actionbar.superclass.initComponent.call(this);
@@ -145,26 +147,31 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
     
     // private
     addActions: function(){
-    
-        // first, get the domino actionbar
+
+        /* first, get the domino actionbar */
         this.getDominoActionbar();
         
-        // now hide it so we don't get the flicker of it
-        // showing for a second before it gets removed
-        // after we replace it with an Ext toolbar
+        /* 
+         * now hide it so we don't get the flicker of it
+         * showing for a second before it gets removed
+         * after we replace it with an Ext toolbar
+         * 
+         */
         this.hideDominoActionbar();
         
         if (!this.useDxl) {
             this.addActionsFromDocument();
         }
         else if(this.noteName === '') {
-        	// do nothing since we don't have a valid noteName
-        	// this could be unintentional or intentional in the case
-        	// that a tbar was passed to a UIView/UIDocument and we always wrap 
-        	// that in an Ext.nd.Actionbar so we can expose the
-        	// methods of Ext.nd.Actionbar like getUIView() and getUIDocument()
         	
-        	// however, do need to call this event!
+            /* do nothing since we don't have a valid noteName
+             * this could be unintentional or intentional in the case
+             * that a tbar was passed to a UIView/UIDocument and we always wrap 
+             * that in an Ext.nd.Actionbar so we can expose the
+             * methods of Ext.nd.Actionbar like getUIView() and getUIDocument()
+             * however, do need to call this event!
+             */
+        	
             this.fireEvent('actionsloaded', this.toolbar);
         } else {
             this.addActionsFromDxl();
@@ -190,7 +197,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
         var response = o.responseXML;
         arActions = q.select('action', response);
         
-        // hack to get the correct view title
+        /* hack to get the correct view title */
         if (this.noteType == 'view' && this.target && this.useViewTitleFromDxl) {
             this.setViewName(response);
         }
@@ -210,7 +217,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
             var imageRef = q.selectValue('imageref/@name', action, null);
             var syscmd = q.selectValue('@systemcommand', action, null);
             
-            // SHOW? check hidewhen
+            /* SHOW? check hidewhen */
             if (hidewhen) {
                 var arHide = hidewhen.split(' ');
                 for (var h = 0; h < arHide.length; h++) {
@@ -222,12 +229,12 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                 }
             }
             
-            // SHOW? check 'Include action in Action bar' option
+            /* SHOW? check 'Include action in Action bar' option */
             if (showinbar == 'false') {
                 show = false;
             }
             
-            // SHOW? check lotusscript
+            /* SHOW? check lotusscript */
             var lotusscript = Ext.DomQuery.selectValue('lotusscript', action, null);
             if (lotusscript) {
                 show = false;
@@ -252,12 +259,12 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                 }
             }
             
-            // now go ahead and handle the actions we can show
-            if (show && syscmd == null) { // for now we do not want to show system commands
+            /* now go ahead and handle the actions we can show */
+            if (show && syscmd == null) { /* for now we do not want to show system commands */
                 var slashLoc = title.indexOf('\\');
                 var isSubAction;
                 
-                if (slashLoc > 0) { // we have a subaction
+                if (slashLoc > 0) { /* we have a subaction */
                     isSubAction = true;
                     var arLevels = title.split('\\');
                     var iLevels = arLevels.length;
@@ -283,13 +290,14 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                 
                 // the JavaScript onClick takes precendence
                 if (tmpOnClick) {
-                    // note that we now use createDelegate so we can change the scope
-                    // to 'this' so that view actions can get a handle to the
-                    // grid by simply refering to 'this.getUIView()' and thus, such things as
-                    // getting a handle to the currently selected documents in the view
-                    // where this action was triggered is much easier
-                    // for a form/document you can also get a handle to the uiDocument
-                    // from this.uiDocument
+                    /* note that we now use createDelegate so we can change the scope
+                     * to 'this' so that view actions can get a handle to the
+                     * grid by simply refering to 'this.getUIView()' and thus, such things as
+                     * getting a handle to the currently selected documents in the view
+                     * where this action was triggered is much easier
+                     * for a form/document you can also get a handle to the uiDocument
+                     * from this.uiDocument
+                     */
                     handler = function(bleh){
                         eval(bleh)
                     }.createDelegate(this, [tmpOnClick]);
@@ -585,9 +593,9 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
         var nbrActions = this.actions.length;
         
         if (nbrActions > 0) {
-            for (var i = 0; i < nbrActions; i++) {
-                this.toolbar.add(this.actions[i]);
-            }
+            Ext.each(this.actions, function(c){
+                this.toolbar.add(c);
+            },this);
             // call doLayout so we can see our dynamically added actions
             this.toolbar.doLayout();
             // now make sure the bbar shows by syncing the grid and the grid's parent
