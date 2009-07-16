@@ -1,3 +1,5 @@
+/* first attempt
+
 Ext.override(Ext.grid.CheckboxSelectionModel, {
 
 			// private
@@ -37,14 +39,14 @@ Ext.override(Ext.grid.CheckboxSelectionModel, {
 			},
 
 			onMouseDown : function(e, t) {
-				/*
-				 * If you want make selections only by checking the checker box,
-				 * add "&& t.className == 'x-grid3-row-checker'" to next if
-				 * statement
-				 * 
-				 * If you want to make selection only with Ctrl key pressed, add
-				 * "&& e.ctrlKey" to next if statement
-				 */
+				//
+				// If you want make selections only by checking the checker box,
+				// add "&& t.className == 'x-grid3-row-checker'" to next if
+				// statement
+				// 
+				// If you want to make selection only with Ctrl key pressed, add
+				// "&& e.ctrlKey" to next if statement
+				//
 				if (e.button === 0 && t.className == 'x-grid3-row-checker') {
 					e.stopEvent();
 					var row = e.getTarget('.x-grid3-row');
@@ -66,6 +68,102 @@ Ext.override(Ext.grid.CheckboxSelectionModel, {
 				}
 			}
 		});
+*/
+
+/* 
+ * attempt 2 (http://extjs.com/forum/showthread.php?t=36418)
+ */
+Ext.grid.RowSelectionModel.override(
+{
+    // FIX: added this function so it could be overrided in CheckboxSelectionModel
+    handleDDRowClick: function(grid, rowIndex, e)
+    {
+        if(e.button === 0 && !e.shiftKey && !e.ctrlKey) {
+            this.selectRow(rowIndex, false);
+            grid.view.focusRow(rowIndex);
+        }
+    },
+    
+    initEvents: function ()
+    {
+        if(!this.grid.enableDragDrop && !this.grid.enableDrag){
+            this.grid.on("rowmousedown", this.handleMouseDown, this);
+        }else{ // allow click to work like normal
+            // FIX: made this handler function overrideable
+            this.grid.on("rowclick", this.handleDDRowClick, this);
+        }
+
+        this.rowNav = new Ext.KeyNav(this.grid.getGridEl(), {
+            "up" : function(e){
+                if(!e.shiftKey){
+                    this.selectPrevious(e.shiftKey);
+                }else if(this.last !== false && this.lastActive !== false){
+                    var last = this.last;
+                    this.selectRange(this.last,  this.lastActive-1);
+                    this.grid.getView().focusRow(this.lastActive);
+                    if(last !== false){
+                        this.last = last;
+                    }
+                }else{
+                    this.selectFirstRow();
+                }
+            },
+            "down" : function(e){
+                if(!e.shiftKey){
+                    this.selectNext(e.shiftKey);
+                }else if(this.last !== false && this.lastActive !== false){
+                    var last = this.last;
+                    this.selectRange(this.last,  this.lastActive+1);
+                    this.grid.getView().focusRow(this.lastActive);
+                    if(last !== false){
+                        this.last = last;
+                    }
+                }else{
+                    this.selectFirstRow();
+                }
+            },
+            scope: this
+        });
+
+        var view = this.grid.view;
+        view.on("refresh", this.onRefresh, this);
+        view.on("rowupdated", this.onRowUpdated, this);
+        view.on("rowremoved", this.onRemove, this);
+    }
+});
+
+Ext.grid.CheckboxSelectionModel.override(
+{
+    // FIX: added this function to check if the click occured on the checkbox.
+    //      If so, then this handler should do nothing...
+    handleDDRowClick: function(grid, rowIndex, e)
+    {
+        var t = Ext.lib.Event.getTarget(e);
+        if (t.className != "x-grid3-row-checker") {
+            Ext.grid.CheckboxSelectionModel.superclass.handleDDRowClick.apply(this, arguments);
+        }
+    }
+});
+
+Ext.grid.GridDragZone.override(
+{
+    getDragData: function (e)
+    {
+        var t = Ext.lib.Event.getTarget(e);
+        var rowIndex = this.view.findRowIndex(t);
+        if(rowIndex !== false){
+            var sm = this.grid.selModel;
+            // FIX: Added additional check (t.className != "x-grid3-row-checker"). It may not
+            //      be beautiful solution but it solves my problem at the moment.
+            if ( (t.className != "x-grid3-row-checker") && (!sm.isSelected(rowIndex) || e.hasModifier()) ){
+                sm.handleMouseDown(this.grid, rowIndex, e);
+            }
+            return {grid: this.grid, ddel: this.ddel, rowIndex: rowIndex, selections:sm.getSelections()};
+        }
+
+        return false;
+    }
+});
 
 Ext.namespace("Ext.nd", "Ext.nd.form", "Ext.nd.data", "Ext.nd.util");
 
