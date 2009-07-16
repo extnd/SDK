@@ -7,7 +7,6 @@ Ext.nd.data.ViewDesign = function(config){
     this.storeConfig = {};
     this.isCategorized = false,
     this.callback = Ext.emptyFn;
-    this.renderers = [];
     
     Ext.apply(this,config);
     
