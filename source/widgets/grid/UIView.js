@@ -718,13 +718,20 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
     // private
     getViewDesignCB: function(o){
         
-        // update to the new store
-        this.store = this.viewDesign.store;
         
-        // add any custom renderers if defined, otherwise add the normal one
-        for (var i=0; i < this.viewDesign.cols.length; i++) {
+        // get the properties we need
+        this.store = this.viewDesign.store;
+        this.isCategorized = this.viewDesign.dominoView.meta.isCategorized;
+        this.allowDocSelection = this.viewDesign.allowDocSelection;
+        this.autoExpandColumn = this.viewDesign.autoExpandColumn;
+        this.isView = this.viewDesign.isView;
+        this.isFolder = this.viewDesign.isFolder;
+        this.cols = this.viewDesign.cols;
+        this.ViewEntryRecord = this.viewDesign.ViewEntryRecord;
+        
+        // add our dominoRenderer or any custom renderers if defined
+        for (var i=0; i < this.cols.length; i++) {
             var rendr = (this.renderers[i]) ? this.renderers[i] : this.dominoRenderer.createDelegate(this);
-            this.cols[i] = this.viewDesign.cols[i];
             this.cols[i].renderer = rendr;
         }
         
