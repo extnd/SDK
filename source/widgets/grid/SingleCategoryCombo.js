@@ -22,7 +22,7 @@ Ext.nd.SingleCategoryCombo = Ext.extend(Ext.util.Observable, {
         // setup a default way to handle a category change
         this.on('categorychange', this.onCategoryChange, this);
         
-        // now apply any customer listeners
+        // now apply any custom listeners
         if(this.listeners){
             this.on(this.listeners);
             delete this.listeners;
