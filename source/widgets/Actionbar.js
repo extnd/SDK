@@ -71,7 +71,7 @@ Ext.nd.Actionbar = function(config){
     this.noteType = '';
     this.noteName = '';
     this.useDxl = true;
-    this.actionbar = false;
+    this.dominoActionbar = {};
     this.actions = [];
     this.useViewTitleFromDxl = false;
     this.convertFormulas = true;
@@ -131,6 +131,9 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
          * existing toolbar
          */ 
         
+       // make sure not a plugin
+       // TODO: need to refactor this code and not have it work both ways
+       // one way as a plugin and another as a Toolbar
         if (!this.isPlugin) {
             Ext.nd.Actionbar.superclass.initComponent.call(this);
             this.toolbar = this;
@@ -147,17 +150,15 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
     
     // private
     addActions: function(){
-
-        /* first, get the domino actionbar */
-        this.getDominoActionbar();
         
-        /* 
-         * now hide it so we don't get the flicker of it
-         * showing for a second before it gets removed
-         * after we replace it with an Ext toolbar
-         * 
-         */
-        this.hideDominoActionbar();
+        /* first, get the domino actionbar */
+        if (this.noteType == '' || this.noteType == 'view') {
+            this.dominoActionbar.actionbar = false;
+        } else {
+            this.dominoActionbar = new Ext.nd.util.DominoActionbar();
+            this.dominoActionbar.hide();
+        }
+
         
         if (!this.useDxl) {
             this.addActionsFromDocument();
@@ -298,9 +299,11 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                      * for a form/document you can also get a handle to the uiDocument
                      * from this.uiDocument
                      */
+
                     handler = function(bleh){
-                        eval(bleh)
+                        return eval(bleh)
                     }.createDelegate(this, [tmpOnClick]);
+
                 }
                 else 
                     if (this.convertFormulas) {
@@ -392,6 +395,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                     });
                 } // end: if (isSubAction)
             } // end: if (show && syscmd == null)
+            
         } // end: for arActions.length
         
         // now process these actions by adding to the toolbar and syncing the grid's size
@@ -417,8 +421,8 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
         var arActions = [];
         var q = Ext.DomQuery;
         
-        if (this.actionbar) {
-            arActions = q.select('a', this.actionbar);
+        if (this.dominoActionbar.actionbar) {
+            arActions = q.select('a', this.dominoActionbar.actionbar);
         }
         
         var curLevelTitle = '';
@@ -490,7 +494,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
             
             // assigne a handler
             handler = function(bleh){
-                eval(bleh)
+                return eval(bleh)
             }.createDelegate(this, tmpOnClick);
             
             // handle subActions
@@ -554,19 +558,10 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
         
     },
     
-    // private
-    hideDominoActionbar: function(){
-        if (this.actionbar) {
-            Ext.get(this.actionbar).setStyle('display', 'none');
-            Ext.get(this.actionbarHr).setStyle('display', 'none');
-        }
-    },
-    
-    // private
-    removeDominoActionbar: function(){
-        if (this.actionbar) {
-            Ext.get(this.actionbar).remove();
-            Ext.get(this.actionbarHr).remove();
+    removeDominoActionbar : function() {
+        
+        if (this.dominoActionbar.remove) {
+            this.dominoActionbar.remove();
         }
     },
     
@@ -606,79 +601,6 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                 this.removeActionbar();
             }
         }
-    },
-    
-    // private
-    getDominoActionbar: function(){
-    
-        // bail if a view since we only use dxl for views
-    	// also bail if there isn't a noteType
-        if (this.noteType == '' || this.noteType == 'view') {
-            this.actionbar = false;
-            return;
-        }
-        
-        // domino's form is the first form
-        var frm = document.forms[0];
-        var isFirstTable = false;
-        var q = Ext.DomQuery;
-        
-        var cn = frm.childNodes;
-        var actionbar, actionbarHr;
-        var bTest1 = false; // 1st (non-hidden) element has to be <table>
-        var bTest2 = false; // only 1 row can be in the table;
-        var bTest3 = false; // 2nd element has to be <hr>
-        var bTest4 = false; // # of <td> tags must equal # <a> tags
-        for (var i = 0; i < cn.length; i++) {
-            var c = cn[i];
-            if (c.nodeType == 1) {
-                if (!bTest1) {
-                    if (c.tagName == 'TABLE') {
-                        actionbar = c;
-                        var arRows = q.select('tr', actionbar);
-                        if (arRows.length != 1) {
-                            break;
-                        }
-                        else {
-                            bTest1 = true;
-                            bTest2 = true;
-                            continue;
-                        }
-                    }
-                    else 
-                        if ((c.tagName == 'INPUT' && q.selectValue('@type', c, '') == 'hidden') || c.tagName == 'LABEL') {
-                            continue; // domino sometimes puts hidden input fields before the actionbar
-                        // and we put in a hidden label field in certain cases
-                        }
-                        else {
-                            break; // didn't pass test 1 so bail
-                        }
-                }
-                else { // bTest1 == true
-                    if (c.tagName == 'HR') {
-                        actionbarHr = c;
-                        bTest3 = true;
-                    }
-                    break; // done with both tests so exit loop
-                } // end: !bTest1
-            } // end: c.nodeType == 1
-            if (bTest1 && bTest2 && bTest3) {
-                // we passed test1, test2, and test3 so break out of the for loop
-                break;
-            }
-        }
-        
-        if (bTest1 && bTest2 && bTest3) {
-            // get the first table
-            var arTDs = q.select('td', actionbar);
-            var arActions = q.select('a', actionbar);
-            if (arTDs.length == arActions.length) {
-                bTest4 = true;
-                this.actionbar = actionbar;
-                this.actionbarHr = actionbarHr;
-            }
-        }
-        
     },
     
     // private
@@ -791,31 +713,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
     unsupportedAtCommand: function(formula){
         Ext.Msg.alert('Error', 'Sorry, the @command "' + formula +
         '" is not currently supported by Ext.nd');
-    },
-    
-    getUIView: function() {
-        if (!this.uiView) {
-            if (this.ownerCt && this.ownerCt.getXType() == 'xnd-uiview') {
-                this.uiView = this.ownerCt;
-            } else {
-                this.uiView = null;
-            }
-        }
-        return this.uiView;
-    },
-    
-    getUIDocument: function() {
-        if (!this.uiDocument) {
-            if (this.ownerCt && this.ownerCt.getXType() == 'xnd-uidocument') {
-                this.uiDocument = this.ownerCt;
-            } else {
-                this.uiDocument = null;
-            }
-        }
-        return this.uiDocument;
-    },
-    getUIDocument: function() {
-        return (this.uiDocument) ? this.uiDocument : null;
     }
+    
 });
 Ext.reg('xnd-actionbar', Ext.nd.Actionbar);
