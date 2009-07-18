@@ -165,6 +165,32 @@ Ext.grid.GridDragZone.override(
     }
 });
 
+// for all toolbars we add some custom methods that help domino apps
+Ext.Toolbar.override({
+   
+    getUIView: function() {
+        if (!this.uiView) {
+            if (this.ownerCt && this.ownerCt.getXType() == 'xnd-uiview') {
+                this.uiView = this.ownerCt;
+            } else {
+                this.uiView = null;
+            }
+        }
+        return this.uiView;
+    },
+    
+    getUIDocument: function() {
+        if (!this.uiDocument) {
+            if (this.ownerCt && this.ownerCt.getXType() == 'xnd-uidocument') {
+                this.uiDocument = this.ownerCt;
+            } else {
+                this.uiDocument = null;
+            }
+        }
+        return this.uiDocument;
+    }
+});
+
 Ext.namespace("Ext.nd", "Ext.nd.form", "Ext.nd.data", "Ext.nd.util");
 
 Ext.nd.version = 'pre-release 2 - Beta 2 for ExtJS 3.x';
