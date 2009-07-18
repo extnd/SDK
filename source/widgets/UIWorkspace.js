@@ -39,20 +39,21 @@ Ext.nd.UIWorkspace.prototype = {
     
         var dialog, cb;
         var opt = {
-            viewName: "f1",
+            type: "custom",
+            viewName: "",
             width: (options.multipleSelection && !options.useCheckboxSelection) ? 600 : 500,
             height: 400,
+            constrainHeader: true,
             shadow: true,
             minWidth: 500,
             minHeight: 400,
-            type: "custom",
             multipleSelection: false,
             showActionbar: false,
             showSearch: true,
             useCheckboxSelection: false,
-            viewOptions: "",
+            viewConfig : {},
             
-            title: "PickListTest",
+            title: "PickList",
             prompt: "Please make your selection(s) and click <OK>.",
             column: 0,
             
@@ -81,26 +82,27 @@ Ext.nd.UIWorkspace.prototype = {
             default:
                 opt.viewUrl = (opt.viewUrl) ? opt.viewUrl : this.dbPath + opt.viewName;
         } //end switch(opt.type)
+
         // private
-        var handleOK = function(){
+        function handleOK(){
         
             var cb = false;
-            var arSelections, map, data;
-            arSelections = opt.choices.getDocuments();
-            var arReturn = new Array();
-            opt.dialog.close();
-            
-            for (var i = 0; i < arSelections.length; i++) {
-                map = (typeof opt.column == 'string') ? opt.column : arSelections[i].fields.keys[opt.column];
-                data = arSelections[i].data[map];
-                arReturn.push(data);                
+
+            if (opt.selections.isXType && opt.selections.isXType('treepanel', true)) {
+                var arReturn = getSelectionsFromTreePanel();    
+            } else {
+                var arReturn = getSelectionsFromUIView();
             }
+            
             
             // move the callback to a local variable
             if (opt.callback) {
                 cb = opt.callback;
                 //opt.callback = false;
             }
+
+            // close the picklist window
+            opt.dialog.close();
             
             // if a callback has been defined, call it and pass the array of return values to it
             if (cb) {
@@ -110,6 +112,7 @@ Ext.nd.UIWorkspace.prototype = {
                 return arReturn; //only usefull if async = false, otherwise your code won't be able to process
             }
         }; // eo handleOK
+
         // private
         var handleCancel = function(){
         
@@ -134,16 +137,41 @@ Ext.nd.UIWorkspace.prototype = {
             
         } // eo handleCancel
 
+        var getSelectionsFromUIView = function() {
 
+            var map, data;
+            var selections = opt.choices.getDocuments();
+            var arReturn = [];
+            
+            for (var i=0; i<selections.length; i++){
+                map = (typeof opt.column == 'string') ? opt.column : selections[i].fields.keys[opt.column];
+                data = selections[i].data[map];
+                arReturn.push(data);
+            }
+            return arReturn;
+        };
+        
+        var getSelectionsFromTreePanel = function() {
+            
+            var selections = opt.selections;
+            var root = selections.getRootNode();
+            var nodes = root.childNodes;
+            var arReturn = [];
+            
+            for (var i = 0; i < nodes.length; i++) {
+                var data = nodes[i].text;
+                arReturn.push(data);                
+            }
+            return arReturn;
+        };
+        
         opt.choices = new Ext.nd.UIView({
-            //region: (opt.multipleSelection && !opt.useCheckboxSelection) ? 'west' : 'center',
             region : 'center',
             layout : 'fit',
             singleSelect: !opt.multipleSelection,
-            selModelConfig: (opt.multipleSelection) ? {type : 'checkbox', singSelect : false} : {},
+            selModelConfig: (opt.multipleSelection && opt.useCheckboxSelection) ? {type : 'checkbox', singSelect : false} : {},
             id: 'xnd-picklist-view',
             layout: 'fit',
-            //width: (opt.multipleSelection && opt.useCheckboxSm) ? opt.width : ((opt.width / 2)),
             xtype: 'xnd-uiview',
             header: false,
             viewUrl: opt.viewUrl,
@@ -188,6 +216,33 @@ Ext.nd.UIWorkspace.prototype = {
         var actionButtons = {};
         var multiSelectionRegions = {};
 
+        var removeSelection = function() {
+            
+            var selections = opt.selections;
+            var selModel = selections.getSelectionModel();
+            var nodes = selModel.getSelectedNodes();
+            if (nodes.length > 0) {
+                nodes[0].remove();
+            }
+            
+        };
+        
+        var removeAllSelections = function() {
+        
+            var selections = opt.selections;
+            var root = selections.getRootNode();
+            var nodes = root.childNodes;
+            
+            /* Ext.each and remove don't work well together
+            Ext.each(nodes, function(node, index, allNodes) {
+                node.remove();
+            },this);
+            */
+            for (var i = nodes.length-1; i >= 0; i--) {
+                nodes[i].remove();                
+            }
+        };
+        
         var addSelection = function(){
             
             var map, data, newNode;
@@ -207,7 +262,7 @@ Ext.nd.UIWorkspace.prototype = {
                 // just in case we somehow get here without really having dblclicked on a doc
                 if (selected.length > 0) {
                     for (var i=0; i<selected.length; i++){
-                        map = (typeof opt.column == 'string') ? opt.column : selectioned[i].fields.keys[opt.column];
+                        map = (typeof opt.column == 'string') ? opt.column : selected[i].fields.keys[opt.column];
                         data = selected[i].data[map];
                     
                         newNode = new Ext.tree.TreeNode({
@@ -234,16 +289,41 @@ Ext.nd.UIWorkspace.prototype = {
         // then show the 2 pane selection layout
         if (opt.multipleSelection && !opt.useCheckboxSelection) {
 
-            // we already have a view loaded in the west region so if the user want's to be able to
-            // pick more than one item and the check box selection model is not wanted, then we
-            // must show a east region that starts as an empty grid where we can add rows (docs)
-            // from the 'choices' grid in the west region.  The center region is just for buttons
+            /* we already have a view loaded in the west region so if the user want's to be able to
+             * pick more than one item and the check box selection model is not wanted, then we
+             * must show a east region that starts as an empty grid where we can add rows (docs)
+             * from the 'choices' grid in the west region.  The center region is just for buttons
             
-            // 140 is about the pixel height of the title area, address book + type ahead area,
-            // and the bottom toolbar combined
-            // so we take that number and subtract it from the height that the developer specifies
-            // and then divide by 2 and we are about in the middle of the center region
+             * 140 is about the pixel height of the title area, address book + type ahead area,
+             * and the bottom toolbar combined
+             * so we take that number and subtract it from the height that the developer specifies
+             * and then divide by 2 and we are about in the middle of the center region
+             */
+            
             var marginTop = ((opt.height - 140) /2) -40;
+            
+
+            
+            /* selections */
+            opt.selections = new Ext.tree.TreePanel({
+                //region: 'east',
+                region : 'center',
+                layout: 'fit',
+                //width: (opt.width / 2 - 115),
+                id: 'selections',
+                root: new Ext.tree.TreeNode({
+                    text: 'Names:',
+                    draggable: false, // disable root node dragging
+                    id: 'selections-root',
+                    expanded: true
+                }),
+                rootVisible: (opt.type == 'names') ? true : false,
+                selModel: new Ext.tree.MultiSelectionModel()
+            })
+            opt.selections.on('dblclick', function(node, e){
+                node.remove();
+            })
+            
             /* buttons */
             actionButtons = {
                 //region: 'center',
@@ -264,47 +344,14 @@ Ext.nd.UIWorkspace.prototype = {
                     xtype: 'button',
                     minWidth: 85,
                     text: '&lsaquo; Remove',
-                    //handler: removeSelection,
-                    scope: this
+                    handler: removeSelection
                 },{
                     xtype: 'button',
                     minWidth: 85,
-                    text: '&laquo; Remove All'
-                    //handler: removeSelection.createDelegate(this,true)
+                    text: '&laquo; Remove All',
+                    handler: removeAllSelections
                 }]
             }
-            
-            /* selections */
-            /*opt.selections = new Ext.nd.UIView({
-         region: 'east',
-         layout: 'fit',
-         width: (opt.width / 2 - 80),
-         xtype: 'xnd-uiview',
-         header: false,
-         viewUrl: opt.viewUrl,
-         loadInitialData: false,
-         showActionbar: false,
-         showPagingToolbar: false,
-         showSearch: false
-         });*/
-            opt.selections = new Ext.tree.TreePanel({
-                //region: 'east',
-                region : 'center',
-                layout: 'fit',
-                //width: (opt.width / 2 - 115),
-                id: 'selections',
-                root: new Ext.tree.TreeNode({
-                    text: 'Names:',
-                    draggable: false, // disable root node dragging
-                    id: 'selections-root',
-                    expanded: true
-                }),
-                rootVisible: (opt.type == 'names') ? true : false
-                //selModel: new Ext.tree.MultiSelectionModel()
-            })
-            opt.selections.on('dblclick', function(node, e){
-                node.remove();
-            })
             
             // update the selection region to now include the real buttons and selections
             multiSelectionRegions = {
@@ -323,29 +370,31 @@ Ext.nd.UIWorkspace.prototype = {
                 modal: true,
                 width: opt.width,
                 height: opt.height,
+                constrainHeader: opt.constrainHeader,
                 shadow: opt.shadow,
                 minWidth: opt.minWidth,
                 minHeight: opt.minHeight,
                 title: opt.title,
+
                 items: [(opt.type == 'names') ? namesPanel : {
                     region: 'north',
                     height: 27,
                     xtype: 'panel',
                     title: opt.prompt,
                     id: 'xnd-picklist-prompt'
-                //}, opt.choices, center, opt.selections]
-                }, opt.choices, multiSelectionRegions]                    
-            /*,bbar: [{
-             text: 'OK',
-             handler: handleOK.createDelegate(this)
-             }, {
-             text: 'Cancel',
-             handler: handleCancel.createDelegate(this)
-             }]*/
+                }, opt.choices, multiSelectionRegions],                    
+                
+                buttons: [{
+                    text: 'OK',
+                    handler: handleOK.createDelegate(this)
+                }, {
+                    text: 'Cancel',
+                    handler: handleCancel.createDelegate(this)
+                }]
             });
         } // eo (!opt.dialog)
-        opt.dialog.addButton('OK', handleOK, this);
-        opt.dialog.addButton('Cancel', handleCancel, this);
+        //opt.dialog.addButton('OK', handleOK, this);
+        //opt.dialog.addButton('Cancel', handleCancel, this);
         
         
         // now show our custom dialog 
