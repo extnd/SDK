@@ -107,27 +107,8 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         }
         this.msgBox = Ext.MessageBox.wait("Loading document...");
 
-        // define a tbar using an Ext.nd.Actionbar if one is wanted 
-        // and the develooper hasn't passed in their own tbar config
-        if (!this.tbar) {
-            this.tbar = (this.showActionbar) ? new Ext.nd.Actionbar({
-                noteType: 'form',
-                noteName: this.formName,
-                uiView: this.getUIView(),
-                uiDocument: this.getUIDocument(),
-                useDxl: true,
-                renderTo : (this.toolbarRenderTo) ? this.toolbarRenderTo : null,
-                id: 'xnd-form-toolbar'
-            }) : null;                    
-        } else {
-            // a tbar has been passed in so make sure we let it know about uiDocument
-            // so that you can do a this.getUIDocument.save(), this.getUIDocument.close(), etc
-            // all from action buttons on the actionbar, also add a referece to uiView
-        	// so that a uiView.refresh(), etc. can be called
-            this.tbar.uiDocument = this.getUIDocument();
-            this.tbar.uiView = this.getUIView();
-        }
-
+        this.setupToolbars();
+        
         this.addEvents(        
                 /**
                  * @event beforeclose Fires just before the current document is closed (equivalent to the NotesUIDocument QueryClose event).
@@ -169,16 +150,20 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
             // this is just something to make FormPanel happy
             this.items = {xtype: 'label', hidden: true};
         }
-        // TODO: for now we use document.forms[0] since we currently only support
-        // loading forms/documents by themselves or in an iframe.  Eventually we want
-        // to provide support to open forms/documents without the need to be in an iframe
+        /* TODO: for now we use document.forms[0] since we 
+         * currently only support loading forms/documents 
+         * by themselves or in an iframe.  Eventually we want
+         * to provide support to open forms/documents without 
+         * the need to be in an iframe
+         */
         return new Ext.form.BasicForm(document.forms[0], this.initialConfig);
     },
     
-    // to support users coming from older versions of Ext.nd where you did
-    // not have to specify 'where' to render to so we will render to
-    // an Ext.Viewport like previous versions did when the render method
-    // is called without any arguments
+    /* to support users coming from older versions of Ext.nd where you did
+     * not have to specify 'where' to render to so we will render to
+     * an Ext.Viewport like previous versions did when the render method
+     * is called without any arguments
+     */
     render : function(){
         if (arguments.length == 0) {
           //this.render(document.body);
@@ -192,26 +177,34 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         
     },
     
-    onRender : function(ct, position){
-    
-        // make sure that body is already set to our domino form's Element (this.form.el)
-        // we do this so that superclass.onRender call will not create a 
-        // new body (which is a form element) but instead, use the
-        // form element (our domino one) instead        
+   onRender : function(ct, position){
+        
+        /* make sure that body is already set to our domino 
+         * form's Element (this.form.el) we do this so that 
+         * superclass.onRender call will not create a 
+         * new body (which is a form element) but instead, 
+         * use the form element (our domino one) instead
+         */        
         this.body = this.form.el;
             
         Ext.nd.UIDocument.superclass.onRender.call(this, ct, position);
         this.form.initEl(this.body);    
-                    
+
+        /* make sure any buttons know about uiView and uiDocument
+         * we do this after the superclass.onRender since that
+         * is where fbar for the buttons gets setup
+         */
+        this.setupButtons();
     },
     
     afterRender : function(){
     
     
-        // make an Ajax call to our DXLExport agent 
-        // to get field info
-        // however, only need to do this if convertFields is true, 
-        // otherwise, there is no need
+        /* make an Ajax call to our DXLExport agent 
+         * to get field info however, 
+         * only need to do this if convertFields is true, 
+         * otherwise, there is no need
+         */
         if (this.convertFields) {
             
             Ext.Ajax.request({
@@ -259,9 +252,13 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
     },
     
     onClose : function() {
-        // return true means that we were able to call the component's remove/hide/close action
-        // return false means that we couldn't find a component and thus couldn't do anything
+        /*
+         * return true means that we were able to call the component's remove/hide/close action
+         * return false means that we couldn't find a component and thus couldn't do anything
+         * 
+         */
     	
+        var returnValue = false;
     	var target = this.getTarget();
     	
     	if (target) {
@@ -270,27 +267,27 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
                 case 'window':
                     if (target.closeAction == 'close') {
                         target.close();
-                        return true;  
+                        returnValue = true;  
                     } else {
                         target.hide();
-                        return true;
+                        returnValue = true;
                     }
                     break;
                 case 'tabpanel':
                     target.remove(target.getActiveTab());
-                    return true;
+                    returnValue = true;
                     break;
                 default:
                     if (target.remove) {
                     	var iframeOwnerCt = this.getIframeOwnerCt();
                     	if (iframeOwnerCt) {
                     		target.remove(this.iframeOwnerCt);
-                    		return true;
+                    		returnValue = true;
                     	} else {
-                    		return false;
+                    		returnValue = false;
                     	}
                     } else {
-                        return false;
+                        returnValue = false;
                     }
                     break;
             } // eo switch
@@ -298,17 +295,87 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         	if (this.editMode) {
         		// TODO: open in read mode if already in edit mode
         	} else {
-        		return false;
+        		returnValue = false;
         	}
         }   
+    	
+    	return returnValue;
     },
     
     // private
-    // called only when convertFields is set to true
-    // and processes the response from the dxl export 
-    // of field info
-    doConvertFieldsCB : function(response, options) {
+    setupToolbars : function() {
+       
+        var tbId;
+        
+        if (this.tbar) {
+        
+            tbId = 'xnd-doc-tbar-' + Ext.id();
+           
+            if (Ext.isArray(this.tbar)) {
+                // add the tbar|bbar|buttons array to our on Actionbar items config
+                this.tbar = new Ext.nd.Actionbar({
+                    id: tbId,
+                    noteName: '', // intentional
+                    uiView: this.getUIView(),
+                    uiDocument : this.getUIDocument(),
+                    target: this.target || null,
+                    items: this.tbar
+                });
+            }
+            else {
+                // tbar isn't an array but probably an instance of Ext.Toolbar
+                // we still need to add the uiDocument and uiView references
+                this.tbar.id = tbId;
+                this.tbar.uiDocument = this.getUIDocument();
+                this.tbar.uiView = this.getUIView();
+            }
+            // a tbar config will override the domino actionbar 
+            // so be sure to remove the domino generated actionbar
+            this.dominoActionbar = new Ext.nd.util.DominoActionbar();
+            this.dominoActionbar.hide();
 
+        } else {
+
+            if (this.showActionbar) {
+                this.tbar = new Ext.nd.Actionbar({
+                    id : tbId,
+                    noteType: 'form',
+                    noteName: this.formName,
+                    uiView: this.getUIView(),
+                    uiDocument: this.getUIDocument(),
+                    useDxl: true,
+                    renderTo : (this.toolbarRenderTo) ? this.toolbarRenderTo : null
+                });
+            }
+            
+        } // eo if (this.tbar)
+        
+    },
+    
+    setupButtons : function() {
+        
+        // handle special case of 'buttons' and 'fbar'
+        if (this.buttons) { 
+            // you can only have one and if buttons exist they will
+            // supersede fbar.  however, keep in mind that the code
+            // in Ext.Panel simply creates a fbar and sets the
+            // items array to buttons.  So we only need to
+            // add uiDocument and uiView to fbar
+            
+            // make sure it exists (it should but just in case
+            if (this.fbar) {
+                this.fbar.uiDocument = this.getUIDocument();
+                this.fbar.uiView = this.getUIView();            
+            }
+        }
+    },
+    
+    /* called only when convertFields is set to true
+     * and processes the response from the dxl export 
+     * of field info
+     */
+    // private
+    doConvertFieldsCB : function(response, options) {
 
         // load in our field defintions
         this.fieldDefinitions = new Ext.util.MixedCollection(false,this.getFieldDefinitionKey);
@@ -317,14 +384,16 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         // convert the fields
         this.doConvertFields();
 
-        // this is called in the form panel's onRender method but we 
-        // need to call it again here since the domino fields didn't exist
-        // in the items array until now 
+        /* this is called in the form panel's onRender method but we 
+         * need to call it again here since the domino fields didn't exist
+         * in the items array until now
+         */ 
         this.initFields();
         
-        // need to call parent afterRender since this callback function
-        // was called from this classes afterRender method
-        //Ext.nd.UIDocument.superclass.afterRender.call(this);  
+        /* need to call parent afterRender since this callback function
+         * was called from this classes afterRender method
+         * Ext.nd.UIDocument.superclass.afterRender.call(this);
+         */  
         Ext.nd.UIDocument.superclass.afterRender.apply(this, options.arguments);
         this.fireEvent('open', this);
         
@@ -343,25 +412,22 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         
         // 1st, convert all elements that do not use an 'xnd-*' class
         var allElements = this.form.el.dom.elements;
-        for (var i = 0; i < allElements.length; i++) {
-        
-            el = allElements[i];
-            if (!this.convertFromClassName(el, false)) {
-                this.convertFromTagName(el);
+        Ext.each(allElements, function(item, index, allItems){
+            if (!this.convertFromClassName(item, false)) {
+                this.convertFromTagName(item);
             }
-                        
-        } // end for allElements
-        
-        
-        // now handle the elements with 'xnd-' classNames
-        // we do this second/last so that any new elements introduced 
-        // by Ext are not processed again
+        },this);
+                
+        /* now handle the elements with 'xnd-' classNames
+         * we do this second/last so that any new elements introduced 
+         * by Ext are not processed again
+         */
         
         var xndElements = q.select('*[class*=xnd-]');
-        for (var i = 0; i < xndElements.length; i++) {
-            el = xndElements[i];
-            this.convertFromClassName(el, true);
-        }
+        Ext.each(xndElements, function(item, index, allItems){
+            this.convertFromClassName(item, true);
+        }, this);
+        
         
     }, // end function doConvertFields()
     
@@ -378,9 +444,11 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         
         switch (el.tagName) {
             case 'SELECT':
-                // for a dialoglist set to use a view for choices, domino causes problems
-                // in that it will send a select tag down without any options
-                // so therefore, we have to check for that
+                /* for a dialoglist set to use a view for choices, 
+                 * domino causes problems in that it will send 
+                 * a select tag down without any options!
+                 * so therefore, we have to check for that
+                 */
                 var dfield = this.getFieldDefinition(el.name);
                 if (dfield){
                     var allowMultiValues = (Ext.DomQuery.selectValue('@allowmultivalues',dfield) == 'true') ? true : false;
@@ -686,12 +754,12 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
                 }
             }, true);
             
-            // now append (move) the textarea into the heContainer
-            // this is needed since the renderT of HtmlEditor will try and
-            // render
-            // into the parentNode of the textarea and since domino sometimes
-            // wraps <font> tags around the textarea, the renderTo code will
-            // break
+            /* now append (move) the textarea into the heContainer
+             * this is needed since the renderT of HtmlEditor will try and
+             * render into the parentNode of the textarea and since domino
+             * sometimes wraps <font> tags around the textarea, 
+             * the renderTo code will break
+             */
             
             heContainer.dom.appendChild(el);
             
@@ -704,9 +772,10 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
             ed = new Ext.form.HtmlEditor();
             ed.applyToMarkup(el);
             
-            // strip off the passthru square brackets and div we add in order to
-            // have
-            // passthru html when in read mode
+            
+            /* strip off the passthru square brackets and div we add 
+             * in order to have passthru html when in read mode
+             */
             ed.on('beforepush', function(editor, html){
                 var htmlBefore = "[<div class='xnd-htmleditor-read'>";
                 var htmlAfter = "</div>]";
@@ -722,8 +791,9 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
                 return false;
             });
             
-            // add back the passthru square brackets and div in order to have
-            // passthru html when in read mode
+            /* add back the passthru square brackets and div 
+             * in order to have passthru html when in read mode
+             */
             ed.on('beforesync', function(editor, html){
                 editor.el.dom.value = "[<div class='xnd-htmleditor-read'>" +
                 html +
@@ -1007,10 +1077,11 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
     	var s = Ext.getDom(el);
         var d = [], opts = s.options;
         var selectedValue = "";
+        var value;
         
         for(var i = 0, len = opts.length;i < len; i++){
             var o = opts[i];
-            var value = (o.hasAttribute ? o.hasAttribute('value') : o.getAttribute('value') !== null) ? o.value : o.text;
+            value = (o.hasAttribute ? o.hasAttribute('value') : o.getAttribute('value') !== null) ? o.value : o.text;
             
             // correct the issue scene with IE when the option has an empty value tag
             value = (value == '' && o.text != '') ? o.text : value;
@@ -1019,6 +1090,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
             }
             d.push([value, o.text]);
         }
+        
         var store = new Ext.data.ArrayStore({
             'id': 0,
             fields: ['value', 'text'],
@@ -1065,7 +1137,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         // to fix a bug with DomHelper not liking domino sometimes wrapping a
         // SELECT within a FONT tag
         // we need to handle setting the value of the hiddenField ourselves
-        var value = (cb.getValue()) ? cb.getValue() : cb.getRawValue();
+        value = (cb.getValue()) ? cb.getValue() : cb.getRawValue();
         if (cb.hiddenName) {
             var field = Ext.get(cb.hiddenName);
             field.dom.value = value;
@@ -1073,26 +1145,44 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         
         // we must also define a listener to change the value of the hidden
         // field when the selection in the combobox changes
-        cb.on('select', function(){
+        cb.on('select', function() {
             /*
              * value is the selection value if set, otherwise is the raw
              * typed text
              */
-            var value = (this.getValue()) ? this.getValue() : this.getRawValue();
-            if (cb.hiddenName) {
-                var field = Ext.get(this.hiddenName);
-                field.dom.value = value;
+            var selvalue = (this.getValue()) ? this.getValue() : this.getRawValue();
+            if (this.hiddenName) {
+                var hiddenField = Ext.get(this.hiddenName);
+                hiddenField.dom.value = selvalue;
             }
             if (typeof extcallback == 'function') {
                 Ext.MessageBox.wait("Refreshing document...");
                 extcallback();
             }
-        });
+        }, cb);
 
         // now add to items
         this.form.items.add(cb);
         
     }, // end convertSelectToComboBox
+    
+    // private for the converted select-to- combo
+    // runs under the scope of the ComboBox
+    onComboSelect : function() {
+        /*
+         * value is the selection value if set, otherwise is the raw
+         * typed text
+         */
+        var value = (this.getValue()) ? this.getValue() : this.getRawValue();
+        if (this.hiddenName) {
+            var field = Ext.get(this.hiddenName);
+            field.dom.value = value;
+        }
+        if (typeof extcallback == 'function') {
+            Ext.MessageBox.wait("Refreshing document...");
+            extcallback();
+        }
+    },
     
     fieldGetText : function(fld) {
     	var oField = this.getForm().findField(fld);
@@ -1188,8 +1278,5 @@ Ext.reg('xnd-uidocument', Ext.nd.UIDocument);
 
 //for backwards compat
 Ext.nd.Form = Ext.nd.UIDocument; 
-Ext.reg('xnd-form', Ext.nd.Form);
-
 //not sure why, but why not
 Ext.nd.Page = Ext.nd.UIDocument; 
-Ext.reg('xnd-page', Ext.nd.Page);
