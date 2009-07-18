@@ -14,6 +14,7 @@
     <include name="widgets\grid\UIView.js" />
     <include name="widgets\grid\SearchPlugin.js" />
     <include name="widgets\grid\SingleCategoryCombo.js" />
+    <include name="util\DominoActionbar.js" />
     <include name="widgets\form\UIDocument.js" />
     <include name="widgets\form\Combo.js" />
     <include name="widgets\form\TimeField.js" />
@@ -51,4 +52,5 @@
   <file name="data\CategorizedStore.js" path="data" />
   <file name="data\ViewDesign.js" path="data" />
   <file name="widgets\form\TimeField.js" path="widgets\form" />
+  <file name="util\DominoActionbar.js" path="util" />
 </project>
