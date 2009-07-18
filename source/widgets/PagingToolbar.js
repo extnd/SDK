@@ -195,17 +195,6 @@ Ext.extend(Ext.nd.PagingToolbar, Ext.PagingToolbar, {
 		this.fireEvent('change', this, d);
 	},
 
-
-    getUIView: function() {
-    	if (!this.uiView) {
-    		if (this.ownerCt && this.ownerCt.isXType('xnd-uiview',true)) {
-    			this.uiView = this.ownerCt;
-    		} else {
-    			this.uiView = null;
-    		}
-    	}
-    	return this.uiView;
-    },
     
 	// private
 	getPageData : function(){
