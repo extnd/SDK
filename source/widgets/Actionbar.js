@@ -299,11 +299,20 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                      * for a form/document you can also get a handle to the uiDocument
                      * from this.uiDocument
                      */
-
+                    /*
                     handler = function(bleh){
                         return eval(bleh)
                     }.createDelegate(this, [tmpOnClick]);
-
+                    */
+                    var fn = function(){
+                        var bleh = tmpOnClick;
+                        return {
+                            run : function(){
+                                return eval(bleh);
+                            }
+                        }
+                    }();
+                    handler = fn.run.createDelegate(this);
                 }
                 else 
                     if (this.convertFormulas) {
