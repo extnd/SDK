@@ -5,7 +5,7 @@ Ext.nd.data.ViewDesign = function(config){
     this.viewName = '';
     this.multiExpand = false;
     this.storeConfig = {};
-    this.isCategorized = false,
+    this.isCategorized = false;
     this.callback = Ext.emptyFn;
     
     Ext.apply(this,config);
