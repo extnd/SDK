@@ -79,8 +79,8 @@ Ext.extend(Ext.nd.data.ViewStore, Ext.data.Store, {
                 // resortascending=colNbr
                 // resortdescending=colNbr
                 
-                //p[pn["sort"]] = this.sortInfo.field;
-                var sortColumn = this.sortInfo.mapping; // to support older domino versions we will use colnumber (however, this will probably cause DND column reordering to break when sorting)
+                var f = this.fields.get(this.sortInfo.field);
+                var sortColumn = f.mapping; // to support older domino versions we will use colnumber (however, this will probably cause DND column reordering to break when sorting)
                 // get the config info for this column
                 var colConfig = this.reader.meta.columnConfig[sortColumn];
                 if (colConfig.resortviewunid != "") {
@@ -168,33 +168,14 @@ Ext.extend(Ext.nd.data.ViewStore, Ext.data.Store, {
         }
         
         this.sortToggle[f.name] = dir;
-        //this.sortInfo = {field: f.name, direction: dir};
-        this.sortInfo = {
-            field: f.name,
-            direction: dir,
-            mapping: f.mapping
-        };
+        this.sortInfo = {field: f.name, direction: dir};
+
         if (!this.remoteSort) {
             this.applySort();
             this.fireEvent("datachanged", this);
         } else {
             this.load(this.lastOptions);
         }
-    },
-    
-    // private (need to override since our data is buried in a property named data)
-    sortData : function(f, direction){
-        direction = direction || 'ASC';
-        var st = this.fields.get(f).sortType;
-        var fn = function(r1, r2){
-            //var v1 = st(r1.data[f]), v2 = st(r2.data[f]);
-            // our override version with the extra .data[0] property
-            var v1 = st(r1.data[f].data[0]), v2 = st(r2.data[f].data[0]);
-            return v1 > v2 ? 1 : (v1 < v2 ? -1 : 0);
-        };
-        this.data.sort(direction, fn);
-        if(this.snapshot && this.snapshot != this.data){
-            this.snapshot.sort(direction, fn);
-        }
     }
+    
 });
