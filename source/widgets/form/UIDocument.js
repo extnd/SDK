@@ -95,7 +95,12 @@ Ext.nd.UIDocument = function(config){
 
 Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
 
-
+    documentWindowTitle: '',
+    documentLoadingWindowTitle: 'Opening...',
+    documentUntitledWindowTitle: '(Untitled)',
+    documentWindowTitleMaxLength: 16,
+    useDocumentWindowTitle: true,
+    
     // for when we extend just Ext.Panel
     // tried extending Ext.form.FormPanel but it expects an items config       
     initComponent : function(){
@@ -188,8 +193,16 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         this.body = this.form.el;
             
         Ext.nd.UIDocument.superclass.onRender.call(this, ct, position);
-        this.form.initEl(this.body);    
-
+        
+        /* apply any custom styles from the bodyStyle config
+         * the .supercalls.onRender normally does this but since
+         * we forced this.body = this.form.el we need to now
+         * apply the bodyStyle config ourselves
+         */
+        if(this.bodyStyle){
+            this.body.applyStyles(this.bodyStyle);
+        }
+        
         /* make sure any buttons know about uiView and uiDocument
          * we do this after the superclass.onRender since that
          * is where fbar for the buttons gets setup
@@ -230,7 +243,14 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
 
     },
 
-
+    edit : function(){
+        var uiView = this.getUIView();
+        var uiViewName = (uiView) ? uiView.viewName : '0';
+        var unid = this.document.universalID;
+        
+        location.href = this.dbPath + uiViewName + '/' + unid + '?EditDocument'
+    },
+    
     save : function(config) {
     	if (this.fireEvent("beforesave", this) !== false) {
             this.onSave(config);
@@ -315,10 +335,10 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
                 // add the tbar|bbar|buttons array to our on Actionbar items config
                 this.tbar = new Ext.nd.Actionbar({
                     id: tbId,
-                    noteName: '', // intentional
+                    noteName: (this.showActionbar) ? this.formName : '',
                     uiView: this.getUIView(),
                     uiDocument : this.getUIDocument(),
-                    target: this.target || null,
+                    target: this.getTarget() || null,
                     items: this.tbar
                 });
             }
@@ -326,6 +346,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
                 // tbar isn't an array but probably an instance of Ext.Toolbar
                 // we still need to add the uiDocument and uiView references
                 this.tbar.id = tbId;
+                this.tbar.target = this.getTarget() || null;
                 this.tbar.uiDocument = this.getUIDocument();
                 this.tbar.uiView = this.getUIView();
             }
@@ -343,6 +364,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
                     noteName: this.formName,
                     uiView: this.getUIView(),
                     uiDocument: this.getUIDocument(),
+                    target: this.getTarget() || null,
                     useDxl: true,
                     renderTo : (this.toolbarRenderTo) ? this.toolbarRenderTo : null
                 });
@@ -364,6 +386,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
             
             // make sure it exists (it should but just in case
             if (this.fbar) {
+                this.fbar.target = this.getTarget() || null;
                 this.fbar.uiDocument = this.getUIDocument();
                 this.fbar.uiView = this.getUIView();            
             }
