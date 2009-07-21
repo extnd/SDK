@@ -35,7 +35,7 @@ Ext.nd.UIDocument = function(config){
     var db = sess.currentDatabase;
 
     //TODO: this needs to go away soon (the use of Ext.nd.currentUIDocument.*)
-    currentUIDocument = Ext.nd.currentUIDocument;
+    var currentUIDocument = Ext.nd.currentUIDocument;
     
 	// now just apply currentUIDocument to 'this' so we get what the agent says
 	// about this uidocument (such as UNID, form name, etc.)
