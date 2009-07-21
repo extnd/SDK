@@ -205,7 +205,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                     id: tbId,
                     noteName: '',
                     uiView: this,
-                    target: this.target || null,
+                    target: this.getTarget() || null,
                     items: this.tbar,
                     plugins: this.tbarPlugins
                 });
@@ -228,7 +228,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                     useDxl: this.buildActionBarFromDXL,
                     useViewTitleFromDxl: this.useViewTitleFromDxl,
                     removeEmptyActionbar: this.removeEmptyActionbar,
-                    target: this.target || null,
+                    target: this.getTarget() || null,
                     plugins: this.tbarPlugins
                 });
             } else {
@@ -240,7 +240,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                         id: tbId,
                         noteName: '', //intentional
                         uiView: this,
-                        target: this.target || null,
+                        target: this.getTarget() || null,
                         plugins: this.tbarPlugins
                     });
                 }
@@ -736,9 +736,10 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         }
         var panelId = 'pnl-' + row.unid;
         var link = this.viewUrl + '/' + row.unid + mode;
+        var target = this.getTarget();
         
         // if no target then just open in a new window
-        if (!this.target) {
+        if (!target) {
             window.open(link);
         }
         else {
@@ -748,18 +749,13 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             // we can easily get a handle to the view so we can do such 
             // things as refresh, etc.
             Ext.nd.util.addIFrame({
-                target: this.target || this.ownerCt,
+                target: target || this.ownerCt,
                 uiView: this,
                 url: link,
-                id: row.unid,
-                documentLoadingWindowTitle: this.documentLoadingWindowTitle,
-                documentUntitledWindowTitle: this.documentUntitledWindowTitle,
-                useDocumentWindowTitle: this.useDocumentWindowTitle,
-                documentWindowTitleMaxLength: this.documentWindowTitleMaxLength,
-                targetDefaults: this.targetDefaults
+                id: row.unid
             });
             
-        } // eo if (!this.target)
+        } // eo if (!target)
     },
     
     getViewDesign: function() {
@@ -1087,6 +1083,21 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         // now return our domino formatted value
         return returnValue;
         
+    },
+    
+    // private
+    getTarget : function() {
+        if (this.target) {
+            return this.target;
+        } else {
+            // if a target property is available then set it
+            if (window && window.target) {
+                this.target = window.target;
+                return this.target;
+            } else {
+                return null;
+            }
+        }
     },
     
     // private
