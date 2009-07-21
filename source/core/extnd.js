@@ -299,27 +299,86 @@ Ext.nd.util.addIFrame = function(config) {
 		// if target is a panel, add the iframe to the panel
 		if (targetPanel) {
 
-			// add the panel
+            // This is a hack to fix the memory issues that occur 
+            // when opening and closing stuff within iFrames
+            targetPanel.on('beforeremove', function(container, panel) {
+                        var iFrame = Ext.DomQuery.selectNode('iframe',
+                                panel.body.dom);
+                        if (iFrame) {
+                            if (iFrame.src) {
+                                iFrame.src = "javascript:false";
+                                Ext.removeNode(iFrame);
+                            }
+                        }
+                    });
+            
+
+            // add the panel
 			panel = targetPanel.add(panelConfig);
+
+            // this takes care setting the title of the panel and adding
+            // refernces to uiView and target to the iframe
+            panel.on('afterrender', function(panel){
+            
+                var dom = Ext.DomQuery.selectNode('iframe',panel.body.dom);
+                //var dom = Ext.get(ifId).dom;
+                var event = Ext.isIE ? 'onreadystatechange' : 'onload';
+                dom[event] = (function() {
+        
+                    try {
+                        var cd = this.contentWindow || window.frames[this.name];
+                        cd.ownerCt = panel;
+                        if (config.uiView) {
+                            cd.uiView = config.uiView;
+                        }
+                        if (targetPanel) {
+                            cd.target = targetPanel;
+                        }
+                    } catch (e) {
+                        // not doing anything if an error
+                        // an error usually means a x-domain security violation
+                    }
+        
+                    // replace the panel's title with the the window title from the
+                    // iframe
+                    // if the useDocumentWindowTitle is set to true
+                    if (useDocumentWindowTitle) {
+                        try {
+                            var title = cd.document.title;
+                            if (title != "") {
+                                if (documentWindowTitleMaxLength != -1) {
+                                    panel.setTitle(Ext.util.Format.ellipsis(title,
+                                            documentWindowTitleMaxLength));
+                                } else {
+                                    panel.setTitle(title);
+                                }
+        
+                            } else {
+                                // there wasn't a title
+                                if (panel.title != config.title
+                                        && config.title != documentLoadingWindowTitle) {
+                                    panel.setTitle(documentUntitledWindowTitle);
+                                }
+                            }
+        
+                        } catch (e) {
+                            // there was an error getting the iframe's title maybe
+                            if (panel.title != config.title
+                                    && panel.title != documentLoadingWindowTitle) {
+                                panel.setTitle(documentUntitledWindowTitle);
+                            }
+                        }
+                    } // eo if (useDocumentWindowTitle)
+        
+                }).createDelegate(dom);
+                
+            });
 
 			// call doLayout so we can now see this
 			if (targetPanel.doLayout) {
 				targetPanel.doLayout();
 			}
 
-			// This is a hack to fix the memory issues that occur when opening
-			// and
-			// closing stuff within iFrames
-			targetPanel.on('beforeremove', function(container, panel) {
-						var iFrame = Ext.DomQuery.selectNode('iframe',
-								panel.body.dom);
-						if (iFrame) {
-							if (iFrame.src) {
-								iFrame.src = "javascript:false";
-							}
-							Ext.removeNode(iFrame);
-						}
-					})
 
 		} else {
 			// target is not a panel so must be dealing with a div element
@@ -338,56 +397,6 @@ Ext.nd.util.addIFrame = function(config) {
 		// and sets the panels title after the iframe loads
 		// if there is an uiView property, it is set as well
 
-		var dom = Ext.get(ifId).dom;
-		var event = Ext.isIE ? 'onreadystatechange' : 'onload';
-		dom[event] = (function() {
-
-			try {
-				var cd = this.contentWindow || window.frames[this.name];
-				cd.ownerCt = panel;
-				if (config.uiView) {
-					cd.uiView = config.uiView;
-				}
-				if (targetPanel) {
-					cd.target = targetPanel;
-				}
-			} catch (e) {
-				// not doing anything if an error
-				// an error usually means a x-domain security violation
-			}
-
-			// replace the panel's title with the the window title from the
-			// iframe
-			// if the useDocumentWindowTitle is set to true
-			if (useDocumentWindowTitle) {
-				try {
-					var title = cd.document.title;
-					if (title != "") {
-						if (documentWindowTitleMaxLength != -1) {
-							panel.setTitle(Ext.util.Format.ellipsis(title,
-									documentWindowTitleMaxLength));
-						} else {
-							panel.setTitle(title);
-						}
-
-					} else {
-						// there wasn't a title
-						if (panel.title != config.title
-								&& config.title != documentLoadingWindowTitle) {
-							panel.setTitle(documentUntitledWindowTitle);
-						}
-					}
-
-				} catch (e) {
-					// there was an error getting the iframe's title maybe
-					if (panel.title != config.title
-							&& panel.title != documentLoadingWindowTitle) {
-						panel.setTitle(documentUntitledWindowTitle);
-					}
-				}
-			} // eo if (useDocumentWindowTitle)
-
-		}).createDelegate(dom);
 
 	} else { // we've already opened this panel
 		if (panel.show) {
