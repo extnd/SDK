@@ -530,6 +530,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         if (dfield) {
             var dtype = Ext.DomQuery.selectValue('@type',dfield);
             switch (dtype) {
+                case 'password':
                 case 'text':
                     this.convertToTextField(el);
                     break;
@@ -671,40 +672,39 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         if (dfield) {
             var allowMultiValues = (Ext.DomQuery.selectValue('@allowmultivalues',dfield) == 'true') ? true : false;
             var allowNew = (Ext.DomQuery.selectValue('keywords/@allownew',dfield) == 'true') ? true : false;
-            var choicesdialog = Ext.DomQuery.selectValue('@choicesdialog',dfield);
+            var choicesdialog = Ext.DomQuery.selectValue('@choicesdialog',dfield, false);
             
-            // for an addressbook dialog
-            if (choicesdialog == "addressbook") {
-                this.convertToNamePicker(el, {
-                    multipleSelection : allowMultiValues,
-                    allowNew : allowNew
-                });
-                return;
-            }
-            
-            // for ACL dialog
-            if (choicesdialog == "acl") {
-                this.convertToACLDialog(el, {
-                    multipleSelection : allowMultiValues,
-                    allowNew : allowNew                
-                });
-                return;
-            }
-            
-            if (choicesdialog == 'view') {
-                this.convertToPickList(el, {
-                    type : 'custom',
-                    viewName : Ext.DomQuery.selectValue('@view', dfield),
-                    column : Ext.DomQuery.selectNumber('@viewcolumn', dfield),
-                    multipleSelection : allowMultiValues,
-                    allowNew : allowNew                    
-                });
-                return;
-            }
-            
-            if (choicesdialog == '') {
+            if (choicesdialog) {
+
+                switch (choicesdialog) {
+                    
+                    case 'addressbook':
+                    this.convertToNamePicker(el, {
+                        multipleSelection : allowMultiValues,
+                        allowNew : allowNew
+                    });
+                    break;
+                    
+                    case 'acl':
+                    this.convertToACLDialog(el, {
+                        multipleSelection : allowMultiValues,
+                        allowNew : allowNew                
+                    });
+                    break;
+                
+                    case 'view':
+                    this.convertToPickList(el, {
+                        type : 'custom',
+                        viewName : Ext.DomQuery.selectValue('@view', dfield),
+                        column : Ext.DomQuery.selectNumber('@viewcolumn', dfield),
+                        multipleSelection : allowMultiValues,
+                        allowNew : allowNew                    
+                    });
+                    break;
+                } // eo switch
+                
+            } else {
                 this.convertToTextField(el);
-                return;
             }
         }
     },
