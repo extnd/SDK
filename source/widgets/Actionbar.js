@@ -111,7 +111,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
     },
     
     // private
-    initComponent: function(){
+    initComponent : function(){
     
         this.addEvents(        /**
          * @event actionsloaded Fires after all actions have been added to toolbar
@@ -141,7 +141,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
         
     },
     
-    onRender: function(ct, position){
+    onRender : function(ct, position){
     
         Ext.nd.Actionbar.superclass.onRender.call(this, ct, position);
         this.addActions();
@@ -149,7 +149,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
     },
     
     // private
-    addActions: function(){
+    addActions : function(){
         
         /* first, get the domino actionbar */
         if (this.noteType == '' || this.noteType == 'view') {
@@ -180,7 +180,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
     },
     
     // private
-    addActionsFromDxl: function(){
+    addActionsFromDxl : function(){
         Ext.Ajax.request({
             method: 'GET',
             disableCaching: true,
@@ -192,14 +192,14 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
     },
     
     // private   
-    addActionsFromDxlSuccess: function(o){
+    addActionsFromDxlSuccess : function(o){
         var arActions;
         var q = Ext.DomQuery;
         var response = o.responseXML;
         arActions = q.select('action', response);
         
         /* hack to get the correct view title */
-        if (this.noteType == 'view' && this.target && this.useViewTitleFromDxl) {
+        if (this.noteType == 'view' && this.getTarget() && this.useViewTitleFromDxl) {
             this.setViewName(response);
         }
         
@@ -325,7 +325,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                             if (cmdFrm && cmdFrm.length) {
                                 switch (cmdFrm[1]) {
                                     case 'Compose':
-                                        handler = this.openForm.createDelegate(this, [cmdFrm[2]]);
+                                        handler = this.openForm.createDelegate(this, [{formName : cmdFrm[2]}]);
                                         break;
                                     case 'EditDocument':
                                         // EditDocument @Command has an optional 2nd param that defines the mode, 1=edit, 2=read
@@ -421,12 +421,12 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
      * Override this method to deal with server communication issues as you please
      * @param {Object} res The Ajax response object
      */
-    addActionsFromDxlFailure: function(res){
+    addActionsFromDxlFailure : function(res){
         // alert("Error communicating with the server");
     },
     
     // private
-    addActionsFromDocument: function(o){
+    addActionsFromDocument : function(o){
         var arActions = [];
         var q = Ext.DomQuery;
         
@@ -575,12 +575,12 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
     },
     
     // private
-    removeActionbar: function(){
+    removeActionbar : function(){
         this.toolbar.destroy();
     },
     
     // private
-    syncGridSize: function(){
+    syncGridSize : function(){
         // now make sure the bbar shows by syncing the grid and the grid's parent
         if (this.toolbar.ownerCt) {
             this.toolbar.ownerCt.syncSize();
@@ -592,7 +592,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
     },
     
     // private
-    processActions: function(){
+    processActions : function(){
     
         var nbrActions = this.actions.length;
         
@@ -614,7 +614,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
     
     // private
     // this is a hack to set the view name on the tab since view?ReadDesign doesn't give the view title
-    setViewName: function(response){
+    setViewName : function(response){
         var q = Ext.DomQuery;
         
         // now get the folder name or view name from folder/@name or view/@name
@@ -641,9 +641,19 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
      * Handler for @Command([Compose];'myform')
      * @param {String} form the url accessible name for the form
      */
-    openForm: function(form){
-        var link = this.dbPath + form + '?OpenForm';
-        var target = this.target || this.ownerCt.ownerCt;
+    openForm : function(options){
+        var formName = options.formName;
+        var dbPath = options.dbPath || this.dbPath;
+        var isResponse = (options.isResponse) ? options.isResponse : false;
+        var pUrl = '';
+                
+        if (isResponse) {
+            var parentUNID = options.parentUNID || this.getParentUNID();
+            var pUrl = (parentUNID !== '') ? '&parentUNID='+parentUNID : '';
+        }
+        
+        var link = dbPath + formName + '?OpenForm' + pUrl;
+        var target = this.getTarget() || this.ownerCt.ownerCt;
         
         // if no target then just open in a new window
         if (!target) {
@@ -660,20 +670,35 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
         }
     },
     
+    // private
+    getParentUNID : function() {
+        var parentUNID = '';
+        if (this.noteType == 'view') {
+            var row = this.getUIView().getSelectionModel().getSelected();
+            if (row && row.unid) {
+                parentUNID = row.unid;
+            }
+        } else {
+            parentUNID = this.getUIDocument().document.universalID;
+        }
+        
+        return parentUNID;
+    },
+    
     /**
      * Handler for @Command([EditDocument])
      * @param {Boolean} editMode true for edit, false for read mode
      */
-    openDocument: function(editMode){
-        //var target = this.target || this.ownerCt.ownerCt;
-    	var target = this.target;
+    openDocument : function(editMode){
+ 
+    	var target = this.getTarget();
         if (this.noteType == 'view') {
             this.openDocumentFromView(editMode);
             return;
         }
         
         var mode = (editMode) ? '?EditDocument' : '?OpenDocument';
-        var unid = Ext.nd.currentUIDocument.document.universalID;
+        var unid = this.getUIDocument().document.universalID;
         var pnlId = 'pnl-' + unid;
         var link = this.dbPath + '0/' + unid + mode;
         // if no target then just location.href
@@ -711,7 +736,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
      * You can also call this method directly with a JavaScript action
      * Calls the browser's window.print( method.
      */
-    print: function(){
+    print : function(){
         window.print();
     },
     
@@ -719,9 +744,24 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
      * Default handler when the @Formula is not understood by the parser.
      * @param {String} formula the unparsed formula
      */
-    unsupportedAtCommand: function(formula){
+    unsupportedAtCommand : function(formula){
         Ext.Msg.alert('Error', 'Sorry, the @command "' + formula +
         '" is not currently supported by Ext.nd');
+    },
+    
+    // private
+    getTarget : function() {
+        if (this.target) {
+            return this.target;
+        } else {
+            // if a target property is available then set it
+            if (window && window.target) {
+                this.target = window.target;
+                return this.target;
+            } else {
+                return null;
+            }
+        }
     }
     
 });
