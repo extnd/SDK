@@ -359,6 +359,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         var cell = false;
         var newParams = {};
         var ds = grid.getStore();
+        var lastCount = ds.lastOptions.params.count;
         var record = ds.getAt(rowIndex);
         
         if (ecImg.dom.tagName == 'IMG') {
@@ -373,9 +374,10 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                 var isExpand = cellEl.hasClass('xnd-view-expand');
                 if (isExpand) {
                     // need to expand (count is determined by taking the
-                    // rowIndex and adding this.count)
+                    // rowIndex and adding this.count, unless lastCount
+                    // is -1 and in that case just use it)
                     newParams = {
-                        count: rowIndex + this.count,
+                        count: (lastCount && lastCount != -1) ? rowIndex + this.count : lastCount,
                         expand: record.position
                     };
                     ds.load({params : newParams});
@@ -394,7 +396,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                         // need to collapse (count is determined by the
                         // lastOptions.params.count)
                         newParams = {
-                            count: (ds.lastOptions.params.count) ? ds.lastOptions.params.count : this.count,
+                            count: (lastCount) ? lastCount : this.count,
                             collapse: record.position
                         };
                         ds.load({params : newParams});
