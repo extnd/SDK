@@ -121,7 +121,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
                  */
                 'beforeclose',        
                 /**
-                 * @event beforemodechange (TODO: Not yet implemented) Fires just before the current document changes modes (from Read to Edit mode, or from Edit to Read mode) (equivalent to the NotesUIDocument QueryModeChange event).
+                 * @event beforemodechange Fires just before the current document changes modes (from Read to Edit mode, or from Edit to Read mode) (equivalent to the NotesUIDocument QueryModeChange event).
                  * @param {Ext.nd.UIDocument} this
                  */
                 'beforemodechange',        
@@ -243,7 +243,13 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
 
     },
 
-    edit : function(){
+    edit : function(config) {
+        if (this.fireEvent("beforemodechange", this) !== false) {
+            this.onEdit(config);
+        }
+    },
+
+    onEdit : function(config){
         var uiView = this.getUIView();
         var uiViewName = (uiView) ? uiView.viewName : '0';
         var unid = this.document.universalID;
