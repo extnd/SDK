@@ -709,21 +709,25 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
             return;
         }
         
-        var mode = (editMode) ? '?EditDocument' : '?OpenDocument';
-        var unid = this.getUIDocument().document.universalID;
-        var link = this.dbPath + '0/' + unid + mode;
-        // if no target then just location.href
-        if (!target) {
-            location.href = link;
-        }
-        else {
-            Ext.nd.util.addIFrame({
-                target: target,
-                uiView: this.getUIView(),
-                uiDocument: this.getUIDocument(),
-                url: link,
-                id: Ext.id()
-            });
+        if (editMode) {
+            this.getUIDocument().edit();
+        } else {
+            var mode = (editMode) ? '?EditDocument' : '?OpenDocument';
+            var unid = this.getUIDocument().document.universalID;
+            var link = this.dbPath + '0/' + unid + mode;
+            // if no target then just location.href
+            if (!target) {
+                location.href = link;
+            }
+            else {
+                Ext.nd.util.addIFrame({
+                    target: target,
+                    uiView: this.getUIView(),
+                    uiDocument: this.getUIDocument(),
+                    url: link,
+                    id: Ext.id()
+                });
+            }
         }
     },
 
