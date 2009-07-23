@@ -322,6 +322,9 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                                     case 'EditDocument':
                                         // EditDocument @Command has an optional 2nd param that defines the mode, 1=edit, 2=read
                                         // if this 2nd param is missing, FF returns undefined and IE returns an empty string
+                                        handler = this.editDocument.createDelegate(this, [cmdFrm[2] ? ((cmdFrm[2] == "1") ? true : false) : true]);
+                                        break;
+                                    case 'OpenDocument':
                                         handler = this.openDocument.createDelegate(this, [cmdFrm[2] ? ((cmdFrm[2] == "1") ? true : false) : true]);
                                         break;
                                     case 'FileCloseWindow':
@@ -675,21 +678,22 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                 parentUNID = row.unid;
             }
         } else {
-            parentUNID = this.getUIDocument().document.universalID;
+            var uidoc = this.getUIDocument()
+            parentUNID = (uidoc && uidoc.document && uidoc.document.universalID) ? uidoc.document.universalID : '';
         }
         
         return parentUNID;
     },
     
     /**
-     * Handler for @Command([EditDocument])
+     * Handler for @Command([OpenDocument])
      * @param {Boolean} editMode true for edit, false for read mode
      */
     openDocument : function(editMode){
  
-    	var target = this.getTarget();
+        var target = this.getTarget();
         if (this.noteType == 'view') {
-            this.openDocumentFromView(editMode);
+            this.getUIView().openDocument(editMode);
             return;
         }
         
@@ -711,19 +715,20 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
             });
         }
     },
-    
+
     /**
      * Handler for @Command([EditDocument])
-     * Called when opening a document from a UIView.
      * @param {Boolean} editMode true for edit, false for read mode
      */
-    openDocumentFromView : function(editMode){
-        var grid = this.getUIView();
-        var row = grid.getSelectionModel().getSelected();
-        var rowIndex = grid.getStore().indexOf(row);
-        var e = null; // not sure how to get the event so we'll just set it to null;
-        // just call the UIView.openDocument method
-        this.getUIView().openDocument(grid, rowIndex, e, editMode);
+    editDocument : function(editMode){
+ 
+        var target = this.getTarget();
+        if (this.noteType == 'view') {
+            this.getUIView().openDocument(editMode);
+            return;
+        } else {
+            this.getUIDocument().edit();
+        }
     },
     
     /**
