@@ -724,9 +724,18 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
     },
     // private
     openDocument: function(grid, rowIndex, e, bEditMode){
-        var mode = (bEditMode) ? '?EditDocument' : '?OpenDocument';
-        var ds = grid.getStore();
+        
+        // if length==1 then we came from an action button
+        if (arguments.length == 1) {
+            bEditMode = arguments[0];
+            grid = this;
+            e = null; // not sure how to get the event so we'll just set it to null;
+        } 
+            
         var row = grid.getSelectionModel().getSelected();
+        var mode = (bEditMode) ? '?EditDocument' : '?OpenDocument';
+        
+
         if (row == undefined) {
             return; // can't open a doc if a row is not selected so bail
         }
