@@ -662,7 +662,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
     convertToTextField : function(el){
         
         // for normal input fields
-        var f = new Ext.form.Field({
+        var f = new Ext.form.TextField({
             id: (el.id ? el.id : el.name)
         });
         f.applyToMarkup(el);
