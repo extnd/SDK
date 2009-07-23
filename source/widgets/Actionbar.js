@@ -52,10 +52,12 @@
  * Supported for Views:
  * @Command([Compose])
  * @Command([EditDocument])
+ * @Command([OpenDocument])
  * @Command([FilePrint])
  * Supported for Forms:
  * @Command([Compose])
  * @Command([EditDocument])
+ * @Command([OpenDocument])
  * @Command([FilePrint])
  * @Command([FileSave])
  * @Command([FileCloseWindow])
@@ -317,7 +319,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                             if (cmdFrm && cmdFrm.length) {
                                 switch (cmdFrm[1]) {
                                     case 'Compose':
-                                        handler = this.openForm.createDelegate(this, [{formName : cmdFrm[2]}]);
+                                        handler = this.openForm.createDelegate(this, [cmdFrm[2]]);
                                         break;
                                     case 'EditDocument':
                                         // EditDocument @Command has an optional 2nd param that defines the mode, 1=edit, 2=read
@@ -638,13 +640,23 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
     
     /**
      * Handler for @Command([Compose];'myform')
-     * @param {String} form the url accessible name for the form
+     * @param {String/Object} form the url accessible name for the form
      */
     openForm : function(options){
-        var formName = options.formName;
-        var dbPath = options.dbPath || this.dbPath;
-        var isResponse = (options.isResponse) ? options.isResponse : false;
-        var pUrl = '';
+        
+        var formName, dbPath, isResponse, pUrl;
+        
+        if (typeof options == 'string') {
+            formName = options;
+            dbPath = this.dbPath;
+            isResponse = false;
+        } else {
+            formName = options.formName;
+            dbPath = options.dbPath || this.dbPath;
+            isResponse = (options.isResponse) ? options.isResponse : false;
+        }
+        
+        pUrl = '';
                 
         if (isResponse) {
             var parentUNID = options.parentUNID || this.getParentUNID();
