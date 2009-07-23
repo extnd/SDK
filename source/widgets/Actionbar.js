@@ -699,7 +699,6 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
         
         var mode = (editMode) ? '?EditDocument' : '?OpenDocument';
         var unid = this.getUIDocument().document.universalID;
-        var pnlId = 'pnl-' + unid;
         var link = this.dbPath + '0/' + unid + mode;
         // if no target then just location.href
         if (!target) {
@@ -722,7 +721,6 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
      */
     editDocument : function(editMode){
  
-        var target = this.getTarget();
         if (this.noteType == 'view') {
             this.getUIView().openDocument(editMode);
             return;
