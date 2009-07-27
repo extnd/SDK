@@ -803,6 +803,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         this.isView = this.viewDesign.isView;
         this.isFolder = this.viewDesign.isFolder;
         this.ViewEntryRecord = this.viewDesign.ViewEntryRecord;
+        this.viewEntryReader = this.viewDesign.viewEntryReader;
         
         
         /* if the view is set to allow for docs to be selected with checkbox AND
