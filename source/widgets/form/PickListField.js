@@ -23,12 +23,17 @@ Ext.extend(Ext.nd.form.PickListField, Ext.form.TriggerField, {
      * @cfg {String} viewName
      * The name of the view to load the 'choice' list.
      */
-    viewName : "f1",
+    viewName : "",
     /**
      * @cfg {Boolean} multipleSelection
      * Whether or not to allow multiple documents to be selected.
      */
-    multipleSelection : false,    
+    multipleSelection : false,
+    /**
+     * @cfg {Boolean} useCheckboxSelection
+     * Whether or not to display checkboxes in the first column.
+     */
+    useCheckboxSelection : false,
     /**
      * @cfg {Boolean} allowNew
      * Whether or not to allow new values to be entered.
@@ -50,7 +55,7 @@ Ext.extend(Ext.nd.form.PickListField, Ext.form.TriggerField, {
      * @cfg {Number} pickListWidth
      * The width of the PickList dialog window (defaults to 300).
      */
-    pickListWidth : 300,
+    pickListWidth : 600,
     /**
      * @cfg {Number} column
      * The column whose values you want returned from the selected choices (defaults to 0).
@@ -121,6 +126,7 @@ Ext.extend(Ext.nd.form.PickListField, Ext.form.TriggerField, {
             type : this.type,
             width : this.pickListWidth,
             multipleSelection : this.multipleSelection,
+            useCheckboxSelection : this.useCheckboxSelection,
             allowNew : this.allowNew,
             dbPath : this.dbPath,
             viewName : this.viewName,
