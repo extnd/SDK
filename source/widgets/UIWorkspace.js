@@ -40,22 +40,25 @@ Ext.nd.UIWorkspace.prototype = {
         var dialog, cb;
         var opt = {
             type: "custom",
+            multipleSelection: false,
+            dbPath: this.dbPath,
             viewName: "",
+            title: "PickList",
+            prompt: "Please make your selection(s) and click <OK>.",
+            column: 0,
+
             width: (options.multipleSelection && !options.useCheckboxSelection) ? 600 : 500,
             height: 400,
             constrainHeader: true,
             shadow: true,
             minWidth: 500,
             minHeight: 400,
-            multipleSelection: false,
+
             showActionbar: false,
             showSearch: true,
             useCheckboxSelection: false,
             viewConfig : {},
-            
-            title: "PickList",
-            prompt: "Please make your selection(s) and click <OK>.",
-            column: 0,
+
             
             // defaults for single category options
             category: null,
@@ -70,17 +73,17 @@ Ext.nd.UIWorkspace.prototype = {
         // viewUrl is either passed in or built from dbPath and viewName
         switch (opt.type) {
             case "custom":
-                opt.viewUrl = (opt.viewUrl) ? opt.viewUrl : this.dbPath + opt.viewName;
+                opt.viewUrl = (opt.viewUrl) ? opt.viewUrl : opt.dbPath + opt.viewName;
                 break;
                 
             case "names":
-                opt.viewUrl = this.sess.addressBooks[0].webFilePath + '($PeopleGroupsFlat)';
-                opt.title = "Select Name";
-                opt.column = 1;
+                opt.viewUrl = (options.viewName && options.viewName !== "") ? opt.dbPath + opt.viewName : this.sess.addressBooks[0].webFilePath + '($PeopleGroupsFlat)';
+                opt.title = (options.title) ? opt.title : "Select Name";
+                opt.column = (options.column) ? opt.column : 1;
                 break;
                 
             default:
-                opt.viewUrl = (opt.viewUrl) ? opt.viewUrl : this.dbPath + opt.viewName;
+                opt.viewUrl = (opt.viewUrl) ? opt.viewUrl : opt.dbPath + opt.viewName;
         } //end switch(opt.type)
 
         // private
@@ -243,6 +246,12 @@ Ext.nd.UIWorkspace.prototype = {
             }
         };
         
+        var removeSelection = function(node, e) {
+            if (node.parentNode) {
+                node.remove();
+            }
+        };
+        
         var addSelection = function(){
             
             var map, data, newNode;
@@ -320,9 +329,7 @@ Ext.nd.UIWorkspace.prototype = {
                 rootVisible: (opt.type == 'names') ? true : false,
                 selModel: new Ext.tree.MultiSelectionModel()
             })
-            opt.selections.on('dblclick', function(node, e){
-                node.remove();
-            })
+            opt.selections.on('dblclick', removeSelection, this);
             
             /* buttons */
             actionButtons = {
