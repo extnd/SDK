@@ -14,7 +14,7 @@
  renderTo: 'myToolbarDiv',
  noteType: 'view',
  noteName: this.viewName,
- useDxl: true
+ createActionsFrom: 'document'
  })</code></pre>
  * Example usage as a plugin to an existing toolbar (note that you must set the isPlugin property to true):<pre><code>
  new Ext.Toolbar({
@@ -33,7 +33,7 @@
  isPlugin: true,
  noteType: 'view',
  noteName: this.viewName,
- useDxl: true
+ createActionsFrom: 'document'
  })
  })</code></pre>
  * @cfg {String} noteType
@@ -41,9 +41,9 @@
  * actions based off from where it is located
  * @cfg {String} noteName
  * The name of the form or view that will be used to access URL commands
- * @cfg {Boolean} useDxl
- * When using noteType: 'form' set to false to convert the HTML actionbar instead of
- * grabbing the form's Dxl and transforming it (Defaults to true)
+ * @cfg {String} createActionsFrom
+ * Can be either 'document' or 'dxl'.  When using noteType: 'form' set to 'document' to convert the HTML actionbar instead of
+ * grabbing the form's Dxl and transforming it (Defaults to 'dxl')
  * @cfg {Boolean} convertFormulas
  * Whether you want basic domino @Formulas converted over to JavaScript code. Currently
  * only single formulas are supported. (Defaults to true)
@@ -72,7 +72,7 @@ Ext.nd.Actionbar = function(config){
     this.dbPath = this.db.webFilePath;
     this.noteType = '';
     this.noteName = '';
-    this.useDxl = true;
+    this.createActionsFrom = 'dxl';
     this.dominoActionbar = {};
     this.actions = [];
     this.useViewTitleFromDxl = false;
@@ -162,7 +162,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
         }
 
         
-        if (!this.useDxl) {
+        if (this.createActionsFrom == 'document') {
             this.addActionsFromDocument();
         }
         else if(this.noteName === '') {
