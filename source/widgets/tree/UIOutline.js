@@ -131,9 +131,9 @@ Ext.extend(Ext.nd.UIOutline, Ext.tree.TreePanel, {
          */
         'openentry',
         /**
-         * @event beforeaddfolder Fires before adding documents from a {@link Ext.nd.UIView} into a folder
+         * @event beforeaddtofolder Fires before adding documents from a {@link Ext.nd.UIView} into a folder
          */
-        'beforeaddfolder',
+        'beforeaddtofolder',
         /**
          * @event addfoldersuccess Fires when the Ajax call to the add to folder agent returns sucessfully
          */
@@ -163,11 +163,12 @@ Ext.extend(Ext.nd.UIOutline, Ext.tree.TreePanel, {
 
         if (type == "20") {
             this.isFolder = true;
-            this.folderUNID = unid;
+            this.dropFolderUNID = unid;
+            this.dropFolderName = node.text;
             return dd.dropAllowed;
         } else {
             this.isFolder = false;
-            this.folderUNID = '';
+            this.dropFolderUNID = '';
             return dd.dropNotAllowed;
         }
     },
@@ -177,32 +178,39 @@ Ext.extend(Ext.nd.UIOutline, Ext.tree.TreePanel, {
         var unids = "";
         // don't even bother if not a folder
         if (this.isFolder) {
-            if (this.fireEvent('beforeaddfolder', this, source, e, data) !== false) {
-                var target = e.target;
-                var fromFolder = '';
-
-                // data.selections are for rows in a grid
-                if (data.selections) {
-                    var select = data.selections;
-                    fromFolder = source.grid.viewName;
-                    for(var i = 0; i < select.length; i++) {
-                        var d = select[i];
-                        unids += "unid=" + d.unid + "&";
-                    }
-                    Ext.Ajax.request({
-                        method: 'POST',
-                        disableCaching: true,
-                        success: this.addToFolderSuccess,
-                        failure: this.addToFolderFailure,
-                        scope: this,
-                        params: unids,
-                        extraParams: data,
-                        url: Ext.nd.extndUrl + 'FolderOperations?OpenAgent&db=' + this.filePath + '&operation=putinfolder' + '&folder=' + this.folderUNID + '&fromfolder=' + fromFolder
-                    });
-                    return true;
-                }
-            }
-
+            
+            // if dragging a doc from a grid then fire its BeforeAddToFolder event
+            // TODO: besides a grid, need to add support for dd a folder onto another folder
+            if (this.fireEvent('beforeaddtofolder', this, source, e, data) !== false) {
+                if (source.grid) {
+                    if (source.grid.fireEvent("beforeaddtofolder", source.grid, this.dropFolderName, source, e, data) !== false) {
+                        var target = e.target;
+                        var fromFolder = '';
+        
+                        // data.selections are for rows in a grid
+                        if (data.selections) {
+                            var select = data.selections;
+                            fromFolder = source.grid.viewName;
+                            for(var i = 0; i < select.length; i++) {
+                                var d = select[i];
+                                unids += "unid=" + d.unid + "&";
+                            }
+                            Ext.Ajax.request({
+                                method: 'POST',
+                                disableCaching: true,
+                                success: this.addToFolderSuccess,
+                                failure: this.addToFolderFailure,
+                                scope: this,
+                                params: unids,
+                                extraParams: data,
+                                url: Ext.nd.extndUrl + 'FolderOperations?OpenAgent&db=' + this.filePath + '&operation=putinfolder' + '&folder=' + this.dropFolderUNID + '&fromfolder=' + fromFolder
+                            });
+                            return true;
+                        }
+                    } // eo view's beforeaddtofolder event
+                } // eo if (source.grid)
+            }// eo folder's beforeaddtofolder event
+            
             // data.node is for other folders in the tree
             if (data.node) {
                 // need to do something here
@@ -211,6 +219,8 @@ Ext.extend(Ext.nd.UIOutline, Ext.tree.TreePanel, {
 
         } // if (this.isFolder)
 
+        return false;
+        
     },// eo addToFolder
 
     addToFolderSuccess: function(response, request) {
