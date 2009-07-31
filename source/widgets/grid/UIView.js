@@ -46,7 +46,8 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
     multiExpandCount: 40,
     notCategorizedText: '(Not Categorized)',
     loadInitialData: true,
-
+    baseParams: {},
+    
     documentWindowTitle: '',
     documentLoadingWindowTitle: 'Opening...',
     documentUntitledWindowTitle: '(Untitled)',
@@ -74,7 +75,6 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         
         this.cols = [];
         this.recordConfig = [];
-        this.baseParams = {};
         this.renderers = [];
 
         
@@ -111,9 +111,12 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         
         this.addEvents(        
         /**
-         * TODO
          * @event beforeaddtofolder Fires just before an add to folder (same as NotesUIView QueryAddToFolder)
-         * @param {Ext.nd.UIView} this
+         * @param {Ext.nd.UIView} this The current view.
+         * @param {String} target The name of the folder that is the target of the drag and drop operation
+         * @param {Object) source
+         * @param (Object) event
+         * @param {Array} data
          */
         'beforeaddtofolder',        
         /**
@@ -337,7 +340,8 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
     
     gridHandleRowDblClick: function(grid, rowIndex, e, bEditMode){
     
-        var row = grid.getSelectionModel().getSelected();
+        //var row = grid.getSelectionModel().getSelected();
+        var row = this.getSelectedDocument(rowIndex);
         
         // if we have an unid then the user is doubleclicking on a doc and not a
         // category
@@ -423,14 +427,15 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         if (e.getTarget().name == "xnd-vw-search") {
             return;
         }
-        var node, row, rowIndex, unid, target;
+        var sm, ds, node, row, rowIndex, unid, target;
         var keyCode = e.browserEvent.keyCode;
         var charCode = e.charCode;
         
         target = e.getTarget();
-        var sm = this.getSelectionModel();
-        row = sm.getSelected();
-        rowIndex = this.getStore().indexOf(row);
+        sm = this.getSelectionModel();
+        row = sm.selections.itemAt(sm.selections.length-1);
+        ds = this.getStore();
+        rowIndex = (row && row.unid && ds && ds.data) ? ds.data.findIndex("unid", row.unid) : -1;
         
         // for now, we won't worry about the altKey
         if (e.altKey) {
@@ -439,9 +444,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         
         // if Ctrl+E
         if (e.ctrlKey && keyCode == 69) {
-            if (row) {
-                this.openDocument(this, rowIndex, e, true);
-            }
+            this.openDocument(this, rowIndex, e, true);
             return;
         }
         
@@ -457,13 +460,11 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         
         switch (keyCode) {
             case e.RETURN:
-                if (row) {
-                    this.openDocument(this, rowIndex, e);
-                }
+                this.openDocument(this, rowIndex, e);
                 break;
             case e.DELETE:
                 if (row) {
-                    this.deleteDocument(this, row, e);
+                    this.deleteDocument(this, rowIndex, e);
                 }
                 break;
                 
@@ -483,19 +484,15 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             // in the Notes client toggling the space bar 
             // will toggle whether the doc is selected or not in a view
             case e.SPACE:
-                if (row) {
-                    if (sm.isSelected(rowIndex)) {
-                        sm.deselectRow(rowIndex);
-                    }
-                    else {
-                        sm.selectRow(rowIndex);
-                    }
+                if (sm.isSelected(rowIndex)) {
+                    sm.deselectRow(rowIndex);
+                }
+                else {
+                    sm.selectRow(rowIndex);
                 }
                 break;
             default:
-                if (row) { // don't process if not typing from a row in the grid
-                    Ext.MessageBox.prompt('Starts with...', 'Search text ', this.quickSearch, this, false, charCode);
-                }
+                Ext.MessageBox.prompt('Starts with...', 'Search text ', this.quickSearch, this, false, charCode);
         }
     },
     
@@ -726,7 +723,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
     editDocument : function(){
         // just calling openDocument and passing
         // in true for editMode
-        this.openDocument(true);
+        this.openDocument(this, null, null, true);
     },
     
     openDocument: function(grid, rowIndex, e, bEditMode){
@@ -734,15 +731,16 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         // if length == 1 then we came from an @Command converted action button
         // if length == 0 then openDocument was called directly
         if (arguments.length <= 1) {
-            bEditMode = (arguments.length == 1) ? arguments[0] : false;
             grid = this;
+            rowIndex = null;
             e = null; // not sure how to get the event so we'll just set it to null;
+            bEditMode = (arguments.length == 1) ? arguments[0] : false;
         } 
             
-        var row = grid.getSelectionModel().getSelected();
+        //var row = grid.getSelectionModel().getSelected();
+        var row = this.getSelectedDocument(rowIndex);
         var mode = (bEditMode) ? '?EditDocument' : '?OpenDocument';
         
-
         if (row == undefined) {
             return; // can't open a doc if a row is not selected so bail
         }
@@ -785,6 +783,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             multiExpand : this.multiExpand,
             storeConfig : this.storeConfig,
             baseParams : this.baseParams,
+            removeCategoryTotal : false,
             callback : this.getViewDesignCB,
             scope : this
         })
@@ -819,14 +818,25 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                 (typeof this.selModelConfig.type === 'undefined' ||
                 (typeof this.selModelConfig.type === 'string' && this.selModelConfig.type !== 'checkbox'))) {
 
+                // remove the grid's current rowclick event if it is using 
+                // our custom handleDDRowClick override 
+                this.un('rowclick', this.selModel.handleDDRowClick, this.selModel);
+
+                // now destroy the old selModel
                 if (this.selModel && this.selModel.destroy){
                     this.selModel.destroy();
                 }
+                        
+                // add in the new selection model
                 this.selModel = new Ext.grid.CheckboxSelectionModel(this.selModelConfig);
+                
+                // call the init manually (you are not supposed to do this since the grid
+                // does this automatically, but since we are changing the selModel on the
+                // fly, we need to do this now)
                 this.selModel.init(this);
 
                 /* 
-                 * this function is a copy/past from the CheckboxSelectionModel
+                 * this function is a copy/paste from the CheckboxSelectionModel
                  * and what it does it make sure that we have mousedown events
                  * defined to capture clicking on the checkboxes 
                  */
@@ -836,7 +846,6 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                     Ext.fly(view.innerHd).on('mousedown', this.onHdMouseDown, this);
                 }, this.selModel);
         
-                this.un('rowclick');
         
                 this.cols.length = 0; // make sure nothing is in our cols array
                 this.cols.push(this.selModel);
@@ -912,7 +921,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         }
         
         // update this.documents property when a row is selected/deselected
-        this.selModel.on('rowselect', function(){
+        this.selModel.on('rowselect', function(sm, rowIndex, rec){
             this.documents = this.getDocuments();
         }, this);
         this.selModel.on('rowdeselect', function(){
@@ -1245,8 +1254,26 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
      * Returns the first selected record.
      * @return {Record}
      */
-    getSelectedDocument: function(){
-        return this.getSelectionModel().getSelected();
+    getSelectedDocument: function(rowIndex){
+        
+        var doc;
+        
+        if (rowIndex) {
+            doc = this.getStore().getAt(rowIndex);        
+        } else {
+       
+            var sm = this.getSelectionModel();
+            var selections = sm.selections;
+        
+            // use itemAt(selections.length-1) to get the last row/doc selected
+            doc = sm.selections.itemAt(selections.length-1);
+        }
+        
+        if (doc && doc.unid) {
+            return doc;
+        } else {
+            return undefined;
+        }
     },
     
     /**
