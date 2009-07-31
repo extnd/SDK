@@ -48,6 +48,7 @@ Ext.nd.UIDocument = function(config){
     //this.autoScroll = true;
     this.dbPath = db.webFilePath;
     this.showActionbar = true;
+    this.createActionsFrom = 'dxl';
     this.convertFields = true;
     this.applyDominoKeywordRefresh = true;
     
@@ -74,8 +75,6 @@ Ext.nd.UIDocument = function(config){
         } else {
             this.formName = document.forms[0].name.substring(1);
         }
-    } else {
-        this.formName = this.formName
     }
 
     // since we use Ext.form.BasicForm we need to make sure initialConfig is set now
@@ -345,6 +344,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
                     uiView: this.getUIView(),
                     uiDocument : this.getUIDocument(),
                     target: this.getTarget() || null,
+                    createActionsFrom: this.createActionsFrom,
                     items: this.tbar
                 });
             }
@@ -371,7 +371,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
                     uiView: this.getUIView(),
                     uiDocument: this.getUIDocument(),
                     target: this.getTarget() || null,
-                    useDxl: true,
+                    createActionsFrom: this.createActionsFrom,
                     renderTo : (this.toolbarRenderTo) ? this.toolbarRenderTo : null
                 });
             }
