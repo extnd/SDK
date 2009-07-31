@@ -19,7 +19,9 @@ Ext.nd.data.ViewStore = function(config){
         sort: 'sort',
         dir: 'dir'
     }});
-    
+    // make sure we have baseParams
+    this.baseParams = {};
+    this.removeCategoryTotal = true;
     Ext.nd.data.ViewStore.superclass.constructor.call(this, config);
 };
 
@@ -43,10 +45,13 @@ Ext.extend(Ext.nd.data.ViewStore, Ext.data.Store, {
      * </code></pre>
      */
     load: function(options){
-        options = options ||
-        {};
+        options = options || {};
+        
         if (this.fireEvent("beforeload", this, options) !== false) {
             this.storeOptions(options);
+            
+            // make sure options has a params property
+            options.params = (options.params) ? options.params : {};
             
             // do some baseParams cleanup
             if (options.params.expand || options.params.expandview) {
@@ -146,6 +151,23 @@ Ext.extend(Ext.nd.data.ViewStore, Ext.data.Store, {
             		this.loadRecords, 
             		this, options);
         }
+    },
+    
+    // override to get rid of a category total
+    loadRecords : function(o, options, success) {
+        var lastRecord, len;
+               
+        if (this.removeCategoryTotal) {
+            len = o.records.length;
+            if (len > 0) {
+                lastRecord = o.records[len-1];
+                if (lastRecord.isCategoryTotal) {
+                    o.records.pop(); // remove this last record
+                }
+            }
+        }
+        // now continue on and call our superclass.loadRecords
+        Ext.nd.data.ViewStore.superclass.loadRecords.call(this, o, options, success);
     },
     
     /**
