@@ -158,19 +158,19 @@ Ext.grid.GridDragZone.override(
         var rowIndex = this.view.findRowIndex(t);
         if(rowIndex !== false){
             var sm = this.grid.selModel;
-            // FIX: Added additional check (t.className != "x-grid3-row-checker"). It may not
-            //      be beautiful solution but it solves my problem at the moment.
-            // so if the classname is not the one for the checkbox then the user clicked
-            // somewhere else in the row
-            if ( (t.className != "x-grid3-row-checker") && (!sm.isSelected(rowIndex) || e.hasModifier()) ){
-                // this is a hack, is it a good hack? who knows! :)
-                // what we want to do for CheckboxSelectionModel is to allow for clicking
-                // on a row (not the checkbox) to still keep the selections, and to do this
-                // the hack is to force the ctrlKey to true
-                if (sm.id == 'checker' && !sm.singleSelect) {
-                    e.ctrlKey = true;
+            if (sm.id == 'checker' && sm.checkOnly && t.className != "x-grid3-row-checker") {
+                // don't do anything
+            } else {
+                if ( (t.className != "x-grid3-row-checker") && (!sm.isSelected(rowIndex) || e.hasModifier()) ){
+                    // this is a hack, is it a good hack? who knows! :)
+                    // what we want to do for CheckboxSelectionModel is to allow for clicking
+                    // on a row (not the checkbox) to still keep the selections, and to do this
+                    // the hack is to force the ctrlKey to true
+                    if (sm.id == 'checker' && !sm.singleSelect) {
+                        e.ctrlKey = true;
+                    }
+                    sm.handleMouseDown(this.grid, rowIndex, e);
                 }
-                sm.handleMouseDown(this.grid, rowIndex, e);
             }
             return {grid: this.grid, ddel: this.ddel, rowIndex: rowIndex, selections:sm.getSelections()};
         }
