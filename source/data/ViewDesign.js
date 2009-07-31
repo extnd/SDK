@@ -5,6 +5,8 @@ Ext.nd.data.ViewDesign = function(config){
     this.viewName = '';
     this.multiExpand = false;
     this.storeConfig = {};
+    this.baseParams = {};
+    this.removeCategoryTotal = true;
     this.isCategorized = false;
     this.callback = Ext.emptyFn;
     
@@ -248,6 +250,7 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
                 method: "GET"
             }),
             baseParams: this.baseParams,
+            removeCategoryTotal: this.removeCategoryTotal,
             reader: this.viewEntryReader,
             remoteSort: true
         }, this.storeConfig));
