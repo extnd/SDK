@@ -81,6 +81,11 @@ Ext.nd.Actionbar = function(config){
     Ext.apply(this, config);
     Ext.nd.Actionbar.superclass.constructor.call(this);
 
+    // for backwards compat
+    if (this.useDxl && this.useDxl === false) {
+        this.createActionsFrom = 'document';
+    }
+    
     this.noteUrl = (this.noteUrl) ? this.noteUrl : this.dbPath + this.noteName;
     
     /* make sure we have a noteName */
