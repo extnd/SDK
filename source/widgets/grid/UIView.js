@@ -593,7 +593,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
     gridDeleteDocumentSuccess: function(response, options){
         var row = options.row;
         var ds = this.getStore();
-        var sm = this.getSelectionModel()
+        var sm = this.getSelectionModel();
         var rowIndex = ds.indexOf(row);
         if (rowIndex == ds.data.length) {
             sm.selectRow(rowIndex);
