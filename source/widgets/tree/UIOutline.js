@@ -252,7 +252,7 @@ Ext.extend(Ext.nd.UIOutline, Ext.tree.TreePanel, {
             extndHref = attributes.extndHref;
             extndType = attributes.extndType;
             extndPosition = attributes.extndPosition;
-            panelId = 'xnd-pnl-' + extndPosition;
+            panelId = this.id + '-' + extndPosition;
             title = (this.useEntryTitleAsTargetTitle) ? node.text : null;
 
             // TODO: need to check to see if duplicate views are
@@ -308,6 +308,7 @@ Ext.extend(Ext.nd.UIOutline, Ext.tree.TreePanel, {
                         var uiview = Ext.apply(
                         				Ext.apply({
                                             xtype: 'xnd-uiview',
+                                            id : panelId,
                                             layout: 'fit',
                                             title: title,
                                             viewUrl: viewUrl
