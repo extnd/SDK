@@ -11,6 +11,15 @@
  * and read the data into Records.
  */
 Ext.nd.data.ViewStore = function(config){
+
+    // just to make sure that viewName, viewUrl, and dbPath get set
+    config = Ext.nd.util.cleanUpConfig(config);
+    
+    // default proxy
+    this.proxy = new Ext.data.HttpProxy({
+        url: config.viewUrl + '?ReadViewEntries',
+        method: "GET"
+    });
     
     // remap paramNames to work with Domino views
     Ext.apply(config, {paramNames : {
