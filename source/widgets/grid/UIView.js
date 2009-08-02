@@ -940,7 +940,10 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
      * Quick utility function to call reload on the grid's datastore
      */
     refresh: function(){
-        this.getStore().reload();
+        var store = this.getStore();
+        if (store && store.proxy) {
+            store.reload();
+        } 
     },
     
     // private
