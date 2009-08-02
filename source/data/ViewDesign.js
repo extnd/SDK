@@ -1,4 +1,8 @@
 Ext.nd.data.ViewDesign = function(config){
+    
+    // just to make sure that viewName, viewUrl, and dbPath get set
+    config = Ext.nd.util.cleanUpConfig(config);
+    
     this.sess = Ext.nd.Session;
     this.dbPath = this.sess.currentDatabase.webFilePath;
     this.noteType = 'view';
@@ -244,11 +248,9 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
     
         // create the Data Store
         this.store = new Ext.nd.data[(this.isCategorized && this.multiExpand) ? 'CategorizedStore' : 'ViewStore'](Ext.apply({
-            // this.store = new Ext.nd.data.ViewStore({
-            proxy: new Ext.data.HttpProxy({
-                url: this.viewUrl + '?ReadViewEntries',
-                method: "GET"
-            }),
+            dbPath : this.dbPath,
+            viewName : this.viewName,
+            viewUrl : this.viewUrl,
             baseParams: this.baseParams,
             removeCategoryTotal: this.removeCategoryTotal,
             reader: this.viewEntryReader,
