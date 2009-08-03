@@ -341,6 +341,9 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                                     case 'FileSave':
                                         handler = this.getUIDocument().save.createDelegate(this.getUIDocument(), [{}]);
                                         break;
+                                    case 'EditDeselectAll':
+                                        handler = this.getUIView().deselectAll.createDelegate(this.getUIView(), []);
+                                        break;
                                     case 'ViewCollapseAll':
                                         handler = this.getUIView().collapseAll.createDelegate(this.getUIView(), []);
                                         break;
@@ -779,7 +782,13 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                 this.target = window.target;
                 return this.target;
             } else {
-                return null;
+                // for an actionbar you have to go up two ownerCt to get pass the uiview or uidoc
+                if (this.ownerCt && this.ownerCt.ownerCt && this.ownerCt.ownerCt.getXType && this.ownerCt.ownerCt.getXType() == 'tabpanel') {
+                    this.target = this.ownerCt.ownerCt.id;
+                    return this.target;
+                } else {
+                    return null;
+                }
             }
         }
     }
