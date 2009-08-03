@@ -316,15 +316,17 @@ Ext.nd.util.addIFrame = function(config) {
             // This is a hack to fix the memory issues that occur 
             // when opening and closing stuff within iFrames
             targetPanel.on('beforeremove', function(container, panel) {
-                        var iFrame = Ext.DomQuery.selectNode('iframe',
-                                panel.body.dom);
-                        if (iFrame) {
-                            if (iFrame.src) {
-                                iFrame.src = "javascript:false";
-                                Ext.removeNode(iFrame);
-                            }
+                // check to make sure Ext object is still there
+                if (Ext) {
+                    var iFrame = Ext.DomQuery.selectNode('iframe', panel.body.dom);
+                    if (iFrame) {
+                        if (iFrame.src) {
+                            iFrame.src = "javascript:false";
+                            Ext.removeNode(iFrame);
                         }
-                    });
+                    }
+                }
+            });
             
 
             // add the panel
