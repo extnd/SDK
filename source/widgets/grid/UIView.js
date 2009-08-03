@@ -1126,7 +1126,13 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                 this.target = window.target;
                 return this.target;
             } else {
-                return null;
+                // for an uiview or uidoc you need to go a level
+                if (this.ownerCt && this.ownerCt.getXType && this.ownerCt.getXType() == 'tabpanel') {
+                    this.target = this.ownerCt.id;
+                    return this.target;
+                } else {
+                    return null;
+                }
             }
         }
     },
@@ -1277,6 +1283,14 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         } else {
             return undefined;
         }
+    },
+    
+    /**
+     * Deselects all documents in a view.
+     * @return {Void}
+     */
+    deselectAll : function() {
+        this.getSelectionModel().clearSelections();
     },
     
     /**
