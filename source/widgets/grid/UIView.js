@@ -364,6 +364,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         var newParams = {};
         var ds = grid.getStore();
         var lastCount = ds.lastOptions.params.count;
+        lastCount = (typeof lastCount == 'undefined') ? this.count : lastCount;
         var record = ds.getAt(rowIndex);
         
         if (ecImg.dom.tagName == 'IMG') {
@@ -381,7 +382,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                     // rowIndex and adding this.count, unless lastCount
                     // is -1 and in that case just use it)
                     newParams = {
-                        count: (lastCount && lastCount != -1) ? rowIndex + this.count : lastCount,
+                        count: ((typeof lastCount != 'undefined') && lastCount != -1) ? rowIndex + this.count : lastCount,
                         expand: record.position
                     };
                     ds.load({params : newParams});
@@ -400,7 +401,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                         // need to collapse (count is determined by the
                         // lastOptions.params.count)
                         newParams = {
-                            count: (lastCount) ? lastCount : this.count,
+                            count: (typeof lastCount != 'undefined') ? lastCount : this.count,
                             collapse: record.position
                         };
                         ds.load({params : newParams});
