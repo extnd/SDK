@@ -126,7 +126,7 @@ Ext.extend(Ext.nd.data.ViewXmlReader, Ext.data.XmlReader, {
 		};
 		
         if (typeof map == 'number') {
-            entryDataNodeMap = "entrydata[columnnumber=" + map + "]"    
+            entryDataNodeMap = 'entrydata[columnnumber=' + map + ']';    
             entryDataNode = q.select(entryDataNodeMap, node, false);
             valueDataNode = (entryDataNode && entryDataNode[0]) ? entryDataNode[0].lastChild : false;
     
@@ -163,12 +163,10 @@ Ext.extend(Ext.nd.data.ViewXmlReader, Ext.data.XmlReader, {
 	getValue : function(node, type) {
 		var oValue = {
 			type : type,
-			// data : []
 			data : ''
 		};
 
 		if (!node) {
-			// oValue.data.push('');
 			oValue.data = '';
 
 			// now check to see if the childNodes have childNodes
@@ -185,16 +183,6 @@ Ext.extend(Ext.nd.data.ViewXmlReader, Ext.data.XmlReader, {
 					oValue.type = type;
 				}
 
-				/*
-				 * old way was to make the the 'data' property an array and add
-				 * to it however, this broke everywhere in Ext where you could
-				 * process a record such as in loadRecords(rec), etc. Therefore,
-				 * we no longer use an array and now separate the values with a
-				 * newline character that we then convert to whatever the
-				 * multi-value separator is for this column in the UIView
-				 * dominoRenderer method
-				 */
-				// oValue.data.push(node.childNodes[i].firstChild.nodeValue);
 				if (i == 0) {
 					oValue.data = node.childNodes[i].firstChild.nodeValue;
 				} else {
@@ -207,11 +195,7 @@ Ext.extend(Ext.nd.data.ViewXmlReader, Ext.data.XmlReader, {
 			// here is just a single value node
 			oValue.type = type;
 
-			// if the single value node has data then it is in a childNode
-			// otherwise just send an empty string since there is not any data
-			// --- maybe better not to send an empty sring
 			if (node.childNodes && node.childNodes.length > 0) {
-				// oValue.data.push(node.childNodes[0].nodeValue);
 				oValue.data = node.childNodes[0].nodeValue;
 			}
 		}
