@@ -97,8 +97,8 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         Ext.applyIf(this, {
             selModel: this.selModel,
             title: this.viewName,
-            collapseIcon: Ext.nd.extndUrl + "resources/images/minus.gif",
-            expandIcon: Ext.nd.extndUrl + "resources/images/plus.gif",
+            collapseIcon: Ext.nd.extndUrl + 'resources/images/minus.gif',
+            expandIcon: Ext.nd.extndUrl + 'resources/images/plus.gif',
             dateTimeFormats: Ext.nd.dateTimeFormats,
             tbar: (this.tbar) ? this.tbar : null,
             bbar: (this.showPagingToolbar) ? new Ext.nd.PagingToolbar({
@@ -318,14 +318,14 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         if (!this.selModel) {
             switch (this.selModelConfig.type) {
                 
-                case "checkbox":
+                case 'checkbox':
                   this.selModel = new Ext.grid.CheckboxSelectionModel(this.selModelConfig);
                   this.cols.push(this.selModel);
                   break;
-                case "cell":
+                case 'cell':
                   this.selModel = new Ext.grid.CellSelectionModel(this.selModelConfig);
                   break;
-                case "row":
+                case 'row':
                   this.selModel = new Ext.grid.RowSelectionModel(this.selModelConfig);
                   break;
                 default:
@@ -350,7 +350,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         // beforeopendocument corresponds to the NotesUIView QueryOpenDocument
         // event
         if (row && row.unid) {
-            if (this.fireEvent("beforeopendocument", grid, rowIndex, e, bEditMode) !== false) {
+            if (this.fireEvent('beforeopendocument', grid, rowIndex, e, bEditMode) !== false) {
                 this.openDocument(grid, rowIndex, e, bEditMode);
             }
         }
@@ -425,7 +425,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
     
     // private
     gridHandleKeyDown: function(e){
-        if (e.getTarget().name == "xnd-vw-search") {
+        if (e.getTarget().name == 'xnd-vw-search') {
             return;
         }
         var sm, ds, node, row, rowIndex, unid, target;
@@ -436,7 +436,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         sm = this.getSelectionModel();
         row = sm.selections.itemAt(sm.selections.length-1);
         ds = this.getStore();
-        rowIndex = (row && row.unid && ds && ds.data) ? ds.data.findIndex("unid", row.unid) : -1;
+        rowIndex = (row && row.unid && ds && ds.data) ? ds.data.findIndex('unid', row.unid) : -1;
         
         // for now, we won't worry about the altKey
         if (e.altKey) {
@@ -570,7 +570,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
     
     // private
     handleContextMenuSearch: function(btn, text){
-        if (btn == "ok" && text) {
+        if (btn == 'ok' && text) {
             this.searchField.setValue(text);
             this.handleViewSearch();
         }
@@ -618,7 +618,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
          */
         if (!grid.region) {
             var colConfig = this.colModel.config[colIndex];
-            if (colConfig.resortviewunid && colConfig.resortviewunid != "") {
+            if (colConfig.resortviewunid && colConfig.resortviewunid != '') {
                 // first, let's stop the propagation of this event so that the
                 // sort events don't try and run as well
                 e.stopPropagation();
@@ -959,7 +959,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
     	
         // TODO: need to figure out why we sometimes get a null for the value
         if (value == null) {
-            return "";
+            return '';
         }
 
         /* next, let's split value into an array so that we can
@@ -977,14 +977,14 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
     	 * see the data for the other columns
     	 */
         
-        var returnValue = "";
+        var returnValue = '';
         var colConfig = this.colModel.config[colIndex];
         var metadata = record.metadata[colConfig.dataIndex];
         
         // if we don't have any data and this is not a response column 
         // nore a category column then just return a blank
         if (typeof value == 'string' && value == '' && !colConfig.response && !metadata.category) {
-            return "";
+            return '';
         }
         
         var args = arguments;
@@ -1002,28 +1002,28 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         // for the expand/collapse icon width + indent width
         var sCollapseImage = '<img src="' + this.collapseIcon + '" style="vertical-align:bottom; margin-right:8px;"/>';
         var sExpandImage = '<img src="' + this.expandIcon + '" style="vertical-align:bottom; margin-right:8px;"/>';
-        var indentPadding = (20 * viewentryLevel) + "px";
-        var indentPaddingNoIcon = (20 + (20 * viewentryLevel)) + "px";
+        var indentPadding = (20 * viewentryLevel) + 'px';
+        var indentPaddingNoIcon = (20 + (20 * viewentryLevel)) + 'px';
         
         // has children and is a categorized column
         var nextViewentryPosition, nextViewentryLevel, extraIndent; 
         if (record.hasChildren && colConfig.sortcategorize) {
-            extraIndent = (metadata.indent) ? ((metadata.indent > 0) ? "padding-left:" + metadata.indent * 20 + "px;" : "") : "";
-            cell.attr = "style='position: absolute; width: auto; white-space: nowrap; " + extraIndent + "'";
+            extraIndent = (metadata.indent) ? ((metadata.indent > 0) ? 'padding-left:' + metadata.indent * 20 + 'px;' : '') : '';
+            cell.attr = 'style="position: absolute; width: auto; white-space: nowrap; ' + extraIndent + '"';
             if (nextViewentry) {
                 nextViewentryPosition = nextViewentry.attributes.getNamedItem('position').value;
                 nextViewentryLevel = nextViewentryPosition.split('.').length;
                 if (nextViewentryLevel > viewentryLevel) {
-                    cell.css = " xnd-view-collapse xnd-view-category";
+                    cell.css = ' xnd-view-collapse xnd-view-category';
                     returnValue = sCollapseImage + this.getValue(value, colConfig, record);
                 }
                 else {
-                    cell.css = " xnd-view-expand xnd-view-category";
+                    cell.css = ' xnd-view-expand xnd-view-category';
                     returnValue = sExpandImage + this.getValue(value, colConfig, record);
                 }
             }
             else { // should be a categorized column on the last record
-                cell.css = " xnd-view-expand xnd-view-category";
+                cell.css = ' xnd-view-expand xnd-view-category';
                 returnValue = sExpandImage + this.getValue(value, colConfig, record);
             }
         }
@@ -1035,69 +1035,67 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                     nextViewentryPosition = nextViewentry.attributes.getNamedItem('position').value;
                     nextViewentryLevel = nextViewentryPosition.split('.').length;
                     if (nextViewentryLevel > viewentryLevel) {
-                        cell.css = "xnd-view-collapse xnd-view-response";
+                        cell.css = 'xnd-view-collapse xnd-view-response';
                         returnValue = sCollapseImage;
                     }
                     else {
-                        cell.css = "xnd-view-expand xnd-view-response";
+                        cell.css = 'xnd-view-expand xnd-view-response';
                         returnValue = sExpandImage;
                     }
                 }
                 else { // should be a categorized column on the last record
-                    cell.css = "xnd-view-expand xnd-view-response";
+                    cell.css = 'xnd-view-expand xnd-view-response';
                     returnValue = sExpandImage;
                 }
             }
             else 
                 if (record.hasChildren && record.isResponse && colConfig.response) {
                     // has children and IS a response doc
-                    extraIndent = (metadata.indent) ? ((metadata.indent > 0) ? "padding-left:" + (20 + (metadata.indent * 20)) + "px;" : "") : "";
-                    cell.attr = "style='position: absolute; width: auto; white-space: nowrap; " + extraIndent + "'";
+                    extraIndent = (metadata.indent) ? ((metadata.indent > 0) ? 'padding-left:' + (20 + (metadata.indent * 20)) + 'px;' : '') : '';
+                    cell.attr = 'style="position: absolute; width: auto; white-space: nowrap; ' + extraIndent + '"';
                     if (nextViewentry) {
                         nextViewentryPosition = nextViewentry.attributes.getNamedItem('position').value;
                         nextViewentryLevel = nextViewentryPosition.split('.').length;
                         if (nextViewentryLevel > viewentryLevel) {
-                            cell.css = "xnd-view-collapse xnd-view-response";
+                            cell.css = 'xnd-view-collapse xnd-view-response';
                             returnValue = sCollapseImage + this.getValue(value, colConfig, record);
                         }
                         else {
-                            cell.css = "xnd-view-expand xnd-view-response";
+                            cell.css = 'xnd-view-expand xnd-view-response';
                             returnValue = sExpandImage + this.getValue(value, colConfig, record);
                         }
                     }
                     else { // should be a categorized column on the last record
-                        cell.css = "xnd-view-expand xnd-view-response";
+                        cell.css = 'xnd-view-expand xnd-view-response';
                         returnValue = sExpandImage + this.getValue(value, colConfig, record);
                     }
                 }
                 else 
                     if (!record.hasChildren && record.isResponse && colConfig.response) {
                         // does NOT have children and IS a response doc
-                        cell.css = "xnd-view-response";
-                        extraIndent = (metadata.indent) ? ((metadata.indent > 0) ? "padding-left:" + (20 + (metadata.indent * 20)) + "px;" : "") : "";
-                        cell.attr = "style='position: absolute; width: auto; white-space: nowrap; " + extraIndent + "'";
+                        cell.css = 'xnd-view-response';
+                        extraIndent = (metadata.indent) ? ((metadata.indent > 0) ? 'padding-left:' + (20 + (metadata.indent * 20)) + 'px;' : '') : '';
+                        cell.attr = 'style="position: absolute; width: auto; white-space: nowrap; ' + extraIndent + '"';
                         returnValue = this.getValue(value, colConfig, record);
                     }
                     else {
                         if (colConfig.icon) {
-                            var tmpReturnValue = "";
-                            var tmpValue = "";
+                            var tmpReturnValue = '';
+                            var tmpValue = '';
                             var separator = this.getListSeparator(colConfig);
-                            var clearFloat = "";
+                            var clearFloat = '';
                             for (var i = 0; i < value.length; i++) {
                                 tmpValue = value[i];
                                 
-                                if (isNaN(parseInt(tmpValue, 10)) || tmpValue == "0") {
-                                    return "";
+                                if (isNaN(parseInt(tmpValue, 10)) || tmpValue == '0') {
+                                    return '';
                                 }
                                 else {
                                     // I believe the domino only has view icon images from 1 to
                                     // 186
-                                    newValue = (tmpValue < 10) ? "00" + tmpValue : (tmpValue < 100) ? "0" + tmpValue : (tmpValue > 186) ? "186" : tmpValue;
-                                    //cell.css = "xnd-icon-vw xnd-icon-vwicn" + newValue;
-                                    //returnValue = "<img src='/icons/vwicn" + newValue + ".gif'/>";
-                                    clearFloat = (colConfig.listseparator == 'newline') ? "style='clear: left;'" : "";
-                                    tmpReturnValue = "<div class='xnd-icon-vw xnd-icon-vwicn" + newValue + "' " + clearFloat + ">&nbsp;</div>";
+                                    newValue = (tmpValue < 10) ? '00' + tmpValue : (tmpValue < 100) ? '0' + tmpValue : (tmpValue > 186) ? '186' : tmpValue;
+                                    clearFloat = (colConfig.listseparator == 'newline') ? 'style="clear: left;"' : '';
+                                    tmpReturnValue = '<div class="xnd-icon-vw xnd-icon-vwicn' + newValue + '" ' + clearFloat + '>&nbsp;</div>';
                                     if (i == 0) {
                                         returnValue = tmpReturnValue;
                                     } else {
@@ -1159,12 +1157,12 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             // handle columns set to show an icon a little differently
             if (colConfig.icon) {
                 if (isNaN(parseInt(tmpValue, 10)) || tmpValue == 0) {
-                    return "";
+                    return '';
                 }
                 else {
                     // I believe the domino only has view icon images from 1 to
                     // 186
-                    newValue = (tmpValue < 10) ? "00" + tmpValue : (tmpValue < 100) ? "0" + tmpValue : (tmpValue > 186) ? "186" : tmpValue;
+                    newValue = (tmpValue < 10) ? '00' + tmpValue : (tmpValue < 100) ? '0' + tmpValue : (tmpValue > 186) ? '186' : tmpValue;
                     return '<img src="/icons/vwicn' + newValue + '.gif"/>';
                 }
             }
@@ -1172,16 +1170,16 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                 switch (dataType) {
                     case 'datetime':
                         var dtf = colConfig.datetimeformat;
-                        if (typeof dtf.show == "undefined") {
+                        if (typeof dtf.show == 'undefined') {
                         	dtf.show = this.dateTimeFormats.show;
                         }
                         if (tmpValue.indexOf('T') > 0) {
                             tmpDate = tmpValue.split(',')[0].replace('T', '.');
-                            tmpDateFmt = "Ymd.His";
+                            tmpDateFmt = 'Ymd.His';
                         }
                         else {
                             tmpDate = tmpValue;
-                            tmpDateFmt = "Ymd";
+                            tmpDateFmt = 'Ymd';
                             dtf.show = 'date'; // switch to date only since
                         // there isn't a time component
                         // present
@@ -1200,7 +1198,19 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                         tmpValue = tmpValue;
                         break;
                     case 'number':
-                        tmpValue = tmpValue;
+                        var nbf = colConfig.numberformat;
+                        if(typeof nbf.format == 'undefined'){
+                            tmpValue = tmpValue;      
+                        }
+                        else{
+                            if(nbf.format == 'currency'){
+                                if(Ext.util.Format.Money){
+                                    tmpValue = Ext.isEmpty(tmpValue)? Ext.util.Format.Money(0):Ext.util.Format.Money(tmpValue);
+                                    break;
+                                }                                                                
+                            }
+                            tmpValue = tmpValue;
+                        }
                         break;
                     default:
                         tmpValue = tmpValue;
@@ -1216,19 +1226,19 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
     	var separator = '';
     	
         switch (colConfig.listseparator) {
-            case "none":
+            case 'none':
                 separator = '';
                 break;
-            case "space":
+            case 'space':
                 separator = ' ';
                 break;
-            case "comma":
+            case 'comma':
                 separator = ',';
                 break;
-            case "newline":
+            case 'newline':
                 separator = '<br/>';
                 break;
-            case "semicolon":
+            case 'semicolon':
                 separator = ';';
                 break;
             default:
