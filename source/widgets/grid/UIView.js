@@ -46,7 +46,6 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
     multiExpandCount: 40,
     notCategorizedText: '(Not Categorized)',
     loadInitialData: true,
-    baseParams: {},
     
     documentWindowTitle: '',
     documentLoadingWindowTitle: 'Opening...',
@@ -72,11 +71,13 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         // the view's design from the domino server
         this.on('render', this.getViewDesign, this);
 
-        
+        // defaults
         this.cols = [];
         this.recordConfig = [];
         this.renderers = [];
-
+        if (!this.baseParams){
+            this.baseParams={};
+        } 
         
         // leave support (for now) for old showSingleCategory property
         if (this.showSingleCategory && typeof this.showSingleCategory == 'string' && !this.category) {
