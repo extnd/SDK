@@ -104,7 +104,7 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
             var name = q.selectValue('@itemname', col, 'columnnumber_' + columnnumber);
             name = name.replace('$', '_'); // Ext doesn't like '$'
             
-            var title = q.selectValue('columnheader/@title', col, "&nbsp;");
+            var title = q.selectValue('columnheader/@title', col, '&nbsp;');
             
             // multiplying by 11.28 converts the inch width to pixels
             var width = Math.max(q.selectNumber('@width', col) * 11.28, 22);
@@ -133,7 +133,7 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
             
             // jump to view
             var resorttoviewValue = (resort == 'toview') ? true : false;
-            var resortviewunidValue = (resorttoviewValue) ? q.selectValue('@resorttoview', col, "") : "";
+            var resortviewunidValue = (resorttoviewValue) ? q.selectValue('@resorttoview', col, '') : '';
             
             // check the storeConfig.remoteSort property to see if the user wants to do sorting from cache
             // if so then it will be set to false (true will do the sorting 'remotely' on the server)
@@ -163,9 +163,19 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
                 datetimeformat.zone = q.selectValue('@zone', tmpDateTimeFormat);
             }
             
+            // number formatting
+            var tmpNumberFormat= q.select('numberformat', col)[0];
+            var numberformat = {};
+            if (tmpNumberFormat) {
+                numberformat.format = q.selectValue('@format', tmpNumberFormat);
+                numberformat.digits = q.selectValue('@digits', tmpNumberFormat);
+                numberformat.punctuated = q.selectValue('@punctuated', tmpNumberFormat);
+                numberformat.percent = q.selectValue('@percent', tmpNumberFormat);
+            }
+            
             var columnConfig = {
                 id : columnnumber,
-                header: (resorttoviewValue) ? title + "<img src='/icons/viewsort.gif' />" : title,
+                header: (resorttoviewValue) ? title + '<img src="/icons/viewsort.gif" />' : title,
                 align: alignValue,
                 dataIndex: name,
                 width: width,
@@ -179,7 +189,8 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
                 response: responseValue,
                 twistie: twistieValue,
                 icon: iconValue,
-                datetimeformat: datetimeformat
+                datetimeformat: datetimeformat,
+                numberformat: numberformat
             };
             
             var recordConfig = {
