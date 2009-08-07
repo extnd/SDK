@@ -82,7 +82,7 @@ Ext.nd.Actionbar = function(config){
     Ext.nd.Actionbar.superclass.constructor.call(this);
 
     // for backwards compat
-    if (this.useDxl && this.useDxl === false) {
+    if (!Ext.isEmpty(this.useDxl) && this.useDxl == false) {
         this.createActionsFrom = 'document';
     }
     
