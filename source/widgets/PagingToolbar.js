@@ -14,9 +14,9 @@ Ext.nd.PagingToolbar = function(config){
 Ext.extend(Ext.nd.PagingToolbar, Ext.PagingToolbar, {
 
 	// change the displayed text
-	beforePageText : "Showing entries ",
-	afterPageText : " - {0}",
-	middlePageText: " of ",
+	beforePageText : 'Showing entries ',
+	afterPageText : ' - {0}',
+	middlePageText: ' of ',
 	paramNames: {
         start: 'start',
         limit: 'count'
@@ -202,7 +202,7 @@ Ext.extend(Ext.nd.PagingToolbar, Ext.PagingToolbar, {
 		var activePage, first, firstText, last, lastText, previous;
 
 		// reset this.button
-		this.button = "";
+		this.button = '';
 
 		// for the new way of showing where within a view you are
 		if (this.store.data.length > 0) {
@@ -221,8 +221,8 @@ Ext.extend(Ext.nd.PagingToolbar, Ext.PagingToolbar, {
 				lastText = last.node.attributes.getNamedItem('position').value;
 			}
 		} else {
-			firstText = "1";
-			lastText = "1";
+			firstText = '1';
+			lastText = '1';
 		}
 
 		return {
