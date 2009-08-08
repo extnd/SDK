@@ -41,7 +41,7 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
         });
     },
     
-    getViewStep2: function(res, req){
+    getViewDesignStep2: function(res, req){
         var dxml = res.responseXML;
         var q = Ext.DomQuery;
         var arColumns = q.select('column', dxml);
@@ -51,7 +51,7 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
         // has taken care of evaluating the hidewhens for us
         this.visibleCols = new Ext.util.MixedCollection();
         Ext.each(arColumns, function(item, index, allItems){
-            colName = Ext.DomQuery('@name', item);
+            colName = Ext.DomQuery.selectValue('@name', item);
             colName = colName.replace('$', '_'); // Ext doesn't like '$'
             this.visibleCols.add(colName); 
         }, this);
