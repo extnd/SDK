@@ -34,6 +34,33 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
         Ext.Ajax.request({
             method: 'GET',
             disableCaching: true,
+            success: this.getViewDesignStep2,
+            failure: this.getViewDesignFailure,
+            scope: this,
+            url: this.viewUrl + '?ReadDesign'
+        });
+    },
+    
+    getViewStep2: function(res, req){
+        var dxml = res.responseXML;
+        var q = Ext.DomQuery;
+        var arColumns = q.select('column', dxml);
+        
+        // this collection holds a reference by column programmatic name
+        // of each column that is visible to this user since ?readdesign
+        // has taken care of evaluating the hidewhens for us
+        this.visibleCols = new Ext.util.MixedCollection();
+        Ext.each(arColumns, function(item, index, allItems){
+            colName = Ext.DomQuery('@name', item);
+            colName = colName.replace('$', '_'); // Ext doesn't like '$'
+            this.visibleCols.add(colName); 
+        }, this);
+        
+        // now we go ahead and do our call to the DXLExporter
+        // to get the rest of the design
+        Ext.Ajax.request({
+            method: 'GET',
+            disableCaching: true,
             success: this.getViewDesignSuccess,
             failure: this.getViewDesignFailure,
             scope: this,
@@ -41,7 +68,7 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
             url: Ext.nd.extndUrl + 'DXLExporter?OpenAgent&db=' + this.dbPath + '&type=' + this.noteType + '&name=' + this.viewName
         });
     },
-    
+
     getViewDesignSuccess: function(res, req){
 
         var dxml = res.responseXML;
@@ -56,12 +83,7 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
         for (var i = 0; i < arColumns.length; i++) {
 
             var col = arColumns[i];
-            
-            /* must check sortcategorize (category column) first
-             * because if the user wants to 'restrict' to just a single category
-             * then the only way it can work in domino is if the FIRST column
-             * is categorized
-             */
+                        
             var sortcategorize = q.selectValue('@categorized', col, false);
             var sortcategorizeValue = (sortcategorize) ? true : false;
             this.isCategorized = this.isCategorized || sortcategorizeValue;
@@ -73,11 +95,20 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
                 continue;
             }
             
+            var columnnumber = colCount;
+            // if name is blank, give it a new unique name
+            var name = q.selectValue('@itemname', col, 'columnnumber_' + columnnumber);
+            name = name.replace('$', '_'); // Ext doesn't like '$'
+            
             // must check for hidden columns since we now use DXLExporter
             // instead of ReadDesign
-            var hidden = q.selectValue('@hidden', col, false);
-            hidden = (hidden === false) ? false : true;
-            if (hidden) {
+            //var hidden = q.selectValue('@hidden', col, false);
+            //hidden = (hidden === false) ? false : true;
+            
+            // new way to check for hidden that uses the results of the ?readdesign
+            // call since domino then takes care of evaluating all hidewhen formulas
+            var visible = this.visibleCols.contains(name);
+            if (!visible) {
                 continue; // skip to next column if this is set to hidden
             }
             
@@ -89,21 +120,8 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
             // and DXLExporter does not include columnnumber so just use
             // whatever the value of colCount is and hopefully all will 
             // still be good :)
-            var columnnumber = colCount;
             colCount++; // not hidden so increment our column count
-
-            // adjust columnnumber if only showing a single category (to fix a
-            // bug with domino not matching column numbers in readviewentries to
-            // readdesign)
-            // NOTE: this is no longer needed since we no longer use ?ReadDesign
-            // but instead use DXLExporter
-            //columnnumber = (this.category) ? columnnumber - 1 : columnnumber;
-            
-            
-            // if name is blank, give it a new unique name
-            var name = q.selectValue('@itemname', col, 'columnnumber_' + columnnumber);
-            name = name.replace('$', '_'); // Ext doesn't like '$'
-            
+          
             var title = q.selectValue('columnheader/@title', col, '&nbsp;');
             
             // multiplying by 11.28 converts the inch width to pixels
