@@ -20,7 +20,7 @@ Ext.nd.data.ViewStore = function(config){
         url: config.viewUrl + '?ReadViewEntries',
         method: "GET"
     });
-    
+
     // remap paramNames to work with Domino views
     Ext.apply(config, {paramNames : {
         start: 'start',
@@ -28,10 +28,20 @@ Ext.nd.data.ViewStore = function(config){
         sort: 'sort',
         dir: 'dir'
     }});
-    // make sure we have baseParams
-    this.baseParams = {};
+    
+    // by default we remove the category total since charts and combos
+    // which could use views don't need this.  pretty much only views
+    // care about this and in ViewDesign (that views use) this is set
+    // to true
     this.removeCategoryTotal = true;
     Ext.nd.data.ViewStore.superclass.constructor.call(this, config);
+
+    // make sure RestrictToCategory is set if category passed in
+    // we do this after our superclass call since it sets baseParams
+    if (this.category && typeof this.category == 'string') {
+        this.baseParams.RestrictToCategory = this.category;    
+    }
+
 };
 
 Ext.extend(Ext.nd.data.ViewStore, Ext.data.Store, {
