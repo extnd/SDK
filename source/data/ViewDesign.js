@@ -76,7 +76,7 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
         var q = Ext.DomQuery;
         var arColumns = q.select('column', dxml);
 
-        this.cols = [];
+        this.cols = new Ext.util.MixedCollection();
         var arRecordConfig = [];
         var colCount = 0;
         
@@ -218,7 +218,7 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
             arRecordConfig.push(recordConfig);
             
             // add to this.cols since it might have a custom selection model
-            this.cols.push(columnConfig);
+            this.cols.add(name, columnConfig);
             
         } // end for loop that processed each column
 
