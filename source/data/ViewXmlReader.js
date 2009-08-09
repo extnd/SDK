@@ -64,23 +64,24 @@ Ext.extend(Ext.nd.data.ViewXmlReader, Ext.data.XmlReader, {
 			var values = {};
 			var metadata = {};
 			var id = sid ? q.selectValue(sid, n) : undefined;
+            var map;
 			for (var j = 0, jlen = fields.length; j < jlen; j++) {
 				var f = fields.items[j];
-                // only add if columnConfig knows about this column
-                // if columnConfig does not know about it then it is
-                // probably because we are doing our custom search
-                // agent and this column has a hidewhen that are
-                // search agent can't evaluate so it sent the data
-                // anyway but we can now filter it out now
-                if (this.meta.columnConfig.containsKey(f.name)) {
-                   var valuePlusDominoMetaData = this.getViewColumnValue(n,
-                   f.name || f.mapping, f.defaultValue);
-                    var v = valuePlusDominoMetaData.data;
-                    delete valuePlusDominoMetaData.data;
-                    metadata[f.name] = valuePlusDominoMetaData;
-                    v = f.convert(v);
-                    values[f.name] = v;
-                }
+                // try to use f.name if available since there is a bug with domino that can be
+                // seen with the SearchView agent.  That bug has to do with columns hidden with
+                // hide when formuls are not evaluated and removed from the ColumnValues array
+                // if the hide when evaluates to true.  Therefore a SearchView can end up sending
+                // back data that it shouldn't have and then the .mapping (which is the columnnumber)
+                // is now off and no longer good to use
+                map = (typeof f.name == 'undefined' || f.name == '') ? f.mapping : f.name;
+				var valuePlusDominoMetaData = this.getViewColumnValue(n, map, f.defaultValue);
+				var v = valuePlusDominoMetaData.data;
+				delete valuePlusDominoMetaData.data;
+				metadata[f.name] = valuePlusDominoMetaData;
+
+				v = f.convert(v);
+				values[f.name] = v;
+
 			}
 			var record = new recordType(values, id);
 			record.node = n;
