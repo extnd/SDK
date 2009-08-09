@@ -856,9 +856,9 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         } // eo if (this.selModelConfig.type === 'checkbox')
         
         // add our cols from the viewDesign call and dominoRenderer or any custom renderers if defined
-        for (var i=0; i < this.viewDesign.cols.length; i++) {
+        for (var i=0; i < this.viewDesign.cols.items.length; i++) {
             var rendr = (this.renderers[i]) ? this.renderers[i] : this.dominoRenderer.createDelegate(this);
-            var col = this.viewDesign.cols[i];
+            var col = this.viewDesign.cols.items[i];
             col.renderer = rendr;
             this.cols.push(col) ; 
         }
