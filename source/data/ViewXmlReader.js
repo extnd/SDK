@@ -66,19 +66,21 @@ Ext.extend(Ext.nd.data.ViewXmlReader, Ext.data.XmlReader, {
 			var id = sid ? q.selectValue(sid, n) : undefined;
 			for (var j = 0, jlen = fields.length; j < jlen; j++) {
 				var f = fields.items[j];
-				// var v = q.selectValue(f.mapping || f.name, n,
-				// f.defaultValue);
-				// we use '.mapping' since it is the columnnumber and '.name'
-				// may not have a value
-				var valuePlusDominoMetaData = this.getViewColumnValue(n,
-						f.mapping, f.defaultValue);
-				var v = valuePlusDominoMetaData.data;
-				delete valuePlusDominoMetaData.data;
-				metadata[f.name] = valuePlusDominoMetaData;
-
-				v = f.convert(v);
-				values[f.name] = v;
-
+                // only add if columnConfig knows about this column
+                // if columnConfig does not know about it then it is
+                // probably because we are doing our custom search
+                // agent and this column has a hidewhen that are
+                // search agent can't evaluate so it sent the data
+                // anyway but we can now filter it out now
+                if (this.meta.columnConfig.containsKey(f.name)) {
+                   var valuePlusDominoMetaData = this.getViewColumnValue(n,
+                   f.name || f.mapping, f.defaultValue);
+                    var v = valuePlusDominoMetaData.data;
+                    delete valuePlusDominoMetaData.data;
+                    metadata[f.name] = valuePlusDominoMetaData;
+                    v = f.convert(v);
+                    values[f.name] = v;
+                }
 			}
 			var record = new recordType(values, id);
 			record.node = n;
@@ -126,16 +128,14 @@ Ext.extend(Ext.nd.data.ViewXmlReader, Ext.data.XmlReader, {
 		};
 		
         if (typeof map == 'number') {
-            entryDataNodeMap = 'entrydata[columnnumber=' + map + ']';    
-            entryDataNode = q.select(entryDataNodeMap, node, false);
-            valueDataNode = (entryDataNode && entryDataNode[0]) ? entryDataNode[0].lastChild : false;
-    
+            entryDataNodeMap = 'entrydata[columnnumber=' + map + ']';      
         } else {
-            entryDataNodeMap = map;
-            entryDataNode = q.select(entryDataNodeMap, node, false);
-            valueDataNode = (entryDataNode && entryDataNode[0]) ? entryDataNode[0] : false;
+            map = map.replace('_', '$'); // Ext doesn't like '$'
+            entryDataNodeMap = 'entrydata[name=' + map + ']';
         }
-        
+        entryDataNode = q.select(entryDataNodeMap, node, false);
+        valueDataNode = (entryDataNode && entryDataNode[0]) ? entryDataNode[0].lastChild : false;
+          
         // sometimes valueDataNode cannot be found due to how domino sends data
         // for instance, a category total row will only send the category
         // total column for the very last record since this a a GRAND total
