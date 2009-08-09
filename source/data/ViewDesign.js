@@ -52,8 +52,11 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
         this.visibleCols = new Ext.util.MixedCollection();
         Ext.each(arColumns, function(item, index, allItems){
             colName = Ext.DomQuery.selectValue('@name', item);
-            colName = colName.replace('$', '_'); // Ext doesn't like '$'
-            this.visibleCols.add(colName); 
+            // we can only check columns that have a name defined
+            if (typeof colName != 'undefined') {
+                colName = colName.replace('$', '_'); // Ext doesn't like '$'
+                this.visibleCols.add(colName);
+            }
         }, this);
         
         // now we go ahead and do our call to the DXLExporter
