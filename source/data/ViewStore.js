@@ -106,7 +106,7 @@ Ext.extend(Ext.nd.data.ViewStore, Ext.data.Store, {
                 var f = this.fields.get(this.sortInfo.field);
                 var sortColumn = f.mapping; // to support older domino versions we will use colnumber (however, this will probably cause DND column reordering to break when sorting)
                 // get the config info for this column
-                var colConfig = this.reader.meta.columnConfig[sortColumn];
+                var colConfig = this.reader.meta.columnConfig.items[sortColumn];
                 if (colConfig.resortviewunid != "") {
                     return; // the grid should have handled the request to change view
                 }
