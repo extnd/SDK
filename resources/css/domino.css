@@ -36,7 +36,7 @@ td.xnd-view-response {
 
 /* Categorized Styles */
 .xnd-category-hd .xnd-category-cell {
-  background:transparent url(../../../../ext/2x/resources/images/default/grid/group-expand-sprite.gif) no-repeat 3px -47px;
+  background:transparent url(../images/group-expand-sprite.gif) no-repeat 3px -47px;
   padding:0 0 0 17px;
 }
 
