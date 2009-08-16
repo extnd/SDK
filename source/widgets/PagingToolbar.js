@@ -91,14 +91,14 @@ Ext.extend(Ext.nd.PagingToolbar, Ext.PagingToolbar, {
 	},
 
 	// private
-	onFirstClick : function(){
+	moveFirst : function(){
 		this.prevButton = 'first';
 		//this.store.load({params: Ext.apply(this.store.lastOptions.params, {start: 1,count: this.pageSize})});
 		this.doLoad(1);
 	},
 
 
-	onPrevClick : function(){
+	movePrevious : function(){
 		this.prevButton = 'previous';
 		var start;
         var first = this.store.data.first();
@@ -123,7 +123,7 @@ Ext.extend(Ext.nd.PagingToolbar, Ext.PagingToolbar, {
         this.doLoad(start);
 	},
 
-	onNextClick : function(){
+	moveNext : function(){
     	this.prevButton = 'next';
 		var start;
 		var last = this.store.data.last();
@@ -143,7 +143,7 @@ Ext.extend(Ext.nd.PagingToolbar, Ext.PagingToolbar, {
 		this.doLoad(start);
 	},
 
-	onLastClick : function(){
+	moveLast : function(){
       	this.prevButton = 'last';
       	var start;
         var total = this.store.getTotalCount();
@@ -153,7 +153,7 @@ Ext.extend(Ext.nd.PagingToolbar, Ext.PagingToolbar, {
         this.doLoad(start);
 	},
 
-	onRefreshClick : function(){
+	refresh : function(){
       	this.prevButton = 'refresh';
         //this.store.load({params: Ext.apply(this.store.lastOptions.params, {start: this.cursor, count: this.pageSize})});
       	this.doLoad(this.cursor);
