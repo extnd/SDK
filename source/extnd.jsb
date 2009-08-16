@@ -51,4 +51,5 @@
   <file name="widgets\Actionbar.js" path="widgets" />
   <file name="widgets\PagingToolbar.js" path="widgets" />
   <file name="widgets\UIWorkspace.js" path="widgets" />
+  <file name="util\DominoActionbar.js" path="util" />
 </project>
