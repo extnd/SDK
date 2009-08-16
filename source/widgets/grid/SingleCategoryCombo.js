@@ -67,9 +67,6 @@ Ext.nd.SingleCategoryCombo = Ext.extend(Ext.util.Observable, {
                 scope: this
             }
         }, '-');
-        
-        // done with adding everything so call doLayout to make sure we see it
-        this.toolbar.doLayout();
 
     },
     
