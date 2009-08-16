@@ -207,7 +207,7 @@ Ext.Toolbar.override({
 
 Ext.namespace("Ext.nd", "Ext.nd.form", "Ext.nd.data", "Ext.nd.util");
 
-Ext.nd.version = 'pre-release 2 - Beta 2 for ExtJS 3.x';
+Ext.nd.version = 'Beta 3 for ExtJS 3.x';
 
 Ext.nd.getBlankImageUrl = function() {
 	return this.extndUrl + "resources/images/s.gif";
@@ -315,6 +315,7 @@ Ext.nd.util.addIFrame = function(config) {
 
             // This is a hack to fix the memory issues that occur 
             // when opening and closing stuff within iFrames
+            /*
             targetPanel.on('beforeremove', function(container, panel) {
                 // check to make sure Ext object is still there
                 if (Ext) {
@@ -327,11 +328,25 @@ Ext.nd.util.addIFrame = function(config) {
                     }
                 }
             });
-            
+            */
 
             // add the panel
 			panel = targetPanel.add(panelConfig);
 
+            
+            panel.on('beforedestroy', function(panel) {
+                // check to make sure Ext object is still there
+                if (Ext) {
+                    var iFrame = Ext.DomQuery.selectNode('iframe', panel.body.dom);
+                    if (iFrame) {
+                        if (iFrame.src) {
+                            iFrame.src = "javascript:false";
+                            Ext.removeNode(iFrame);
+                        }
+                    }
+                }
+            });
+            
             // this takes care setting the title of the panel and adding
             // refernces to uiView and target to the iframe
             panel.on('afterrender', function(panel){
