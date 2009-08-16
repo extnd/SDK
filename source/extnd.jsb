@@ -25,6 +25,7 @@
     <include name="widgets\Actionbar.js" />
     <include name="widgets\UIWorkspace.js" />
     <include name="widgets\PagingToolbar.js" />
+    <include name="util\DominoActionbar.js" />
   </target>
   <file name="core\extnd.js" path="core" />
   <file name="core\Formula.js" path="core" />
