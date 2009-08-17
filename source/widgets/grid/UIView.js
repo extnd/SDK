@@ -46,6 +46,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
     multiExpandCount: 40,
     notCategorizedText: '(Not Categorized)',
     loadInitialData: true,
+    layout : 'fit',
     
     documentWindowTitle: '',
     documentLoadingWindowTitle: 'Opening...',
@@ -983,7 +984,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         var metadata = record.metadata[colConfig.dataIndex];
         
         // if we don't have any data and this is not a response column 
-        // nore a category column then just return a blank
+        // nor a category column then just return a blank
         if (typeof value == 'string' && value == '' && !colConfig.response && !metadata.category) {
             return '';
         }
@@ -1106,7 +1107,10 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                             }
                         }
                         else {
-                            // just normal data
+                            // just normal data but check first to see if a 'totals' column
+                            if (colConfig.totals != 'none') {
+                                cell.css = ' xnd-view-totals xnd-view-' + colConfig.totals;
+                            }
                             returnValue = this.getValue(value, colConfig, record);
                         }
                     }
