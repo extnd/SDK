@@ -130,6 +130,9 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
             // multiplying by 11.28 converts the inch width to pixels
             var width = Math.max(q.selectNumber('@width', col) * 11.28, 22);
             
+            // totals column
+            var totals = q.selectValue('@totals', col, 'none');
+            
             // response
             var response = q.selectValue('@responsesonly', col, false);
             var responseValue = (response) ? true : false;
@@ -200,6 +203,7 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
                 align: alignValue,
                 dataIndex: name,
                 width: width,
+                totals: totals,
                 sortable: isSortable,
                 resortascending: resortascendingValue,
                 resortdescending: resortdescendingValue,
@@ -259,7 +263,8 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
                 totalRecords: '@toplevelentries',
                 id: '@position',
                 columnConfig: this.cols,
-                isCategorized: this.isCategorized
+                isCategorized: this.isCategorized,
+                fromViewDesign : true
             },
             recordConfig: arRecordConfig
         };
