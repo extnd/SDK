@@ -20,13 +20,18 @@
  *            class for more details.
  */
 Ext.nd.data.ViewXmlReader = function(meta, recordType) {
-    meta = meta || {};
+    
+    if (arguments.length == 1 && Ext.isArray(arguments[0])) {
+        recordType = arguments[0];
+        meta = {};
+    }
     
 	meta = Ext.apply({
 		root : 'viewentries',
 		record : 'viewentry',
 		totalRecords : '@toplevelentries',
-		id : '@position'
+		id : '@position',
+        fromViewDesign : false
 	   }, meta);
 
 	Ext.nd.data.ViewXmlReader.superclass.constructor.call(this, meta, recordType || meta.fields);
@@ -73,7 +78,11 @@ Ext.extend(Ext.nd.data.ViewXmlReader, Ext.data.XmlReader, {
                 // if the hide when evaluates to true.  Therefore a SearchView can end up sending
                 // back data that it shouldn't have and then the .mapping (which is the columnnumber)
                 // is now off and no longer good to use
-                map = (typeof f.name == 'undefined' || f.name == '') ? f.mapping : f.name;
+                if (this.meta.fromViewDesign) {
+                    map = (typeof f.name == 'undefined' || f.name == '') ? f.mapping : f.name;
+                } else {
+                    map = (f.mapping) ? f.mapping : f.name;                    
+                }
 				var valuePlusDominoMetaData = this.getViewColumnValue(n, map, f.defaultValue);
 				var v = valuePlusDominoMetaData.data;
 				delete valuePlusDominoMetaData.data;
