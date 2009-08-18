@@ -51,6 +51,7 @@ Ext.nd.UIDocument = function(config){
     this.createActionsFrom = 'dxl';
     this.convertFields = true;
     this.applyDominoKeywordRefresh = true;
+    this.defaultFieldWidth = 120;
     
     // developer can specify where the toolbar should appear
     this.toolbarRenderTo; 
@@ -435,13 +436,17 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
 
     doConvertFields : function(){
     
-        var dh = Ext.DomHelper;
-        var el, arClasses, cls, id;
-        var q = Ext.DomQuery;
+        var elem, key;
         
         // 1st, convert all elements that do not use an 'xnd-*' class
-        var allElements = this.form.el.dom.elements;
-        Ext.each(allElements, function(item, index, allItems){
+        var elements = this.form.el.dom.elements;
+        var allElements = new Ext.util.MixedCollection();
+
+        for (var i=0, len = elements.length; i < len; i++) {
+            key = elements[i].id ? elements[i].id : Ext.id();
+            allElements.add(key, elements[i]);
+        }
+        Ext.each(allElements.items, function(item, index, allItems){
             if (!this.convertFromClassName(item, false)) {
                 this.convertFromTagName(item);
             }
@@ -451,10 +456,9 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
          * we do this second/last so that any new elements introduced 
          * by Ext are not processed again
          */
-        
-        var xndElements = q.select('*[class*=xnd-]');
-        Ext.each(xndElements, function(item, index, allItems){
-            this.convertFromClassName(item, true);
+        var xndElements = Ext.DomQuery.select('*[class*=xnd-]');
+        Ext.each(xndElements, function(elem, index, allItems){
+            this.convertFromClassName(elem, true);
         }, this);
         
         
@@ -478,7 +482,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
                  * a select tag down without any options!
                  * so therefore, we have to check for that
                  */
-                var dfield = this.getFieldDefinition(el.name);
+                var dfield = this.getFieldDefinition(el);
                 if (dfield){
                     var allowMultiValues = (Ext.DomQuery.selectValue('@allowmultivalues',dfield) == 'true') ? true : false;
                     var allowNew = (Ext.DomQuery.selectValue('keywords/@allownew',dfield) == 'true') ? true : false;
@@ -648,22 +652,14 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         this.convertToTextField(el);
     },
     
-    // private
-    convertToTimeField : function(el){
-    
-        var tm = new Ext.nd.form.TimeField();
-        tm.applyToMarkup(el);
-        // now add to items
-        this.form.items.add(tm);                        
-        
-    },
     
     // private
     convertToTextField : function(el){
         
         // for normal input fields
         var f = new Ext.form.TextField({
-            id: (el.id ? el.id : el.name)
+            id: (el.id ? el.id : el.name),
+            width : this.getFieldWidth(el)
         });
         f.applyToMarkup(el);
         // now add to items
@@ -704,6 +700,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
                         viewName : Ext.DomQuery.selectValue('@view', dfield),
                         column : Ext.DomQuery.selectNumber('@viewcolumn', dfield),
                         multipleSelection : allowMultiValues,
+                        useCheckboxSelection : true,
                         allowNew : allowNew                    
                     });
                     break;
@@ -722,7 +719,8 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         
         var nm = new Ext.nd.form.PickListField(Ext.apply({
             type: 'names',
-            id: (el.id ? el.id : el.name)
+            id: (el.id ? el.id : el.name),
+            width : this.getFieldWidth(el)
         }, config));
         nm.applyToMarkup(el);
         // now add to items
@@ -734,7 +732,8 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
     convertToPickList : function(el, config){
 
         var pl = new Ext.nd.form.PickListField(Ext.apply({
-            id: (el.id ? el.id : el.name)
+            id: (el.id ? el.id : el.name),
+            width : this.getFieldWidth(el)
         }, config));
         pl.applyToMarkup(el);
         // now add to items
@@ -839,7 +838,9 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
     
     convertToNumberField : function(el){
         
-        var nbr = new Ext.form.NumberField();
+        var nbr = new Ext.form.NumberField({
+            width : this.getFieldWidth(el)
+        });
         nbr.applyToMarkup(el);
         // now add to items
         this.form.items.add(nbr);                        
@@ -868,7 +869,8 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         var dt = new Ext.form.DateField({
             id: (el.id ? el.id : el.name),
             selectOnFocus: true,
-            format: this.dateTimeFormats.dateFormat
+            format: this.dateTimeFormats.dateFormat,
+            width : this.getFieldWidth(el)
         });
         
         dt.applyToMarkup(el);
@@ -876,6 +878,18 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         this.form.items.add(dt);
     },
     
+    // private
+    convertToTimeField : function(el){
+    
+        var tm = new Ext.nd.form.TimeField({
+            width : this.getFieldWidth(el)
+        });
+        tm.applyToMarkup(el);
+        // now add to items
+        this.form.items.add(tm);                        
+        
+    },
+
     // private
     convertToCheckbox : function(el){
         var dfield = this.getFieldDefinition(el);
@@ -1021,7 +1035,8 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
             typeAhead: true,
             mode: 'local',
             triggerAction: 'all',
-            selectOnFocus:true
+            selectOnFocus:true,
+            width : this.getFieldWidth(el)
         });
         
         // renderTo config option didn't work
@@ -1082,7 +1097,8 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
             valueField: "value",
             //renderTo: el,
             forceSelection: true,
-            resizable: true
+            resizable: true,
+            width : this.getFieldWidth(el)
         });
         
         cb.applyToMarkup(el);
@@ -1091,11 +1107,12 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
     
     // private
     convertToMultiSelect : function(el, forceSelection) {
-        
+        // TODO
     },
     
     // private 
     convertToAllowMultiValueSelect : function(el, forceSelection){
+        // TODO
         //alert('allow multi value')
         //alert(el.name);    
     },
@@ -1139,7 +1156,8 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
             triggerAction: 'all',
             lazyRender: false, // docs say must be true since we are in an FormPanel but we need it set to false
             forceSelection: forceSelection,
-            resizable: true
+            resizable: true,
+            width : this.getFieldWidth(el)
         });
         
         // only setup domino's onchange event for keyword refreshes if the user
@@ -1208,14 +1226,24 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
             field.dom.value = value;
         }
         if (typeof extcallback == 'function') {
-            Ext.MessageBox.wait("Refreshing document...");
+            Ext.MessageBox.wait('Refreshing document...');
             extcallback();
+        }
+    },
+    
+    // private
+    getFieldWidth : function(el){
+        var w = Ext.get(el).dom.style.width;
+        if (w == '' || w == 'auto') {
+            return this.defaultFieldWidth;
+        } else {
+            return parseInt(w, 10);   
         }
     },
     
     fieldGetText : function(fld) {
     	var oField = this.getForm().findField(fld);
-    	return (oField) ? oField.getValue() : "";
+    	return (oField) ? oField.getValue() : '';
     },
 
     fieldSetText : function(fld, value) {
