@@ -59,17 +59,22 @@ Ext.nd.DominoUI.prototype = {
         // so that for each view opened, the target property defaults
         // will be applied
         
-        var west = Ext.apply({
+        var west = {
                 region: 'west',
-                id: 'xnd-outline-panel',
-                xtype: 'xnd-uioutline',
-                target: 'xnd-center-panel',
-                viewTarget: 'xnd-grid-panel',
-                collapsible: true,
                 title: Ext.nd.Session.currentDatabase.title,
+                collapsible: true,
                 split: true,
-                width: 200
-            }, this.uiOutline);
+                width: 200,
+                minSize : 150,
+                maxSize : 400,
+                items : [Ext.apply({
+                        id: 'xnd-outline-panel',
+                        xtype: 'xnd-uioutline',
+                        border : false,
+                        target: 'xnd-center-panel',
+                        viewTarget: 'xnd-grid-panel'               
+                    }, this.uiOutline)
+                ]};
             
         
         // center/view area    
