@@ -44,7 +44,7 @@ Ext.nd.UIWorkspace.prototype = {
             dbPath: this.dbPath,
             viewName: "",
             title: "PickList",
-            prompt: "Please make your selection(s) and click <OK>.",
+            prompt: "Please make your selection(s) and click &lt;OK&gt;.",
             column: 0,
 
             width: (options.multipleSelection && !options.useCheckboxSelection) ? 600 : 500,
