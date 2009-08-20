@@ -292,7 +292,7 @@ Ext.nd.util.addIFrame = function(config) {
 		// the target passed in is not an Ext panel so it must be a div
 		// so we will add the iframe directly to this div
 		targetDiv = Ext.get(target);
-	}
+	} // eo if(target.add)
 
 	// check for the panel that will have the iframe
 	if (!panel) {
@@ -313,23 +313,11 @@ Ext.nd.util.addIFrame = function(config) {
 		// if target is a panel, add the iframe to the panel
 		if (targetPanel) {
 
-            // This is a hack to fix the memory issues that occur 
-            // when opening and closing stuff within iFrames
-            /*
-            targetPanel.on('beforeremove', function(container, panel) {
-                // check to make sure Ext object is still there
-                if (Ext) {
-                    var iFrame = Ext.DomQuery.selectNode('iframe', panel.body.dom);
-                    if (iFrame) {
-                        if (iFrame.src) {
-                            iFrame.src = "javascript:false";
-                            Ext.removeNode(iFrame);
-                        }
-                    }
-                }
-            });
-            */
-
+            // for Ext windows, removeALL will make sure we don't open more than one doc in the window
+            if (targetPanel.getXType() == 'window') {
+                targetPanel.removeAll();
+            }
+            
             // add the panel
 			panel = targetPanel.add(panelConfig);
 
@@ -419,21 +407,20 @@ Ext.nd.util.addIFrame = function(config) {
 			}
 		}
 
-		// now show the panel (not sure if this is needed)
-		if (panel.show) {
-			panel.show();
-		}
 
-		// this block sets the ownerCt attribute of the iframe to the panel
-		// and sets the panels title after the iframe loads
-		// if there is an uiView property, it is set as well
+    }  // eo if(!panel)
+    
+    
+    // now show the panel (not sure if this is needed)
+    if (panel.show) {
+        panel.show();
+    }
+    
+    // and show the target if it has a show method (like in the case of an Ext.Window
+    if (target.show) {
+        target.show();
+    }
 
-
-	} else { // we've already opened this panel
-		if (panel.show) {
-			panel.show();
-		}
-	}
     
 } // eo addIFrame
 
