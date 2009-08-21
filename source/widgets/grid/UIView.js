@@ -3,6 +3,7 @@ Ext.nd.UIView = function(config){
     this.storeConfig = {};
     this.viewConfig = {};
     this.selModelConfig = {singleSelect : false, checkOnly : true};
+    this.renderers = [];
     this.targetDefaults = {};
     this.tbarPlugins = [];
     this.bbarPlugins = [];
@@ -75,7 +76,6 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         // defaults
         this.cols = [];
         this.recordConfig = [];
-        this.renderers = [];
         if (!this.baseParams){
             this.baseParams={};
         } 
