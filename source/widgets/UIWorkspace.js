@@ -168,13 +168,11 @@ Ext.nd.UIWorkspace.prototype = {
             return arReturn;
         };
         
-        opt.choices = new Ext.nd.UIView({
+        opt.choices = new Ext.nd.UIView(Ext.apply({
             region : 'center',
-            layout : 'fit',
             singleSelect: !opt.multipleSelection,
             selModelConfig: (opt.multipleSelection && opt.useCheckboxSelection) ? {type : 'checkbox', singSelect : false} : {},
             id: 'xnd-picklist-view',
-            layout: 'fit',
             xtype: 'xnd-uiview',
             header: false,
             viewUrl: opt.viewUrl,
@@ -183,7 +181,7 @@ Ext.nd.UIWorkspace.prototype = {
             categoryComboBoxCount: opt.categoryComboBoxCount,
             showActionbar: opt.showActionbar,
             showSearch: opt.showSearch
-        });
+        },opt.viewConfig));
 
         if (opt.type == 'names') {
         
