@@ -25,6 +25,11 @@ Ext.extend(Ext.nd.form.PickListField, Ext.form.TriggerField, {
      */
     viewName : "",
     /**
+     * @cfg {Object} viewConfig
+     * Any additional view configs that you want applied to the UIView.
+     */
+    viewConfig : {},    
+    /**
      * @cfg {Boolean} multipleSelection
      * Whether or not to allow multiple documents to be selected.
      */
@@ -131,6 +136,7 @@ Ext.extend(Ext.nd.form.PickListField, Ext.form.TriggerField, {
             dbPath : this.dbPath,
             viewName : this.viewName,
             viewUrl : this.viewUrl,
+            viewConfig : this.viewConfig,
             column : this.column,
             category : this.category,
             showCategoryComboBox : this.showCategoryComboBox,
