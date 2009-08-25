@@ -140,7 +140,11 @@ Ext.extend(Ext.nd.data.ViewXmlReader, Ext.data.XmlReader, {
         if (typeof map == 'number') {
             entryDataNodeMap = 'entrydata[columnnumber=' + map + ']';      
         } else {
-            map = map.replace('_', '$'); // Ext doesn't like '$'
+            // in Ext.nd.data.ViewDesign we replaced the '$' signs with '+'
+            // since the Ext MixedCollection didn't like dealing with '$' signs
+            // so now, we need to replace it back so that we can find the value
+            // within the xml entrydata node
+            map = map.replace('+', '$'); 
             entryDataNodeMap = 'entrydata[name=' + map + ']';
         }
         entryDataNode = q.select(entryDataNodeMap, node, false);
