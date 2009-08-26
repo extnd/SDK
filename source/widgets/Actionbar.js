@@ -230,8 +230,9 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                 var arHide = hidewhen.split(' ');
                 for (var h = 0; h < arHide.length; h++) {
                     if (arHide[h] == 'web' ||
-                    (arHide[h] == 'edit' && Ext.nd.currentUIDocument.editMode) ||
-                    (arHide[h] == 'read' && !Ext.nd.currentUIDocument.editMode)) {
+                        (typeof Ext.nd.currentUIDocument != 'undefined' &&
+                            (arHide[h] == 'edit' && Ext.nd.currentUIDocument.editMode) ||
+                            (arHide[h] == 'read' && !Ext.nd.currentUIDocument.editMode))) {
                         show = false;
                     }
                 }
