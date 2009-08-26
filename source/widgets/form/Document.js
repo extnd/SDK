@@ -11,6 +11,7 @@ Ext.nd.Document = function(config) {
   // Set any config params passed in to override defaults
   Ext.apply(this,config);
 
+  // TODO - this entire class needs to be rewritten to call the DXLExporter
   var sHREF, locNSF, urlStart;
   sHREF = location.href;
   locNSF = sHREF.toLowerCase().indexOf('.nsf/');
