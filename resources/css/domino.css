@@ -99,8 +99,9 @@ td.xnd-view-response {
   #xnd-form-toolbar {display: none;}
 }
 
+/* TODO - need to find out why we had this set */
 .x-form-field-wrap {
-    height: 23px;
+    /*height: 23px;*/
 }
 /* fix an IE + Domino issue with form triggers */
 .ext-ie .x-form-field-wrap .x-form-trigger {
