@@ -321,15 +321,26 @@ Ext.nd.util.addIFrame = function(config) {
             // add the panel
 			panel = targetPanel.add(panelConfig);
 
-            
+            // setup a beforedestory listener so we can make sure we don't add memory leaks to IE
             panel.on('beforedestroy', function(panel) {
-                // check to make sure Ext object is still there
-                if (Ext) {
+                // check to make sure Ext object is still there (if this panel was created from an
+                // action within another iframe then there is a chance that the iframe where the
+                // action originated could be gone and thus the Ext reference would be gone too
+                // since the Ext reference is coming from that iframe's global list of vars)
+                // TODO: figure out a way to have the Ext reference be the Ext of the panel so
+                // that it will always be available
+                if (typeof Ext != 'undefined') {
                     var iFrame = Ext.DomQuery.selectNode('iframe', panel.body.dom);
                     if (iFrame) {
                         if (iFrame.src) {
                             iFrame.src = "javascript:false";
-                            Ext.removeNode(iFrame);
+                            // use try/catch for those cases where our check for Ext still passes
+                            // but in fact it isn't there and thus the Ext.removeNode kept throwing errors
+                            try {
+                                Ext.removeNode(iFrame);
+                            } catch(e){
+                                //alert(e);
+                            }
                         }
                     }
                 }
@@ -424,6 +435,7 @@ Ext.nd.util.addIFrame = function(config) {
     
 } // eo addIFrame
 
+            
 Ext.nd.util.doLayoutAndShow = function(panel) {
 	// all component's owner Ext.Container should have a doLayout
 	// but check just in case
