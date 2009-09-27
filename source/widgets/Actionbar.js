@@ -611,7 +611,11 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                 this.toolbar.add(c);
             },this);
             // call doLayout so we can see our dynamically added actions
-            this.toolbar.doLayout();
+            // TODO: currently a call to doLayout failed for createActionFrom = 'document'
+            // on the line that calls this.layout.layout();
+            if (this.createActionsFrom == 'dxl'){
+                this.toolbar.doLayout(true, false);
+            }
             // now make sure the bbar shows by syncing the grid and the grid's parent
             this.syncGridSize();
         }
