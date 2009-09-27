@@ -322,29 +322,36 @@ Ext.nd.util.addIFrame = function(config) {
 			panel = targetPanel.add(panelConfig);
 
             // setup a beforedestory listener so we can make sure we don't add memory leaks to IE
-            panel.on('beforedestroy', function(panel) {
-                // check to make sure Ext object is still there (if this panel was created from an
-                // action within another iframe then there is a chance that the iframe where the
-                // action originated could be gone and thus the Ext reference would be gone too
-                // since the Ext reference is coming from that iframe's global list of vars)
-                // TODO: figure out a way to have the Ext reference be the Ext of the panel so
-                // that it will always be available
-                if (typeof Ext != 'undefined') {
-                    var iFrame = Ext.DomQuery.selectNode('iframe', panel.body.dom);
-                    if (iFrame) {
-                        if (iFrame.src) {
-                            iFrame.src = "javascript:false";
-                            // use try/catch for those cases where our check for Ext still passes
-                            // but in fact it isn't there and thus the Ext.removeNode kept throwing errors
-                            try {
+            
+            // TODO: another issue discovered is that the real issue appears to be with the 
+            // fact that this code is in an anonymous function originating from the window that
+            // the grid is in (and thus could already be in an iframe) so if this window/iframe 
+            // that the grid is in is closed before this tab is close this anonymous function
+            // will no longer be available.  In IE you get the error about this code can't be
+            // run from a "freed script" (or something like that) and in FireFox you get some kind
+            // of component exception and something about no data found.  So now I'm trying for 
+            // a check to see if the window is the same as the window.top and only execute if
+            // that is the case
+            if (window == window.top) {
+                panel.on('beforedestroy', function(panel) {
+                    // check to make sure Ext object is still there (if this panel was created from an
+                    // action within another iframe then there is a chance that the iframe where the
+                    // action originated could be gone and thus the Ext reference would be gone too
+                    // since the Ext reference is coming from that iframe's global list of vars)
+                    // TODO: figure out a way to have the Ext reference be the Ext of the panel so
+                    // that it will always be available; this try/catch only ignores the error and 
+                    // doesn't fix it but Rich thinks he knows how to fix this.
+                    if (typeof Ext != 'undefined') {
+                        var iFrame = Ext.DomQuery.selectNode('iframe', panel.body.dom);
+                        if (iFrame) {
+                            if (iFrame.src) {
+                                iFrame.src = "javascript:false";
                                 Ext.removeNode(iFrame);
-                            } catch(e){
-                                //alert(e);
                             }
                         }
                     }
-                }
-            });
+                });
+            }
             
             // this takes care setting the title of the panel and adding
             // refernces to uiView and target to the iframe
