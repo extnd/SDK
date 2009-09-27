@@ -110,7 +110,6 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         if (document && document.body) {
             document.body.style.visibility = "hidden";
         }
-        this.msgBox = Ext.MessageBox.wait("Loading document...");
 
         this.setupToolbars();
         
@@ -235,7 +234,6 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         	Ext.nd.UIDocument.superclass.afterRender.apply(this, arguments);
         	this.fireEvent('open', this);
         	
-            this.msgBox.hide();
             if (document && document.body) {
                 document.body.style.visibility = "";
             }
@@ -427,7 +425,6 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         Ext.nd.UIDocument.superclass.afterRender.apply(this, options.arguments);
         this.fireEvent('open', this);
         
-        this.msgBox.hide();
         if (document && document.body) {
             document.body.style.visibility = "";
         }  
