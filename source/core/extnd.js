@@ -207,7 +207,7 @@ Ext.Toolbar.override({
 
 Ext.namespace("Ext.nd", "Ext.nd.form", "Ext.nd.data", "Ext.nd.util");
 
-Ext.nd.version = 'Beta 3 for ExtJS 3.x';
+Ext.nd.version = 'Beta 3r1 for ExtJS 3.x';
 
 Ext.nd.getBlankImageUrl = function() {
 	return this.extndUrl + "resources/images/s.gif";
