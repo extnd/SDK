@@ -104,13 +104,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
     // for when we extend just Ext.Panel
     // tried extending Ext.form.FormPanel but it expects an items config       
     initComponent : function(){
-
-        // show a loading mask to hide all of domino's default markup
-        // while we pretty things up
-        if (document && document.body) {
-            document.body.style.visibility = "hidden";
-        }
-
+    
         this.setupToolbars();
         
         this.addEvents(        
@@ -139,7 +133,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
                  * @param {Ext.nd.UIDocument} this
                  */
                 'open');
-        
+             
         // now call parent initComponent
         Ext.nd.UIDocument.superclass.initComponent.call(this);   
 
@@ -231,12 +225,9 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
 
         } else {
 
-        	Ext.nd.UIDocument.superclass.afterRender.apply(this, arguments);
-        	this.fireEvent('open', this);
-        	
-            if (document && document.body) {
-                document.body.style.visibility = "";
-            }
+        	Ext.nd.UIDocument.superclass.afterRender.apply(this, arguments);            
+            this.fireEvent('open', this);
+
         }
 
     },
@@ -422,13 +413,9 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
          * was called from this classes afterRender method
          * Ext.nd.UIDocument.superclass.afterRender.call(this);
          */  
-        Ext.nd.UIDocument.superclass.afterRender.apply(this, options.arguments);
+        Ext.nd.UIDocument.superclass.afterRender.apply(this, options.arguments)
         this.fireEvent('open', this);
-        
-        if (document && document.body) {
-            document.body.style.visibility = "";
-        }  
-  
+
     },
 
     doConvertFields : function(){
