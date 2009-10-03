@@ -253,8 +253,12 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
     },
     
     onSave : function(config) {
+        
+        // TODO: I'm sure there is a better way of doing this but I'm brain dead right now :)
+        config = (typeof config == 'undefined') ? {closeOnSave : false} : (typeof config == 'boolean') ? {closeOnSave : config} : config;
+       
         this.getForm().submit(Ext.apply({
-          success: Ext.emptyFn,
+          success: (config.closeOnSave) ? this.close : Ext.emptyFn,
           failure: Ext.emptyFn,
           scope: this            
         },config));
@@ -460,6 +464,10 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
     convertFromTagName : function(el) {
         
         switch (el.tagName) {
+            case 'BUTTON':
+                // do nothing for now on buttons
+                break;
+                
             case 'SELECT':
                 /* for a dialoglist set to use a view for choices, 
                  * domino causes problems in that it will send 
@@ -489,6 +497,10 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
                 
             case 'TEXTAREA':
                 this.convertToTextAreaField(el);
+                break;
+
+            case 'FIELDSET':
+                this.convertToFieldSet(el);
                 break;
                 
             case 'INPUT':
@@ -648,6 +660,20 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         f.applyToMarkup(el);
         // now add to items
         this.form.items.add(f);
+                                        
+    },
+
+    // private
+    convertToFieldSet : function(el){
+        
+        //var title = Ext.DomQuery.selectValue('legend',el,'');
+        var fs = new Ext.form.FieldSet({
+            id: (el.id ? el.id : el.name),
+            //title : title,
+            autoHeight: true,
+            autoWidth : true
+        });
+        fs.applyToMarkup(el);
                                         
     },
 
