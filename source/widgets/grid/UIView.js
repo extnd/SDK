@@ -730,14 +730,15 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
     },
     
     openDocument: function(grid, rowIndex, e, bEditMode){
+
         
         // if length == 1 then we came from an @Command converted action button
         // if length == 0 then openDocument was called directly
         if (arguments.length <= 1) {
+            bEditMode = (arguments.length == 1) ? arguments[0] : false;
             grid = this;
             rowIndex = null;
             e = null; // not sure how to get the event so we'll just set it to null;
-            bEditMode = (arguments.length == 1) ? arguments[0] : false;
         } 
             
         //var row = grid.getSelectionModel().getSelected();
