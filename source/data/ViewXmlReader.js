@@ -138,16 +138,26 @@ Ext.extend(Ext.nd.data.ViewXmlReader, Ext.data.XmlReader, {
 		};
 		
         if (typeof map == 'number') {
-            entryDataNodeMap = 'entrydata[columnnumber=' + map + ']';      
+            entryDataNodeMap = 'entrydata[columnnumber=' + map + ']';   
+            entryDataNode = q.select(entryDataNodeMap, node, false);
         } else {
-            // in Ext.nd.data.ViewDesign we replaced the '$' signs with '+'
+            
+            // try it first without modifying the map
+            entryDataNodeMap = 'entrydata[name=' + map + ']';
+            entryDataNode = q.select(entryDataNodeMap, node, false);
+
+            // let's see if we found something and if so we are ok and if not let's look the other way
+            // in Ext.nd.data.ViewDesign we replaced the '$' sign at the beginning with '_'
             // since the Ext MixedCollection didn't like dealing with '$' signs
             // so now, we need to replace it back so that we can find the value
             // within the xml entrydata node
-            map = map.replace('+', '$'); 
-            entryDataNodeMap = 'entrydata[name=' + map + ']';
+            if (!entryDataNode){
+                map = map.replace(/^_/, '$'); 
+                entryDataNodeMap = 'entrydata[name=' + map + ']';
+                entryDataNode = q.select(entryDataNodeMap, node, false);
+            }
         }
-        entryDataNode = q.select(entryDataNodeMap, node, false);
+        
         valueDataNode = (entryDataNode && entryDataNode[0]) ? entryDataNode[0].lastChild : false;
           
         // sometimes valueDataNode cannot be found due to how domino sends data

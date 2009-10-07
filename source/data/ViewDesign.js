@@ -54,7 +54,7 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
             var colName = Ext.DomQuery.selectValue('@name', item);
             // we can only check columns that have a name defined
             if (typeof colName != 'undefined') {
-                colName = colName.replace('$', '+'); // Ext doesn't like '$'
+                colName = colName.replace(/^$/, '_'); // Ext doesn't like '$' at the beginning like domino automatically will add
                 this.visibleCols.add(colName);
             }
         }, this);
@@ -101,7 +101,7 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
             var columnnumber = colCount;
             // if name is blank, give it a new unique name
             var name = q.selectValue('@itemname', col, 'columnnumber_' + columnnumber);
-            name = name.replace('$', '+'); // Ext doesn't like '$'
+            name = name.replace(/^$/, '_'); // Ext doesn't like '$'
             
             // must check for hidden columns since we now use DXLExporter
             // instead of ReadDesign
