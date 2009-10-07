@@ -312,7 +312,11 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
             } // eo switch
         } else {
         	if (this.editMode) {
-        		// TODO: open in read mode if already in edit mode
+        		// open in read mode if already in edit mode and no target
+        	    var uiView = this.getUIView();
+                var uiViewName = (uiView) ? uiView.viewName : '0';
+                var unid = this.document.universalID;              
+                location.href = this.dbPath + uiViewName + '/' + unid + '?OpenDocument'
         	} else {
         		returnValue = false;
         	}
