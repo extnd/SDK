@@ -225,7 +225,14 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
 
         } else {
 
-        	Ext.nd.UIDocument.superclass.afterRender.apply(this, arguments);            
+        	Ext.nd.UIDocument.superclass.afterRender.apply(this, arguments);
+        	
+        	// seen some issues where this.layout is a string (this.layout = 'fit') and thus
+        	// does not have a layout() method which doLayout() calls
+        	if (typeof this.layout == 'object') {
+        	    this.doLayout();
+        	} 
+        	
             this.fireEvent('open', this);
 
         }
