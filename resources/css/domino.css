@@ -5,7 +5,6 @@
  *----------------------------------------------------
  */
 
-
 html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,p,blockquote,th,td {
   font-family: tahoma,verdana,helvetica;
   font-size: 11px;
@@ -103,8 +102,12 @@ td.xnd-view-response {
 .x-form-field-wrap {
     /*height: 23px;*/
 }
+.ext-ie6 .x-form-field-wrap, .ext-ie7 .x-form-field-wrap {
+    height: 23px;        
+}
+
 /* fix an IE + Domino issue with form triggers */
-.ext-ie .x-form-field-wrap .x-form-trigger {
+.ext-ie6 .x-form-field-wrap .x-form-trigger, .ext-ie7 .x-form-field-wrap .x-form-trigger {
     top: 1px;
 }
 
