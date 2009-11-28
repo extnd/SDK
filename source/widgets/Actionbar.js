@@ -1,5 +1,6 @@
 /**
  * @class Ext.nd.Actionbar
+ * @extends Ext.Toolbar
  * An {@link Ext.Toolbar} to deal with Domino's view and form actionbars. By default
  * it will make a call to the Ext.nd Dxl exporter agent and parse the Actionbar Xml section
  * Additionally, you can use Ext.nd.Actionbar as a plugin for an existing Ext.Toolbar.
@@ -36,6 +37,21 @@
  createActionsFrom: 'document'
  })
  })</code></pre>
+ * Also note that the Ext.nd.Actionbar can convert the following formulas for you into Ext actions:
+ * <ul>at Commands supported for Views:
+ *      <li>Command([Compose])</li>
+ *      <li>Command([EditDocument])</li>
+ *      <li>Command([OpenDocument])</li>
+ *      <li>Command([FilePrint])</li>
+ * </ul>
+ * <ul>at Commands supported for Forms:
+ *      <li>Command([Compose])</li>
+ *      <li>Command([EditDocument])</li>
+ *      <li>Command([OpenDocument])</li>
+ *      <li>Command([FilePrint])</li>
+ *      <li>Command([FileSave])</li>
+ *      <li>Command([FileCloseWindow])</li>
+ * </ul>
  * @cfg {String} noteType
  * Current options are 'form' or 'view' this lets the toolbar know how to handle certain
  * actions based off from where it is located
@@ -45,22 +61,10 @@
  * Can be either 'document' or 'dxl'.  When using noteType: 'form' set to 'document' to convert the HTML actionbar instead of
  * grabbing the form's Dxl and transforming it (Defaults to 'dxl')
  * @cfg {Boolean} convertFormulas
- * Whether you want basic domino @Formulas converted over to JavaScript code. Currently
+ * Whether you want basic domino Formulas converted over to JavaScript code. Currently
  * only single formulas are supported. (Defaults to true)
  * @cfg {Boolean} removeEmptyActionbar
  * Whether you want to remove an actionbar that does not contain any actions
- * Supported for Views:
- * @Command([Compose])
- * @Command([EditDocument])
- * @Command([OpenDocument])
- * @Command([FilePrint])
- * Supported for Forms:
- * @Command([Compose])
- * @Command([EditDocument])
- * @Command([OpenDocument])
- * @Command([FilePrint])
- * @Command([FileSave])
- * @Command([FileCloseWindow])
  * @constructor
  * Create a new Actionbar
  */
