@@ -1,15 +1,20 @@
 /**
  * @class Ext.nd.data.ViewXmlReader
  * @extends Ext.data.XmlReader An expanded version of Ext's XmlReader to deal
- *          with Domino's funky ReadViewEntries format
- * @cfg {String} totalRecords - override domino's toplevelentries
+ *          with Domino's unique ?ReadViewEntries format.
+ * @cfg {String} totalRecords The DomQuery path from which to retrieve the 
+ *          total number of records in the dataset. This is only needed if 
+ *          the whole dataset is not passed in one go, but is being paged from 
+ *          the remote server.  For Domino, this defaults to '@toplevelentries'.
  * @cfg {String} record The DomQuery path to the repeated element which contains
- *      record information.
- * @cfg {String} success The DomQuery path to the success attribute used by
- *      forms.
+ *          record information.  For Domino, this defaults to 'viewentry'.
  * @cfg {String} id The DomQuery path relative from the record element to the
- *      element that contains a record identifier value.
- * @constructor Create a new XmlReader
+ *          element that contains a record identifier value.  For Domino, this
+ *          defaults to '@position' since this poistion attribute from a ?ReadViewEntries
+ *          call is unique per row and using '@unid' can sometimes not be unique
+ *          in categorizes views where the same document can appear under different
+ *          categories.
+ * @constructor Create a new ViewXmlReader
  * @param {Object}
  *            meta Metadata configuration options
  * @param {Mixed}
