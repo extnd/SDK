@@ -1,3 +1,17 @@
+/**
+ * @class Ext.nd.UIView
+ * @extends Ext.grid.GridPanel
+ * @cfg {String} storeConfig
+ * @cfg {String} viewConfig
+ * @cfg {String} selModelConfig
+ * @cfg {String} renderers
+ * @cfg {String} targetDefaults
+ * @cfg {String} tbarPlugins
+ * @cfg {String} bbarPlugins
+ * @constructor Create a new UIView
+ * @param {Object} config The config object
+ * @xtype uiview
+ */
 Ext.nd.UIView = function(config){
 
     this.storeConfig = {};
