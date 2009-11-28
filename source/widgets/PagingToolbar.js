@@ -2,10 +2,7 @@
  * @class Ext.nd.PagingToolbar
  * @extends Ext.PagingToolbar
  * A specialized toolbar that is bound to a {@link Ext.nd.data.ViewStore} and provides automatic paging controls geared towards Domino
- * @constructor
- * @param {String/HTMLElement/Element} container The id or element that will contain the toolbar
- * @param {Ext.nd.ViewStore} store The underlying data store providing the paged data
- * @param {Object} config The config object
+ * @constructor Create a new PagingToolbar that works with Domino views
  */
 Ext.nd.PagingToolbar = function(config){
     Ext.nd.PagingToolbar.superclass.constructor.call(this, config);
