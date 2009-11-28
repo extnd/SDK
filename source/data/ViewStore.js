@@ -4,11 +4,11 @@
  * @extends Ext.data.Store
  * A specialized version of {@link Ext.data.Store} to deal with oddities from
  * reading a Domino view via ?ReadViewEntries.  Use for widgets such as the
- * {@link Ext.grid.GridPanel}, or the {@link Ext.form.ComboBox}.
+ * {@link Ext.nd.UIView}, or the {@link Ext.nd.form.ComboBox}.
  * @constructor
- * Creates a new Store
- * @param {Object} config A config object containing the objects needed for the Store to access data,
- * and read the data into Records.
+ * Creates a new ViewStore
+ * @param {Object} config A config object containing the objects needed for 
+ * the ViewStore to access data, and read the data into Records.
  */
 Ext.nd.data.ViewStore = function(config){
 
