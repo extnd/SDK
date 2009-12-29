@@ -1,3 +1,38 @@
+/**
+ * @class Ext.nd.form.ComboBox
+ * @extends Ext.form.ComboBox
+ * A combobox control with support for loading data from Domino views.
+ * <p><b>Example</b></p>
+ * <pre><code>
+var cb = new Ext.nd.form.ComboBox({
+    viewName : 'yourView',
+    category : 'someCategory',
+    parentCombo 'parentId',
+    count : 50
+});
+ * </code></pre>
+ * @constructor
+ * Create a new ComboBox
+ * @param {Object} config
+ * @cfg {String} viewName The name of the view used to load the values of the combobox
+ * @cfg {String} viewUrl The url to the view used to load the values of the combobox.  
+ * If a viewName is specified, this property is ignored.
+ * @cfg {String} dbPath (optional) The path to the database that contains the view to load.
+ * Defaults to Ext.nd.Session.currentDatabase.webFilePath.
+ * @cfg (String) count The number of documents/rows from the view to load at a time. 
+ * If pageSize is set then count is ignored and pageSize is used.  If you want ALL documents/rows
+ * loaded then set pageSize or count to -1.
+ * @cfg valueField {String/Number} The column position or programmatic name from the loaded Domino view
+ * that is the stored value.
+ * @cfg displayField {String/Number} The column position or programmatic name from the loaded Domino view
+ * that is used for the displayed values.
+ * @cfg {String} category (optional) The category you wish to restrict to for categorized views.
+ * @cfg {String/Component} parentCombo (optional) The string id or component of the parent combo
+ * associated with this combo.  If set, then when the parent combo changes, this combo will update 
+ * with new values based off of the selected value of the parent combo.  This works well with
+ * single category fields where a 'RestrictToCategory' can be done using the selected value of the
+ * parent combo as the value of the category of this combo.
+ */
 Ext.nd.form.ComboBox = function(config) {
     
     config = Ext.nd.util.cleanUpConfig(config);
@@ -133,7 +168,7 @@ Ext.extend(Ext.nd.form.ComboBox, Ext.form.ComboBox,  {
         }
         
         // simulate the fire event so any combo that references
-        // this combo as it's parent will call it's on onP
+        // this combo as it's parent will call it's o2n onSelect event
         this.fireEvent('select', this, null, null);
         
     }
