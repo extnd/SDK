@@ -50,6 +50,8 @@ Ext.nd.CategorizedView = Ext.extend(Ext.grid.GridView, {
             var sm = this.grid.getSelectionModel();
             sm.clearSelections();
         } else {
+            return;
+            // TODO: ask Rich why any of the below code is needed
             // TODO: this is a bad hack to force selection, need to write a real
             // selection model extension that handles this all properly
             var row = e.getTarget('div.x-grid3-row');
