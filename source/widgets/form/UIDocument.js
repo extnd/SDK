@@ -3,7 +3,9 @@
  *        Ext equivalents Simple example:
  * <pre><code>
   var uidoc = new Ext.nd.UIDocument();
-  uidoc.render('myDiv');
+  uidoc.render('myDiv'); // to render to a specified location
+  -- or --
+  uidoc.render(); // to render to an Ext.Viewport
  </code></pre> 
  * More complex example:<pre><code>
   var uidoc = new Ext.nd.UIDocument({
@@ -12,17 +14,26 @@
   });
   new Ext.Viewport({
     layout: 'fit',
-    items: frm
+    items: uidoc
   });
  </code></pre>
  * @cfg {Boolean} showActionbar Whether or not to read in the form/page DXL
  *      behind the scences and build an Ext.Toolbar from domino actions
  *      (Defaults to true)
+ * @cfig {String} createActionsFrom Set to 'document' if you want to create the actionbar
+ * from the actions domino sends after it evaluates hide-when formulas.  Set to 'dxl' if
+ * you want to create the actionbar from what is defined in Designer.  
  * @cfg {Boolean} convertFields Determines whether to convert form fields to Ext
  *      fields. (Defaults to true)
  * @cfg {Boolean} applyDominoKeywordRefresh Determines whether to apply the
  *      postback onchange event that Domino sends for Keyword fields set to
  *      "Refresh fields on keyword change". Defaults to true.
+ * @cfg {Number} defaultFieldWidth
+ * @cfg documentWindowTitle: '',
+ * @cfg documentLoadingWindowTitle: 'Opening...',
+ * @cfg documentUntitledWindowTitle: '(Untitled)',
+ * @cfg documentWindowTitleMaxLength: 16,
+ * @cfg useDocumentWindowTitle: true,
  * @constructor Creates a new Form component
  * @param {Object}
  *            config Configuration options
