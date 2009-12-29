@@ -16,7 +16,8 @@
  *          categories.
  * @constructor Create a new ViewXmlReader
  * @param {Object}
- *            meta Metadata configuration options
+ *            meta Metadata configuration options. This is built for you but if you want
+ *            to override any of the properties you can do so.
  * @param {Mixed}
  *            recordType The definition of the data record type to produce. This
  *            can be either a valid Record subclass created with
