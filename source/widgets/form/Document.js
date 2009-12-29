@@ -1,6 +1,6 @@
 
 /**
- * @class Ext.nd.Document
+ * @class-not-ready Ext.nd.Document
  * @constructor
  * Makes an AJAX call to retrieve a Domino Document
  * @param {Object} config Configuration options
