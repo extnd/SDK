@@ -581,6 +581,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
         
     },
     
+    // private
     removeDominoActionbar : function() {
         
         if (this.dominoActionbar.remove) {
@@ -658,19 +659,25 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
     /**
      * Handler for @Command([Compose];'myform')
      * @param {String/Object} form the url accessible name for the form
+     * @cfg {String} formName the name of the form
+     * @cfg {String} dbPath the path to the database (defaults to the dbPath of the Ext.nd.Actionbar)
+     * @cfg {String} isResponse whether the form should inherit from the parent form (defaults to false)
+     * @cfg {String} target where to open the new form (defaults to the target set for Ext.nd.Actionbar)
      */
     openForm : function(options){
         
-        var formName, dbPath, isResponse, pUrl;
+        var formName, dbPath, isResponse, pUrl, target;
         
         if (typeof options == 'string') {
             formName = options;
             dbPath = this.dbPath;
             isResponse = false;
+            target = this.getTarget();
         } else {
             formName = options.formName;
             dbPath = options.dbPath || this.dbPath;
             isResponse = (options.isResponse) ? options.isResponse : false;
+            target = options.target || this.getTarget();
         }
         
         pUrl = '';
@@ -680,8 +687,8 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
             var pUrl = (parentUNID !== '') ? '&parentUNID='+parentUNID : '';
         }
         
+        // set the url to the form
         var link = dbPath + formName + '?OpenForm' + pUrl;
-        var target = this.getTarget() || this.ownerCt.ownerCt;
         
         // if no target then just open in a new window
         if (!target) {
@@ -698,7 +705,11 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
         }
     },
     
-    // private
+    /**
+     * from a view, returns the selected document's UNID
+     * from a document, returns the document's UNID
+     * @return {String} The UNID of the active/selected document.
+     */
     getParentUNID : function() {
         var parentUNID = '';
         if (this.noteType == 'view') {
