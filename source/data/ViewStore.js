@@ -29,15 +29,21 @@ Ext.nd.data.ViewStore = function(config){
         dir: 'dir'
     }});
     
-    // by default we remove the category total since charts and combos
-    // which could use views don't need this.  pretty much only views
-    // care about this and in ViewDesign (that views use) this is set
-    // to true
+   /**
+    * @cfg {Boolean} removeCategoryTotal
+    * by default we remove the category total since charts and combos
+    * which could use views don't need this.  pretty much only views
+    * care about this and in {@link Ext.nd.data.ViewDesign (that views use)
+    * this is set to true for you
+    */
     this.removeCategoryTotal = true;
     Ext.nd.data.ViewStore.superclass.constructor.call(this, config);
 
-    // make sure RestrictToCategory is set if category passed in
-    // we do this after our superclass call since it sets baseParams
+    
+   /**
+    * @cfg {String} category (optional) 
+    * the category to restrict to for views that are categorized
+    */
     if (this.category && typeof this.category == 'string') {
         this.baseParams.RestrictToCategory = this.category;    
     }
