@@ -25,7 +25,7 @@
       }] 
   });
   </code></pre> 
- * @cfg {String} outlineName The name or alias of an outline as set in Domino Desgner.
+ * @cfg {String} outlineName The name or alias of an outline as set in Domino Designer.
  * @cfg {String} outlineUrl The full web path to an outline (i.e. '/someDb/outlineName'). Used for when you want to load an outline from a different database.
  * @cfg {Boolean} useOutlineIcons Whether to use the icons as set in Domino Designer. If set to false, Ext folder and leaf icons will be used. (Defaults to
  *      false)
@@ -33,8 +33,8 @@
  * @cfg {Component/String} target The component or id of an existing div where you want entries to open into.  If you need for
  * views to open differently you can also set the 'viewTarget' property.
  * @cfg {Component/String} viewTarget The component or id of an existing div where you want just view entries to open into.
- * @cfg {Object} targetDefaults A config object to pass along to the target for an entry being opend.  You can specify a different
- * set of target defaults for a view by seting the 'viewTargetDefaults' property.
+ * @cfg {Object} targetDefaults A config object to pass along to the target for an entry being opened.  You can specify a different
+ * set of target defaults for a view by setting the 'viewTargetDefaults' property.
  * @cfg {Object} viewTargetDefaults A config object to pass along to the target for a view entry being opened.  Use 'targetDefaults'
  * for all other entries.  
  * Set the 'target' property for all other entries.

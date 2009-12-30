@@ -1,10 +1,11 @@
 /**
  * @class Ext.nd.UIView
  * @extends Ext.grid.GridPanel
- * @cfg {String} storeConfig
- * @cfg {String} viewConfig
- * @cfg {String} selModelConfig
- * @cfg {String} renderers
+ * @cfg {String} storeConfig Any additional configs you wish to pass to the underlying store for the UIView
+ * @cfg {String} viewConfig Any additional configs you wish to pass to the underlying view for the UIView
+ * @cfg {String} selModelConfig Any additional configs you wish to pass to the underlying selModel
+ * @cfg {Array} renderers Any custom column renderers you want to pass in in order to do custom formatting to columns  
+ * @cfg {String/Component} target The target component you want documents from this view to open into
  * @cfg {String} targetDefaults
  * @cfg {String} tbarPlugins
  * @cfg {String} bbarPlugins
