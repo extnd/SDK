@@ -29,11 +29,6 @@
  *      postback onchange event that Domino sends for Keyword fields set to
  *      "Refresh fields on keyword change". Defaults to true.
  * @cfg {Number} defaultFieldWidth
- * @cfg documentWindowTitle: '',
- * @cfg documentLoadingWindowTitle: 'Opening...',
- * @cfg documentUntitledWindowTitle: '(Untitled)',
- * @cfg documentWindowTitleMaxLength: 16,
- * @cfg useDocumentWindowTitle: true,
  * @constructor Creates a new Form component
  * @param {Object}
  *            config Configuration options
@@ -56,7 +51,6 @@ Ext.nd.UIDocument = function(config){
 	this.uidoc = currentUIDocument; 
 
     // defaults
-    //this.autoScroll = true;
     this.dbPath = db.webFilePath;
     this.showActionbar = true;
     this.createActionsFrom = 'dxl';
@@ -105,13 +99,7 @@ Ext.nd.UIDocument = function(config){
 };
 
 Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
-
-    documentWindowTitle: '',
-    documentLoadingWindowTitle: 'Opening...',
-    documentUntitledWindowTitle: '(Untitled)',
-    documentWindowTitleMaxLength: 16,
-    useDocumentWindowTitle: true,
-    
+   
     // for when we extend just Ext.Panel
     // tried extending Ext.form.FormPanel but it expects an items config       
     initComponent : function(){

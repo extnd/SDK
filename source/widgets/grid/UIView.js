@@ -15,6 +15,7 @@
  */
 Ext.nd.UIView = function(config){
 
+	// defaults
     this.storeConfig = {};
     this.viewConfig = {};
     this.selModelConfig = {singleSelect : false, checkOnly : true};
@@ -30,7 +31,7 @@ Ext.nd.UIView = function(config){
         delete config.gridConfig;
     }
     
-    config = Ext.nd.util.cleanUpConfig(config);
+    config = Ext.nd.util.cleanUpUIViewConfig(config);
     
     /* We need some dummy colConfig and datastore definitions
      * so that Ext can render the grid, these get replaced once we

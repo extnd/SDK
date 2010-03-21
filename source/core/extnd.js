@@ -464,6 +464,9 @@ Ext.nd.util.cleanUpConfig = function(config) {
         if (!config.dbPath && Ext.nd.Session) {
              config.dbPath = Ext.nd.Session.currentDatabase.webFilePath;
         }
+        if (!config.filePath && Ext.nd.Session) {
+             config.filePath = Ext.nd.Session.currentDatabase.filePath;
+        }
         config.viewUrl = config.dbPath + config.viewName;
     }
     // ok, no viewName but do we have the viewUrl?
@@ -476,3 +479,49 @@ Ext.nd.util.cleanUpConfig = function(config) {
     return config;
 
 } // eo cleanUpConfig
+
+Ext.nd.util.cleanUpUIViewConfig = function(config) {
+    
+    // viewUrl is either passed in or built from dbPath and viewName
+    if (typeof config.viewName == 'string') {
+        if (!config.dbPath && Ext.nd.Session) {
+             config.dbPath = Ext.nd.Session.currentDatabase.webFilePath;
+        }
+        if (!config.filePath && Ext.nd.Session) {
+             config.filePath = Ext.nd.Session.currentDatabase.filePath;
+        }
+        config.viewUrl = config.dbPath + config.viewName;
+    }
+    // ok, no viewName but do we have the viewUrl?
+    else if (config.viewUrl) {
+        var vni = config.viewUrl.lastIndexOf('/') + 1;
+        config.dbPath = config.viewUrl.substring(0, vni);
+        config.viewName = config.viewUrl.substring(vni);
+    }
+
+    return config;
+
+} // eo cleanUpUIViewConfig
+
+Ext.nd.util.cleanUpUIOutlineConfig = function(config) {
+    
+    // outlineUrl is either passed in or built from dbPath and outlineName
+    if (typeof config.outlineName == 'string') {
+        if (!config.dbPath && Ext.nd.Session) {
+             config.dbPath = Ext.nd.Session.currentDatabase.webFilePath;
+        }
+        if (!config.filePath && Ext.nd.Session) {
+             config.filePath = Ext.nd.Session.currentDatabase.filePath;
+        }
+        config.outlineUrl = config.dbPath + config.outlineName;
+    }
+    // ok, no outlineName but do we have the outlineUrl?
+    else if (config.outlineUrl) {
+        var vni = config.outlineUrl.lastIndexOf('/') + 1;
+        config.dbPath = config.outlineUrl.substring(0, vni);
+        config.outlineName = config.outlineUrl.substring(vni);
+    }
+
+    return config;
+
+} // eo cleanUpUIOutlineConfig

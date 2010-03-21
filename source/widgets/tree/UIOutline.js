@@ -32,15 +32,18 @@
  * @cfg (Boolean} showIcons
  * @cfg {Component/String} target The component or id of an existing div where you want entries to open into.  If you need for
  * views to open differently you can also set the 'viewTarget' property.
- * @cfg {Component/String} viewTarget The component or id of an existing div where you want just view entries to open into.
  * @cfg {Object} targetDefaults A config object to pass along to the target for an entry being opened.  You can specify a different
  * set of target defaults for a view by setting the 'viewTargetDefaults' property.
+
+ * @cfg {Object} viewDefaults A config object to pass along to all views opened from this outline.  
+ * @cfg {Component/String} viewTarget The component or id of an existing div where you want just view entries to open into.
  * @cfg {Object} viewTargetDefaults A config object to pass along to the target for a view entry being opened.  Use 'targetDefaults'
  * for all other entries.  
- * Set the 'target' property for all other entries.
+
  * @cfg {String} dbPath
  * @cfg {String} filePath
  * @cfg {Boolean} useEntryTitleAsTargetTitle
+ 
  * @constructor Create a new UIOutline component
  * @param {Object} config Configuration options
  */
@@ -53,13 +56,7 @@ Ext.nd.UIOutline = function(config) {
         delete config.treeConfig;
     }
 
-    var sess = Ext.nd.Session; // should we assume that there will always be a
-    // session?
-    var db = sess.currentDatabase;
-
     // defaults
-    this.dbPath = db.webFilePath;
-    this.filePath = db.filePath;
     this.targetDefaults = {};
     this.outlineName = '';
     this.showIcons = true;
@@ -67,10 +64,11 @@ Ext.nd.UIOutline = function(config) {
     this.target = null;
     this.viewDefaults = {}; //applied to each view during an openEntry call
 
-    Ext.apply(this, config);
-    // outlineUrl is either passed in or built from dbPath and outlineName
-    this.outlineUrl = (this.outlineUrl) ? this.outlineUrl : this.dbPath + this.outlineName;
+	config = Ext.nd.util.cleanUpUIViewConfig(config);
 
+	// TODO: is this Ext.apply needed? doesn't the call to the superclass.constructor do this as well?
+    Ext.apply(this, config);
+	
     Ext.nd.UIOutline.superclass.constructor.call(this);
 };
 
