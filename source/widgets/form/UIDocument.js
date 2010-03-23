@@ -43,12 +43,12 @@ Ext.nd.UIDocument = function(config){
     //TODO: this needs to go away soon (the use of Ext.nd.currentUIDocument.*)
     var currentUIDocument = Ext.nd.currentUIDocument;
     
-	// now just apply currentUIDocument to 'this' so we get what the agent says
-	// about this uidocument (such as UNID, form name, etc.)
-	Ext.apply(this, currentUIDocument);
+    // now just apply currentUIDocument to 'this' so we get what the agent says
+    // about this uidocument (such as UNID, form name, etc.)
+    Ext.apply(this, currentUIDocument);
 
-	// for backwards compat (not sure if any devs are using this)
-	this.uidoc = currentUIDocument; 
+    // for backwards compat (not sure if any devs are using this)
+    this.uidoc = currentUIDocument; 
 
     // defaults
     this.dbPath = db.webFilePath;
@@ -224,14 +224,14 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
 
         } else {
 
-        	Ext.nd.UIDocument.superclass.afterRender.apply(this, arguments);
-        	
-        	// seen some issues where this.layout is a string (this.layout = 'fit') and thus
-        	// does not have a layout() method which doLayout() calls
-        	if (typeof this.layout == 'object') {
-        	    this.doLayout();
-        	} 
-        	
+            Ext.nd.UIDocument.superclass.afterRender.apply(this, arguments);
+            
+            // seen some issues where this.layout is a string (this.layout = 'fit') and thus
+            // does not have a layout() method which doLayout() calls
+            if (typeof this.layout == 'object') {
+                this.doLayout();
+            } 
+            
             this.fireEvent('open', this);
 
         }
@@ -253,7 +253,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
     },
     
     save : function(config) {
-    	if (this.fireEvent("beforesave", this) !== false) {
+        if (this.fireEvent("beforesave", this) !== false) {
             this.onSave(config);
         }
     },
@@ -271,7 +271,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
     },
         
     close : function(){
-    	if (this.fireEvent("beforeclose", this) !== false) {
+        if (this.fireEvent("beforeclose", this) !== false) {
             this.onClose();
         }
     },
@@ -282,11 +282,11 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
          * return false means that we couldn't find a component and thus couldn't do anything
          * 
          */
-    	
+        
         var returnValue = false;
-    	var target = this.getTarget();
-    	
-    	if (target) {
+        var target = this.getTarget();
+        
+        if (target) {
             
             switch (target.getXType()) {
                 case 'window':
@@ -304,31 +304,31 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
                     break;
                 default:
                     if (target.remove) {
-                    	var iframeOwnerCt = this.getIframeOwnerCt();
-                    	if (iframeOwnerCt) {
-                    		target.remove(this.iframeOwnerCt);
-                    		returnValue = true;
-                    	} else {
-                    		returnValue = false;
-                    	}
+                        var iframeOwnerCt = this.getIframeOwnerCt();
+                        if (iframeOwnerCt) {
+                            target.remove(this.iframeOwnerCt);
+                            returnValue = true;
+                        } else {
+                            returnValue = false;
+                        }
                     } else {
                         returnValue = false;
                     }
                     break;
             } // eo switch
         } else {
-        	if (this.editMode) {
-        		// open in read mode if already in edit mode and no target
-        	    var uiView = this.getUIView();
+            if (this.editMode) {
+                // open in read mode if already in edit mode and no target
+                var uiView = this.getUIView();
                 var uiViewName = (uiView) ? uiView.viewName : '0';
                 var unid = this.document.universalID;              
                 location.href = this.dbPath + uiViewName + '/' + unid + '?OpenDocument'
-        	} else {
-        		returnValue = false;
-        	}
+            } else {
+                returnValue = false;
+            }
         }   
-    	
-    	return returnValue;
+        
+        return returnValue;
     },
     
     // private
@@ -1139,8 +1139,8 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
     
     // private
     convertSelectToComboBox : function(el, forceSelection){
-    	
-    	var s = Ext.getDom(el);
+        
+        var s = Ext.getDom(el);
         var d = [], opts = s.options;
         var selectedValue = "";
         var value;
@@ -1256,64 +1256,66 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         var w = Ext.get(el).dom.style.width;
         if (w == '' || w == 'auto') {
             return this.defaultFieldWidth;
+        } else if (w.indexOf('%',0) > 0) {
+            return w; // support % widths
         } else {
             return parseInt(w, 10);   
         }
     },
     
     fieldGetText : function(fld) {
-    	var oField = this.getForm().findField(fld);
-    	return (oField) ? oField.getValue() : '';
+        var oField = this.getForm().findField(fld);
+        return (oField) ? oField.getValue() : '';
     },
 
     fieldSetText : function(fld, value) {
-    	var oField = this.getForm().findField(fld);
-    	if (oField) {
-    		try {
-    			oField.setValue(value);
-    		} catch(e){}
-    	}
+        var oField = this.getForm().findField(fld);
+        if (oField) {
+            try {
+                oField.setValue(value);
+            } catch(e){}
+        }
     },
 
     fieldAppendText : function(fld, value) {
-    	var oField = this.getForm().findField(fld);
-    	if (oField) {
-    		try {
-    			oField.setValue(oField.getValue() + value);
-    		} catch(e){}
-    	}
+        var oField = this.getForm().findField(fld);
+        if (oField) {
+            try {
+                oField.setValue(oField.getValue() + value);
+            } catch(e){}
+        }
     },
 
     fieldClear : function(fld) {
-    	var oField = this.getForm().findField(fld);
-    	if (oField) {
-    		try {
-    			oField.setValue("");
-    		} catch(e){}
-    	}
+        var oField = this.getForm().findField(fld);
+        if (oField) {
+            try {
+                oField.setValue("");
+            } catch(e){}
+        }
     },
 
     fieldContains : function(fld, searchString) {
-    	var oField = this.getForm().findField(fld);
-    	var bContains = false;
-    	if (oField) {
-    		try {
-    			var test = oField.getValue().indexOf(searchString);
-				bContains = (test === -1) ? false : true;
-    		} catch(e){}
-    	}
-    	return bContains;
+        var oField = this.getForm().findField(fld);
+        var bContains = false;
+        if (oField) {
+            try {
+                var test = oField.getValue().indexOf(searchString);
+                bContains = (test === -1) ? false : true;
+            } catch(e){}
+        }
+        return bContains;
     },
     
     getTarget : function() {
-		if (this.target) {
-			return this.target;
-		} else {
-			// if a target property is available then set it
-			if (window && window.target) {
-				this.target = window.target;
-				return this.target;
-			} else {
+        if (this.target) {
+            return this.target;
+        } else {
+            // if a target property is available then set it
+            if (window && window.target) {
+                this.target = window.target;
+                return this.target;
+            } else {
                 // for an uiview or uidoc you need to go a level
                 if (this.ownerCt && this.ownerCt.getXType && this.ownerCt.getXType() == 'tabpanel') {
                     this.target = this.ownerCt.id;
@@ -1321,24 +1323,24 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
                 } else {
                     return null;
                 }
-			}
-		}
-	},
-	
+            }
+        }
+    },
+    
     getIframeOwnerCt : function() {
-		if (this.iframeOwnerCt) {
-			return this.iframeOwnerCt;
-		} else {
-			// if a target property is available then set it
-			// if an ownerCt property is available then set it
-		    if (window && window.ownerCt) {
-		        this.iframeOwnerCt = window.ownerCt;
-		        return this.iframeOwnerCt;
-		    } else {
-				return null;
-			}
-		}
-	},
+        if (this.iframeOwnerCt) {
+            return this.iframeOwnerCt;
+        } else {
+            // if a target property is available then set it
+            // if an ownerCt property is available then set it
+            if (window && window.ownerCt) {
+                this.iframeOwnerCt = window.ownerCt;
+                return this.iframeOwnerCt;
+            } else {
+                return null;
+            }
+        }
+    },
 
     getUIView: function() {
         if (this.uiView && this.uiView != null) {
@@ -1354,7 +1356,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
     },
     
     getUIDocument: function() {
-    	return this
+        return this
     }
 });
 Ext.reg('xnd-uidocument', Ext.nd.UIDocument);
