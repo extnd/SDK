@@ -2,72 +2,72 @@
 
 Ext.override(Ext.grid.CheckboxSelectionModel, {
 
-			// private
-			initEvents : function() {
-				Ext.grid.CheckboxSelectionModel.superclass.initEvents.call(this);
+            // private
+            initEvents : function() {
+                Ext.grid.CheckboxSelectionModel.superclass.initEvents.call(this);
 
-				// when the grid renders add the mousedown events
-				this.grid.on('render', function() {
-							var view = this.grid.getView();
-							view.mainBody.on('mousedown', this.onMouseDown,
-									this);
-							Ext.fly(view.innerHd).on('mousedown',
-									this.onHdMouseDown, this);
-						}, this);
+                // when the grid renders add the mousedown events
+                this.grid.on('render', function() {
+                            var view = this.grid.getView();
+                            view.mainBody.on('mousedown', this.onMouseDown,
+                                    this);
+                            Ext.fly(view.innerHd).on('mousedown',
+                                    this.onHdMouseDown, this);
+                        }, this);
 
-				// before the row is selected check for custom deselectingFlag
-				// and DnD
-				this.on('beforerowselect', function(sm, rowIndex, keep, rec) {
-							if (this.deselectingFlag
-									&& this.grid.enableDragDrop) {
-								this.deselectingFlag = false;
-								this.deselectRow(rowIndex);
-								return this.deselectingFlag;
-							}
-							return keep;
-						}, this);
+                // before the row is selected check for custom deselectingFlag
+                // and DnD
+                this.on('beforerowselect', function(sm, rowIndex, keep, rec) {
+                            if (this.deselectingFlag
+                                    && this.grid.enableDragDrop) {
+                                this.deselectingFlag = false;
+                                this.deselectRow(rowIndex);
+                                return this.deselectingFlag;
+                            }
+                            return keep;
+                        }, this);
 
-				// rowclick
-				this.grid.on('rowclick', function(grid, rowIndex, e) {
-							if (e.button === 0 && !e.shiftKey && !e.ctrlKey) {
-								this.selectRow(rowIndex, true); // true to keep
-								// existing
-								grid.view.focusRow(rowIndex);
-							}
-						}, this);
+                // rowclick
+                this.grid.on('rowclick', function(grid, rowIndex, e) {
+                            if (e.button === 0 && !e.shiftKey && !e.ctrlKey) {
+                                this.selectRow(rowIndex, true); // true to keep
+                                // existing
+                                grid.view.focusRow(rowIndex);
+                            }
+                        }, this);
 
-			},
+            },
 
-			onMouseDown : function(e, t) {
-				//
-				// If you want make selections only by checking the checker box,
-				// add "&& t.className == 'x-grid3-row-checker'" to next if
-				// statement
-				// 
-				// If you want to make selection only with Ctrl key pressed, add
-				// "&& e.ctrlKey" to next if statement
-				//
-				if (e.button === 0 && t.className == 'x-grid3-row-checker') {
-					e.stopEvent();
-					var row = e.getTarget('.x-grid3-row');
-					if (row) {
-						var index = row.rowIndex;
-						if (this.isSelected(index)) {
-							if (this.grid.enableDragDrop) {
-								this.deselectRow(index);
-							}
-							this.deselectingFlag = true;
+            onMouseDown : function(e, t) {
+                //
+                // If you want make selections only by checking the checker box,
+                // add "&& t.className == 'x-grid3-row-checker'" to next if
+                // statement
+                // 
+                // If you want to make selection only with Ctrl key pressed, add
+                // "&& e.ctrlKey" to next if statement
+                //
+                if (e.button === 0 && t.className == 'x-grid3-row-checker') {
+                    e.stopEvent();
+                    var row = e.getTarget('.x-grid3-row');
+                    if (row) {
+                        var index = row.rowIndex;
+                        if (this.isSelected(index)) {
+                            if (this.grid.enableDragDrop) {
+                                this.deselectRow(index);
+                            }
+                            this.deselectingFlag = true;
 
-						} else {
-							if (this.grid.enableDragDrop) {
-								this.deselectingFlag = false;
-							}
-							this.selectRow(index, true);
-						}
-					}
-				}
-			}
-		});
+                        } else {
+                            if (this.grid.enableDragDrop) {
+                                this.deselectingFlag = false;
+                            }
+                            this.selectRow(index, true);
+                        }
+                    }
+                }
+            }
+        });
 */
 
 /* 
@@ -207,15 +207,15 @@ Ext.Toolbar.override({
 
 Ext.namespace("Ext.nd", "Ext.nd.form", "Ext.nd.data", "Ext.nd.util");
 
-Ext.nd.version = 'Beta 3r1 for ExtJS 3.x';
+Ext.nd.version = 'Beta 4 for ExtJS 3.x';
 
 Ext.nd.getBlankImageUrl = function() {
-	return this.extndUrl + "resources/images/s.gif";
+    return this.extndUrl + "resources/images/s.gif";
 };
 
 Ext.nd.init = function(config) {
-	Ext.apply(this, config);
-	Ext.BLANK_IMAGE_URL = this.getBlankImageUrl();
+    Ext.apply(this, config);
+    Ext.BLANK_IMAGE_URL = this.getBlankImageUrl();
 };
 
 /**
@@ -231,87 +231,87 @@ Ext.nd.init = function(config) {
  */
 Ext.nd.util.addIFrame = function(config) {
 
-	var target;
-	var targetPanel = false; // if the target is an Ext container
-	var targetDiv = false; // if the target is simply a div
-	var panel = false; // the panel that will contain the iframe
-	var iframe = false; // the iframe
+    var target;
+    var targetPanel = false; // if the target is an Ext container
+    var targetDiv = false; // if the target is simply a div
+    var panel = false; // the panel that will contain the iframe
+    var iframe = false; // the iframe
 
-	var documentLoadingWindowTitle = config.documentLoadingWindowTitle
-			|| (config.uiDocument
-					? config.uiDocument.documentLoadingWindowTitle
-					: (config.uiView
-							? config.uiView.documentLoadingWindowTitle
-							: "Opening"));
-	var documentUntitledWindowTitle = config.documentUntitledWindowTitle
-			|| (config.uiDocument
-					? config.uiDocument.documentUntitledWindowTitle
-					: (config.uiView
-							? config.uiView.documentUntitledWindowTitle
-							: "(Untitled)"));
-	var useDocumentWindowTitle = config.useDocumentWindowTitle
-			|| (config.uiDocument
-					? config.uiDocument.useDocumentWindowTitle
-					: (config.uiView
-							? config.uiView.useDocumentWindowTitle
-							: true));
-	var documentWindowTitleMaxLength = config.documentWindowTitleMaxLength
-			|| (config.uiDocument
-					? config.uiDocument.documentWindowTitleMaxLength
-					: (config.uiView
-							? config.uiView.documentWindowTitleMaxLength
-							: 16));
-	var targetDefaults = config.targetDefaults
-			|| (config.uiDocument
-					? config.uiDocument.targetDefaults
-					: (config.uiView ? config.uiView.targetDefaults : {}));
+    var documentLoadingWindowTitle = config.documentLoadingWindowTitle
+            || (config.uiDocument
+                    ? config.uiDocument.documentLoadingWindowTitle
+                    : (config.uiView
+                            ? config.uiView.documentLoadingWindowTitle
+                            : "Opening"));
+    var documentUntitledWindowTitle = config.documentUntitledWindowTitle
+            || (config.uiDocument
+                    ? config.uiDocument.documentUntitledWindowTitle
+                    : (config.uiView
+                            ? config.uiView.documentUntitledWindowTitle
+                            : "(Untitled)"));
+    var useDocumentWindowTitle = config.useDocumentWindowTitle
+            || (config.uiDocument
+                    ? config.uiDocument.useDocumentWindowTitle
+                    : (config.uiView
+                            ? config.uiView.useDocumentWindowTitle
+                            : true));
+    var documentWindowTitleMaxLength = config.documentWindowTitleMaxLength
+            || (config.uiDocument
+                    ? config.uiDocument.documentWindowTitleMaxLength
+                    : (config.uiView
+                            ? config.uiView.documentWindowTitleMaxLength
+                            : 16));
+    var targetDefaults = config.targetDefaults
+            || (config.uiDocument
+                    ? config.uiDocument.targetDefaults
+                    : (config.uiView ? config.uiView.targetDefaults : {}));
 
-	// first, determine the target
-	// try and see if it is a component first
-	target = (config.target.getXType) ? config.target : Ext
-			.getCmp(config.target);
-	// if it is not then see if it is an id or element in the dom
-	target = (target && target.getXType) ? target : Ext.get(target);
+    // first, determine the target
+    // try and see if it is a component first
+    target = (config.target.getXType) ? config.target : Ext
+            .getCmp(config.target);
+    // if it is not then see if it is an id or element in the dom
+    target = (target && target.getXType) ? target : Ext.get(target);
 
-	// if the add method exists then the 'target' is some kind of panel
-	// otherwise, it might just be a div on the page
-	if (target.add) {
+    // if the add method exists then the 'target' is some kind of panel
+    // otherwise, it might just be a div on the page
+    if (target.add) {
 
-		// ok, target is a panel so store a reference to it
-		targetPanel = target;
+        // ok, target is a panel so store a reference to it
+        targetPanel = target;
 
-		// checking to see if a panel with this component id (not dom id)
-		// already exists in the 'target' panel
-		// if it does already exist, we'lll just show that panel later in the
-		// code
-		if (targetPanel.items) {
-			panel = targetPanel.items.get(config.id);
-		}
+        // checking to see if a panel with this component id (not dom id)
+        // already exists in the 'target' panel
+        // if it does already exist, we'lll just show that panel later in the
+        // code
+        if (targetPanel.items) {
+            panel = targetPanel.items.get(config.id);
+        }
 
-	} else {
-		// the target passed in is not an Ext panel so it must be a div
-		// so we will add the iframe directly to this div
-		targetDiv = Ext.get(target);
-	} // eo if(target.add)
+    } else {
+        // the target passed in is not an Ext panel so it must be a div
+        // so we will add the iframe directly to this div
+        targetDiv = Ext.get(target);
+    } // eo if(target.add)
 
-	// check for the panel that will have the iframe
-	if (!panel) {
+    // check for the panel that will have the iframe
+    if (!panel) {
 
-		// the id of the iframe
-		var ifId = 'if-' + config.id;
+        // the id of the iframe
+        var ifId = 'if-' + config.id;
 
-		// our config options for the panel
-		var panelConfig = Ext.apply({
-					html : "<iframe id='" + ifId + "' src='" + config.url
-							+ "' frameBorder='0' width='100%' height='100%'/>",
-					title : config.title || documentLoadingWindowTitle,
-					layout : 'fit',
-					id : config.id,
-					closable : true
-				}, config.targetDefaults);
+        // our config options for the panel
+        var panelConfig = Ext.apply({
+                    html : "<iframe id='" + ifId + "' src='" + config.url
+                            + "' frameBorder='0' width='100%' height='100%'/>",
+                    title : config.title || documentLoadingWindowTitle,
+                    layout : 'fit',
+                    id : config.id,
+                    closable : true
+                }, config.targetDefaults);
 
-		// if target is a panel, add the iframe to the panel
-		if (targetPanel) {
+        // if target is a panel, add the iframe to the panel
+        if (targetPanel) {
 
             // for Ext windows, removeALL will make sure we don't open more than one doc in the window
             if (targetPanel.getXType() == 'window') {
@@ -319,7 +319,7 @@ Ext.nd.util.addIFrame = function(config) {
             }
             
             // add the panel
-			panel = targetPanel.add(panelConfig);
+            panel = targetPanel.add(panelConfig);
 
             // setup a beforedestory listener so we can make sure we don't add memory leaks to IE
             
@@ -411,19 +411,19 @@ Ext.nd.util.addIFrame = function(config) {
                 
             });
 
-			// call doLayout so we can now see this
-			if (targetPanel.doLayout) {
-				targetPanel.doLayout();
-			}
+            // call doLayout so we can now see this
+            if (targetPanel.doLayout) {
+                targetPanel.doLayout();
+            }
 
 
-		} else {
-			// target is not a panel so must be dealing with a div element
-			// check to make sure it exists before adding
-			if (targetDiv) {
-				panel = new Ext.Panel(panelConfig);
-			}
-		}
+        } else {
+            // target is not a panel so must be dealing with a div element
+            // check to make sure it exists before adding
+            if (targetDiv) {
+                panel = new Ext.Panel(panelConfig);
+            }
+        }
 
 
     }  // eo if(!panel)
@@ -444,16 +444,16 @@ Ext.nd.util.addIFrame = function(config) {
 
             
 Ext.nd.util.doLayoutAndShow = function(panel) {
-	// all component's owner Ext.Container should have a doLayout
-	// but check just in case
-	if (panel.ownerCt && panel.ownerCt.doLayout) {
-		panel.ownerCt.doLayout();
-	}
-	// and if the component has a show method,
-	// call it so this newly added component is shown
-	if (panel.show) {
-		panel.show();
-	}
+    // all component's owner Ext.Container should have a doLayout
+    // but check just in case
+    if (panel.ownerCt && panel.ownerCt.doLayout) {
+        panel.ownerCt.doLayout();
+    }
+    // and if the component has a show method,
+    // call it so this newly added component is shown
+    if (panel.show) {
+        panel.show();
+    }
 
 } // eo doLayoutAndShow
 
