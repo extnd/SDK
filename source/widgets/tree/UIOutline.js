@@ -64,7 +64,7 @@ Ext.nd.UIOutline = function(config) {
     this.target = null;
     this.viewDefaults = {}; //applied to each view during an openEntry call
 
-	config = Ext.nd.util.cleanUpUIViewConfig(config);
+	config = Ext.nd.util.cleanUpUIOutlineConfig(config);
 
 	// TODO: is this Ext.apply needed? doesn't the call to the superclass.constructor do this as well?
     Ext.apply(this, config);
