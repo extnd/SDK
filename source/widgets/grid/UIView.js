@@ -770,28 +770,31 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         if (!row.unid) {
             return;
         }
-        var panelId = 'pnl-' + row.unid;
-        var link = this.viewUrl + '/' + row.unid + mode;
-        var target = this.getTarget();
         
-        // if no target then just open in a new window
-        if (!target) {
-            window.open(link);
-        }
-        else {
-        
-            // open doc in an iframe
-            // we set the 'uiView' property to 'this' so that from a doc, 
-            // we can easily get a handle to the view so we can do such 
-            // things as refresh, etc.
-            Ext.nd.util.addIFrame({
-                target: target || this.ownerCt,
-                uiView: this,
-                url: link,
-                id: row.unid
-            });
-            
-        } // eo if (!target)
+        if (this.fireEvent('beforeopendocument', grid, rowIndex, e, bEditMode) !== false) {
+	        var panelId = 'pnl-' + row.unid;
+	        var link = this.viewUrl + '/' + row.unid + mode;
+	        var target = this.getTarget();
+	        
+	        // if no target then just open in a new window
+	        if (!target) {
+	            window.open(link);
+	        }
+	        else {
+	        
+	            // open doc in an iframe
+	            // we set the 'uiView' property to 'this' so that from a doc, 
+	            // we can easily get a handle to the view so we can do such 
+	            // things as refresh, etc.
+	            Ext.nd.util.addIFrame({
+	                target: target || this.ownerCt,
+	                uiView: this,
+	                url: link,
+	                id: row.unid
+	            });
+	            
+	        } // eo if (!target)
+		}  // if fire beforeopendocument event
     },
     
     getViewDesign: function() {
