@@ -222,6 +222,14 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
                 url: Ext.nd.extndUrl + 'DXLExporter?OpenAgent&db=' + this.dbPath + '&type=form&name=' + this.formName
             });
 
+            // need to go ahead and make sure we set the layout 
+			// since we are making the above Ajax call
+			if (Ext.isString(this.layout)) {
+				this.layout = new Ext.Container.LAYOUTS[this.layout.toLowerCase()](this.layoutConfig);
+			}
+			this.setLayout(this.layout);
+			Ext.nd.UIDocument.superclass.afterRender.apply(this, arguments);
+			
         } else {
 
             Ext.nd.UIDocument.superclass.afterRender.apply(this, arguments);
@@ -413,7 +421,13 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         // load in our field defintions
         this.fieldDefinitions = new Ext.util.MixedCollection(false,this.getFieldDefinitionKey);
         this.fieldDefinitions.addAll(Ext.DomQuery.select('field', response.responseXML));
-      
+        var noteinfo = Ext.DomQuery.select('noteinfo', response.responseXML);
+      	this.noteinfo = {
+      		unid : Ext.DomQuery.selectValue('@unid', noteinfo),
+      		noteid : Ext.DomQuery.selectValue('@noteid', noteinfo),
+      		sequence : Ext.DomQuery.selectValue('@sequence', noteinfo)
+      	};
+  
         // convert the fields
         this.doConvertFields();
 
@@ -428,8 +442,12 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
          * Ext.nd.UIDocument.superclass.afterRender.call(this);
          */  
         Ext.nd.UIDocument.superclass.afterRender.apply(this, options.arguments)
-        this.fireEvent('open', this);
-
+        
+        // since we have dynamically added Ext form fields we need
+        // to call doLayout
+        this.doLayout();	   
+		this.fireEvent('open', this);
+		
     },
 
     doConvertFields : function(){
@@ -525,6 +543,9 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
                     case 'radio':
                         this.convertToRadio(el);
                         break;
+                    case 'file':
+                    	this.convertToFileUpload(el);
+                    	break;
                     default:
                         this.convertFromDominoFieldType(el);
                         
@@ -774,6 +795,83 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
 
     },
     
+    // private : function(el) {
+    convertToFileUpload : function(el){
+    	
+    	/* can only convert to the nicer Ext UploadField
+    	 * if the user has loaded the Ext.ux.form.FileUploadFile code
+    	 * 
+    	 * If you want to create file uploads on the fly
+    	 * then you will need to set this notes.ini parameter
+    	 * DominoDisableFileUploadChecks=1
+    	 * 
+    	 * That parameter will allow for you to create file inputs
+    	 * but note that the name attribute needs to start as '%%File.n'
+    	 * where n = a unique number/string for each file upload field
+    	 */ 
+    	
+    	if (Ext.ux.form.FileUploadField) {
+    		
+    		// make sure el has an id
+    		el.id = el.id || Ext.id();
+    		
+    		var attr = el.attributes;
+	        var style = '';
+	        var cls = '';
+	        if (attr) {
+	        	var oStyle = attr.getNamedItem('style');
+	        	var oCls = attr.getNamedItem('class');
+	            style = oStyle ? oStyle.value : '';
+	            cls = oCls ? oCls.value : '';
+	        }
+	        
+	        var sName = el.name;
+	        var sId = el.id;
+	        
+	        var dh = Ext.DomHelper;
+	    	
+	        var parentParagraphTag = Ext.get(el).findParentNode('p', true);
+	        if (parentParagraphTag) {
+	        	var innerMarkup = parentParagraphTag.innerHTML;
+	        	dh.insertBefore(parentParagraphTag, {
+	        		tag : 'div',
+	        		html : innerMarkup
+	        	});
+	       		Ext.removeNode(parentParagraphTag);
+	       		
+	       		// need a new reference to el since the original
+	       		// reference just got removed
+	       		el = Ext.getDom(sId);
+	        }
+	        	    	
+	        // define a place holder for the fileuploadfield
+        	var fileUploadContainer = dh.insertBefore(el, {
+            	tag : 'div',
+            	id : Ext.id()
+        	}, true);
+
+        	// render the new Ext fileupload field
+	        var uploadField = new Ext.ux.form.FileUploadField({
+	        	id : sId,
+	        	name : sName,
+				renderTo : fileUploadContainer.id,
+				width : this.getFieldWidth(el)
+			});
+			
+			el.name = Ext.id(); // wipe out the name in case somewhere else they have a reference
+	        // now remove the domino generated fileupload field
+	        Ext.removeNode(el);
+	        
+	        // now add to items
+	        this.form.items.add(uploadField);
+	        
+    	} else {
+    		// Ext's fileuploadfield code isn't loaded
+    		// so at least conver the input area to the Ext look-n-feel
+    		this.convertToTextField(el);
+    	}
+    	
+    },
     // private
     convertToHtmlEditor : function(el){
     
@@ -803,7 +901,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
             }, true);
             
             /* now append (move) the textarea into the heContainer
-             * this is needed since the renderT of HtmlEditor will try and
+             * this is needed since the renderTo of HtmlEditor will try and
              * render into the parentNode of the textarea and since domino
              * sometimes wraps <font> tags around the textarea, 
              * the renderTo code will break
@@ -1164,6 +1262,15 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
             autoDestroy: true
         });
         
+        var attr = el.attributes;
+        var style = '';
+        var cls = '';
+        if (attr) {
+        	var oStyle = attr.getNamedItem('style');
+        	var oCls = attr.getNamedItem('class');
+            style = oStyle ? oStyle.value : '';
+            cls = oCls ? oCls.value : '';
+        }
         var cb = new Ext.form.ComboBox({
             transform: el,
             id: (el.id ? el.id : el.name),
@@ -1177,6 +1284,8 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
             lazyRender: false, // docs say must be true since we are in an FormPanel but we need it set to false
             forceSelection: forceSelection,
             resizable: true,
+            style : style,
+            cls : cls,
             width : this.getFieldWidth(el)
         });
         
@@ -1253,13 +1362,18 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
     
     // private
     getFieldWidth : function(el){
-        var w = Ext.get(el).dom.style.width;
-        if (w == '' || w == 'auto') {
-            return this.defaultFieldWidth;
-        } else if (w.indexOf('%',0) > 0) {
+    	var theEl = Ext.get(el);
+        var w = theEl.getStyle('width');
+        if (w.indexOf('%',0) > 0) {
             return w; // support % widths
+        } else if (parseFloat(w) == 0) {
+        	return parseFloat(w); // if the developer really set width : 0 then return it!	
         } else {
-            return parseInt(w, 10);   
+        	var computedWidth = theEl.getComputedWidth(); 
+        	// sometimes computed width can return 0 when the field is hidden on
+        	// an inactive tab and thus we don't want to return 0
+        	// TODO : need a better fix however, than returning the defaultFieldWidth
+            return computedWidth == 0 ? this.defaultFieldWidth : computedWidth;
         }
     },
     
