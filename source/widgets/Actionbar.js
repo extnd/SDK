@@ -155,8 +155,25 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
     onRender : function(ct, position){
     
         Ext.nd.Actionbar.superclass.onRender.call(this, ct, position);
-        this.addActions();
         
+    },
+    
+    afterRender : function() {
+    	
+    	// need to go ahead and make sure we set the layout 
+	   	if (Ext.isString(this.layout)) {
+			this.layout = new Ext.Container.LAYOUTS[this.layout.toLowerCase()](this.layoutConfig);
+		}
+		this.setLayout(this.layout);
+		Ext.nd.Actionbar.superclass.afterRender.apply(this, arguments);
+		
+		// needed to do this AFTER our layout stuff above
+		// otherwise, a call to doLayout when adding items after the
+		// actionsloaded event (which occurs at the end of addActions) 
+		// will not work
+		this.addActions();
+        
+
     },
     
     // private
