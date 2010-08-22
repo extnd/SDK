@@ -191,10 +191,21 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
             var tmpNumberFormat= q.select('numberformat', col)[0];
             var numberformat = {};
             if (tmpNumberFormat) {
+                // this will be either fixed, scientific, or currency
                 numberformat.format = q.selectValue('@format', tmpNumberFormat);
-                numberformat.digits = q.selectValue('@digits', tmpNumberFormat);
-                numberformat.punctuated = q.selectValue('@punctuated', tmpNumberFormat);
-                numberformat.percent = q.selectValue('@percent', tmpNumberFormat);
+                
+                var tmpDigits = q.selectValue('@digits', tmpNumberFormat);
+                numberformat.digits = (tmpDigits != 'varying') ? parseInt(tmpDigits,10) : 'varying';
+                
+                var tmpParens = q.selectValue('@parens', tmpNumberFormat);
+                numberformat.parens = (tmpParens == 'true') ? true : false;
+                
+                var tmpPer = q.selectValue('@percent', tmpNumberFormat);
+                numberformat.percent = (tmpPer == 'true') ? true : false;
+                
+                var tmpPunc = q.selectValue('@punctuated', tmpNumberFormat);
+                numberformat.punctuated = (tmpPunc == 'true') ? true : false;
+                
             }
             
             var columnConfig = {

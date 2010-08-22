@@ -118,6 +118,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             collapseIcon: Ext.nd.extndUrl + 'resources/images/minus.gif',
             expandIcon: Ext.nd.extndUrl + 'resources/images/plus.gif',
             dateTimeFormats: Ext.nd.dateTimeFormats,
+            formatCurrencyFnc : Ext.util.Format.usMoney,
             tbar: (this.tbar) ? this.tbar : null,
             bbar: (this.showPagingToolbar) ? new Ext.nd.PagingToolbar({
                 uiView: this,
@@ -1174,6 +1175,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         }
         
         for (var i = 0, len = value.length; i < len; i++) {
+        	var nbf = colConfig.numberformat;
             var sep = (i + 1 < len) ? separator : '';
             dataType = metadata.type; // set in the
             // XmlReader.getNamedValue method
@@ -1185,11 +1187,13 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                     return '';
                 }
                 else {
-                    // I believe the domino only has view icon images from 1 to
-                    // 186
+                    // I believe domino only has view icon images 
+                	// from 1 to 186
                     newValue = (tmpValue < 10) ? '00' + tmpValue : (tmpValue < 100) ? '0' + tmpValue : (tmpValue > 186) ? '186' : tmpValue;
                     return '<img src="/icons/vwicn' + newValue + '.gif"/>';
                 }
+            } else if (colConfig.totals == 'percentoverall' || colConfig.totals == 'percentparent') {
+            	return Ext.util.Format.round(100 * parseFloat(tmpValue), nbf.digits) + '%';
             }
             else {
                 switch (dataType) {
@@ -1223,18 +1227,22 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                         tmpValue = tmpValue;
                         break;
                     case 'number':
-                        var nbf = colConfig.numberformat;
-                        if(typeof nbf.format == 'undefined'){
-                            tmpValue = tmpValue;      
-                        }
-                        else{
-                            if(nbf.format == 'currency'){
-                                if(Ext.util.Format.Money){
-                                    tmpValue = Ext.isEmpty(tmpValue)? Ext.util.Format.Money(0):Ext.util.Format.Money(tmpValue);
-                                    break;
-                                }                                                                
-                            }
-                            tmpValue = tmpValue;
+                    	tmpValue = parseFloat(tmpValue);
+                        switch (nbf.format) {
+                        	case 'currency' :
+                                tmpValue = Ext.isEmpty(tmpValue)? this.formatCurrencyFnc(0) : this.formatCurrencyFnc(tmpValue);
+                                break;
+                                break;
+                            case 'fixed' :
+                            case 'scientific' :
+                            	if (nbf.percent) {
+                            		tmpValue = Ext.util.Format.round(100 * tmpValue, nbf.digits) + '%';
+                            	} else {
+                            		tmpValue = Ext.util.Format.round(tmpValue, nbf.digits);
+                            	}
+                            	break;
+                            default :
+                            	tmpValue = tmpValue;
                         }
                         break;
                     default:
