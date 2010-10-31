@@ -60,43 +60,44 @@ Ext.nd.DominoUI.prototype = {
         // will be applied
         
         var west = {
-                region: 'west',
-                title: Ext.nd.Session.currentDatabase.title,
-                collapsible: true,
-                split: true,
-                width: 200,
-                minSize : 150,
-                maxSize : 400,
-                items : [Ext.apply({
-                        id: 'xnd-outline-panel',
-                        xtype: 'xnd-uioutline',
-                        border : false,
-                        target: 'xnd-center-panel',
-                        viewTarget: 'xnd-grid-panel'               
-                    }, this.uiOutline)
-                ]};
+            region: 'west',
+            title: Ext.nd.Session.currentDatabase.title,
+            collapsible: true,
+            split: true,
+            width: 200,
+            minSize : 150,
+            maxSize : 400,
+            layout: 'fit',
+            items : [Ext.apply({
+                id: 'xnd-outline-panel',
+                xtype: 'xnd-uioutline',
+                border : false,
+                target: 'xnd-center-panel',
+                viewTarget: 'xnd-grid-panel'               
+            }, this.uiOutline)]
+        };
             
         
         // center/view area    
         var center = {
-                region: 'center',
-                id: 'xnd-center-panel',
-                xtype: 'tabpanel',
+            region: 'center',
+            id: 'xnd-center-panel',
+            xtype: 'tabpanel',
+            target: 'xnd-center-panel',
+            defaults : {
+                target : 'xnd-center-panel',
+                border : true
+            },
+            enableTabScroll: true,
+            activeTab: 0,
+            items: [Ext.apply({
+                id: 'xnd-grid-panel',
+                layout: 'fit',
+                xtype: 'xnd-uiview',
                 target: 'xnd-center-panel',
-                defaults : {
-                    target : 'xnd-center-panel',
-                    border : true
-                },
-                enableTabScroll: true,
-                activeTab: 0,
-                items: [Ext.apply({
-                        id: 'xnd-grid-panel',
-                        layout: 'fit',
-                        xtype: 'xnd-uiview',
-                        target: 'xnd-center-panel',
-                        closable: false
-                    }, this.uiView)
-                ]};
+                closable: false
+            }, this.uiView)]
+        };
                 
         this.viewport = new Ext.Viewport({
             layout: 'border',
