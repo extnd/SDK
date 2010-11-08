@@ -123,9 +123,9 @@ Ext.extend(Ext.nd.UIOutline, Ext.tree.TreePanel, {
         /**
          * @event openentry Fires after openEntry
          * @param {Ext.nd.UIOutline} this
+         * @param {Ext.tree.TreeNode} node The tree node that was opened
          * @param {Integer} type An indicator of what type of node was opened. 0 = Nothing opened 1 = View opened 2 = Link opened
          * @param {Ext.nd.UIView|Ext.Component} obj The view or component that was created
-         * @param {Node} node
          */
         'openentry',
         /**
@@ -243,15 +243,15 @@ Ext.extend(Ext.nd.UIOutline, Ext.tree.TreePanel, {
     // private
     openEntry: function(node, e) {
         if (this.fireEvent('beforeopenentry', this, node) !== false) {
-            var panel, target, targetDefaults, ownerCt;
-            var attributes, panelId, title, entry, xtype; 
-            var extndType, extndHref, extndPosition;
-            attributes = node.attributes;
-            extndHref = attributes.extndHref;
-            extndType = attributes.extndType;
-            extndPosition = attributes.extndPosition;
-            panelId = this.id + '-' + extndPosition;
-            title = (this.useEntryTitleAsTargetTitle) ? node.text : null;
+            var panel, target, targetDefaults, ownerCt,
+                entry, xtype,
+                type = 0,
+                attributes = node.attributes,
+                extndHref = attributes.extndHref,
+                extndType = attributes.extndType,
+                extndPosition = attributes.extndPosition,
+                panelId = this.id + '-' + extndPosition,
+                title = (this.useEntryTitleAsTargetTitle) ? node.text : null;
 
             // TODO: need to check to see if duplicate views are
             // allowed or not. if not, then make sure to check
@@ -290,7 +290,7 @@ Ext.extend(Ext.nd.UIOutline, Ext.tree.TreePanel, {
 
                 // 2 = view and 20 = folder
                 if (extndType == "2" || extndType == "20") {
-
+                    type = 1;
                     // got a view so get the viewUrl which shouldn't have a '?'
                     // or '!' but we check for it just in case
                     var viewUrl = (extndHref.indexOf('?') > 0) ? extndHref.split('?')[0] : extndHref.split('!')[0];
@@ -304,14 +304,14 @@ Ext.extend(Ext.nd.UIOutline, Ext.tree.TreePanel, {
                     	// apply whatever viewDefaults were define for the uioutline
                     	// and then apply the targetDefaults
                         var uiview = Ext.apply(
-                        				Ext.apply({
-                                            xtype: 'xnd-uiview',
-                                            id : panelId,
-                                            layout: 'fit',
-                                            title: title,
-                                            viewUrl: viewUrl
-                                        }, this.viewDefaults), 
-                                     targetDefaults);
+                				Ext.apply({
+                                xtype: 'xnd-uiview',
+                                id : panelId,
+                                layout: 'fit',
+                                title: title,
+                                viewUrl: viewUrl
+                            }, this.viewDefaults), 
+                        targetDefaults);
 
                                     
                         if (target.getXType && target.add) {
@@ -399,7 +399,7 @@ Ext.extend(Ext.nd.UIOutline, Ext.tree.TreePanel, {
                 // not (extndType == "2" || extndType == "20") so just
                 // open in an iframe since it must be a page,doc,form,or url
                 else if (extndHref != "") {
-
+                    type = 2;
                     // if no target then just open in a new window
                     if (!target) {
                         window.open(extndHref);
@@ -428,7 +428,7 @@ Ext.extend(Ext.nd.UIOutline, Ext.tree.TreePanel, {
             } // eo if (!panel)
 
             // now fire the openentry event
-            this.fireEvent('openentry', this, node);
+            this.fireEvent('openentry', this, node, type, entry);
 
         } // eo if (this.fireEvent...)
     }// eo openEntry
