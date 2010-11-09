@@ -683,7 +683,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
      */
     openForm : function(options){
         
-        var formName, dbPath, isResponse, pUrl, target;
+        var formName, dbPath, isResponse, pUrl, target, title;
         
         if (typeof options == 'string') {
             formName = options;
@@ -695,6 +695,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
             dbPath = options.dbPath || this.dbPath;
             isResponse = (options.isResponse) ? options.isResponse : false;
             target = options.target || this.getTarget();
+            title = options.title;
         }
         
         pUrl = '';
@@ -717,6 +718,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                 uiView: this.getUIView(),
                 uiDocument: this.getUIDocument(),
                 url: link,
+                title : title,
                 id: Ext.id()
             });
         }
