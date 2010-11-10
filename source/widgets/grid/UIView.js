@@ -821,6 +821,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         // get the properties we need
         this.store = this.viewDesign.store;
         this.isCategorized = this.viewDesign.dominoView.meta.isCategorized;
+        this.isCalendar = this.viewDesign.dominoView.meta.isCalendar;
         this.allowDocSelection = this.viewDesign.allowDocSelection;
         this.autoExpandColumn = this.viewDesign.autoExpandColumn;
         this.isView = this.viewDesign.isView;
