@@ -57,6 +57,10 @@ Ext.nd.UIDocument = function(config){
     this.convertFields = true;
     this.applyDominoKeywordRefresh = true;
     this.defaultFieldWidth = 120;
+    this.documentLoadingWindowTitle = "Opening";
+    this.documentUntitledWindowTitle = "Untitled";
+    this.useDocumentWindowTitle = true;
+    this.documentWindowTitleMaxLength = 16;
     
     // developer can specify where the toolbar should appear
     this.toolbarRenderTo; 
@@ -136,8 +140,47 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         // now call parent initComponent
         Ext.nd.UIDocument.superclass.initComponent.call(this);   
 
+        // take over Domino's generated _doClick function
+        if (Ext.isFunction(_doClick)){
+        	_doClick = this._doClick.createDelegate(this);
+        }
     },
     
+    // private
+  	// change the hash reference by prepending xnd-goto
+ 	// will fix an IE issue with the layout not positioning correctly
+    // when the page loads and 'jumps' to the <a href> reference in the hash
+    // TODO: need to add code to instead "scroll" to the hash reference
+    _doClick : function(v, o, t, h) {
+		var form = this.getForm();
+	  	if (form.onsubmit) {
+		     var retVal = form.onsubmit();
+		     if (typeof retVal == "boolean" && retVal == false)
+		       return false;
+		}
+		var target = document._domino_target;
+		if (o.href != null) {
+		  if (o.target != null)
+		     target = o.target;
+		} else {
+		  if (t != null)
+		    target = t;
+		}
+		form.el.dom.target = target;
+		form.findField("__Click").setValue(v);
+		
+		// modify hash to prepend 'xnd-goto'
+		if (h != null) {
+		  form.el.dom.action += h.replace('#','#xnd-goto');
+		}
+		
+		// call submit from the dom and not the Ext form since it will do an Ajax submit
+		// but the dom submit will do a standard submit which is what domino is needing to do
+		// if calling _doClick (usually a refresh fields on keyword change type of submit)
+		form.el.dom.submit({standardSubmit : true});
+		return false;
+	},
+	
     // private
     // overriding the FormPanels createForm method with our own 
     // so we can reuse the domino generated form
@@ -261,7 +304,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
     },
     
     save : function(config) {
-        if (this.fireEvent("beforesave", this) !== false) {
+    	if (this.fireEvent("beforesave", this) !== false) {
             this.onSave(config);
         }
     },
@@ -271,20 +314,33 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         // TODO: I'm sure there is a better way of doing this but I'm brain dead right now :)
         config = (typeof config == 'undefined') ? {closeOnSave : false} : (typeof config == 'boolean') ? {closeOnSave : config} : config;
        
+        // make sure we have a url to post to
+        // it can be blank when the developer is opening a doc in read mode but still
+        // wants to call the uidoc's save method.  since domino sets the action attribute to blank
+        // when in read mode, we have to create it ourselves
+    	var action = this.getForm().el.dom.action;
+    	if (action == "") {
+        	var uiView = this.getUIView();
+        	var uiViewName = (uiView) ? uiView.viewName : '0';
+        	var unid = this.document.universalID;
+    		Ext.applyIf(config,{url : action || this.dbPath + uiViewName + '/' + unid + '?SaveDocument'})
+        }
+        
         this.getForm().submit(Ext.apply({
+          method: 'POST',
           success: (config.closeOnSave) ? this.close : Ext.emptyFn,
           failure: Ext.emptyFn,
           scope: this            
         },config));
     },
         
-    close : function(){
+    close : function(unid){
         if (this.fireEvent("beforeclose", this) !== false) {
-            this.onClose();
+            this.onClose(unid);
         }
     },
     
-    onClose : function() {
+    onClose : function(unid) {
         /*
          * return true means that we were able to call the component's remove/hide/close action
          * return false means that we couldn't find a component and thus couldn't do anything
@@ -329,8 +385,12 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
                 // open in read mode if already in edit mode and no target
                 var uiView = this.getUIView();
                 var uiViewName = (uiView) ? uiView.viewName : '0';
-                var unid = this.document.universalID;              
-                location.href = this.dbPath + uiViewName + '/' + unid + '?OpenDocument'
+                var unid = (unid) ? unid : this.document.universalID;
+                if (unid) {
+                	location.href = this.dbPath + uiViewName + '/' + unid + '?OpenDocument'
+                } else {
+                	location.href = this.dbPath;
+                }
             } else {
                 returnValue = false;
             }
@@ -1305,7 +1365,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
                     // isn't explicitly set
                     var sOnChange = onChange.nodeValue;
                     extcallback = function(bleh){
-                        eval(bleh);
+                    	eval(bleh);
                     }.createCallback(sOnChange);
                 }
             }
