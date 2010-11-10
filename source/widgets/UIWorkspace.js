@@ -215,7 +215,7 @@ Ext.nd.UIWorkspace.prototype = {
         
         opt.selections = {};
         var actionButtons = {};
-        var multiSelectionRegions = {};
+        var multiSelectionRegions = {region : 'east', width : 0};
 
         var removeSelection = function() {
             
@@ -383,11 +383,12 @@ Ext.nd.UIWorkspace.prototype = {
 
                 items: [(opt.type == 'names') ? namesPanel : {
                     region: 'north',
-                    height: 27,
-                    xtype: 'panel',
-                    title: opt.prompt,
+                    height: 47,
+                    xtype: 'box',
+                    bodyStyle : 'padding : 4px;',
+                   	html: opt.prompt,
                     id: 'xnd-picklist-prompt'
-                }, opt.choices, multiSelectionRegions],                    
+            	}, opt.choices, multiSelectionRegions],                    
                 
                 buttons: [{
                     text: 'OK',
