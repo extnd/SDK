@@ -265,6 +265,14 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
         var allowdocselection = q.selectValue(root+'/@allowdocselection', dxml, false);
         this.allowDocSelection = (allowdocselection == 'true') ? true : false;
         
+        // TODO: need to get the value of useapplet since if true, it causes opening docs from a view not to work
+        // and therefore a dummy viewname is needed instead
+        
+        // type will either be 'view' or 'calendar'
+        var type = q.selectValue(root+'/@type', dxml, 'view');
+        // now set isCalendar if not already set from the passed in config
+        this.isCalendar = this.isCalendar || (type == 'calendar' ? true : false);
+                
         // the dominoView object holds all of the design information for the
         // view
         this.dominoView = {
