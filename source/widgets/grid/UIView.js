@@ -990,9 +990,9 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
          * we stored multi-values in the XmlReader.getValue
          * method.
          */
-    	if (value) {
+        	if (value && value.split) {
             value = value.split('\n');
-    	}
+        }
 
         /* if value has a length of zero, assume this is a column in domino
          * that is not currently displaying any data like a 'show response only' 
