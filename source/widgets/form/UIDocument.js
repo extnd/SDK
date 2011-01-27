@@ -950,10 +950,9 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
             });
             
         } else {
-            var dh = Ext.DomHelper;
-            
+                       
             // define a place holder for the HtmlEditor
-            var heContainer = dh.insertBefore(el, {
+            var heContainer = Ext.DomHelper.insertBefore(el, {
                 tag: 'div',
                 style: {
                     width: 500
@@ -1298,6 +1297,22 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
     // private
     convertSelectToComboBox : function(el, forceSelection){
         
+		//define a place holder for the ComboBox
+        var cbContainer = Ext.DomHelper.insertBefore(el, {
+            tag: 'div'
+        }, true);
+            
+        /* now append (move) the select into the cbContainer
+         * this is needed since domino
+         * sometimes wraps <font> tags around the select 
+         * and then, when Ext tries to create the hidden input 
+         * field for the combo, it does but returns the font node
+         * to the internal hiddenField property which then breaks
+         * setting the dom field that submits with the form
+         */
+        
+        cbContainer.dom.appendChild(el);
+            	
         var s = Ext.getDom(el);
         var d = [], opts = s.options;
         var selectedValue = "";
@@ -1334,6 +1349,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         var cb = new Ext.form.ComboBox({
             transform: el,
             id: (el.id ? el.id : el.name),
+            hiddenName: el.name,
             store : store,
             mode : 'local',
             value : selectedValue,
@@ -1360,9 +1376,9 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
             var attr = el.attributes;
             if (attr) {
                 var onChange = attr['onchange'];
-                if (onChange && onChange.nodeValue != null) { // for some
-                    // reason IE returns an onchange of null if one
-                    // isn't explicitly set
+                if (onChange && onChange.nodeValue != null) { 
+                	// for some reason IE returns an onchange of null 
+                	// if one isn't explicitly set
                     var sOnChange = onChange.nodeValue;
                     extcallback = function(bleh){
                     	eval(bleh);
@@ -1373,47 +1389,31 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         // to fix a bug with DomHelper not liking domino sometimes wrapping a
         // SELECT within a FONT tag
         // we need to handle setting the value of the hiddenField ourselves
-        value = (cb.getValue()) ? cb.getValue() : cb.getRawValue();
-        if (cb.hiddenName) {
-            var field = Ext.get(cb.hiddenName);
-            field.dom.value = value;
-        }
+        //value = (cb.getValue()) ? cb.getValue() : cb.getRawValue();
+        //if (cb.hiddenName) {
+        //    var field = Ext.get(cb.hiddenName);
+        //    field.dom.value = value;
+        //}
         
         // we must also define a listener to change the value of the hidden
         // field when the selection in the combobox changes
-        cb.on('select', function() {
-            /*
-             * value is the selection value if set, otherwise is the raw
-             * typed text
-             */
-            var selvalue = (this.getValue()) ? this.getValue() : this.getRawValue();
-            if (this.hiddenName) {
-                var hiddenField = Ext.get(this.hiddenName);
-                hiddenField.dom.value = selvalue;
-            }
-            if (typeof extcallback == 'function') {
-                Ext.MessageBox.wait("Refreshing document...");
-                extcallback();
-            }
-        }, cb);
-
+        cb.on('select', this.onComboSelect, this);
+        
         // now add to items
         this.form.items.add(cb);
         
     }, // end convertSelectToComboBox
     
-    // private for the converted select-to- combo
-    // runs under the scope of the ComboBox
-    onComboSelect : function() {
-        /*
-         * value is the selection value if set, otherwise is the raw
-         * typed text
-         */
-        var value = (this.getValue()) ? this.getValue() : this.getRawValue();
-        if (this.hiddenName) {
-            var field = Ext.get(this.hiddenName);
-            field.dom.value = value;
-        }
+    // private for the converted select-to-combo
+    onComboSelect : function(cb) {
+        // to fix a bug with DomHelper not liking domino sometimes wrapping a
+        // SELECT within a FONT tag
+        // we need to handle setting the value of the hiddenField ourselves
+        //var value = (cb.getValue()) ? cb.getValue() : cb.getRawValue();
+        //if (cb.hiddenName) {
+        //    var field = Ext.get(cb.hiddenName);
+        //    field.dom.value = value;
+        //}
         if (typeof extcallback == 'function') {
             Ext.MessageBox.wait('Refreshing document...');
             extcallback();
