@@ -1,8 +1,8 @@
 #!/bin/sh
 
-jsbuilder=/Users/neflar/Documents/aps/Extnd/jsbuilder/JSBuilder.sh
-jsb3_path=/Users/neflar/Documents/aps/Extnd/source/extnd.jsb3
-output_path=/Users/neflar/Documents/aps/Extnd/build/
+jsbuilder=jsbuilder/JSBuilder.sh
+jsb3_path=source/extnd.jsb3
+output_path=build/
 
 $jsbuilder -p $jsb3_path -d $output_path
 
