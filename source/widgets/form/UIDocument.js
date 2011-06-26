@@ -20,7 +20,7 @@
  * @cfg {Boolean} showActionbar Whether or not to read in the form/page DXL
  *      behind the scences and build an Ext.Toolbar from domino actions
  *      (Defaults to true)
- * @cfig {String} createActionsFrom Set to 'document' if you want to create the actionbar
+ * @cfg {String} createActionsFrom Set to 'document' if you want to create the actionbar
  * from the actions domino sends after it evaluates hide-when formulas.  Set to 'dxl' if
  * you want to create the actionbar from what is defined in Designer.  
  * @cfg {Boolean} convertFields Determines whether to convert form fields to Ext
@@ -37,80 +37,85 @@ Ext.nd.UIDocument = function(config){
     
     config = config || {};
    
-    var sess = Ext.nd.Session;
-    var db = sess.currentDatabase;
-
-    //TODO: this needs to go away soon (the use of Ext.nd.currentUIDocument.*)
-    var currentUIDocument = Ext.nd.currentUIDocument;
+    var me = this,
+    	sess = Ext.nd.Session,
+    	db = sess.currentDatabase,
+    	//TODO: this needs to go away soon (the use of Ext.nd.currentUIDocument.*)
+    	currentUIDocument = Ext.nd.currentUIDocument || {};
     
     // now just apply currentUIDocument to 'this' so we get what the agent says
     // about this uidocument (such as UNID, form name, etc.)
-    Ext.apply(this, currentUIDocument);
-
+    Ext.apply(me, currentUIDocument);
+	me.document = me.document || {};
+	
     // for backwards compat (not sure if any devs are using this)
-    this.uidoc = currentUIDocument; 
+    me.uidoc = currentUIDocument; 
 
     // defaults
-    this.dbPath = db.webFilePath;
-    this.showActionbar = true;
-    this.createActionsFrom = 'dxl';
-    this.convertFields = true;
-    this.applyDominoKeywordRefresh = true;
-    this.defaultFieldWidth = 120;
-    this.documentLoadingWindowTitle = "Opening";
-    this.documentUntitledWindowTitle = "Untitled";
-    this.useDocumentWindowTitle = true;
-    this.documentWindowTitleMaxLength = 16;
+    me.dbPath = db.webFilePath;
+    me.showActionbar = true;
+    me.createActionsFrom = 'dxl';
+    me.convertFields = true;
+    me.applyDominoKeywordRefresh = true;
+    me.defaultFieldWidth = 120;
+    me.documentLoadingWindowTitle = "Opening";
+    me.documentUntitledWindowTitle = "Untitled";
+    me.useDocumentWindowTitle = true;
+    me.documentWindowTitleMaxLength = 16;
+    me.refreshMessage = 'Refreshing document...';
     
     // developer can specify where the toolbar should appear
-    this.toolbarRenderTo; 
-    this.dateTimeFormats = Ext.nd.dateTimeFormats;
+    me.toolbarRenderTo; 
+    me.dateTimeFormats = Ext.nd.dateTimeFormats;
     
-    // for a page we need this hack to get the page name (that we store in the
-    // formName variable)
+    // for a page we need this hack to get the page name (that we store in the formName variable)
     // we do this since the UIDocument.js agent couldn't get this info and
     // domino does not send the page name in the form tag like it does for forms
-    // ALSO - for special forms like $$ViewTemplate or $$SearchTemplae,
-    // '_DominoForm' is sent as the form name
-    if (typeof this.formName == 'undefined') {
-        if (document.forms.length == 0 ||
-        document.forms[0].name.substring(1) == '' ||
-        document.forms[0].name.substring(1) == 'DominoForm') {
-            var href = location.href.toLowerCase();
-            var search = location.search.toLowerCase();
-            var start = href.indexOf(this.dbPath.toLowerCase()) +
-            this.dbPath.length;
-            var end = (search != "") ? href.indexOf(search) : href.length;
-            this.formName = href.substring(start, end);
+    // ALSO - for special forms like $$ViewTemplate or $$SearchTemplae, '_DominoForm' is sent as the form name
+    
+    if (typeof me.formName == 'undefined') {
+    	var frms = document.forms,
+    		href, search, start, end;
+    		
+        if (frms.length == 0 || frms[0].name.substring(1) == '' || frms[0].name.substring(1) == 'DominoForm') {
+            
+            href = location.href.toLowerCase();
+           	search = location.search.toLowerCase();
+           	start = href.indexOf(me.dbPath.toLowerCase()) + me.dbPath.length;
+           	end = (search != "") ? href.indexOf(search) : href.length;
+            	
+            me.formName = location.href.substring(start, end);
+            
         } else {
-            this.formName = document.forms[0].name.substring(1);
+            me.formName = document.forms[0].name.substring(1);
         }
     }
 
     // since we use Ext.form.BasicForm we need to make sure initialConfig is set now
-    if (!this.initialConfig) {
-        this.initialConfig = {};    
+    if (!me.initialConfig) {
+        me.initialConfig = {};    
     }
     // now apply anything passed in
-    Ext.apply(this.initialConfig, config);  
+    Ext.apply(me.initialConfig, config);  
     // and now set any config params passed in to override defaults
-    Ext.apply(this, config);
+    Ext.apply(me, config);
     
     // formUrl is either passed in or built from dbPath and formName
-    this.formUrl = (this.formUrl) ? this.formUrl : this.dbPath + this.formName;
+    me.formUrl = (me.formUrl) ? me.formUrl : me.dbPath + me.formName;
     
-    Ext.nd.UIDocument.superclass.constructor.apply(this, arguments);
+    // call parent's constructor
+    Ext.nd.UIDocument.superclass.constructor.apply(me, arguments);
 };
 
 Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
    
-    // for when we extend just Ext.Panel
-    // tried extending Ext.form.FormPanel but it expects an items config       
     initComponent : function(){
-    
-        this.setupToolbars();
+    	
+    	var me = this;
+    	
+        me.setupToolbars();
         
-        this.addEvents(        
+        me.addEvents(        
                 /**
                  * @event beforeclose Fires just before the current document is closed (equivalent to the NotesUIDocument QueryClose event).
                  * @param {Ext.nd.UIDocument} this
@@ -138,11 +143,14 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
                 'open');
              
         // now call parent initComponent
-        Ext.nd.UIDocument.superclass.initComponent.call(this);   
+        Ext.nd.UIDocument.superclass.initComponent.call(me);   
 
+		// parent's initComponet create the form so let's now make sure the url is set
+		me.setPostUrl();
+		
         // take over Domino's generated _doClick function
         if (Ext.isFunction(_doClick)){
-        	_doClick = this._doClick.createDelegate(this);
+        	_doClick = me._doClick.createDelegate(me);
         }
     },
     
@@ -290,50 +298,90 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
     },
 
     edit : function(config) {
-        if (this.fireEvent("beforemodechange", this) !== false) {
-            this.onEdit(config);
+    	var me = this;
+        if (me.fireEvent("beforemodechange", me) !== false) {
+            me.onEdit(config);
         }
     },
 
     onEdit : function(config){
-        var uiView = this.getUIView();
-        var uiViewName = (uiView) ? uiView.viewName : '0';
-        var unid = this.document.universalID;
+        var me = this,
+        	uiView = me.getUIView(),
+        	uiViewName = (uiView) ? uiView.viewName : '0',
+        	unid = me.document.universalID;
         
-        location.href = this.dbPath + uiViewName + '/' + unid + '?EditDocument'
+        location.href = me.dbPath + uiViewName + '/' + unid + '?EditDocument'
     },
     
     save : function(config) {
-    	if (this.fireEvent("beforesave", this) !== false) {
-            this.onSave(config);
+    	var me = this;
+    	if (me.fireEvent("beforesave", me) !== false) {
+            me.onSave(config);
         }
     },
     
     onSave : function(config) {
         
-        // TODO: I'm sure there is a better way of doing this but I'm brain dead right now :)
-        config = (typeof config == 'undefined') ? {closeOnSave : false} : (typeof config == 'boolean') ? {closeOnSave : config} : config;
-       
-        // make sure we have a url to post to
-        // it can be blank when the developer is opening a doc in read mode but still
-        // wants to call the uidoc's save method.  since domino sets the action attribute to blank
-        // when in read mode, we have to create it ourselves
-    	var action = this.getForm().el.dom.action;
-    	if (action == "") {
-        	var uiView = this.getUIView();
-        	var uiViewName = (uiView) ? uiView.viewName : '0';
-        	var unid = this.document.universalID;
-    		Ext.applyIf(config,{url : action || this.dbPath + uiViewName + '/' + unid + '?SaveDocument'})
-        }
+        var frm = this.getForm(),
+        	fieldModDate;
         
-        this.getForm().submit(Ext.apply({
-          method: 'POST',
-          success: (config.closeOnSave) ? this.close : Ext.emptyFn,
-          failure: Ext.emptyFn,
-          scope: this            
+        // TODO: need to add documentation code for the fact that config could be an object or a boolean
+        config = (typeof config == 'undefined') ? {closeOnSave : false} : (typeof config == 'boolean') ? {closeOnSave : config} : config;
+    	
+    	// disable the %%ModDate field that domino adds since having it there could cause rep/save conflicts
+    	fieldModDate = frm.findField('%%ModDate');
+    	if (fieldModDate) {
+    		fieldModDate.disable();
+    	}
+    	
+    	var cb = {};
+    	if (config.success) {
+    		cb.success = config.success;
+    		delete config.success;
+    	}
+    	if (config.failure) {
+    		cb.failure = config.failure;
+    		delete config.failure;
+    	}
+    	if (config.scope) {
+    		cb.scope = config.scope;
+    		delete config.scope;
+    	}
+    	
+        frm.submit(Ext.apply({
+          	method: 'POST',
+          	//success: (config.closeOnSave) ? this.close : Ext.emptyFn,
+          	success: this.onSaveCallback,
+          	failure: this.onSaveCallback,
+          	cb : cb,
+          	scope: this            
         },config));
     },
-        
+       
+    onSaveCallback : function(form, action){
+    	var me = this,
+    		options = action.options,
+    		cb = options.cb,
+    		result = action.result,
+    		msg = result.msg,
+    		unid = result.unid || result.universalID;
+    		
+    	if (unid) {
+    		me.setUniversalID(unid);
+    	}
+    	
+    	if (result.success) {
+    		if (cb.success) {
+    			cb.success.apply(cb.scope || me, arguments);
+    		}
+    	} else {
+    		if (cb.failure) {
+    			cb.failure.apply(cb.scope || me, arguments);
+    		}
+    	}
+    	
+    },
+    
     close : function(unid){
         if (this.fireEvent("beforeclose", this) !== false) {
             this.onClose(unid);
@@ -397,6 +445,46 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         }   
         
         return returnValue;
+    },
+    
+    
+    // private 
+    setPostUrl : function() {
+    	
+    	// make sure we have a url to post to
+        // it can be blank when the developer is opening a doc in read mode but still
+        // wants to call the uidoc's save method.  since domino sets the action attribute to blank
+        // when in read mode, we have to create it ourselves
+    	
+    	var me = this,
+    		frm = me.getForm(),
+    		action, uiView, uiViewName, unid;
+    	
+    	if (!frm.url) {
+    		action = me.getForm().el.dom.action;
+			if (action == "") {
+				uiView = me.getUIView();
+				uiViewName = (uiView) ? uiView.viewName : '0';
+				unid = me.document.universalID;
+				frm.url = me.dbPath + uiViewName + '/' + unid + '?SaveDocument';
+			} else {
+				frm.url = action;
+			}
+    	}
+    },
+    
+    // private 
+    setUniversalID : function(unid) {
+    	
+    	var me = this,
+    		frm = me.getForm(),
+    		uiView = me.getUIView(),
+			uiViewName = (uiView) ? uiView.viewName : '0',
+			unid = unid || me.document.universalID;
+			
+		frm.url = me.dbPath + uiViewName + '/' + unid + '?SaveDocument';
+		me.document.universalID = unid;
+		me.isNewDoc = false;
     },
     
     // private
@@ -1297,22 +1385,16 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
     // private
     convertSelectToComboBox : function(el, forceSelection){
         
-		//define a place holder for the ComboBox
-        var cbContainer = Ext.DomHelper.insertBefore(el, {
-            tag: 'div'
-        }, true);
-            
-        /* now append (move) the select into the cbContainer
-         * this is needed since domino
-         * sometimes wraps <font> tags around the select 
-         * and then, when Ext tries to create the hidden input 
-         * field for the combo, it does but returns the font node
-         * to the internal hiddenField property which then breaks
-         * setting the dom field that submits with the form
-         */
+        // if Domino wrapped the select el in a font tag then we need to
+        // move this select out of this font tag and into div *before* 
+        // this font tag
+        if (el.parentNode.tagName == 'FONT') {
+        	var cbContainer = Ext.DomHelper.insertBefore(el.parentNode, {
+				tag: 'div'
+			}, true);
+			cbContainer.dom.appendChild(el);	
+        }
         
-        cbContainer.dom.appendChild(el);
-            	
         var s = Ext.getDom(el);
         var d = [], opts = s.options;
         var selectedValue = "";
@@ -1376,49 +1458,32 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
             var attr = el.attributes;
             if (attr) {
                 var onChange = attr['onchange'];
-                if (onChange && onChange.nodeValue != null) { 
-                	// for some reason IE returns an onchange of null 
-                	// if one isn't explicitly set
-                    var sOnChange = onChange.nodeValue;
-                    extcallback = function(bleh){
-                    	eval(bleh);
-                    }.createCallback(sOnChange);
+                
+                // for some reason IE returns an onchange of null 
+               	// if one isn't explicitly set    
+                if (onChange && onChange.nodeValue != null) {
+                
+                	var sOnChange = onChange.nodeValue;
+                    
+                    extcallback = function(){
+                    	// only show the wait if this is a domino generated postback
+                    	if (sOnChange.indexOf('$Refresh') > 0) {
+							Ext.MessageBox.wait(this.refreshMessage);
+						}	
+                    	eval(sOnChange);
+                    }
+                    
+					// add a listener for the select event so we can
+					// run the code we captured in the extcallback function
+					cb.on('select', extcallback, this);
                 }
             }
         } // end if (this.applyDominoKeywordRefresh)
-        // to fix a bug with DomHelper not liking domino sometimes wrapping a
-        // SELECT within a FONT tag
-        // we need to handle setting the value of the hiddenField ourselves
-        //value = (cb.getValue()) ? cb.getValue() : cb.getRawValue();
-        //if (cb.hiddenName) {
-        //    var field = Ext.get(cb.hiddenName);
-        //    field.dom.value = value;
-        //}
-        
-        // we must also define a listener to change the value of the hidden
-        // field when the selection in the combobox changes
-        cb.on('select', this.onComboSelect, this);
         
         // now add to items
         this.form.items.add(cb);
         
     }, // end convertSelectToComboBox
-    
-    // private for the converted select-to-combo
-    onComboSelect : function(cb) {
-        // to fix a bug with DomHelper not liking domino sometimes wrapping a
-        // SELECT within a FONT tag
-        // we need to handle setting the value of the hiddenField ourselves
-        //var value = (cb.getValue()) ? cb.getValue() : cb.getRawValue();
-        //if (cb.hiddenName) {
-        //    var field = Ext.get(cb.hiddenName);
-        //    field.dom.value = value;
-        //}
-        if (typeof extcallback == 'function') {
-            Ext.MessageBox.wait('Refreshing document...');
-            extcallback();
-        }
-    },
     
     // private
     getFieldWidth : function(el){
