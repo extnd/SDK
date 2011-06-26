@@ -1,14 +1,15 @@
 /**
  * @class Ext.nd.UIView
  * @extends Ext.grid.GridPanel
- * @cfg {String} storeConfig Any additional configs you wish to pass to the underlying store for the UIView
- * @cfg {String} viewConfig Any additional configs you wish to pass to the underlying view for the UIView
- * @cfg {String} selModelConfig Any additional configs you wish to pass to the underlying selModel
+ * @cfg {Object} storeConfig Any additional configs you wish to pass to the underlying store for the UIView
+ * @cfg {Object} viewConfig Any additional configs you wish to pass to the underlying view for the UIView
+ * @cfg {Object} selModelConfig Any additional configs you wish to pass to the underlying selModel
  * @cfg {Array} renderers Any custom column renderers you want to pass in in order to do custom formatting to columns  
  * @cfg {String/Component} target The target component you want documents from this view to open into
- * @cfg {String} targetDefaults
- * @cfg {String} tbarPlugins
- * @cfg {String} bbarPlugins
+ * @cfg {Object} targetDefaults
+ * @cfg {Array} tbarPlugins
+ * @cfg {Array} bbarPlugins
+ * @cfg {Object} quickSearchConfig Any additional configs you wish to pass to the quick search window
  * @constructor Create a new UIView
  * @param {Object} config The config object
  * @xtype uiview
@@ -23,6 +24,10 @@ Ext.nd.UIView = function(config){
     this.targetDefaults = {};
     this.tbarPlugins = [];
     this.bbarPlugins = [];
+    this.quickSearchConfig = {width: 200};
+    
+    //private
+    this.quickSearchKeyStrokes = [];
         
     
     // just for backwards compatability
@@ -205,7 +210,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         this.on('headerclick', this.gridHandleHeaderClick, this, true);
         
         // keydown, for things like 'Quick Search', <delete> to delete, <enter> to open a doc
-        this.on('keydown', this.gridHandleKeyDown, this, true);
+        this.on('keypress', this.gridHandleKeyDown, this, true);
         
         // rightclick, to give a context menu for things like 'document properties, copy, paste, delete, etc'
         this.on('rowcontextmenu', this.gridHandleRowContextMenu, this, true);
@@ -447,14 +452,15 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         if (e.getTarget().name == 'xnd-vw-search') {
             return;
         }
-        var sm, ds, node, row, rowIndex, unid, target;
-        var keyCode = e.browserEvent.keyCode;
-        var charCode = e.charCode;
+        var me = this,
+        	sm, ds, node, row, rowIndex, unid, target,
+        	keyCode = e.browserEvent.keyCode,
+        	charCode = e.charCode;
         
         target = e.getTarget();
-        sm = this.getSelectionModel();
+        sm = me.getSelectionModel();
         row = sm.selections.itemAt(sm.selections.length-1);
-        ds = this.getStore();
+        ds = me.getStore();
         rowIndex = (row && row.unid && ds && ds.data) ? ds.data.findIndex('unid', row.unid) : -1;
         
         // for now, we won't worry about the altKey
@@ -464,7 +470,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         
         // if Ctrl+E
         if (e.ctrlKey && keyCode == 69) {
-            this.openDocument(this, rowIndex, e, true);
+            me.openDocument(me, rowIndex, e, true);
             return;
         }
         
@@ -480,11 +486,11 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         
         switch (keyCode) {
             case e.RETURN:
-                this.openDocument(this, rowIndex, e);
+                me.openDocument(me, rowIndex, e);
                 break;
             case e.DELETE:
                 if (row) {
-                    this.deleteDocument(this, rowIndex, e);
+                    me.deleteDocument(me, rowIndex, e);
                 }
                 break;
                 
@@ -511,22 +517,67 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                     sm.selectRow(rowIndex);
                 }
                 break;
+                
+        	// default is to capture the keys entered and then show the quick search dialog
             default:
-                Ext.MessageBox.prompt('Starts with...', 'Search text ', this.quickSearch, this, false, charCode);
+            	me.quickSearchKeyStrokes.push(charCode || keyCode);
+            	me.showQuickSearchWindow();      	
         }
     },
     
     // private
-    quickSearch: function(btn, text){
-        var ds = this.getStore();
-        if (btn == 'ok') {
-            // first, remove the start param from the lastOptions.params
-            delete ds.lastOptions.params.start;
-            // next, load dataSrource, passing the startkey param
-            ds.load({
-                params: Ext.apply(ds.lastOptions.params, {startkey: text})
-            }); // append the startkey param to the existing params (ds.lastOptions)
-        }
+    showQuickSearchWindow: function(buf) {
+		
+		var me = this;
+    	if (!me.quickSearchWindow) {
+			me.quickSearchField = new Ext.form.TextField({itemId: 'quickSearchInput'});
+			me.quickSearchWindow = new Ext.Window(Ext.apply({
+				border: false,
+				layout: 'fit',
+				closeAction: 'hide',
+				title: 'Starts with...',
+				defaultButton : me.quickSearchField,
+				items: [me.quickSearchField],
+				buttons: [{
+					text: 'OK',
+					handler: me.quickSearch,
+					scope: me
+				}, {
+					text: 'Cancel',
+					scope: me,
+					handler: function() {
+						me.quickSearchWindow.hide();
+					}
+				}],
+				listeners: {
+					show: function() {
+						for (var i = 0, len = me.quickSearchKeyStrokes.length; i<len; i++) {
+							var v = me.quickSearchKeyStrokes.pop();
+							me.quickSearchField.el.dom.value += String.fromCharCode(v);
+						}	
+					},
+					hide: function() {
+						me.quickSearchField.setValue('');	
+					},
+					scope: me
+				}
+			}, me.quickSearchConfig));
+		}
+		me.quickSearchWindow.show();
+
+    },
+    
+    // private
+    quickSearch: function(btn, e){
+        var ds = this.getStore(),
+        	text = this.quickSearchField.getValue();
+		// first, remove the start param from the lastOptions.params
+		delete ds.lastOptions.params.start;
+		// next, load dataSrource, passing the startkey param
+		ds.load({
+			params: Ext.apply(ds.lastOptions.params, {startkey: text})
+		}); // append the startkey param to the existing params (ds.lastOptions)
+		this.quickSearchWindow.hide();
     },
     
     // private
@@ -924,7 +975,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
          * initial load of the data and instead, wait until the user makes a
          * choice.
          */
-        
+        // TODO: is this really needed? Stores already have an autoLoad property that we can use
         if (this.loadInitialData) {
             this.store.load({
                 params: {
@@ -991,7 +1042,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
          * we stored multi-values in the XmlReader.getValue
          * method.
          */
-        	if (value && value.split) {
+        if (value && value.split) {
             value = value.split('\n');
         }
 
@@ -1175,6 +1226,11 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             newValue = this.notCategorizedText;
         }
         
+        // need to make sure value is an array
+        // the loop below will format as needed
+        value = (Ext.isArray(value)) ? value : [''+value]; 
+        
+        
         for (var i = 0, len = value.length; i < len; i++) {
         	var nbf = colConfig.numberformat;
             var sep = (i + 1 < len) ? separator : '';
@@ -1198,6 +1254,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             }
             else {
                 switch (dataType) {
+                	case 'datetimelist':
                     case 'datetime':
                         var dtf = colConfig.datetimeformat;
                         if (typeof dtf.show == 'undefined') {
@@ -1224,9 +1281,11 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                                 break;
                         }
                         break;
+                    case 'textlist':
                     case 'text':
                         tmpValue = tmpValue;
                         break;
+                    case 'numberlist':
                     case 'number':
                     	tmpValue = parseFloat(tmpValue);
                         switch (nbf.format) {
