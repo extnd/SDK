@@ -86,6 +86,7 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
         for (var i = 0; i < arColumns.length; i++) {
 
             var col = arColumns[i];
+            var type = 'string'; // default type
                         
             var sortcategorize = q.selectValue('@categorized', col, false);
             var sortcategorizeValue = (sortcategorize) ? true : false;
@@ -130,8 +131,9 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
             // multiplying by 11.28 converts the inch width to pixels
             var width = Math.max(q.selectNumber('@width', col) * 11.28, 22);
             
-            // totals column
+            // totals column (and if it is a totals column, set type to 'float')
             var totals = q.selectValue('@totals', col, 'none');
+            type = (totals !== 'none') ? 'float' : type;
             
             // response
             var response = q.selectValue('@responsesonly', col, false);
@@ -181,6 +183,7 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
             var tmpDateTimeFormat = q.select('datetimeformat', col)[0];
             var datetimeformat = {};
             if (tmpDateTimeFormat) {
+            	type = 'date';
                 datetimeformat.show = q.selectValue('@show', tmpDateTimeFormat);
                 datetimeformat.date = q.selectValue('@date', tmpDateTimeFormat);
                 datetimeformat.time = q.selectValue('@time', tmpDateTimeFormat);
@@ -191,6 +194,7 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
             var tmpNumberFormat= q.select('numberformat', col)[0];
             var numberformat = {};
             if (tmpNumberFormat) {
+            	type = 'float';
                 // this will be either fixed, scientific, or currency
                 numberformat.format = q.selectValue('@format', tmpNumberFormat);
                 
@@ -231,7 +235,8 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
             
             var recordConfig = {
                 name: name,
-                mapping: columnnumber
+                mapping: columnnumber,
+                type: type
             };
             arRecordConfig.push(recordConfig);
             
