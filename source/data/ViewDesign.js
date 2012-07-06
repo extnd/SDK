@@ -86,6 +86,7 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
         for (var i = 0; i < arColumns.length; i++) {
 
             var col = arColumns[i];
+            var type = 'string'; // default type
                         
             var sortcategorize = q.selectValue('@categorized', col, false);
             var sortcategorizeValue = (sortcategorize) ? true : false;
@@ -130,8 +131,9 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
             // multiplying by 11.28 converts the inch width to pixels
             var width = Math.max(q.selectNumber('@width', col) * 11.28, 22);
             
-            // totals column
+            // totals column (and if it is a totals column, set type to 'float')
             var totals = q.selectValue('@totals', col, 'none');
+            type = (totals !== 'none') ? 'float' : type;
             
             // response
             var response = q.selectValue('@responsesonly', col, false);
@@ -181,6 +183,7 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
             var tmpDateTimeFormat = q.select('datetimeformat', col)[0];
             var datetimeformat = {};
             if (tmpDateTimeFormat) {
+            	type = 'date';
                 datetimeformat.show = q.selectValue('@show', tmpDateTimeFormat);
                 datetimeformat.date = q.selectValue('@date', tmpDateTimeFormat);
                 datetimeformat.time = q.selectValue('@time', tmpDateTimeFormat);
@@ -191,10 +194,22 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
             var tmpNumberFormat= q.select('numberformat', col)[0];
             var numberformat = {};
             if (tmpNumberFormat) {
+            	type = 'float';
+                // this will be either fixed, scientific, or currency
                 numberformat.format = q.selectValue('@format', tmpNumberFormat);
-                numberformat.digits = q.selectValue('@digits', tmpNumberFormat);
-                numberformat.punctuated = q.selectValue('@punctuated', tmpNumberFormat);
-                numberformat.percent = q.selectValue('@percent', tmpNumberFormat);
+                
+                var tmpDigits = q.selectValue('@digits', tmpNumberFormat);
+                numberformat.digits = (tmpDigits != 'varying') ? parseInt(tmpDigits,10) : 'varying';
+                
+                var tmpParens = q.selectValue('@parens', tmpNumberFormat);
+                numberformat.parens = (tmpParens == 'true') ? true : false;
+                
+                var tmpPer = q.selectValue('@percent', tmpNumberFormat);
+                numberformat.percent = (tmpPer == 'true') ? true : false;
+                
+                var tmpPunc = q.selectValue('@punctuated', tmpNumberFormat);
+                numberformat.punctuated = (tmpPunc == 'true') ? true : false;
+                
             }
             
             var columnConfig = {
@@ -220,7 +235,8 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
             
             var recordConfig = {
                 name: name,
-                mapping: columnnumber
+                mapping: columnnumber,
+                type: type
             };
             arRecordConfig.push(recordConfig);
             
@@ -254,6 +270,14 @@ Ext.extend(Ext.nd.data.ViewDesign, Ext.util.Observable, {
         var allowdocselection = q.selectValue(root+'/@allowdocselection', dxml, false);
         this.allowDocSelection = (allowdocselection == 'true') ? true : false;
         
+        // TODO: need to get the value of useapplet since if true, it causes opening docs from a view not to work
+        // and therefore a dummy viewname is needed instead
+        
+        // type will either be 'view' or 'calendar'
+        var type = q.selectValue(root+'/@type', dxml, 'view');
+        // now set isCalendar if not already set from the passed in config
+        this.isCalendar = this.isCalendar || (type == 'calendar' ? true : false);
+                
         // the dominoView object holds all of the design information for the
         // view
         this.dominoView = {

@@ -1,14 +1,15 @@
 /**
  * @class Ext.nd.UIView
  * @extends Ext.grid.GridPanel
- * @cfg {String} storeConfig Any additional configs you wish to pass to the underlying store for the UIView
- * @cfg {String} viewConfig Any additional configs you wish to pass to the underlying view for the UIView
- * @cfg {String} selModelConfig Any additional configs you wish to pass to the underlying selModel
+ * @cfg {Object} storeConfig Any additional configs you wish to pass to the underlying store for the UIView
+ * @cfg {Object} viewConfig Any additional configs you wish to pass to the underlying view for the UIView
+ * @cfg {Object} selModelConfig Any additional configs you wish to pass to the underlying selModel
  * @cfg {Array} renderers Any custom column renderers you want to pass in in order to do custom formatting to columns  
  * @cfg {String/Component} target The target component you want documents from this view to open into
- * @cfg {String} targetDefaults
- * @cfg {String} tbarPlugins
- * @cfg {String} bbarPlugins
+ * @cfg {Object} targetDefaults
+ * @cfg {Array} tbarPlugins
+ * @cfg {Array} bbarPlugins
+ * @cfg {Object} quickSearchConfig Any additional configs you wish to pass to the quick search window
  * @constructor Create a new UIView
  * @param {Object} config The config object
  * @xtype uiview
@@ -23,6 +24,10 @@ Ext.nd.UIView = function(config){
     this.targetDefaults = {};
     this.tbarPlugins = [];
     this.bbarPlugins = [];
+    this.quickSearchConfig = {width: 200};
+    
+    //private
+    this.quickSearchKeyStrokes = [];
         
     
     // just for backwards compatability
@@ -118,6 +123,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             collapseIcon: Ext.nd.extndUrl + 'resources/images/minus.gif',
             expandIcon: Ext.nd.extndUrl + 'resources/images/plus.gif',
             dateTimeFormats: Ext.nd.dateTimeFormats,
+            formatCurrencyFnc : Ext.util.Format.usMoney,
             tbar: (this.tbar) ? this.tbar : null,
             bbar: (this.showPagingToolbar) ? new Ext.nd.PagingToolbar({
                 uiView: this,
@@ -204,7 +210,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         this.on('headerclick', this.gridHandleHeaderClick, this, true);
         
         // keydown, for things like 'Quick Search', <delete> to delete, <enter> to open a doc
-        this.on('keydown', this.gridHandleKeyDown, this, true);
+        this.on('keypress', this.gridHandleKeyDown, this, true);
         
         // rightclick, to give a context menu for things like 'document properties, copy, paste, delete, etc'
         this.on('rowcontextmenu', this.gridHandleRowContextMenu, this, true);
@@ -446,14 +452,15 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         if (e.getTarget().name == 'xnd-vw-search') {
             return;
         }
-        var sm, ds, node, row, rowIndex, unid, target;
-        var keyCode = e.browserEvent.keyCode;
-        var charCode = e.charCode;
+        var me = this,
+        	sm, ds, node, row, rowIndex, unid, target,
+        	keyCode = e.browserEvent.keyCode,
+        	charCode = e.charCode;
         
         target = e.getTarget();
-        sm = this.getSelectionModel();
+        sm = me.getSelectionModel();
         row = sm.selections.itemAt(sm.selections.length-1);
-        ds = this.getStore();
+        ds = me.getStore();
         rowIndex = (row && row.unid && ds && ds.data) ? ds.data.findIndex('unid', row.unid) : -1;
         
         // for now, we won't worry about the altKey
@@ -463,7 +470,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         
         // if Ctrl+E
         if (e.ctrlKey && keyCode == 69) {
-            this.openDocument(this, rowIndex, e, true);
+            me.openDocument(me, rowIndex, e, true);
             return;
         }
         
@@ -479,11 +486,11 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         
         switch (keyCode) {
             case e.RETURN:
-                this.openDocument(this, rowIndex, e);
+                me.openDocument(me, rowIndex, e);
                 break;
             case e.DELETE:
                 if (row) {
-                    this.deleteDocument(this, rowIndex, e);
+                    me.deleteDocument(me, rowIndex, e);
                 }
                 break;
                 
@@ -510,22 +517,67 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                     sm.selectRow(rowIndex);
                 }
                 break;
+                
+        	// default is to capture the keys entered and then show the quick search dialog
             default:
-                Ext.MessageBox.prompt('Starts with...', 'Search text ', this.quickSearch, this, false, charCode);
+            	me.quickSearchKeyStrokes.push(charCode || keyCode);
+            	me.showQuickSearchWindow();      	
         }
     },
     
     // private
-    quickSearch: function(btn, text){
-        var ds = this.getStore();
-        if (btn == 'ok') {
-            // first, remove the start param from the lastOptions.params
-            delete ds.lastOptions.params.start;
-            // next, load dataSrource, passing the startkey param
-            ds.load({
-                params: Ext.apply(ds.lastOptions.params, {startkey: text})
-            }); // append the startkey param to the existing params (ds.lastOptions)
-        }
+    showQuickSearchWindow: function(buf) {
+		
+		var me = this;
+    	if (!me.quickSearchWindow) {
+			me.quickSearchField = new Ext.form.TextField({itemId: 'quickSearchInput'});
+			me.quickSearchWindow = new Ext.Window(Ext.apply({
+				border: false,
+				layout: 'fit',
+				closeAction: 'hide',
+				title: 'Starts with...',
+				defaultButton : me.quickSearchField,
+				items: [me.quickSearchField],
+				buttons: [{
+					text: 'OK',
+					handler: me.quickSearch,
+					scope: me
+				}, {
+					text: 'Cancel',
+					scope: me,
+					handler: function() {
+						me.quickSearchWindow.hide();
+					}
+				}],
+				listeners: {
+					show: function() {
+						for (var i = 0, len = me.quickSearchKeyStrokes.length; i<len; i++) {
+							var v = me.quickSearchKeyStrokes.pop();
+							me.quickSearchField.el.dom.value += String.fromCharCode(v);
+						}	
+					},
+					hide: function() {
+						me.quickSearchField.setValue('');	
+					},
+					scope: me
+				}
+			}, me.quickSearchConfig));
+		}
+		me.quickSearchWindow.show();
+
+    },
+    
+    // private
+    quickSearch: function(btn, e){
+        var ds = this.getStore(),
+        	text = this.quickSearchField.getValue();
+		// first, remove the start param from the lastOptions.params
+		delete ds.lastOptions.params.start;
+		// next, load dataSrource, passing the startkey param
+		ds.load({
+			params: Ext.apply(ds.lastOptions.params, {startkey: text})
+		}); // append the startkey param to the existing params (ds.lastOptions)
+		this.quickSearchWindow.hide();
     },
     
     // private
@@ -770,28 +822,31 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         if (!row.unid) {
             return;
         }
-        var panelId = 'pnl-' + row.unid;
-        var link = this.viewUrl + '/' + row.unid + mode;
-        var target = this.getTarget();
         
-        // if no target then just open in a new window
-        if (!target) {
-            window.open(link);
-        }
-        else {
-        
-            // open doc in an iframe
-            // we set the 'uiView' property to 'this' so that from a doc, 
-            // we can easily get a handle to the view so we can do such 
-            // things as refresh, etc.
-            Ext.nd.util.addIFrame({
-                target: target || this.ownerCt,
-                uiView: this,
-                url: link,
-                id: row.unid
-            });
-            
-        } // eo if (!target)
+        if (this.fireEvent('beforeopendocument', grid, rowIndex, e, bEditMode) !== false) {
+	        var panelId = 'pnl-' + row.unid;
+	        var link = this.viewUrl + '/' + row.unid + mode;
+	        var target = this.getTarget();
+	        
+	        // if no target then just open in a new window
+	        if (!target) {
+	            window.open(link);
+	        }
+	        else {
+	        
+	            // open doc in an iframe
+	            // we set the 'uiView' property to 'this' so that from a doc, 
+	            // we can easily get a handle to the view so we can do such 
+	            // things as refresh, etc.
+	            Ext.nd.util.addIFrame({
+	                target: target || this.ownerCt,
+	                uiView: this,
+	                url: link,
+	                id: row.unid
+	            });
+	            
+	        } // eo if (!target)
+		}  // if fire beforeopendocument event
     },
     
     getViewDesign: function() {
@@ -817,6 +872,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         // get the properties we need
         this.store = this.viewDesign.store;
         this.isCategorized = this.viewDesign.dominoView.meta.isCategorized;
+        this.isCalendar = this.viewDesign.dominoView.meta.isCalendar;
         this.allowDocSelection = this.viewDesign.allowDocSelection;
         this.autoExpandColumn = this.viewDesign.autoExpandColumn;
         this.isView = this.viewDesign.isView;
@@ -919,7 +975,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
          * initial load of the data and instead, wait until the user makes a
          * choice.
          */
-        
+        // TODO: is this really needed? Stores already have an autoLoad property that we can use
         if (this.loadInitialData) {
             this.store.load({
                 params: {
@@ -986,9 +1042,9 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
          * we stored multi-values in the XmlReader.getValue
          * method.
          */
-    	if (value) {
+        if (value && value.split) {
             value = value.split('\n');
-    	}
+        }
 
         /* if value has a length of zero, assume this is a column in domino
          * that is not currently displaying any data like a 'show response only' 
@@ -1170,7 +1226,13 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             newValue = this.notCategorizedText;
         }
         
+        // need to make sure value is an array
+        // the loop below will format as needed
+        value = (Ext.isArray(value)) ? value : [''+value]; 
+        
+        
         for (var i = 0, len = value.length; i < len; i++) {
+        	var nbf = colConfig.numberformat;
             var sep = (i + 1 < len) ? separator : '';
             dataType = metadata.type; // set in the
             // XmlReader.getNamedValue method
@@ -1182,14 +1244,17 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                     return '';
                 }
                 else {
-                    // I believe the domino only has view icon images from 1 to
-                    // 186
+                    // I believe domino only has view icon images 
+                	// from 1 to 186
                     newValue = (tmpValue < 10) ? '00' + tmpValue : (tmpValue < 100) ? '0' + tmpValue : (tmpValue > 186) ? '186' : tmpValue;
                     return '<img src="/icons/vwicn' + newValue + '.gif"/>';
                 }
+            } else if (colConfig.totals == 'percentoverall' || colConfig.totals == 'percentparent') {
+            	return Ext.util.Format.round(100 * parseFloat(tmpValue), nbf.digits) + '%';
             }
             else {
                 switch (dataType) {
+                	case 'datetimelist':
                     case 'datetime':
                         var dtf = colConfig.datetimeformat;
                         if (typeof dtf.show == 'undefined') {
@@ -1216,22 +1281,28 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                                 break;
                         }
                         break;
+                    case 'textlist':
                     case 'text':
                         tmpValue = tmpValue;
                         break;
+                    case 'numberlist':
                     case 'number':
-                        var nbf = colConfig.numberformat;
-                        if(typeof nbf.format == 'undefined'){
-                            tmpValue = tmpValue;      
-                        }
-                        else{
-                            if(nbf.format == 'currency'){
-                                if(Ext.util.Format.Money){
-                                    tmpValue = Ext.isEmpty(tmpValue)? Ext.util.Format.Money(0):Ext.util.Format.Money(tmpValue);
-                                    break;
-                                }                                                                
-                            }
-                            tmpValue = tmpValue;
+                    	tmpValue = parseFloat(tmpValue);
+                        switch (nbf.format) {
+                        	case 'currency' :
+                                tmpValue = Ext.isEmpty(tmpValue)? this.formatCurrencyFnc(0) : this.formatCurrencyFnc(tmpValue);
+                                break;
+                                break;
+                            case 'fixed' :
+                            case 'scientific' :
+                            	if (nbf.percent) {
+                            		tmpValue = Ext.util.Format.round(100 * tmpValue, nbf.digits) + '%';
+                            	} else {
+                            		tmpValue = Ext.util.Format.round(tmpValue, nbf.digits);
+                            	}
+                            	break;
+                            default :
+                            	tmpValue = tmpValue;
                         }
                         break;
                     default:

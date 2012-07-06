@@ -108,10 +108,8 @@ Ext.extend(Ext.nd.data.ViewXmlReader, Ext.data.XmlReader, {
 			record.position = n.attributes.getNamedItem('position').value;
 			record.depth = record.position.split('.').length;
 			record.noteid = n.attributes.getNamedItem('noteid').value;
-			record.unid = (n.attributes.getNamedItem('unid')) ? n.attributes
-					.getNamedItem('unid').value : null;
-			record.isCategory = (record.hasChildren && !n.attributes
-					.getNamedItem('unid')) ? true : false;
+			record.unid = (n.attributes.getNamedItem('unid')) ? n.attributes.getNamedItem('unid').value : null;
+			record.isCategory = (record.hasChildren && !n.attributes.getNamedItem('unid')) ? true : false;
 			record.isCategoryTotal = n.attributes.getNamedItem('categorytotal');
 		}
 

@@ -135,7 +135,7 @@ Ext.Toolbar.override({
 
 Ext.namespace("Ext.nd", "Ext.nd.form", "Ext.nd.data", "Ext.nd.util");
 
-Ext.nd.version = 'Beta 4 for ExtJS 3.x';
+Ext.nd.version = '1.0 RC1 for ExtJS 3.x';
 
 Ext.nd.getBlankImageUrl = function() {
     return this.extndUrl + "resources/images/s.gif";
@@ -201,6 +201,13 @@ Ext.nd.util.addIFrame = function(config) {
     // if it is not then see if it is an id or element in the dom
     target = (target && target.getXType) ? target : Ext.get(target);
 
+    // if we couldn't find the target, wheter a component or a div/element
+    // then just open in a new window
+    if (!target) {
+    	window.open(config.url);
+    	return;
+    }
+    
     // if the add method exists then the 'target' is some kind of panel
     // otherwise, it might just be a div on the page
     if (target.add) {
