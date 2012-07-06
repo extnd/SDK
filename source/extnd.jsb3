@@ -1,0 +1,37 @@
+{
+    "projectName": "Ext.nd - Ext for Notes / Domino",
+    "licenseText": "Ext.nd - Ext for Notes / Domino 1.0 RC1\n Copyright(c) 2006-2010 Ext.nd Team http://www.extjs.com/license",
+    "builds": [{
+        "name": "Extnd All",
+        "target": "extnd-all.js",
+        "debug": "true",
+        "files": [
+            { "name": "extnd.js", "path":"core/" },
+            { "name": "Formula.js", "path":"core/" },
+            { "name": "ViewDesign.js", "path":"data/" },
+            { "name": "ViewStore.js", "path":"data/" },
+            { "name": "ViewXmlReader.js", "path":"data/" },
+            { "name": "CategorizedStore.js", "path":"data/" },
+            { "name": "CategorizedRowSelectionModel.js", "path":"widgets/grid/" },
+            { "name": "CategorizedView.js", "path":"widgets/grid/" },
+            { "name": "ViewSuggest.js", "path":"widgets/grid/" },
+            { "name": "UIView.js", "path":"widgets/grid/" },
+            { "name": "SearchPlugin.js", "path":"widgets/grid/" },
+            { "name": "SingleCategoryCombo.js", "path":"widgets/grid/" },
+            { "name": "UIDocument.js", "path":"widgets/form/" },
+            { "name": "Combo.js", "path":"widgets/form/" },
+            { "name": "TimeField.js", "path":"widgets/form/" },
+            { "name": "Document.js", "path":"widgets/form/" },
+            { "name": "PickListField.js", "path":"widgets/form/" },
+            { "name": "PickListTypeAhead.js", "path":"widgets/form/" },
+            { "name": "DominoUI.js", "path":"widgets/layout/" },
+            { "name": "UIOutline.js", "path":"widgets/tree/" },
+            { "name": "Actionbar.js", "path":"widgets/" },
+            { "name": "UIWorkspace.js", "path":"widgets/" },
+            { "name": "PagingToolbar.js", "path":"widgets/" },
+            { "name": "DominoActionbar.js", "path":"util/" }
+        ]
+    }]
+}
+  
+  

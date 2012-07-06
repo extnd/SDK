@@ -97,8 +97,7 @@ Ext.extend(Ext.nd.data.ViewStore, Ext.data.Store, {
             }
             
             // now merge the baseParams and passed in params
-            var p = Ext.apply(this.baseParams, options.params ||
-            {});
+            var p = Ext.apply(this.baseParams, options.params || {});
             
             
             if (this.sortInfo && this.remoteSort) {
