@@ -520,12 +520,16 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                 }
                 
                 // now, let's remove the 'return false;' if it exists since this is what domino usually adds to the end of javascript actions
-                arOnClick = tmpOnClick.split('\r'); // TODO: will \r work on all browsers and all platforms???
+                arOnClick = tmpOnClick.split('\r');
                 var len = arOnClick.length;
+                if (len === 1) {
+                    arOnClick = tmpOnClick.split('\n');
+                    len = arOnClick.length;
+                }
                 if (arOnClick[len - 1] == 'return false;') {
                     arOnClick.splice(arOnClick.length - 1, 1); // removing the 'return false;' that domino adds
                 }
-                tmpOnClick = arOnClick.join('\r');
+                tmpOnClick = arOnClick.join(' ');
             }
             
             // assigne a handler
