@@ -7,7 +7,7 @@
         "debug": "true",
         "files": [
             { 
-                "path": "core/",
+                "path": "../source/core/",
                 "name": "extnd.js"  
             },
             { 
