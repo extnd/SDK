@@ -1,0 +1,5 @@
+
+UIView.js
+
+	- added a beforeopendocument event so that a user can decide wheather or not to allow the opening of a doc from the view by return false or true
+

@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Ext.nd Demo LOCAL</title>
+
+<!-- Ext JS library -->
+<script type='text/javascript' src='../../sencha/ExtJS/Ext3/ext-3.4.0/adapter/ext/ext-base.js'></script>
+<script type='text/javascript' src='../../sencha/ExtJS/Ext3/ext-3.4.0/ext-all.js'></script>
+
+<!-- Ext.nd JS library -->
+<script type='text/javascript' src='../builds/extnd-all-debug.js'></script>
+<script type='text/javascript' src='/extnd/extnd_b4.nsf/extnd/3x/Session.js?OpenAgent&db=extnd/demo.nsf'></script>
+<!--<script type='text/javascript' src='/extnd/extnd_b4.nsf/extnd/3x/UIDocument.js?OpenAgent&db=extnd/demo.nsf&unid=&editmode=false'></script>-->
+
+<link rel='stylesheet' type='text/css' href='../../sencha/ExtJS/Ext3/ext-3.4.0/resources/css/ext-all.css' />
+<link rel='stylesheet' type='text/css' href='../builds/resources/css/domino.css' />
+
+
+<script language="JavaScript" type="text/javascript">
+<!--
+Ext.nd.UIView.override({
+
+    addEventListeners : function() {
+
+        // for such things as opening a doc from the view
+        this.on('rowdblclick', this.gridHandleRowDblClick, this);
+
+        // headerclick, to handle switching to another view
+        this.on('headerclick', this.gridHandleHeaderClick, this, true);
+
+        // keydown, for things like 'Quick Search', <delete> to delete, <enter> to open a doc
+        this.on('keydown', this.gridHandleKeyDown, this, true);
+
+        // rightclick, to give a context menu for things like 'document properties, copy, paste, delete, etc'
+        this.on('rowcontextmenu', this.gridHandleRowContextMenu, this, true);
+
+        this.getStore().on('beforeload',function() {
+            alert('scrolltoview2!');
+        }, this, true);
+    }
+
+});
+
+var ExtndApp = function() {
+    return {
+        init : function(){
+            this.ui = new Ext.nd.DominoUI({
+                uiOutline : {
+                    outlineName: 'mainOL',
+                    useArrows : true,
+                    showIcons : false
+                    //viewDefaults: {
+                    //	selModelConfig: {type: 'checkbox'}
+                    //}
+                },
+                uiView : {
+                    viewName: 'sc1',
+                    viewTitle: 'A Categorized View',
+                    //selModelConfig: {type: 'checkbox'},
+                    storeConfig : {
+                        listeners : {
+                            'load' : function() {
+                                alert('stv3');
+                            }
+                        }
+                    },
+                    showSearch: true,
+                    showActionbar : true,
+                    dateTimeFormats : {
+                        dateFormat : 'd/m/y',
+                        timeFormat : 'h:i:s A',
+                        dateTimeFormat : 'Y-M-d h:i:s A'
+                    }
+                }
+            });
+        } // init
+    } // return
+}();
+
+Ext.onReady(ExtndApp.init, ExtndApp, true);
+// -->
+</script>
+
+<script language="JavaScript" type="text/javascript">
+<!--
+document._domino_target = "_self";
+function _doClick(v, o, t) {
+  var url="/extnd/demo.nsf?OpenDatabase&Click=" + v;
+  if (o.href != null)
+    o.href = url;
+  else {
+    if (t == null)
+      t = document._domino_target;
+    window.open(url, t);
+  }
+
+}
+// -->
+</script>
+</head>
+<body text="#000000" bgcolor="#FFFFFF">
+
+<form action=""></form>
+</body>
+</html>
