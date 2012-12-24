@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Ext-nd-DominoUI-method-constructor'><span id='Ext-nd-DominoUI-cfg-uiView'><span id='Ext-nd-DominoUI-cfg-uiOutline'><span id='Ext-nd-DominoUI'>/**
+</span></span></span></span> * @class Ext.nd.DominoUI
+ *        &lt;p&gt;
+ *        Here's an example showing the creation of a typical DominoUI:
+ *        &lt;/p&gt;
+ * 
+ * &lt;pre&gt;&lt;code&gt;
+  new Ext.nd.DominoUI({
+      uiOutline: {
+          outlineName: &amp;quot;mainOL&amp;quot;
+      },
+      uiView: {
+          viewName: &amp;quot;Requests&amp;quot;,
+          viewTitle: &amp;quot;Requests&amp;quot;
+      }
+  });
+  &lt;/code&gt;&lt;/pre&gt;
+ * 
+ * @cfg {Object} uiOutline A {@link Ext.nd.UIOutline} config object
+ * @cfg {Object} uiView A {@link Ext.nd.UIView} config object
+ * @constructor Create an integrated domino interface, with a view and an outline
+ * @param {Object} config Configuration options
+ * 
+ */
+Ext.nd.DominoUI = function(config) {
+
+    // Set any config params passed in to override defaults
+    Ext.apply(this, config);
+
+    // init the DominoUI
+    this.init();
+
+    // load any links
+    this.loadLink();
+
+}; // end Ext.nd.DominoUI
+
+Ext.nd.DominoUI.prototype = {
+    uiView: {
+        viewName: '',
+        viewUrl: ''
+    },
+    uiOutline: {
+        outlineName: '',
+        outlineUrl: ''
+    },
+    viewOpeningTitle: 'Opening...',
+
+    init: function() {
+        // create the UI
+        // creates outlinePanel, viewPanel, statusPanel
+        this.createDominoUI();
+    },
+
+    // private
+    createDominoUI: function() {
+        
+        // west/outline - be sure to include the defaults property
+        // so that for each view opened, the target property defaults
+        // will be applied
+        
+        var west = {
+            region: 'west',
+            title: Ext.nd.Session.currentDatabase.title,
+            collapsible: true,
+            split: true,
+            width: 200,
+            minSize : 150,
+            maxSize : 400,
+            layout: 'fit',
+            items : [Ext.apply({
+                id: 'xnd-outline-panel',
+                xtype: 'xnd-uioutline',
+                border : false,
+                target: 'xnd-center-panel',
+                viewTarget: 'xnd-grid-panel'               
+            }, this.uiOutline)]
+        };
+            
+        
+        // center/view area    
+        var center = {
+            region: 'center',
+            id: 'xnd-center-panel',
+            xtype: 'tabpanel',
+            target: 'xnd-center-panel',
+            defaults : {
+                target : 'xnd-center-panel',
+                border : true
+            },
+            enableTabScroll: true,
+            activeTab: 0,
+            items: [Ext.apply({
+                id: 'xnd-grid-panel',
+                layout: 'fit',
+                xtype: 'xnd-uiview',
+                target: 'xnd-center-panel',
+                closable: false
+            }, this.uiView)]
+        };
+                
+        this.viewport = new Ext.Viewport({
+            layout: 'border',
+            id: 'extnd-viewport',
+            items: [west, center]
+        });
+
+        // include these since the alpha and beta 1x code
+        // included these and some developers have custom
+        // code that depends on these being defined
+        
+        this.outlinePanel = Ext.getCmp('xnd-outline-panel');
+        this.view = Ext.getCmp('xnd-grid-panel');
+        this.tabPanel = Ext.getCmp('xnd-center-panel');
+    },
+
+    // leave for backwards capability since this was included in beta 1x code
+    loadLink: function() {
+
+        // allow for link in
+        var href = window.location.href;
+
+        if (href.indexOf('?') &gt; 0 || href.indexOf('!') &gt; 0) {
+            var qs = (href.indexOf('?') &gt; 0) ? href.split('?')[1] : href.split('!')[1];
+            var ps = Ext.urlDecode(qs);
+            var link = ps['link'];
+            var title = link;
+
+            if (link) {
+                var unid = (link.indexOf('?') &gt; 0) ? href.split('?')[0] : link;
+  
+                Ext.nd.util.addIFrame({
+                    target: this.tabPanel,
+                    uiView: this.view,
+                    url: link,
+                    id: unid,
+                    title: 'Opening...',
+                    useIFrameTitle: true
+                });
+    
+            } // eo if(link)
+        } // eo if(href.indexOf...)
+    } // eo loadLink
+};
+Ext.reg('xnd-dominoui', Ext.nd.DominoUI);</pre>
+</body>
+</html>

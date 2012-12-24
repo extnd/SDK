@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">
+<span id='-not-ready-method-constructor'><span id='-not-ready'>/**
+</span></span> * @class-not-ready Ext.nd.Document
+ * @constructor
+ * Makes an AJAX call to retrieve a Domino Document
+ * @param {Object} config Configuration options
+ */
+Ext.nd.Document = function(config) {
+  var sForm = 'Ext.nd.Document.json';
+  
+  // Set any config params passed in to override defaults
+  Ext.apply(this,config);
+
+  // TODO - this entire class needs to be rewritten to call the DXLExporter
+  var sHREF, locNSF, urlStart;
+  sHREF = location.href;
+  locNSF = sHREF.toLowerCase().indexOf('.nsf/');
+  urlStart = sHREF.substring(0,locNSF+5);
+  this.url = urlStart + '($Ext.nd.SwitchForm)/' + this.unid + '?OpenDocument&amp;form=' + sForm;
+
+  Ext.Ajax.request({
+    method: 'GET',
+    disableCaching: true,
+    success: this.assignValue,
+    failure: this.processException,
+    scope: this,
+    url: this.url
+  });
+};
+
+Ext.nd.Document.prototype = {
+  onComplete: function() {},
+  
+  assignValue: function(req) {
+   var sTmp, oTmp;
+    sTmp = req.responseText;
+    oTmp = eval('(' + sTmp + ')');
+  
+    // Set any config params passed in to override defaults
+    Ext.apply(this,oTmp);
+  
+    // now call the user's onComplete function
+    this.onComplete();
+  },
+  
+  processException: function(req) {
+   Ext.MessageBox.alert(&quot;Error&quot;,&quot;There was an error in the instantiation of the Document class&quot;);
+  }  
+};
+</pre>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">Ext.nd.CategorizedView = Ext.extend(Ext.grid.GridView, {
+    initTemplates: function() {
+        Ext.nd.CategorizedView.superclass.initTemplates.call(this);
+        this.state = {};
+        this.selections = [];
+        
+        if (!this.startGroup) {
+            this.startGroup = new Ext.XTemplate(
+                '&lt;div id=&quot;{position}&quot; class=&quot;xnd-category {cls}&quot;&gt;',
+                '&lt;div id=&quot;{position}-hd&quot; class=&quot;xnd-category-hd&quot; style=&quot;{cstyle}&quot;&gt;&lt;div&gt;{row}&lt;/div&gt;&lt;/div&gt;', 
+                '&lt;div id=&quot;{position}-bd&quot; class=&quot;xnd-category-body&quot; style=&quot;{style}&quot;&gt;'
+            );
+        }
+        this.startGroup.compile();
+        this.endGroup = '&lt;/div&gt;&lt;/div&gt;';
+        this.templates.row =  new Ext.Template(
+            '&lt;div id=&quot;{position}&quot; class=&quot;x-grid3-row {alt}&quot; style=&quot;{tstyle}&quot;&gt;&lt;table class=&quot;x-grid3-row-table&quot; border=&quot;0&quot; cellspacing=&quot;0&quot; cellpadding=&quot;0&quot; style=&quot;{tstyle}&quot;&gt;',
+            '&lt;tbody&gt;&lt;tr&gt;{cells}&lt;/tr&gt;',
+            (this.enableRowBody ? '&lt;tr class=&quot;x-grid3-row-body-tr&quot; style=&quot;{bodyStyle}&quot;&gt;&lt;td colspan=&quot;{cols}&quot; class=&quot;x-grid3-body-cell&quot; tabIndex=&quot;0&quot; hidefocus=&quot;on&quot;&gt;&lt;div class=&quot;x-grid3-row-body&quot;&gt;{body}&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;' : ''),
+            '&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;'
+        );
+    },
+    
+    renderUI: function() {
+        Ext.nd.CategorizedView.superclass.renderUI.call(this);
+        this.mainBody.on('mousedown', this.interceptMouse, this);
+    },
+    
+    toggleCategory: function(group, expanded) {
+        group = Ext.getDom(group);
+        var gel = Ext.fly(group);
+        expanded = expanded !== undefined ? expanded : gel.hasClass('xnd-category-collapsed');
+        
+        
+        this.state[gel.dom.id] = expanded;
+        
+        if (expanded) {
+            this.grid.getStore().loadCategory(gel.dom.id);
+            gel.removeClass('xnd-category-collapsed');
+        } else {
+            gel.addClass('xnd-category-collapsed');
+        }
+    },
+    
+    interceptMouse: function(e) {
+        var hd = e.getTarget('.xnd-category-hd', this.mainBody);
+        if (hd) {
+            e.stopEvent();
+            this.toggleCategory(hd.parentNode);
+            var sm = this.grid.getSelectionModel();
+            sm.clearSelections();
+        } else {
+            return;
+            // TODO: ask Rich why any of the below code is needed
+            // TODO: this is a bad hack to force selection, need to write a real
+            // selection model extension that handles this all properly
+            var row = e.getTarget('div.x-grid3-row');
+            if (row) {
+                var store = this.grid.getStore();
+                var rec = store.findRecordByPosition(row.id);
+                var sm = this.grid.getSelectionModel();
+                sm.clearSelections();
+                for (var i = 0, len = this.selections.length;i &lt; len;i++) {
+                    var tmpRow = this.selections[i];
+                    this.fly(tmpRow).removeClass('x-grid3-row-selected');
+                    delete tmpRow;
+                }
+                sm.selections.add(rec);                
+                this.selections.push(row);
+                
+                this.fly(row).radioClass(&quot;x-grid3-row-selected&quot;);
+            }
+        }
+    },
+    
+    doRender: function(cs, rs, ds, startRow, colCount, stripe) {
+        if (rs.length &lt; 1) {
+            return '';
+        }
+        
+        var cstyle = 'width:' + this.getTotalWidth() + ';';
+        
+        var buf = [];
+        for (var i = 0, len = rs.length; i &lt; len; i++) {
+            var rowIndex = startRow + i;
+            var r = rs[i];
+            if (r.isCategory) {
+                // if state is defined use it, however state is in terms of expanded
+                // so negate it, otherwise use the default.
+                var isCollapsed = typeof this.state[r.position] !== 'undefined' ? !this.state[r.position] : true;
+                var gcls = isCollapsed ? 'xnd-category-collapsed' : '';
+                var row = this.oldRender(cs, [r], ds, rowIndex, colCount, stripe);
+                buf.push(this.startGroup.apply({
+                    position: r.position,
+                    row: row,
+                    cls: gcls,
+                    //          style: 'padding-left:'+(r.depth*17)+'px;',
+                    cstyle: cstyle
+                }));
+                if (r.children) {
+                    buf.push(this.doRender(cs, r.children, ds, rowIndex, colCount, stripe));
+                }
+                buf.push(this.endGroup);
+            } else {
+                buf.push(this.oldRender(cs, [r], ds, startRow, colCount, stripe));
+            }
+        }
+        return buf.join('');
+    },
+    
+    oldRender: function(cs, rs, ds, startRow, colCount, stripe) {
+        var ts = this.templates, ct = ts.cell, rt = ts.row, last = colCount - 1;
+        var tstyle = 'width:' + this.getTotalWidth() + ';';
+        // buffers
+        var buf = [], cb, c, p = {}, rp = {
+            tstyle: tstyle
+        }, r;
+        for (var j = 0, len = rs.length; j &lt; len; j++) {
+            r = rs[j];
+            cb = [];
+            var rowIndex = (j + startRow);
+            for (var i = 0; i &lt; colCount; i++) {
+                c = cs[i];
+                p.id = c.id;
+                p.css = i == 0 ? 'x-grid3-cell-first ' : (i == last ? 'x-grid3-cell-last ' : '');
+                if (r.isCategory &amp;&amp; (r.depth - 1) == i) {
+                    p.css += 'xnd-category-cell';
+                }
+                p.attr = p.cellAttr = &quot;&quot;;
+                p.value = c.renderer(r.data[c.name], p, r, rowIndex, i, ds);
+                p.style = c.style;
+                if (p.value == undefined || p.value === &quot;&quot;) p.value = &quot;&amp;#160;&quot;;
+                if (r.dirty &amp;&amp; typeof r.modified[c.name] !== 'undefined') {
+                    p.css += ' x-grid3-dirty-cell';
+                }
+                cb[cb.length] = ct.apply(p);
+            }
+            var alt = [];
+            if (stripe &amp;&amp; ((rowIndex + 1) % 2 == 0)) {
+                alt[0] = &quot;x-grid3-row-alt&quot;;
+            }
+            if (r.dirty) {
+                alt[1] = &quot; x-grid3-dirty-row&quot;;
+            }
+            rp.cols = colCount;
+            if (this.getRowClass) {
+                alt[2] = this.getRowClass(r, rowIndex, rp, ds);
+            }
+            rp.position = r.position;
+            rp.alt = alt.join(&quot; &quot;);
+            rp.cells = cb.join(&quot;&quot;);
+            buf[buf.length] = rt.apply(rp);
+        }
+        return buf.join(&quot;&quot;);
+    },
+    focusRow: function() {
+    },
+    
+    // private
+    getRows: function() {
+        if (this.hasRows()) {
+            var rows = Ext.query('div.x-grid3-row', this.mainBody.dom);
+            return rows || [];
+        }
+    },
+    
+    onRowSelect: function(row) {
+        //    console.log(['onRowSelect',row]);
+        this.addRowClass(row, &quot;x-grid3-row-selected&quot;);
+    }
+});
+</pre>
+</body>
+</html>

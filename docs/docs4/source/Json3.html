@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Ext-data-writer-Json'>/**
+</span> * @class Ext.data.writer.Json
+
+This class is used to write {@link Ext.data.Model} data to the server in a JSON format.
+The {@link #allowSingle} configuration can be set to false to force the records to always be
+encoded in an array, even if there is only a single record being sent.
+
+ * @markdown
+ */
+Ext.define('Ext.data.writer.Json', {
+    extend: 'Ext.data.writer.Writer',
+    alternateClassName: 'Ext.data.JsonWriter',
+    alias: 'writer.json',
+    
+<span id='Ext-data-writer-Json-cfg-root'>    /**
+</span>     * @cfg {String} root The HTTP parameter name by which JSON encoded records will be passed to the server if the
+     * {@link #encode} option is `true`.
+     */
+    root: undefined,
+    
+<span id='Ext-data-writer-Json-cfg-encode'>    /**
+</span>     * @cfg {Boolean} [encode=false] Configure `true` to send record data (all record fields if {@link #writeAllFields} is `true`)
+     * as a JSON encoded HTTP parameter named by the {@link #root} configuration.
+     * 
+     * The encode option should only be set to true when a {@link #root} is defined, because the values will be
+     * sent as part of the request parameters as opposed to a raw post. The root will be the name of the parameter
+     * sent to the server.
+     */
+    encode: false,
+    
+<span id='Ext-data-writer-Json-cfg-allowSingle'>    /**
+</span>     * @cfg {Boolean} [allowSingle=true] Configure with `false` to ensure that records are always wrapped in an array, even if there is only
+     * one record being sent. When there is more than one record, they will always be encoded into an array.
+     */
+    allowSingle: true,
+    
+<span id='Ext-data-writer-Json-method-writeRecords'>    //inherit docs
+</span>    writeRecords: function(request, data) {
+        var root = this.root;
+        
+        if (this.allowSingle &amp;&amp; data.length == 1) {
+            // convert to single object format
+            data = data[0];
+        }
+        
+        if (this.encode) {
+            if (root) {
+                // sending as a param, need to encode
+                request.params[root] = Ext.encode(data);
+            } else {
+                //&lt;debug&gt;
+                Ext.Error.raise('Must specify a root when using encode');
+                //&lt;/debug&gt;
+            }
+        } else {
+            // send as jsonData
+            request.jsonData = request.jsonData || {};
+            if (root) {
+                request.jsonData[root] = data;
+            } else {
+                request.jsonData = data;
+            }
+        }
+        return request;
+    }
+});
+</pre>
+</body>
+</html>
