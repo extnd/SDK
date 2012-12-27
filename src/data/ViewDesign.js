@@ -1,3 +1,7 @@
+/**
+ * Gets the design of a Domino view by making two Ajax calls.  The first is to view?ReadDesign and the second
+ * is to the custom DXLExporter agent.  After these calls are made, column and field defs are created.
+ */
 Ext.define('Ext.nd.data.ViewDesign', {
 
     mixins: {
@@ -5,7 +9,9 @@ Ext.define('Ext.nd.data.ViewDesign', {
     },
 
     requires: [
-        'Ext.nd.data.ViewStore'
+        'Ext.nd.data.ViewStore',
+        'Ext.nd.data.ViewModel',
+        'Ext.nd.grid.ViewColumn'
     ],
 
     constructor: function (config) {
@@ -208,7 +214,7 @@ Ext.define('Ext.nd.data.ViewDesign', {
             var tmpDateTimeFormat = q.select('datetimeformat', col)[0];
             var datetimeformat = {};
             if (tmpDateTimeFormat) {
-            	type = 'date';
+                type = 'date';
                 datetimeformat.show = q.selectValue('@show', tmpDateTimeFormat);
                 datetimeformat.date = q.selectValue('@date', tmpDateTimeFormat);
                 datetimeformat.time = q.selectValue('@time', tmpDateTimeFormat);
@@ -238,8 +244,9 @@ Ext.define('Ext.nd.data.ViewDesign', {
             }
 
             var columnConfig = {
+                xtype               : 'xnd-viewcolumn',
                 id                  : columnnumber,
-                header              : (resorttoviewValue) ? title + '<img src="/icons/viewsort.gif" />' : title,
+                text                : (resorttoviewValue) ? title + '<img src="/icons/viewsort.gif" />' : title,
                 align               : alignValue,
                 dataIndex           : name,
                 width               : width,
@@ -260,8 +267,9 @@ Ext.define('Ext.nd.data.ViewDesign', {
 
             var recordConfig = {
                 name    : name,
-                mapping : columnnumber,
-                type    : type
+                mapping : 'entrydata[columnnumber=' + columnnumber + ']',
+                type    : type,
+                convert : Ext.nd.data.ViewModel.prototype.convertEntryData
             };
             arRecordConfig.push(recordConfig);
 
@@ -318,9 +326,7 @@ Ext.define('Ext.nd.data.ViewDesign', {
             fields: arRecordConfig
         };
 
-        // go ahead and setup our Record and our Reader
-        //me.ViewEntryRecord = Ext.data.Record.create(me.dominoView);
-        //me.viewEntryReader = new Ext.nd.data.ViewXmlReader(me.dominoView.meta, me.ViewEntryRecord);
+        // define the store
         me.setStore();
 
         if (me.scope) {
@@ -331,17 +337,20 @@ Ext.define('Ext.nd.data.ViewDesign', {
     },
 
     setStore : function() {
-        var me = this;
+        var me = this,
+            viewModel = Ext.define("Ext.nd.data.ViewModel-" + Ext.id(), {
+                extend: 'Ext.nd.data.ViewModel',
+                fields: me.dominoView.fields
+            });
 
         // create the Data Store
         me.store = new Ext.nd.data[(me.isCategorized && me.multiExpand) ? 'CategorizedStore' : 'ViewStore'](Ext.apply({
+            model               : viewModel,
             dbPath              : me.dbPath,
             viewName            : me.viewName,
             viewUrl             : me.viewUrl,
             baseParams          : me.baseParams,
             removeCategoryTotal : me.removeCategoryTotal,
-            fields              : me.dominoView.fields,
-            //reader              : me.viewEntryReader,
             remoteSort          : true
         }, me.storeConfig));
 
@@ -352,5 +361,5 @@ Ext.define('Ext.nd.data.ViewDesign', {
         this.fireEvent('getdesignfailure', this, res, req);
     }
 
+
 });
-// eo Ext.nd.data.ViewDesign
