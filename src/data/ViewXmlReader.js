@@ -1,42 +1,19 @@
 /**
- * @class Ext.nd.data.ViewXmlReader
- * @extends Ext.data.XmlReader An expanded version of Ext's XmlReader to deal
- *          with Domino's unique ?ReadViewEntries format.
- * @cfg {String} totalRecords The DomQuery path from which to retrieve the
- *          total number of records in the dataset. This is only needed if
- *          the whole dataset is not passed in one go, but is being paged from
- *          the remote server.  For Domino, this defaults to '@toplevelentries'.
- * @cfg {String} record The DomQuery path to the repeated element which contains
- *          record information.  For Domino, this defaults to 'viewentry'.
- * @cfg {String} id The DomQuery path relative from the record element to the
- *          element that contains a record identifier value.  For Domino, this
- *          defaults to '@position' since this poistion attribute from a ?ReadViewEntries
- *          call is unique per row and using '@unid' can sometimes not be unique
- *          in categorizes views where the same document can appear under different
- *          categories.
- * @constructor Create a new ViewXmlReader
- * @param {Object}
- *            meta Metadata configuration options. This is built for you but if you want
- *            to override any of the properties you can do so.
- * @param {Mixed}
- *            recordType The definition of the data record type to produce. This
- *            can be either a valid Record subclass created with
- *            {@link Ext.data.Record#create}, or an array of objects with which
- *            to call Ext.data.Record.create. See the {@link Ext.data.Record}
- *            class for more details.
+ * An expanded version of Ext's XmlReader to deal with Domino's unique ?ReadViewEntries format.
+ *
  */
 Ext.define('Ext.nd.data.ViewXmlReader', {
 
     extend  : 'Ext.data.reader.Xml',
     alias   : 'reader.xnd-viewxml',
 
-    constructor: function (meta, recordType) {
+    /**
+     * @param {Object} meta
+     *     Metadata configuration options. This is built for you but if you want
+     *     to override any of the properties you can do so.
+     */
+    constructor: function (meta) {
         var me = this;
-
-        if (arguments.length == 1 && Ext.isArray(arguments[0])) {
-            recordType = arguments[0];
-            meta = {};
-        }
 
         me.meta = Ext.apply({
             root            : 'viewentries',
@@ -46,16 +23,15 @@ Ext.define('Ext.nd.data.ViewXmlReader', {
             fromViewDesign  : false
            }, meta);
 
-        me.callParent([meta, recordType || meta.fields]);
+        me.callParent(arguments);
     },
 
     /**
      * Create a data block containing Ext.data.Records from an XML document.
      *
-     * @param {Object}
-     *            doc A parsed XML document.
+     * @param {Object} doc A parsed XML document.
      * @return {Object} records A data block which is used by an
-     *         {@link Ext.nd.ViewStore} as a cache of Ext.data.Records.
+     *    {@link Ext.nd.ViewStore} as a cache of Ext.data.Records.
      */
     readRecords : function(doc) {
         /**
@@ -65,12 +41,14 @@ Ext.define('Ext.nd.data.ViewXmlReader', {
          * @type XMLDocument
          */
         this.xmlData = doc;
-        var root = doc.documentElement || doc;
-        var q = Ext.DomQuery;
-        var viewModel = this.proxy.getModel();
-        var fields = viewModel.prototype.fields;
-        var sid = this.meta.id;
-        var totalRecords = 0;
+        var me          = this,
+            root        = doc.documentElement || doc,
+            q           = Ext.DomQuery,
+            viewModel   = this.model,
+            fields      = viewModel.prototype.fields,
+            sid         = this.meta.id,
+            totalRecords = 0;
+
         if (this.meta.totalRecords) {
             totalRecords = q.selectNumber(this.meta.totalRecords, root, 0);
         }
@@ -86,7 +64,7 @@ Ext.define('Ext.nd.data.ViewXmlReader', {
                 var f = fields.items[j];
                 // try to use f.name if available since there is a bug with domino that can be
                 // seen with the SearchView agent.  That bug has to do with columns hidden with
-                // hide when formuls are not evaluated and removed from the ColumnValues array
+                // hide when formulas are not evaluated and removed from the ColumnValues array
                 // if the hide when evaluates to true.  Therefore a SearchView can end up sending
                 // back data that it shouldn't have and then the .mapping (which is the columnnumber)
                 // is now off and no longer good to use
@@ -130,12 +108,9 @@ Ext.define('Ext.nd.data.ViewXmlReader', {
     /**
      * Used to parse Domino's ReadViewEntries format
      *
-     * @param {Object}
-     *            node An XML node
-     * @param {String}
-     *            name The name attribute to look for within the XML node
-     * @param {String}
-     *            defaultValue Value to return if name or node are not present
+     * @param {Object} node An XML node
+     * @param {String} name The name attribute to look for within the XML node
+     * @param {String} defaultValue Value to return if name or node are not present
      * @return {String} nodeValue the value found within the XML node
      */
     getViewColumnValue : function(node, map, defaultValue) {
@@ -196,7 +171,7 @@ Ext.define('Ext.nd.data.ViewXmlReader', {
 
     }, // end getViewColumnValue
 
-    getValue : function(node, type) {
+    getValue : function (node, type) {
         var oValue = {
             type : type,
             data : ''
