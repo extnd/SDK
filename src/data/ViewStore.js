@@ -29,7 +29,7 @@ Ext.define('Ext.nd.data.ViewStore', {
                 url     : config.viewUrl + '?ReadViewEntries',
 
                 reader: {
-                    type            : 'xnd-viewxml',
+                    type            : 'xml',
                     root            : 'viewentries',
                     record          : 'viewentry',
                     totalRecords    : '@toplevelentries',
