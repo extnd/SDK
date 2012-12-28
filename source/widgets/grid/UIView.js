@@ -4,7 +4,7 @@
  * @cfg {Object} storeConfig Any additional configs you wish to pass to the underlying store for the UIView
  * @cfg {Object} viewConfig Any additional configs you wish to pass to the underlying view for the UIView
  * @cfg {Object} selModelConfig Any additional configs you wish to pass to the underlying selModel
- * @cfg {Array} renderers Any custom column renderers you want to pass in in order to do custom formatting to columns  
+ * @cfg {Array} renderers Any custom column renderers you want to pass in in order to do custom formatting to columns
  * @cfg {String/Component} target The target component you want documents from this view to open into
  * @cfg {Object} targetDefaults
  * @cfg {Array} tbarPlugins
@@ -16,7 +16,7 @@
  */
 Ext.nd.UIView = function(config){
 
-	// defaults
+    // defaults
     this.storeConfig = {};
     this.viewConfig = {};
     this.selModelConfig = {singleSelect : false, checkOnly : true};
@@ -25,19 +25,19 @@ Ext.nd.UIView = function(config){
     this.tbarPlugins = [];
     this.bbarPlugins = [];
     this.quickSearchConfig = {width: 200};
-    
+
     //private
     this.quickSearchKeyStrokes = [];
-        
-    
+
+
     // just for backwards compatability
     if (config.gridConfig) {
         Ext.applyIf(config, config.gridConfig);
         delete config.gridConfig;
     }
-    
+
     config = Ext.nd.util.cleanUpUIViewConfig(config);
-    
+
     /* We need some dummy colConfig and datastore definitions
      * so that Ext can render the grid, these get replaced once we
      * get the design info back from the server
@@ -46,12 +46,12 @@ Ext.nd.UIView = function(config){
         dataIndex: 'dummy',
         header: ''
     }];
-    
+
     this.dmyId = 'xnd-dummy-store-' + Ext.id();
     config.store = new Ext.data.Store({
         id: this.dmyId
     });
-    
+
     Ext.nd.UIView.superclass.constructor.call(this, config);
 }
 
@@ -69,7 +69,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
     notCategorizedText: '(Not Categorized)',
     loadInitialData: true,
     layout : 'fit',
-    
+
     documentWindowTitle: '',
     documentLoadingWindowTitle: 'Opening...',
     documentUntitledWindowTitle: '(Untitled)',
@@ -87,9 +87,9 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
 
     // categorized: false,// TODO: check with Rich on the 'categorized' property
     // since we already have an 'isCategorized' property
-    
+
     initComponent: function(){
-    
+
         // wait until the grid is rendered before making the Ajax call to get
         // the view's design from the domino server
         this.on('render', this.getViewDesign, this);
@@ -99,8 +99,8 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         this.recordConfig = [];
         if (!this.baseParams){
             this.baseParams={};
-        } 
-        
+        }
+
         // leave support (for now) for old showSingleCategory property
         if (this.showSingleCategory && typeof this.showSingleCategory == 'string' && !this.category) {
             this.category = this.showSingleCategory;
@@ -111,11 +111,11 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         if (typeof this.category === 'string') {
             this.baseParams.RestrictToCategory = this.category;
         }
-       
+
         this.setupSelectionModel();
-        
+
         this.setupToolbars();
-        
+
         // ApplyIf so that these can all be overridden if passed into the config
         Ext.applyIf(this, {
             selModel: this.selModel,
@@ -132,8 +132,8 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                 plugins: this.bbarPlugins
             }) : null
         });
-        
-        this.addEvents(        
+
+        this.addEvents(
         /**
          * @event beforeaddtofolder Fires just before an add to folder (same as NotesUIView QueryAddToFolder)
          * @param {Ext.nd.UIView} this The current view.
@@ -142,31 +142,31 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
          * @param (Object) event
          * @param {Array} data
          */
-        'beforeaddtofolder',        
+        'beforeaddtofolder',
         /**
          * TODO
          * @event beforeclose Fires just before the current view is closed (same as NotesUIView QueryClose)
          * @param {Ext.nd.UIView} this
          */
-        'beforeclose',        
+        'beforeclose',
         /**
          * @event beforeopendocument Fires just before the currently selected document is opened (same as NotesUIView QueryOpenDocument)
          * @param {Ext.nd.UIView} this
          */
-        'beforeopendocument',        
+        'beforeopendocument',
         /**
          * TODO
          * @event beforeopen Fires just before the current view is opened (same as NotesUIView QueryOpen)
          * @param {Ext.nd.UIView} this
          */
-        'beforeopen',        
+        'beforeopen',
         /**
          * @event getdesignfailure Fires if the Ajax call to ?ReadDesign fails
          * @param {Ext.nd.UIView} this
          * @param {Object} res XHR response object
          * @param {Object} req XHR request object
          */
-        'getdesignfailure',        
+        'getdesignfailure',
         /**
          * @event getdesignsuccess Fires after successfully parsing the Design of a View and creating an {@link Ext.grid.ColumnModel} and
          *        {@link Ext.nd.data.Store}
@@ -174,7 +174,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
          * @param {Ext.nd.data.Store} store The newly created (and bound) DataStore
          * @param {Ext.grid.ColumnModel} colModel The newly created ColumnModel
          */
-        'getdesignsuccess',        
+        'getdesignsuccess',
         /**
          * @event open Fires just after the current view is opened (same as NotesUIView PostOpen)
          * @param {Ext.nd.UIView} this
@@ -182,11 +182,11 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         'open');
 
         this.addEventListeners();
-        
-        Ext.nd.UIView.superclass.initComponent.call(this);
-        
 
-        
+        Ext.nd.UIView.superclass.initComponent.call(this);
+
+
+
     },
 
     onRender : function(ct, position) {
@@ -198,33 +198,33 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
          * is where fbar for the buttons gets setup
          */
         this.setupButtons();
-        
+
 },
-    
+
     addEventListeners : function() {
-        
+
         // for such things as opening a doc from the view
         this.on('rowdblclick', this.gridHandleRowDblClick, this);
-        
+
         // headerclick, to handle switching to another view
         this.on('headerclick', this.gridHandleHeaderClick, this, true);
-        
+
         // keydown, for things like 'Quick Search', <delete> to delete, <enter> to open a doc
         this.on('keypress', this.gridHandleKeyDown, this, true);
-        
+
         // rightclick, to give a context menu for things like 'document properties, copy, paste, delete, etc'
         this.on('rowcontextmenu', this.gridHandleRowContextMenu, this, true);
-    
+
     },
-    
+
     // private
     setupToolbars : function() {
 
         // the actionbar/toolbar plugins
         this.getPlugins();
-        
+
         var tbId = 'xnd-view-toolbar-' + Ext.id();
-        
+
         // if a tbar was passed in, just use that and add the plugins to it
         if (this.tbar) {
             if (Ext.isArray(this.tbar)) {
@@ -274,11 +274,11 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             }
         }
     },
-    
+
     setupButtons : function() {
- 
+
         // handle special case of 'buttons' and 'fbar'
-        if (this.fbar || this.buttons) { 
+        if (this.fbar || this.buttons) {
             /*
              * you can only have one and if buttons exist they will
              * supersede fbar.  however, keep in mind that the code
@@ -286,17 +286,17 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
              * items array to buttons.  So we only need to
              * add uiDocument and uiView to fbar
              */
-            
+
             // make sure it exists (it should but just in case
             if (this.fbar) {
-                this.fbar.uiView = this;            
+                this.fbar.uiView = this;
             }
         }
-        
+
     }, // eo setupToolbars
-    
+
     getPlugins : function(){
-    
+
         // category combo plugin
         if (this.showCategoryComboBox) {
             var cp = new Ext.nd.SingleCategoryCombo({
@@ -309,13 +309,13 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                 this.category = '';
             }
             if (this.showCategoryComboBoxPosition == 'top') {
-                this.tbarPlugins.push(cp);       
+                this.tbarPlugins.push(cp);
             } else {
                 this.bbarPlugins.push(cp);
             }
         } // eo showCategoryComboBox plugin
-            
-        
+
+
         // search plugin
         if (this.showSearch) {
             var sp = new Ext.nd.SearchPlugin(this)
@@ -323,25 +323,25 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                 this.tbarPlugins.push(sp)
             } else {
                 this.bbarPlugins.push(sp)
-            }            
+            }
         } // eo showSearch plug
-        
+
     }, // eo getPlugins
-    
+
     // private
     setupSelectionModel : function() {
-        
+
         // if the 'sm' shortcut was used then move that to selModel
         if (this.sm) {
             this.selModel = this.sm;
             delete this.sm;
         }
 
-        // if the developer hasn't specified their own selection model 
+        // if the developer hasn't specified their own selection model
         // then we need to
         if (!this.selModel) {
             switch (this.selModelConfig.type) {
-                
+
                 case 'checkbox':
                   this.selModel = new Ext.grid.CheckboxSelectionModel(this.selModelConfig);
                   this.cols.push(this.selModel);
@@ -355,18 +355,18 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                 default:
                   this.selModel = new Ext.grid.RowSelectionModel(this.selModelConfig);
                   break;
-                  
+
             } // eo switch
         } // eo if
 
-        
+
     },
-    
+
     gridHandleRowDblClick: function(grid, rowIndex, e, bEditMode){
-    
+
         //var row = grid.getSelectionModel().getSelected();
         var row = this.getSelectedDocument(rowIndex);
-        
+
         // if we have an unid then the user is doubleclicking on a doc and not a
         // category
         // so fire the beforeopendocument event to see if the developer wants us
@@ -379,7 +379,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             }
         }
     },
-    
+
     // private - to handle expand/collapse of categories and responses
     gridHandleCellClick: function(grid, rowIndex, colIndex, e){
         var ecImg = Ext.get(e.getTarget());
@@ -390,7 +390,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         var lastCount = ds.lastOptions.params.count;
         lastCount = (typeof lastCount == 'undefined') ? this.count : lastCount;
         var record = ds.getAt(rowIndex);
-        
+
         if (ecImg.dom.tagName == 'IMG') {
             cellCat = ecImg.findParent('td.xnd-view-category');
             cell = cellCat;
@@ -446,44 +446,44 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             // categories
         }
     },
-    
+
     // private
     gridHandleKeyDown: function(e){
         if (e.getTarget().name == 'xnd-vw-search') {
             return;
         }
         var me = this,
-        	sm, ds, node, row, rowIndex, unid, target,
-        	keyCode = e.browserEvent.keyCode,
-        	charCode = e.charCode;
-        
+            sm, ds, node, row, rowIndex, unid, target,
+            keyCode = e.browserEvent.keyCode,
+            charCode = e.charCode;
+
         target = e.getTarget();
         sm = me.getSelectionModel();
         row = sm.selections.itemAt(sm.selections.length-1);
         ds = me.getStore();
         rowIndex = (row && row.unid && ds && ds.data) ? ds.data.findIndex('unid', row.unid) : -1;
-        
+
         // for now, we won't worry about the altKey
         if (e.altKey) {
             return;
         }
-        
+
         // if Ctrl+E
         if (e.ctrlKey && keyCode == 69) {
             me.openDocument(me, rowIndex, e, true);
             return;
         }
-        
+
         // for now, we won't worry about all other ctrlKey clicks
         if (e.ctrlKey) {
             return;
         }
-        
+
         // we don't worry about the shift key, unless another key is typed
         if (e.shiftKey && keyCode == 16) {
             return;
         }
-        
+
         switch (keyCode) {
             case e.RETURN:
                 me.openDocument(me, rowIndex, e);
@@ -493,7 +493,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                     me.deleteDocument(me, rowIndex, e);
                 }
                 break;
-                
+
             case e.BACKSPACE:
             case e.DOWN:
             case e.ESC:
@@ -506,8 +506,8 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             case e.UP:
             case e.TAB:
                 break;
-                
-            // in the Notes client toggling the space bar 
+
+            // in the Notes client toggling the space bar
             // will toggle whether the doc is selected or not in a view
             case e.SPACE:
                 if (sm.isSelected(rowIndex)) {
@@ -517,77 +517,77 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                     sm.selectRow(rowIndex);
                 }
                 break;
-                
-        	// default is to capture the keys entered and then show the quick search dialog
+
+            // default is to capture the keys entered and then show the quick search dialog
             default:
-            	me.quickSearchKeyStrokes.push(charCode || keyCode);
-            	me.showQuickSearchWindow();      	
+                me.quickSearchKeyStrokes.push(charCode || keyCode);
+                me.showQuickSearchWindow();
         }
     },
-    
+
     // private
     showQuickSearchWindow: function(buf) {
-		
-		var me = this;
-    	if (!me.quickSearchWindow) {
-			me.quickSearchField = new Ext.form.TextField({itemId: 'quickSearchInput'});
-			me.quickSearchWindow = new Ext.Window(Ext.apply({
-				border: false,
-				layout: 'fit',
-				closeAction: 'hide',
-				title: 'Starts with...',
-				defaultButton : me.quickSearchField,
-				items: [me.quickSearchField],
-				buttons: [{
-					text: 'OK',
-					handler: me.quickSearch,
-					scope: me
-				}, {
-					text: 'Cancel',
-					scope: me,
-					handler: function() {
-						me.quickSearchWindow.hide();
-					}
-				}],
-				listeners: {
-					show: function() {
-						for (var i = 0, len = me.quickSearchKeyStrokes.length; i<len; i++) {
-							var v = me.quickSearchKeyStrokes.pop();
-							me.quickSearchField.el.dom.value += String.fromCharCode(v);
-						}	
-					},
-					hide: function() {
-						me.quickSearchField.setValue('');	
-					},
-					scope: me
-				}
-			}, me.quickSearchConfig));
-		}
-		me.quickSearchWindow.show();
+
+        var me = this;
+        if (!me.quickSearchWindow) {
+            me.quickSearchField = new Ext.form.TextField({itemId: 'quickSearchInput'});
+            me.quickSearchWindow = new Ext.Window(Ext.apply({
+                border: false,
+                layout: 'fit',
+                closeAction: 'hide',
+                title: 'Starts with...',
+                defaultButton : me.quickSearchField,
+                items: [me.quickSearchField],
+                buttons: [{
+                    text: 'OK',
+                    handler: me.quickSearch,
+                    scope: me
+                }, {
+                    text: 'Cancel',
+                    scope: me,
+                    handler: function() {
+                        me.quickSearchWindow.hide();
+                    }
+                }],
+                listeners: {
+                    show: function() {
+                        for (var i = 0, len = me.quickSearchKeyStrokes.length; i<len; i++) {
+                            var v = me.quickSearchKeyStrokes.pop();
+                            me.quickSearchField.el.dom.value += String.fromCharCode(v);
+                        }
+                    },
+                    hide: function() {
+                        me.quickSearchField.setValue('');
+                    },
+                    scope: me
+                }
+            }, me.quickSearchConfig));
+        }
+        me.quickSearchWindow.show();
 
     },
-    
+
     // private
     quickSearch: function(btn, e){
         var ds = this.getStore(),
-        	text = this.quickSearchField.getValue();
-		// first, remove the start param from the lastOptions.params
-		delete ds.lastOptions.params.start;
-		// next, load dataSrource, passing the startkey param
-		ds.load({
-			params: Ext.apply(ds.lastOptions.params, {startkey: text})
-		}); // append the startkey param to the existing params (ds.lastOptions)
-		this.quickSearchWindow.hide();
+            text = this.quickSearchField.getValue();
+        // first, remove the start param from the lastOptions.params
+        delete ds.lastOptions.params.start;
+        // next, load dataSrource, passing the startkey param
+        ds.load({
+            params: Ext.apply(ds.lastOptions.params, {startkey: text})
+        }); // append the startkey param to the existing params (ds.lastOptions)
+        this.quickSearchWindow.hide();
     },
-    
+
     // private
     gridHandleRowContextMenu: function(grid, rowIndex, e){
         e.stopEvent();
-        
+
         var menu = new Ext.menu.Menu({
             id: 'xnd-context-menu'
         });
-        
+
         /*
          * TODO: add this back in at a later date and make it
          * configurable on whether to include this or not
@@ -610,7 +610,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             handler: this.gridContextMenuOpenDocument,
             scope: this
         });
-        
+
         /*
          * TODO: add this back in at a later date
          * menu.addSeparator();
@@ -620,14 +620,14 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
          *    scope: this
          * });
          */
-        
+
         // tell menu which row is selected and show menu
         menu.grid = grid;
         menu.rowIndex = rowIndex;
         var coords = e.getXY();
         menu.showAt([coords[0], coords[1]]);
     },
-    
+
     // private
     gridContextMenuSearchView: function(){
         if (!this.showSearch) {
@@ -637,7 +637,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             Ext.MessageBox.prompt('Search View', 'Query:', this.handleContextMenuSearch, this);
         }
     },
-    
+
     // private
     handleContextMenuSearch: function(btn, text){
         if (btn == 'ok' && text) {
@@ -645,7 +645,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             this.handleViewSearch();
         }
     },
-    
+
     // private
     gridContextMenuOpenDocument: function(action, e){
         var grid = action.parentMenu.grid;
@@ -653,13 +653,13 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         var bEditMode = action.editMode;
         this.openDocument(grid, rowIndex, e, bEditMode);
     },
-    
+
     // private
     gridContextMenuShowDocumentPropertiesDialog: function(){
         Ext.MessageBox.alert('Document Properties', 'In a future release, you will see a document properties box.');
         return;
     },
-    
+
     // private
     gridDeleteDocumentSuccess: function(response, options){
         var row = options.row;
@@ -674,13 +674,13 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         }
         ds.remove(row);
     },
-    
-    
+
+
     // private
     gridHandleHeaderClick: function(grid, colIndex, e){
-    
+
         var config, newView;
-        
+
         /* check to see if the grid is directly part of a region in a border
          * layout, if so, we can NOT dynamically remove and add the region
          * instead, the developer needs to nest the Ext.nd.UIView in a panel by
@@ -692,11 +692,11 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                 // first, let's stop the propagation of this event so that the
                 // sort events don't try and run as well
                 e.stopPropagation();
-                
+
                 // get the url to the db this view is in
                 var dbUrl = this.viewUrl;
                 dbUrl = dbUrl.substring(0, dbUrl.lastIndexOf('/') + 1);
-                
+
                 /* make sure to delete the old viewName property
                  * and the initialConfig property
                  * otherwise, viewUrl won't be used
@@ -710,26 +710,26 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                 delete grid.viewName;
                 delete this.initialConfig.viewName;
                 delete grid.initialConfig.viewName;
-                
+
                 // delete the current grid
                 if (grid.ownerCt && grid.ownerCt.remove) {
-                
+
                     // make a new config for the new view
                     config = {
                         viewUrl: dbUrl + colConfig.resortviewunid
                     };
-                    
+
                     Ext.applyIf(config, grid.initialConfig);
-                    
+
                     // next, get the index of the old view
                     // and then remove it
                     var o = grid.ownerCt;
                     var idx = o.items.indexOf(grid);
                     o.remove(grid, true);
-                    
+
                     // now create this new view at the same index
                     newView = o.insert(idx, new Ext.nd.UIView(config));
-                    
+
                     // and now show it by calling the show method
                     // if one exists for this component
                     // definitely necessary in cases where new panels
@@ -738,37 +738,37 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                         newView.show();
                     }
                     o.doLayout();
-                    
+
                 }
                 else {
-                
+
                     // this is for cases where the user has added the grid
                     // to a div using renderTo : 'myDiv'
-                    
+
                     // get a reference to the container that the view
                     // currently is rendered
                     var renderTo = grid.container;
-                    
+
                     // make a new config for the new view
                     config = Ext.applyIf({
                         viewUrl: dbUrl + colConfig.resortviewunid,
                         renderTo: renderTo
                     }, grid.initialConfig);
-                    
+
                     // destory the old UIView
                     grid.destroy();
-                    
+
                     // now add this new UIView
                     newView = new Ext.nd.UIView(config);
                     newView.on('render', function(){
                         newView.doLayout();
                     }, this);
-                    
+
                 }
                 // to make sure not to call Ext's onHeaderClick which does the
                 // sorting
                 return false;
-                
+
             }
             else {
                 // ok, this column is not set to 'change view' OR this column
@@ -781,25 +781,25 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             // ok, grid is directly in a boder layout's region so we can't
             // 'change
             // view' so just return true so Ext's normal onHeaderClick is called
-            
+
             // TODO: need a way to handle when a grid is in a region
             // within a border layout. however, for now, we can just
             // tell users to add the UIView to the items array of the region
             // instead of directly in the region
             return true;
-            
+
         } // eo if (!grid.region)
     },
-    
+
     editDocument : function(){
         // just calling openDocument and passing
         // in true for editMode
         this.openDocument(this, null, null, true);
     },
-    
+
     openDocument: function(grid, rowIndex, e, bEditMode){
 
-        
+
         // if length == 1 then we came from an @Command converted action button
         // if length == 0 then openDocument was called directly
         if (arguments.length <= 1) {
@@ -807,50 +807,50 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             grid = this;
             rowIndex = null;
             e = null; // not sure how to get the event so we'll just set it to null;
-        } 
-            
+        }
+
         //var row = grid.getSelectionModel().getSelected();
         var row = this.getSelectedDocument(rowIndex);
         var mode = (bEditMode) ? '?EditDocument' : '?OpenDocument';
-        
+
         if (row == undefined) {
             return; // can't open a doc if a row is not selected so bail
         }
-        
+
         // we have a row so continue
         // if a unid does not exist this row is a category so bail
         if (!row.unid) {
             return;
         }
-        
+
         if (this.fireEvent('beforeopendocument', grid, rowIndex, e, bEditMode) !== false) {
-	        var panelId = 'pnl-' + row.unid;
-	        var link = this.viewUrl + '/' + row.unid + mode;
-	        var target = this.getTarget();
-	        
-	        // if no target then just open in a new window
-	        if (!target) {
-	            window.open(link);
-	        }
-	        else {
-	        
-	            // open doc in an iframe
-	            // we set the 'uiView' property to 'this' so that from a doc, 
-	            // we can easily get a handle to the view so we can do such 
-	            // things as refresh, etc.
-	            Ext.nd.util.addIFrame({
-	                target: target || this.ownerCt,
-	                uiView: this,
-	                url: link,
-	                id: row.unid
-	            });
-	            
-	        } // eo if (!target)
-		}  // if fire beforeopendocument event
+            var panelId = 'pnl-' + row.unid;
+            var link = this.viewUrl + '/' + row.unid + mode;
+            var target = this.getTarget();
+
+            // if no target then just open in a new window
+            if (!target) {
+                window.open(link);
+            }
+            else {
+
+                // open doc in an iframe
+                // we set the 'uiView' property to 'this' so that from a doc,
+                // we can easily get a handle to the view so we can do such
+                // things as refresh, etc.
+                Ext.nd.util.addIFrame({
+                    target: target || this.ownerCt,
+                    uiView: this,
+                    url: link,
+                    id: row.unid
+                });
+
+            } // eo if (!target)
+        }  // if fire beforeopendocument event
     },
-    
+
     getViewDesign: function() {
-        
+
         this.viewDesign = new Ext.nd.data.ViewDesign({
             dbPath : this.dbPath,
             viewName : this.viewName,
@@ -862,13 +862,13 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             callback : this.getViewDesignCB,
             scope : this
         })
-        
+
     },
-    
+
     // private
     getViewDesignCB: function(o){
-        
-        
+
+
         // get the properties we need
         this.store = this.viewDesign.store;
         this.isCategorized = this.viewDesign.dominoView.meta.isCategorized;
@@ -879,70 +879,70 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         this.isFolder = this.viewDesign.isFolder;
         this.ViewEntryRecord = this.viewDesign.ViewEntryRecord;
         this.viewEntryReader = this.viewDesign.viewEntryReader;
-        
-        
+
+
         /* if the view is set to allow for docs to be selected with checkbox AND
-         * the developer has not explicitly set this.selModelConfig.type 
-         * to something OTHER than'checkbox' then change the selModel to the 
+         * the developer has not explicitly set this.selModelConfig.type
+         * to something OTHER than'checkbox' then change the selModel to the
          * CheckboxSelectionModel and push that onto the cols array
          */
         if (this.selModelConfig.type === 'checkbox') {
             // do nothing if type is already 'checkbox' since the checkbox sm was added earlier already
         } else {
             // don't do this if type was explicitly set to something else
-            if (this.allowDocSelection && 
+            if (this.allowDocSelection &&
                 (typeof this.selModelConfig.type === 'undefined' ||
                 (typeof this.selModelConfig.type === 'string' && this.selModelConfig.type !== 'checkbox'))) {
 
-                // remove the grid's current rowclick event if it is using 
-                // our custom handleDDRowClick override 
+                // remove the grid's current rowclick event if it is using
+                // our custom handleDDRowClick override
                 this.un('rowclick', this.selModel.handleDDRowClick, this.selModel);
 
                 // now destroy the old selModel
                 if (this.selModel && this.selModel.destroy){
                     this.selModel.destroy();
                 }
-                        
+
                 // add in the new selection model
                 this.selModel = new Ext.grid.CheckboxSelectionModel(this.selModelConfig);
-                
+
                 // call the init manually (you are not supposed to do this since the grid
                 // does this automatically, but since we are changing the selModel on the
                 // fly, we need to do this now)
                 this.selModel.init(this);
 
-                /* 
+                /*
                  * this function is a copy/paste from the CheckboxSelectionModel
                  * and what it does it make sure that we have mousedown events
-                 * defined to capture clicking on the checkboxes 
+                 * defined to capture clicking on the checkboxes
                  */
                 this.on('getdesignsuccess', function(){
                     var view = this.grid.getView();
                     view.mainBody.on('mousedown', this.onMouseDown, this);
                     Ext.fly(view.innerHd).on('mousedown', this.onHdMouseDown, this);
                 }, this.selModel);
-        
-        
+
+
                 this.cols.length = 0; // make sure nothing is in our cols array
                 this.cols.push(this.selModel);
             }
-            
+
         } // eo if (this.selModelConfig.type === 'checkbox')
-        
+
         // add our cols from the viewDesign call and dominoRenderer or any custom renderers if defined
         for (var i=0; i < this.viewDesign.cols.items.length; i++) {
             var rendr = (this.renderers[i]) ? this.renderers[i] : this.dominoRenderer.createDelegate(this);
             var col = this.viewDesign.cols.items[i];
             col.renderer = rendr;
-            this.cols.push(col) ; 
+            this.cols.push(col) ;
         }
 
-        
- 
+
+
 
         this.colModel = new Ext.grid.ColumnModel(this.cols);
-        
-        
+
+
         if (this.isCategorized && this.multiExpand) {
             //this.selModel = new Ext.nd.CategorizedRowSelectionModel();
             //console.log(['categorized', this]);
@@ -968,7 +968,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         // from our Ajax call to the Domino server since we used a 'dummy'
         // colModel to begin with
         this.reconfigure(this.store, this.colModel);
-        
+
         /* There may be cases where a grid needs to be rendered the firs time
          * without any data. A good example is a view where you want to show
          * the user the SingleCategoryCombo of choices but don't want to do an
@@ -984,7 +984,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                 }
             });
         }
-        
+
         if (this.showPagingToolbar) {
             var pg = this.getBottomToolbar();
             // now that we know if the view is categorized or not we need to let
@@ -995,7 +995,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                 pg.bind(this.store);
             }
         }
-        
+
         // update this.documents property when a row is selected/deselected
         this.selModel.on('rowselect', function(sm, rowIndex, rec){
             this.documents = this.getDocuments();
@@ -1003,15 +1003,15 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         this.selModel.on('rowdeselect', function(){
             this.documents = this.getDocuments();
         }, this);
-        
-        
+
+
         this.fireEvent('getdesignsuccess', this, this.store, this.colModel);
         this.fireEvent('open', this);
     },
-    
+
     // private
 
-    
+
     /**
      * Quick utility function to call reload on the grid's datastore
      */
@@ -1019,19 +1019,19 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         var store = this.getStore();
         if (store && store.proxy) {
             store.reload();
-        } 
+        }
     },
-    
+
     // private
     dominoRenderer: function(value, cell, record, rowIndex, colIndex, dataStore){
-    	
-    	
-    	// first check to see if this is a 'phantom' (new record being dynamically added
-    	// like in the RowEditor example and if so, just let it pass
-    	if (record.phantom === true) {
-    		return (typeof value == 'undefined') ? '' : value;
-    	}
-    	
+
+
+        // first check to see if this is a 'phantom' (new record being dynamically added
+        // like in the RowEditor example and if so, just let it pass
+        if (record.phantom === true) {
+            return (typeof value == 'undefined') ? '' : value;
+        }
+
         // TODO: need to figure out why we sometimes get a null for the value
         if (value == null) {
             return '';
@@ -1047,41 +1047,41 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
         }
 
         /* if value has a length of zero, assume this is a column in domino
-         * that is not currently displaying any data like a 'show response only' 
-    	 * column, or a multi-categorized view that is collapsed and you can't 
-    	 * see the data for the other columns
-    	 */
-        
+         * that is not currently displaying any data like a 'show response only'
+         * column, or a multi-categorized view that is collapsed and you can't
+         * see the data for the other columns
+         */
+
         var returnValue = '';
         var colConfig = this.colModel.config[colIndex];
         var metadata = record.metadata[colConfig.dataIndex];
-        
-        // if we don't have any data and this is not a response column 
+
+        // if we don't have any data and this is not a response column
         // nor a category column then just return a blank
         if (typeof value == 'string' && value == '' && !colConfig.response && !metadata.category) {
             return '';
         }
-        
+
         var args = arguments;
         var prevColConfig = (colIndex > 0) ? this.colModel.config[colIndex - 1] : null;
-        
+
         // get the viewentry for this record
         var viewentry = record.node;
         var dsItem = dataStore.data.items[rowIndex + 1];
         var nextViewentry = (dsItem) ? dsItem.node : null;
-        
+
         // indent padding
         var viewentryPosition = viewentry.attributes.getNamedItem('position').value;
         var viewentryLevel = viewentryPosition.split('.').length;
-        
+
         // for the expand/collapse icon width + indent width
         var sCollapseImage = '<img src="' + this.collapseIcon + '" style="vertical-align:bottom; margin-right:8px;"/>';
         var sExpandImage = '<img src="' + this.expandIcon + '" style="vertical-align:bottom; margin-right:8px;"/>';
         var indentPadding = (20 * viewentryLevel) + 'px';
         var indentPaddingNoIcon = (20 + (20 * viewentryLevel)) + 'px';
-        
+
         // has children and is a categorized column
-        var nextViewentryPosition, nextViewentryLevel, extraIndent; 
+        var nextViewentryPosition, nextViewentryLevel, extraIndent;
         if (record.hasChildren && colConfig.sortcategorize) {
             extraIndent = (metadata.indent) ? ((metadata.indent > 0) ? 'padding-left:' + metadata.indent * 20 + 'px;' : '') : '';
             cell.attr = 'style="position: absolute; width: auto; white-space: nowrap; ' + extraIndent + '"';
@@ -1102,7 +1102,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                 returnValue = sExpandImage + this.getValue(value, colConfig, record);
             }
         }
-        else 
+        else
             if (!record.isCategory && record.hasChildren && !record.isResponse && colConfig.response) {
                 // is NOT a category but has children and IS NOT a response doc BUT
                 // IS a response COLUMN
@@ -1123,7 +1123,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                     returnValue = sExpandImage;
                 }
             }
-            else 
+            else
                 if (record.hasChildren && record.isResponse && colConfig.response) {
                     // has children and IS a response doc
                     extraIndent = (metadata.indent) ? ((metadata.indent > 0) ? 'padding-left:' + (20 + (metadata.indent * 20)) + 'px;' : '') : '';
@@ -1145,7 +1145,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                         returnValue = sExpandImage + this.getValue(value, colConfig, record);
                     }
                 }
-                else 
+                else
                     if (!record.hasChildren && record.isResponse && colConfig.response) {
                         // does NOT have children and IS a response doc
                         cell.css = 'xnd-view-response';
@@ -1161,7 +1161,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                             var clearFloat = '';
                             for (var i = 0; i < value.length; i++) {
                                 tmpValue = value[i];
-                                
+
                                 if (isNaN(parseInt(tmpValue, 10)) || tmpValue == '0') {
                                     return '';
                                 }
@@ -1174,7 +1174,7 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                                     if (i == 0) {
                                         returnValue = tmpReturnValue;
                                     } else {
-                                    	returnValue = returnValue + separator + tmpReturnValue;
+                                        returnValue = returnValue + separator + tmpReturnValue;
                                     }
                                 }
                             }
@@ -1187,12 +1187,12 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                             returnValue = this.getValue(value, colConfig, record);
                         }
                     }
-        
+
         // now return our domino formatted value
         return returnValue;
-        
+
     },
-    
+
     // private
     getTarget : function() {
         if (this.target) {
@@ -1213,52 +1213,52 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             }
         }
     },
-    
+
     // private
     getValue: function(value, colConfig, record){
         var dataType, newValue, tmpDate, tmpDateFmt, separator, metadata;
         metadata = record.metadata[colConfig.dataIndex];
         separator = this.getListSeparator(colConfig);
         newValue = '';
-        
+
         // handle non-categorized columns
         if (colConfig.sortcategorize && value.length == 0) {
             newValue = this.notCategorizedText;
         }
-        
+
         // need to make sure value is an array
         // the loop below will format as needed
-        value = (Ext.isArray(value)) ? value : [''+value]; 
-        
-        
+        value = (Ext.isArray(value)) ? value : [''+value];
+
+
         for (var i = 0, len = value.length; i < len; i++) {
-        	var nbf = colConfig.numberformat;
+            var nbf = colConfig.numberformat;
             var sep = (i + 1 < len) ? separator : '';
             dataType = metadata.type; // set in the
             // XmlReader.getNamedValue method
             var tmpValue = value[i];
-            
+
             // handle columns set to show an icon a little differently
             if (colConfig.icon) {
                 if (isNaN(parseInt(tmpValue, 10)) || tmpValue == 0) {
                     return '';
                 }
                 else {
-                    // I believe domino only has view icon images 
-                	// from 1 to 186
+                    // I believe domino only has view icon images
+                    // from 1 to 186
                     newValue = (tmpValue < 10) ? '00' + tmpValue : (tmpValue < 100) ? '0' + tmpValue : (tmpValue > 186) ? '186' : tmpValue;
                     return '<img src="/icons/vwicn' + newValue + '.gif"/>';
                 }
             } else if (colConfig.totals == 'percentoverall' || colConfig.totals == 'percentparent') {
-            	return Ext.util.Format.round(100 * parseFloat(tmpValue), nbf.digits) + '%';
+                return Ext.util.Format.round(100 * parseFloat(tmpValue), nbf.digits) + '%';
             }
             else {
                 switch (dataType) {
-                	case 'datetimelist':
+                    case 'datetimelist':
                     case 'datetime':
                         var dtf = colConfig.datetimeformat;
                         if (typeof dtf.show == 'undefined') {
-                        	dtf.show = this.dateTimeFormats.show;
+                            dtf.show = this.dateTimeFormats.show;
                         }
                         if (tmpValue.indexOf('T') > 0) {
                             tmpDate = tmpValue.split(',')[0].replace('T', '.');
@@ -1287,22 +1287,22 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
                         break;
                     case 'numberlist':
                     case 'number':
-                    	tmpValue = parseFloat(tmpValue);
+                        tmpValue = parseFloat(tmpValue);
                         switch (nbf.format) {
-                        	case 'currency' :
+                            case 'currency' :
                                 tmpValue = Ext.isEmpty(tmpValue)? this.formatCurrencyFnc(0) : this.formatCurrencyFnc(tmpValue);
                                 break;
                                 break;
                             case 'fixed' :
                             case 'scientific' :
-                            	if (nbf.percent) {
-                            		tmpValue = Ext.util.Format.round(100 * tmpValue, nbf.digits) + '%';
-                            	} else {
-                            		tmpValue = Ext.util.Format.round(tmpValue, nbf.digits);
-                            	}
-                            	break;
+                                if (nbf.percent) {
+                                    tmpValue = Ext.util.Format.round(100 * tmpValue, nbf.digits) + '%';
+                                } else {
+                                    tmpValue = Ext.util.Format.round(tmpValue, nbf.digits);
+                                }
+                                break;
                             default :
-                            	tmpValue = tmpValue;
+                                tmpValue = tmpValue;
                         }
                         break;
                     default:
@@ -1316,8 +1316,8 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
 
     // private
     getListSeparator : function(colConfig) {
-    	var separator = '';
-    	
+        var separator = '';
+
         switch (colConfig.listseparator) {
             case 'none':
                 separator = '';
@@ -1337,10 +1337,10 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             default:
                 separator = '';
         }
-        
+
         return separator;
     },
-    
+
     // private
     removeFromContainer: function(){
         // first, try removing from the container if one exists, else, just
@@ -1352,13 +1352,13 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
             this.destroy();
         }
     },
-    
+
     /**
-     * Returns the selected records.  This mimics the NotesUIView.Documents 
-     * property that returns the selected documents from a view as a 
+     * Returns the selected records.  This mimics the NotesUIView.Documents
+     * property that returns the selected documents from a view as a
      * NotesDocumentCollection.
      * @return {Array} Array of selected records
-     */    
+     */
     getDocuments: function(){
         return this.getSelectionModel().getSelections();
     },
@@ -1368,27 +1368,27 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
      * @return {Record}
      */
     getSelectedDocument: function(rowIndex){
-        
+
         var doc;
-        
+
         if (rowIndex) {
-            doc = this.getStore().getAt(rowIndex);        
+            doc = this.getStore().getAt(rowIndex);
         } else {
-       
+
             var sm = this.getSelectionModel();
             var selections = sm.selections;
-        
+
             // use itemAt(selections.length-1) to get the last row/doc selected
             doc = sm.selections.itemAt(selections.length-1);
         }
-        
+
         if (doc && doc.unid) {
             return doc;
         } else {
             return undefined;
         }
     },
-    
+
     /**
      * Deselects all documents in a view.
      * @return {Void}
@@ -1396,33 +1396,33 @@ Ext.extend(Ext.nd.UIView, Ext.grid.GridPanel, {
     deselectAll : function() {
         this.getSelectionModel().clearSelections();
     },
-    
+
     /**
-     * Expands all levels of categories, subcategories, documents, 
-     * and responses within the view or folder. This mimics the 
+     * Expands all levels of categories, subcategories, documents,
+     * and responses within the view or folder. This mimics the
      * ViewExpandAll @Command
-     */    
+     */
     expandAll : function() {
-    	this.ecAll('expandview'); 
+        this.ecAll('expandview');
     },
 
     /**
-     * Collapses all levels of categories, subcategories, documents, 
-     * and responses within the view or folder. This mimics the 
+     * Collapses all levels of categories, subcategories, documents,
+     * and responses within the view or folder. This mimics the
      * ViewCollapseAll @Command
-     */    
+     */
     collapseAll : function() {
-        this.ecAll('collapseview'); 	
+        this.ecAll('collapseview');
     },
-    
+
     // private
     ecAll : function(param) {
-    	var ds = this.getStore();
-    	var config = {};
+        var ds = this.getStore();
+        var config = {};
         config[param] = 'true';
-        ds.load({params: config});     
+        ds.load({params: config});
     }
-    
-    
+
+
 });
 Ext.reg('xnd-uiview', Ext.nd.UIView);

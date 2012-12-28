@@ -1,10 +1,17 @@
+/**
+ * Custom store to load Domino View categories 'on-the-fly'
+ */
 Ext.nd.data.CategorizedStore = function(config){
     Ext.nd.data.CategorizedStore.superclass.constructor.call(this, config);
-    
+
     this.addEvents('categoryload');
 };
 
 Ext.extend(Ext.nd.data.CategorizedStore, Ext.nd.data.ViewStore, {
+
+    /**
+     * Makes a server request to load just the data for a category being expanded
+     */
     loadCategory: function(position, options){
         var rec = this.findRecordByPosition(position);
         if (!rec.isCategory || rec.childrenRendered) {
@@ -12,8 +19,8 @@ Ext.extend(Ext.nd.data.CategorizedStore, Ext.nd.data.ViewStore, {
         }
         // TODO: need to add multiExpandCount
         this.proxy.doRequest(
-        	'read', // action 
-        	null, // record
+            'read', // action
+            null, // record
             {
                 start: position,
                 expand: position,
@@ -27,7 +34,10 @@ Ext.extend(Ext.nd.data.CategorizedStore, Ext.nd.data.ViewStore, {
             }, options) // options
         );
     },
-    
+
+    /**
+     * Loads the category records into the store
+     */
     loadCategoryRecords: function(o, options, success){
         if (!o || success === false || !options) {
             if (success !== false) {
@@ -38,7 +48,7 @@ Ext.extend(Ext.nd.data.CategorizedStore, Ext.nd.data.ViewStore, {
             }
             return;
         }
-        
+
         var r = o.records;
         var recs = [];
         if (options.rec) {
@@ -49,7 +59,7 @@ Ext.extend(Ext.nd.data.CategorizedStore, Ext.nd.data.ViewStore, {
                     //          r[i].parent = options.rec.position; // Set parent = to position which is also the id
                 }
             }
-            
+
             options.rec.children = recs;
             options.rec.childrenRendered = true;
             this.fireEvent("datachanged", this);
@@ -59,7 +69,7 @@ Ext.extend(Ext.nd.data.CategorizedStore, Ext.nd.data.ViewStore, {
             options.callback.call(options.scope || this, r, options, true);
         }
     },
-    
+
     findRecordByPosition: function(position){
         var pos = position.split('.');
         var rec = this.getAt(pos[0] - 1);
@@ -75,15 +85,15 @@ Ext.extend(Ext.nd.data.CategorizedStore, Ext.nd.data.ViewStore, {
         }
         return rec;
     },
-    
+
     findRecordByIndex: function(index){
-        // console.log(['frbi', this.flatRecords()]);  
+        // console.log(['frbi', this.flatRecords()]);
         var records = this.flatRecords();
         return records[index];
     },
-    
-    
-    
+
+
+
     flatRecords: function(){
         var recs = [];
         for (var i = 0; i < this.data.length; i++) {
@@ -91,7 +101,7 @@ Ext.extend(Ext.nd.data.CategorizedStore, Ext.nd.data.ViewStore, {
         }
         return recs;
     },
-    
+
     findChildren: function(rec){
         var buf = [rec];
         if (rec && rec.children) {
@@ -101,8 +111,8 @@ Ext.extend(Ext.nd.data.CategorizedStore, Ext.nd.data.ViewStore, {
         }
         return buf;
     },
-    
-    
+
+
     getCount: function(){
         var ttl = 0;
         for (var i = 0; i < this.data.length; i++) {
@@ -110,7 +120,7 @@ Ext.extend(Ext.nd.data.CategorizedStore, Ext.nd.data.ViewStore, {
         }
         return ttl;
     },
-    
+
     countChildRecords: function(rec){
         if (rec && rec.children) {
             var ttl = 1;

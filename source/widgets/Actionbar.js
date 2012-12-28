@@ -9,69 +9,70 @@
  * call this code explicitly for the actionbar to be created.  The actionbar for forms
  * and views will automatically be created for you.  But if you need to create an
  * actionbar explicity, then follow the examples below.
- * Example standalone usage:<pre><code>
- new Ext.nd.Actionbar({
- id:'xnd-view-toolbar-'+Ext.id(),
- renderTo: 'myToolbarDiv',
- noteType: 'view',
- noteName: this.viewName,
- createActionsFrom: 'document'
- })</code></pre>
- * Example usage as a plugin to an existing toolbar (note that you must set the isPlugin property to true):<pre><code>
- new Ext.Toolbar({
- items : [{
- text: 'button1',
- handler: function(){
- alert('you clicked button1');
- }
- }, {
- text: 'button2',
- handler: function(){
- alert('you clicked button 2');
- }
- }],
- plugins: new Ext.nd.Actionbar({
- isPlugin: true,
- noteType: 'view',
- noteName: this.viewName,
- createActionsFrom: 'document'
- })
- })</code></pre>
+ *
+ * Example standalone usage:
+ *
+        new Ext.nd.Actionbar({
+            id:'xnd-view-toolbar-'+Ext.id(),
+            renderTo: 'myToolbarDiv',
+            noteType: 'view',
+            noteName: this.viewName,
+            createActionsFrom: 'document'
+        });
+ *
+ * Example usage as a plugin to an existing toolbar (note that you must set the isPlugin property to true):
+ *
+        new Ext.Toolbar({
+            items : [
+                {
+                    text: 'button1',
+                    handler: function(){
+                        alert('you clicked button1');
+                    }
+                },
+                {
+                    text: 'button2',
+                    handler: function(){
+                        alert('you clicked button 2');
+                    }
+                }
+            ],
+            plugins: new Ext.nd.Actionbar({
+                isPlugin: true,
+                noteType: 'view',
+                noteName: this.viewName,
+                createActionsFrom: 'document'
+            })
+        });
+ *
  * Also note that the Ext.nd.Actionbar can convert the following formulas for you into Ext actions:
- * <ul>at Commands supported for Views:
- *      <li>Command([Compose])</li>
- *      <li>Command([EditDocument])</li>
- *      <li>Command([OpenDocument])</li>
- *      <li>Command([FilePrint])</li>
- * </ul>
- * <ul>at Commands supported for Forms:
- *      <li>Command([Compose])</li>
- *      <li>Command([EditDocument])</li>
- *      <li>Command([OpenDocument])</li>
- *      <li>Command([FilePrint])</li>
- *      <li>Command([FileSave])</li>
- *      <li>Command([FileCloseWindow])</li>
- * </ul>
- * @cfg {String} noteType
- * Current options are 'form' or 'view' this lets the toolbar know how to handle certain
- * actions based off from where it is located
- * @cfg {String} noteName
- * The name of the form or view that will be used to access URL commands
- * @cfg {String} createActionsFrom
- * Can be either 'document' or 'dxl'.  When using noteType: 'form' set to 'document' to convert the HTML actionbar instead of
- * grabbing the form's Dxl and transforming it (Defaults to 'dxl')
- * @cfg {Boolean} convertFormulas
- * Whether you want basic domino Formulas converted over to JavaScript code. Currently
- * only single formulas are supported. (Defaults to true)
- * @cfg {Boolean} removeEmptyActionbar
- * Whether you want to remove an actionbar that does not contain any actions
+ *
+ * ## @Commands supported for Views:
+ * - Command([Compose])
+ * - Command([EditDocument])
+ * - Command([OpenDocument])
+ * - Command([FilePrint])
+ *
+ * ## @Commands supported for Forms:
+ * - Command([Compose])
+ * - Command([EditDocument])
+ * - Command([OpenDocument])
+ * - Command([FilePrint])
+ * - Command([FileSave])
+ * - Command([FileCloseWindow])
+ *
+ * @cfg {String} noteType Current options are 'form' or 'view' this lets the toolbar know how to handle certain actions based off from where it is located
+ * @cfg {String} noteName The name of the form or view that will be used to access URL commands
+ * @cfg {String} createActionsFrom Can be either 'document' or 'dxl'.  When using noteType: 'form' set to 'document' to convert the HTML actionbar instead of grabbing the form's Dxl and transforming it (Defaults to 'dxl')
+ * @cfg {Boolean} convertFormulas Whether you want basic domino Formulas converted over to JavaScript code. Currently only single formulas are supported. (Defaults to true)
+ * @cfg {Boolean} removeEmptyActionbar Whether you want to remove an actionbar that does not contain any actions
  * @constructor
  * Create a new Actionbar
  */
 Ext.nd.Actionbar = function(config){
     this.sess = Ext.nd.Session;
     this.db = this.sess.currentDatabase;
-    
+
     // defaults
     this.dbPath = this.db.webFilePath;
     this.noteType = '';
@@ -81,7 +82,7 @@ Ext.nd.Actionbar = function(config){
     this.actions = [];
     this.useViewTitleFromDxl = false;
     this.convertFormulas = true;
-    
+
     Ext.apply(this, config);
     Ext.nd.Actionbar.superclass.constructor.call(this);
 
@@ -89,9 +90,9 @@ Ext.nd.Actionbar = function(config){
     if (!Ext.isEmpty(this.useDxl) && this.useDxl == false) {
         this.createActionsFrom = 'document';
     }
-    
+
     this.noteUrl = (this.noteUrl) ? this.noteUrl : this.dbPath + this.noteName;
-    
+
     /* make sure we have a noteName */
     if (this.noteName == '') {
         var vni = this.noteUrl.lastIndexOf('/') + 1;
@@ -104,44 +105,44 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
 
     /* plugins call init */
     init: function(toolbar){
-    
+
         this.toolbar = toolbar;
-        
+
         /* if the parent toolbar is an Ext.nd.Actionbar
-         * then we need to wait to add the actions 
+         * then we need to wait to add the actions
          * until the parent is done with adding its actions
          */
-        
+
         if (this.toolbar.getXType() == 'xnd-actionbar') {
             this.toolbar.on('actionsloaded', this.addActions, this);
         }
         else {
             this.addActions();
         }
-        
+
     },
-    
+
     // private
     initComponent : function(){
-    
+
         this.addEvents(        /**
          * @event actionsloaded Fires after all actions have been added to toolbar
          * @param {Ext.nd.Actionbar} this
          */
         'actionsloaded');
-        
-        
-        /* 
+
+
+        /*
          * do this so that if used as a plugin or not
-         * both ways will have a 'toolbar' property that 
-         * references the toolbar, but only call the 
+         * both ways will have a 'toolbar' property that
+         * references the toolbar, but only call the
          * addActions method if the isPlugin property
          * is not set to true.  Otherwise, this actionbar
          * is being used as a plugin and the init method
          * will be called and the actions added to the
          * existing toolbar
-         */ 
-        
+         */
+
        // make sure not a plugin
        // TODO: need to refactor this code and not have it work both ways
        // one way as a plugin and another as a Toolbar
@@ -149,36 +150,36 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
             Ext.nd.Actionbar.superclass.initComponent.call(this);
             this.toolbar = this;
         }
-        
-    },
-    
-    onRender : function(ct, position){
-    
-        Ext.nd.Actionbar.superclass.onRender.call(this, ct, position);
-        
-    },
-    
-    afterRender : function() {
-    	
-    	// need to go ahead and make sure we set the layout 
-	   	if (Ext.isString(this.layout)) {
-			this.layout = new Ext.Container.LAYOUTS[this.layout.toLowerCase()](this.layoutConfig);
-		}
-		this.setLayout(this.layout);
-		Ext.nd.Actionbar.superclass.afterRender.apply(this, arguments);
-		
-		// needed to do this AFTER our layout stuff above
-		// otherwise, a call to doLayout when adding items after the
-		// actionsloaded event (which occurs at the end of addActions) 
-		// will not work
-		this.addActions();
-        
 
     },
-    
+
+    onRender : function(ct, position){
+
+        Ext.nd.Actionbar.superclass.onRender.call(this, ct, position);
+
+    },
+
+    afterRender : function() {
+
+        // need to go ahead and make sure we set the layout
+        if (Ext.isString(this.layout)) {
+            this.layout = new Ext.Container.LAYOUTS[this.layout.toLowerCase()](this.layoutConfig);
+        }
+        this.setLayout(this.layout);
+        Ext.nd.Actionbar.superclass.afterRender.apply(this, arguments);
+
+        // needed to do this AFTER our layout stuff above
+        // otherwise, a call to doLayout when adding items after the
+        // actionsloaded event (which occurs at the end of addActions)
+        // will not work
+        this.addActions();
+
+
+    },
+
     // private
     addActions : function(){
-        
+
         /* first, get the domino actionbar */
         if (this.noteType == '' || this.noteType == 'view') {
             this.dominoActionbar.actionbar = false;
@@ -187,26 +188,26 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
             this.dominoActionbar.hide();
         }
 
-        
+
         if (this.createActionsFrom == 'document') {
             this.addActionsFromDocument();
         }
         else if(this.noteName === '') {
-        	
+
             /* do nothing since we don't have a valid noteName
              * this could be unintentional or intentional in the case
-             * that a tbar was passed to a UIView/UIDocument and we always wrap 
+             * that a tbar was passed to a UIView/UIDocument and we always wrap
              * that in an Ext.nd.Actionbar so we can expose the
              * methods of Ext.nd.Actionbar like getUIView() and getUIDocument()
              * however, do need to call this event!
              */
-        	
+
             this.fireEvent('actionsloaded', this.toolbar);
         } else {
             this.addActionsFromDxl();
         }
     },
-    
+
     // private
     addActionsFromDxl : function(){
         Ext.Ajax.request({
@@ -218,26 +219,26 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
             url: Ext.nd.extndUrl + 'DXLExporter?OpenAgent&db=' + this.dbPath + '&type=' + this.noteType + '&name=' + this.noteName
         });
     },
-    
-    // private   
+
+    // private
     addActionsFromDxlSuccess : function(o){
         var arActions;
         var q = Ext.DomQuery;
         var response = o.responseXML;
         arActions = q.select('action', response);
-        
+
         /* hack to get the correct view title */
         if (this.noteType == 'view' && this.getTarget() && this.useViewTitleFromDxl) {
             this.setViewName(response);
         }
-        
+
         var curLevelTitle = '';
         var isFirst = false;
-        
+
         for (var i = 0; i < arActions.length; i++) {
             var show = true;
             var action = arActions[i];
-            
+
             var title = q.selectValue('@title', action, "");
             var hidewhen = q.selectValue('@hide', action, null);
             var showinbar = q.selectValue('@showinbar', action, null);
@@ -245,7 +246,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
             var icon = q.selectNumber('@icon', action, null);
             var imageRef = q.selectValue('imageref/@name', action, null);
             var syscmd = q.selectValue('@systemcommand', action, null);
-            
+
             /* SHOW? check hidewhen */
             if (hidewhen) {
                 var arHide = hidewhen.split(' ');
@@ -258,23 +259,23 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                     }
                 }
             }
-            
+
             /* SHOW? check 'Include action in Action bar' option */
             if (showinbar == 'false') {
                 show = false;
             }
-            
+
             /* SHOW? check lotusscript */
             var lotusscript = Ext.DomQuery.selectValue('lotusscript', action, null);
             if (lotusscript) {
                 show = false;
             }
-            
+
             if (icon) {
                 if (icon < 10) {
                     imageRef = "00" + icon;
                 }
-                else 
+                else
                     if (icon < 100) {
                         imageRef = "0" + icon;
                     }
@@ -288,20 +289,20 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                     imageRef = (imageRef.indexOf('/') == 0) ? imageRef : this.dbPath + imageRef;
                 }
             }
-            
+
             /* now go ahead and handle the actions we can show */
             if (show && syscmd == null) { /* for now we do not want to show system commands */
                 var slashLoc = title.indexOf('\\');
                 var isSubAction;
-                
+
                 if (slashLoc > 0) { /* we have a subaction */
                     isSubAction = true;
                     var arLevels = title.split('\\');
                     var iLevels = arLevels.length;
-                    
+
                     var tmpCurLevelTitle = title.substring(0, slashLoc);
                     title = title.substring(slashLoc + 1);
-                    
+
                     if (tmpCurLevelTitle != curLevelTitle) {
                         curLevelTitle = tmpCurLevelTitle
                         isFirst = true;
@@ -314,10 +315,10 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                     isSubAction = false;
                     curLevelTitle = '';
                 }
-                
+
                 var tmpOnClick = Ext.DomQuery.selectValue('javascript', action, null);
                 var handler = Ext.emptyFn;
-                
+
                 // the JavaScript onClick takes precendence
                 if (tmpOnClick) {
                     /* note that we now use createDelegate so we can change the scope
@@ -335,7 +336,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                         }
                     }().createDelegate(this);
                 }
-                else 
+                else
                     if (this.convertFormulas) {
                         // Handle known formulas
                         var formula = Ext.DomQuery.selectValue('formula', action, null);
@@ -381,7 +382,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                                     default:
                                         show = false; // For now hide unsupported commands
                                         // handler = this.unsupportedAtCommand.createDelegate(this,[formula]);
-                                
+
                                 } // end switch
                             } // end if (cmdFrm.length)
                         } // end if (formula)
@@ -392,7 +393,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                             // add separator
                             this.actions.push('-');
                         }
-                        
+
                         this.actions.push({
                             text: curLevelTitle,
                             menu: {
@@ -404,7 +405,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                                 }]
                             }
                         });
-                        
+
                     }
                     else {
                         // length-1 so we can get back past the separator and to the top level of the dropdown
@@ -415,14 +416,14 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                             handler: handler
                         });
                     }
-                    
+
                 }
                 else {
                     if (i > 0) {
                         // add separator
                         this.actions.push('-');
                     }
-                    
+
                     this.actions.push({
                         text: title,
                         cls: (icon || imageRef) ? 'x-btn-text-icon' : null,
@@ -431,19 +432,19 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                     });
                 } // end: if (isSubAction)
             } // end: if (show && syscmd == null)
-            
+
         } // end: for arActions.length
-        
+
         // now process these actions by adding to the toolbar and syncing the grid's size
         this.processActions();
-        
-        // now remove the domino actionbar        
+
+        // now remove the domino actionbar
         this.removeDominoActionbar();
-        
+
         // tell the listeners to actionsloaded that we are done
         this.fireEvent('actionsloaded', this.toolbar);
     },
-    
+
     /**
      * Override this method to deal with server communication issues as you please
      * @param {Object} res The Ajax response object
@@ -451,19 +452,19 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
     addActionsFromDxlFailure : function(res){
         // alert("Error communicating with the server");
     },
-    
+
     // private
     addActionsFromDocument : function(o){
         var arActions = [];
         var q = Ext.DomQuery;
-        
+
         if (this.dominoActionbar.actionbar) {
             arActions = q.select('a', this.dominoActionbar.actionbar);
         }
-        
+
         var curLevelTitle = '';
         var isFirst = false;
-        
+
         for (var i = 0; i < arActions.length; i++) {
             var action = arActions[i];
             var title = action.lastChild.nodeValue;
@@ -473,14 +474,14 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
             // if not and the path is an absolute path, use that, otherwise build the path
             imageRef = (imageRef == null) ? null : (imageRef && (imageRef.indexOf('/') == 0 || imageRef.indexOf('http') == 0)) ? imageRef : this.dbPath + imageRef;
             var cls = (title == null) ? 'x-btn-icon' : (imageRef) ? 'x-btn-text-icon' : null;
-            
+
             if (slashLoc > 0) { // we have a subaction
                 isSubAction = true;
                 var arLevels = title.split('\\');
                 var iLevels = arLevels.length;
                 var tmpCurLevelTitle = title.substring(0, slashLoc);
                 title = title.substring(slashLoc + 1);
-                
+
                 if (tmpCurLevelTitle != curLevelTitle) {
                     curLevelTitle = tmpCurLevelTitle
                     isFirst = true;
@@ -493,7 +494,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                 isSubAction = false;
                 curLevelTitle = '';
             }
-            
+
             // get the onclick and href attributes
             var handler, sHref, tmpOnClick, oOnClick, arOnClick;
             // sHref = q.selectValue('@href',action,''); // there's a bug in IE with getAttribute('href') so we can't use this
@@ -513,12 +514,12 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                 else {
                     tmpOnClick = ''
                 }
-                
+
                 // first, let's remove the beginning 'return' if it exists due to domino's 'return _doClick...' code that is generated to handle @formulas
                 if (tmpOnClick.indexOf('return _doClick') == 0) {
                     tmpOnClick = tmpOnClick.substring(7);
                 }
-                
+
                 // now, let's remove the 'return false;' if it exists since this is what domino usually adds to the end of javascript actions
                 arOnClick = tmpOnClick.split('\r');
                 var len = arOnClick.length;
@@ -531,7 +532,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                 }
                 tmpOnClick = arOnClick.join(' ');
             }
-            
+
             // assigne a handler
             var handler = function(){
                 var bleh = tmpOnClick;
@@ -539,8 +540,8 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                     return eval(bleh);
                 }
             }().createDelegate(this);
-            
-            
+
+
             // handle subActions
             if (isSubAction) {
                 // special case for the first one
@@ -549,7 +550,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                         // add separator
                         this.actions.push('-');
                     }
-                    
+
                     // add action
                     this.actions.push({
                         text: curLevelTitle,
@@ -562,7 +563,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                             }]
                         }
                     });
-                    
+
                     // subaction that is not the first one
                 }
                 else {
@@ -581,7 +582,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                     // add separator
                     this.actions.push('-');
                 }
-                
+
                 // add action
                 this.actions.push({
                     text: title,
@@ -593,28 +594,28 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
         } // end for arActions.length
         // now process these actions by adding to the toolbar and syncing the grid's size
         this.processActions();
-        
+
         // now delete the original actionbar (table) that was sent from domino
         this.removeDominoActionbar();
-        
+
         // tell the listeners to actionsloaded that we are done
         this.fireEvent('actionsloaded', this);
-        
+
     },
-    
+
     // private
     removeDominoActionbar : function() {
-        
+
         if (this.dominoActionbar.remove) {
             this.dominoActionbar.remove();
         }
     },
-    
+
     // private
     removeActionbar : function(){
         this.toolbar.destroy();
     },
-    
+
     // private
     syncGridSize : function(){
         // now make sure the bbar shows by syncing the grid and the grid's parent
@@ -624,14 +625,14 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                 this.toolbar.ownerCt.ownerCt.syncSize();
             }
         }
-        
+
     },
-    
+
     // private
     processActions : function(){
-    
+
         var nbrActions = this.actions.length;
-        
+
         if (nbrActions > 0) {
             Ext.each(this.actions, function(c){
                 this.toolbar.add(c);
@@ -651,18 +652,18 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
             }
         }
     },
-    
+
     // private
     // this is a hack to set the view name on the tab since view?ReadDesign doesn't give the view title
     setViewName : function(response){
         var q = Ext.DomQuery;
-        
+
         // now get the folder name or view name from folder/@name or view/@name
         var vwName = q.selectValue('view/@name', response);
         if (typeof vwName == 'undefined') {
             vwName = q.selectValue('folder/@name', response);
         }
-        
+
         if (!this.getUIView().showFullCascadeName) {
             // if any backslashes then only show the text after the last backslash
             var bsLoc = vwName.lastIndexOf('\\');
@@ -670,13 +671,13 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
                 vwName = vwName.substring(bsLoc + 1);
             }
         }
-        
+
         // now set the tab's title
         if (this.tabPanel) {
             this.tabPanel.activeTab.setTitle(vwName)
         }
     },
-    
+
     /**
      * Handler for @Command([Compose];'myform')
      * @param {String/Object} form the url accessible name for the form
@@ -686,9 +687,9 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
      * @cfg {String} target where to open the new form (defaults to the target set for Ext.nd.Actionbar)
      */
     openForm : function(options){
-        
+
         var formName, dbPath, isResponse, pUrl, target, title;
-        
+
         if (typeof options == 'string') {
             formName = options;
             dbPath = this.dbPath;
@@ -701,17 +702,17 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
             target = options.target || this.getTarget();
             title = options.title;
         }
-        
+
         pUrl = '';
-                
+
         if (isResponse) {
             var parentUNID = options.parentUNID || this.getParentUNID();
             var pUrl = (parentUNID !== '') ? '&parentUNID='+parentUNID : '';
         }
-        
+
         // set the url to the form
         var link = dbPath + formName + '?OpenForm' + pUrl;
-        
+
         // if no target then just open in a new window
         if (!target) {
             window.open(link);
@@ -727,7 +728,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
             });
         }
     },
-    
+
     /**
      * from a view, returns the selected document's UNID
      * from a document, returns the document's UNID
@@ -744,22 +745,22 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
             var uidoc = this.getUIDocument()
             parentUNID = (uidoc && uidoc.document && uidoc.document.universalID) ? uidoc.document.universalID : '';
         }
-        
+
         return parentUNID;
     },
-    
+
     /**
      * Handler for @Command([OpenDocument])
      * @param {Boolean} editMode true for edit, false for read mode
      */
     openDocument : function(editMode){
- 
+
         var target = this.getTarget();
         if (this.noteType == 'view') {
             this.getUIView().openDocument(editMode);
             return;
         }
-        
+
         if (editMode) {
             this.getUIDocument().edit();
         } else {
@@ -787,7 +788,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
      * @param {Boolean} editMode true for edit, false for read mode
      */
     editDocument : function(editMode){
- 
+
         if (this.noteType == 'view') {
             this.getUIView().openDocument(editMode);
             return;
@@ -795,7 +796,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
             this.getUIDocument().edit();
         }
     },
-    
+
     /**
      * Handler for @Command([FilePrint])
      * This method is called when you set the @formula of a button to @Command([FilePrint]).
@@ -805,7 +806,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
     print : function(){
         window.print();
     },
-    
+
     /**
      * Default handler when the @Formula is not understood by the parser.
      * @param {String} formula the unparsed formula
@@ -814,7 +815,7 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
         Ext.Msg.alert('Error', 'Sorry, the @command "' + formula +
         '" is not currently supported by Ext.nd');
     },
-    
+
     // private
     getTarget : function() {
         if (this.target) {
@@ -835,6 +836,6 @@ Ext.extend(Ext.nd.Actionbar, Ext.Toolbar, {
             }
         }
     }
-    
+
 });
 Ext.reg('xnd-actionbar', Ext.nd.Actionbar);
