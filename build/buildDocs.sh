@@ -7,5 +7,5 @@ jsduck \
   ../extjs-3.4.0/src/util \
   ../extjs-3.4.0/src/widgets \
   -o ../builds/docs \
-  --title="Extnd SDK" \
+  --title="Extnd SDK for ExtJS 3.x" \
   --welcome="../doc_src/welcome.html"
