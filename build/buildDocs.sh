@@ -9,3 +9,6 @@ jsduck \
   -o ../builds/docs \
   --title="Extnd SDK for ExtJS 3.x" \
   --welcome="../doc_src/welcome.html"
+
+rm -rf ../../ExtndDocs/docs/docs3
+cp -R ../builds/docs ../../ExtndDocs/docs/docs3
