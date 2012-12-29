@@ -15,7 +15,13 @@
   </script>
 </head>
 <body onload="prettyPrint(); highlight();">
-  <pre class="prettyprint lang-js">Ext.define('Ext.nd.grid.Panel', {
+  <pre class="prettyprint lang-js"><span id='Ext-nd-grid-Panel'>/**
+</span> * Customized grid to work with Domino views.  All of the work to define the columns and the underlying store, model, proxy, etc.
+ * is handled for you.
+ * The minimum config needed is the viewUrl or the dbPath and viewName.  Based on this information, a call to ?ReadDesign
+ * is made and a Model is then dynamically created for you based on the design of the Domino View.
+ */
+Ext.define('Ext.nd.grid.Panel', {
 
     extend: 'Ext.grid.Panel',
 
@@ -34,59 +40,59 @@
         'Ext.nd.data.ViewDesign'
     ],
 
-    viewType                : 'gridview',
-    storeConfig             : {},
-    viewConfig              : {},
-    renderers               : [],
-    quickSearchKeyStrokes   : [],
-    targetDefaults          : {},
-    tbarPlugins             : [],
-    bbarPlugins             : [],
-    colsFromDesign          : [],
-    baseParams              : {},
+<span id='Ext-nd-grid-Panel-cfg-viewType'>    viewType                : 'gridview',
+</span><span id='Ext-nd-grid-Panel-property-storeConfig'>    storeConfig             : {},
+</span><span id='Ext-nd-grid-Panel-cfg-viewConfig'>    viewConfig              : {},
+</span><span id='Ext-nd-grid-Panel-property-renderers'>    renderers               : [],
+</span><span id='Ext-nd-grid-Panel-property-quickSearchKeyStrokes'>    quickSearchKeyStrokes   : [],
+</span><span id='Ext-nd-grid-Panel-property-targetDefaults'>    targetDefaults          : {},
+</span><span id='Ext-nd-grid-Panel-property-tbarPlugins'>    tbarPlugins             : [],
+</span><span id='Ext-nd-grid-Panel-property-bbarPlugins'>    bbarPlugins             : [],
+</span><span id='Ext-nd-grid-Panel-property-colsFromDesign'>    colsFromDesign          : [],
+</span><span id='Ext-nd-grid-Panel-property-baseParams'>    baseParams              : {},
+</span>
 
+<span id='Ext-nd-grid-Panel-property-showActionbar'>    showActionbar                   : true,
+</span><span id='Ext-nd-grid-Panel-property-showPagingToolbar'>    showPagingToolbar               : false,
+</span><span id='Ext-nd-grid-Panel-property-showSearch'>    showSearch                      : true,
+</span><span id='Ext-nd-grid-Panel-property-showSearchPosition'>    showSearchPosition              : 'bottom',
+</span><span id='Ext-nd-grid-Panel-property-showCategoryComboBox'>    showCategoryComboBox            : false,
+</span><span id='Ext-nd-grid-Panel-property-showCategoryComboBoxPosition'>    showCategoryComboBoxPosition    : 'top',
+</span><span id='Ext-nd-grid-Panel-property-buildActionBarFromDXL'>    buildActionBarFromDXL           : true,
+</span><span id='Ext-nd-grid-Panel-property-editMode'>    editMode                        : true,
+</span><span id='Ext-nd-grid-Panel-property-multiExpand'>    multiExpand                     : false,
+</span><span id='Ext-nd-grid-Panel-property-multiExpandCount'>    multiExpandCount                : 40,
+</span><span id='Ext-nd-grid-Panel-property-notCategorizedText'>    notCategorizedText              : '(Not Categorized)',
+</span><span id='Ext-nd-grid-Panel-property-loadInitialData'>    loadInitialData                 : true,
+</span><span id='Ext-nd-grid-Panel-cfg-layout'>    layout                          : 'fit',
+</span>
+<span id='Ext-nd-grid-Panel-property-documentWindowTitle'>    documentWindowTitle             : '',
+</span><span id='Ext-nd-grid-Panel-property-documentLoadingWindowTitle'>    documentLoadingWindowTitle      : 'Opening...',
+</span><span id='Ext-nd-grid-Panel-property-documentUntitledWindowTitle'>    documentUntitledWindowTitle     : '(Untitled)',
+</span><span id='Ext-nd-grid-Panel-property-documentWindowTitleMaxLength'>    documentWindowTitleMaxLength    : 16,
+</span><span id='Ext-nd-grid-Panel-property-useDocumentWindowTitle'>    useDocumentWindowTitle          : true,
+</span>
+<span id='Ext-nd-grid-Panel-property-extendLastColumn'>    extendLastColumn                : undefined,
+</span><span id='Ext-nd-grid-Panel-property-enableDragDrop'>    enableDragDrop                  : true,
+</span><span id='Ext-nd-grid-Panel-property-ddGroup'>    ddGroup                         : 'TreeDD',
+</span><span id='Ext-nd-grid-Panel-property-loadMask'>    loadMask                        : true,
+</span><span id='Ext-nd-grid-Panel-property-count'>    count                           : 40,
+</span>
+<span id='Ext-nd-grid-Panel-property-noteType'>    // private
+</span>    noteType                        : 'view',
 
-    showActionbar                   : true,
-    showPagingToolbar               : false,
-    showSearch                      : true,
-    showSearchPosition              : 'bottom',
-    showCategoryComboBox            : false,
-    showCategoryComboBoxPosition    : 'top',
-    buildActionBarFromDXL           : true,
-    editMode                        : true,
-    multiExpand                     : false,
-    multiExpandCount                : 40,
-    notCategorizedText              : '(Not Categorized)',
-    loadInitialData                 : true,
-    layout                          : 'fit',
-
-    documentWindowTitle             : '',
-    documentLoadingWindowTitle      : 'Opening...',
-    documentUntitledWindowTitle     : '(Untitled)',
-    documentWindowTitleMaxLength    : 16,
-    useDocumentWindowTitle          : true,
-
-    extendLastColumn                : undefined,
-    enableDragDrop                  : true,
-    ddGroup                         : 'TreeDD',
-    loadMask                        : true,
-    count                           : 40,
-
-    // private
-    noteType                        : 'view',
-
-    // TODO ExtJS4 uses selModel that can be a config or a selction model instance
-    selModelConfig: {
+<span id='Ext-nd-grid-Panel-property-selModelConfig'>    // TODO ExtJS4 uses selModel that can be a config or a selection model instance
+</span>    selModelConfig: {
         singleSelect : false,
         checkOnly : true
     },
 
-    quickSearchConfig: {
-        width: 200
+<span id='Ext-nd-grid-Panel-property-quickSearchConfig'>    quickSearchConfig: {
+</span>        width: 200
     },
 
-    initComponent: function () {
-        var me = this;
+<span id='Ext-nd-grid-Panel-method-initComponent'>    initComponent: function () {
+</span>        var me = this;
 
         // applyIf so that these can all be overridden if passed into the config
         Ext.applyIf(me, {
@@ -100,8 +106,8 @@
     },
 
 
-    getInitialColumns: function () {
-        return [
+<span id='Ext-nd-grid-Panel-method-getInitialColumns'>    getInitialColumns: function () {
+</span>        return [
             {
                 dataIndex   : 'dummy',
                 header      : '&amp;nbsp;',
@@ -110,8 +116,8 @@
         ];
     },
 
-    getInitialStore: function () {
-        var me = this;
+<span id='Ext-nd-grid-Panel-method-getInitialStore'>    getInitialStore: function () {
+</span>        var me = this;
 
         me.dmyId = 'xnd-dummy-store-' + Ext.id();
 
@@ -122,13 +128,13 @@
     },
 
 
-    onRender: function () {
-        this.callParent(arguments);
+<span id='Ext-nd-grid-Panel-method-onRender'>    onRender: function () {
+</span>        this.callParent(arguments);
         this.getViewDesign();
     },
 
-    getViewDesign: function () {
-        var me = this;
+<span id='Ext-nd-grid-Panel-method-getViewDesign'>    getViewDesign: function () {
+</span>        var me = this;
 
         me.viewDesign = Ext.create('Ext.nd.data.ViewDesign', {
             dbPath              : me.dbPath,
@@ -144,8 +150,8 @@
 
     },
 
-    // private
-    getViewDesignCB: function (o) {
+<span id='Ext-nd-grid-Panel-method-getViewDesignCB'>    // private
+</span>    getViewDesignCB: function (o) {
        var me = this;
 
         // get the properties we need
@@ -156,8 +162,6 @@
         me.autoExpandColumn = me.viewDesign.autoExpandColumn;
         me.isView = me.viewDesign.isView;
         me.isFolder = me.viewDesign.isFolder;
-        me.ViewEntryRecord = me.viewDesign.ViewEntryRecord;
-        me.viewEntryReader = me.viewDesign.viewEntryReader;
 
 
         /* if the view is set to allow for docs to be selected with checkbox AND
@@ -214,10 +218,11 @@
         } // eo if (me.selModelConfig.type === 'checkbox')
 
         // add our columns from the viewDesign call and dominoRenderer or any custom renderers if defined
+        // TODO add back support for developer defined custom renderers
         for (var i=0; i &lt; me.viewDesign.columns.items.length; i++) {
-            var rendr = (me.renderers[i]) ? me.renderers[i] : Ext.bind(me.dominoRenderer, me);
+            //var rendr = (me.renderers[i]) ? me.renderers[i] : Ext.bind(me.dominoRenderer, me);
             var col = me.viewDesign.columns.items[i];
-            col.renderer = rendr;
+            //col.renderer = rendr;
             me.colsFromDesign.push(col) ;
         }
 
@@ -290,305 +295,8 @@
     },
 
 
-    dominoRenderer: function (value, cell, record, rowIndex, colIndex, dataStore) {
-        var me = this;
-
-        // first check to see if this is a 'phantom' (new record being dynamically added
-        // like in the RowEditor example and if so, just let it pass
-        if (record.phantom === true) {
-            return (typeof value == 'undefined') ? '' : value;
-        }
-
-        // TODO: need to figure out why we sometimes get a null for the value
-        if (value == null) {
-            return '';
-        }
-
-        /* next, let's split value into an array so that we can
-         * process the listseparator.  we use '\n' since that is how
-         * we stored multi-values in the XmlReader.getValue
-         * method.
-         */
-        if (value &amp;&amp; value.split) {
-            value = value.split('\n');
-        }
-
-        /* if value has a length of zero, assume this is a column in domino
-         * that is not currently displaying any data like a 'show response only'
-         * column, or a multi-categorized view that is collapsed and you can't
-         * see the data for the other columns
-         */
-
-        var returnValue = '';
-        var colConfig = this.columns[colIndex];
-        var metadata = record.metadata[colConfig.dataIndex];
-
-        // if we don't have any data and this is not a response column
-        // nor a category column then just return a blank
-        if (typeof value == 'string' &amp;&amp; value == '' &amp;&amp; !colConfig.response &amp;&amp; !metadata.category) {
-            return '';
-        }
-
-        var args = arguments;
-        var prevColConfig = (colIndex &gt; 0) ? this.columns[colIndex - 1] : null;
-
-        // get the viewentry for this record
-        var viewentry = record.node;
-        var dsItem = dataStore.data.items[rowIndex + 1];
-        var nextViewentry = (dsItem) ? dsItem.node : null;
-
-        // indent padding
-        var viewentryPosition = viewentry.attributes.getNamedItem('position').value;
-        var viewentryLevel = viewentryPosition.split('.').length;
-
-        // for the expand/collapse icon width + indent width
-        var sCollapseImage = '&lt;img src=&quot;' + this.collapseIcon + '&quot; style=&quot;vertical-align:bottom; margin-right:8px;&quot;/&gt;';
-        var sExpandImage = '&lt;img src=&quot;' + this.expandIcon + '&quot; style=&quot;vertical-align:bottom; margin-right:8px;&quot;/&gt;';
-        var indentPadding = (20 * viewentryLevel) + 'px';
-        var indentPaddingNoIcon = (20 + (20 * viewentryLevel)) + 'px';
-
-        // has children and is a categorized column
-        var nextViewentryPosition, nextViewentryLevel, extraIndent;
-        if (record.hasChildren &amp;&amp; colConfig.sortcategorize) {
-            extraIndent = (metadata.indent) ? ((metadata.indent &gt; 0) ? 'padding-left:' + metadata.indent * 20 + 'px;' : '') : '';
-            cell.attr = 'style=&quot;position: absolute; width: auto; white-space: nowrap; ' + extraIndent + '&quot;';
-            if (nextViewentry) {
-                nextViewentryPosition = nextViewentry.attributes.getNamedItem('position').value;
-                nextViewentryLevel = nextViewentryPosition.split('.').length;
-                if (nextViewentryLevel &gt; viewentryLevel) {
-                    cell.css = ' xnd-view-collapse xnd-view-category';
-                    returnValue = sCollapseImage + this.getValue(value, colConfig, record);
-                }
-                else {
-                    cell.css = ' xnd-view-expand xnd-view-category';
-                    returnValue = sExpandImage + this.getValue(value, colConfig, record);
-                }
-            }
-            else { // should be a categorized column on the last record
-                cell.css = ' xnd-view-expand xnd-view-category';
-                returnValue = sExpandImage + this.getValue(value, colConfig, record);
-            }
-        }
-        else
-            if (!record.isCategory &amp;&amp; record.hasChildren &amp;&amp; !record.isResponse &amp;&amp; colConfig.response) {
-                // is NOT a category but has children and IS NOT a response doc BUT
-                // IS a response COLUMN
-                if (nextViewentry) {
-                    nextViewentryPosition = nextViewentry.attributes.getNamedItem('position').value;
-                    nextViewentryLevel = nextViewentryPosition.split('.').length;
-                    if (nextViewentryLevel &gt; viewentryLevel) {
-                        cell.css = 'xnd-view-collapse xnd-view-response';
-                        returnValue = sCollapseImage;
-                    }
-                    else {
-                        cell.css = 'xnd-view-expand xnd-view-response';
-                        returnValue = sExpandImage;
-                    }
-                }
-                else { // should be a categorized column on the last record
-                    cell.css = 'xnd-view-expand xnd-view-response';
-                    returnValue = sExpandImage;
-                }
-            }
-            else
-                if (record.hasChildren &amp;&amp; record.isResponse &amp;&amp; colConfig.response) {
-                    // has children and IS a response doc
-                    extraIndent = (metadata.indent) ? ((metadata.indent &gt; 0) ? 'padding-left:' + (20 + (metadata.indent * 20)) + 'px;' : '') : '';
-                    cell.attr = 'style=&quot;position: absolute; width: auto; white-space: nowrap; ' + extraIndent + '&quot;';
-                    if (nextViewentry) {
-                        nextViewentryPosition = nextViewentry.attributes.getNamedItem('position').value;
-                        nextViewentryLevel = nextViewentryPosition.split('.').length;
-                        if (nextViewentryLevel &gt; viewentryLevel) {
-                            cell.css = 'xnd-view-collapse xnd-view-response';
-                            returnValue = sCollapseImage + this.getValue(value, colConfig, record);
-                        }
-                        else {
-                            cell.css = 'xnd-view-expand xnd-view-response';
-                            returnValue = sExpandImage + this.getValue(value, colConfig, record);
-                        }
-                    }
-                    else { // should be a categorized column on the last record
-                        cell.css = 'xnd-view-expand xnd-view-response';
-                        returnValue = sExpandImage + this.getValue(value, colConfig, record);
-                    }
-                }
-                else
-                    if (!record.hasChildren &amp;&amp; record.isResponse &amp;&amp; colConfig.response) {
-                        // does NOT have children and IS a response doc
-                        cell.css = 'xnd-view-response';
-                        extraIndent = (metadata.indent) ? ((metadata.indent &gt; 0) ? 'padding-left:' + (20 + (metadata.indent * 20)) + 'px;' : '') : '';
-                        cell.attr = 'style=&quot;position: absolute; width: auto; white-space: nowrap; ' + extraIndent + '&quot;';
-                        returnValue = this.getValue(value, colConfig, record);
-                    }
-                    else {
-                        if (colConfig.icon) {
-                            var tmpReturnValue = '';
-                            var tmpValue = '';
-                            var separator = this.getListSeparator(colConfig);
-                            var clearFloat = '';
-                            for (var i = 0; i &lt; value.length; i++) {
-                                tmpValue = value[i];
-
-                                if (isNaN(parseInt(tmpValue, 10)) || tmpValue == '0') {
-                                    return '';
-                                }
-                                else {
-                                    // I believe the domino only has view icon images from 1 to
-                                    // 186
-                                    newValue = (tmpValue &lt; 10) ? '00' + tmpValue : (tmpValue &lt; 100) ? '0' + tmpValue : (tmpValue &gt; 186) ? '186' : tmpValue;
-                                    clearFloat = (colConfig.listseparator == 'newline') ? 'style=&quot;clear: left;&quot;' : '';
-                                    tmpReturnValue = '&lt;div class=&quot;xnd-icon-vw xnd-icon-vwicn' + newValue + '&quot; ' + clearFloat + '&gt;&amp;nbsp;&lt;/div&gt;';
-                                    if (i == 0) {
-                                        returnValue = tmpReturnValue;
-                                    } else {
-                                        returnValue = returnValue + separator + tmpReturnValue;
-                                    }
-                                }
-                            }
-                        }
-                        else {
-                            // just normal data but check first to see if a 'totals' column
-                            if (colConfig.totals != 'none') {
-                                cell.css = ' xnd-view-totals xnd-view-' + colConfig.totals;
-                            }
-                            returnValue = this.getValue(value, colConfig, record);
-                        }
-                    }
-
-        // now return our domino formatted value
-        return returnValue;
-
-    },
-
-    // private
-    getValue: function(value, colConfig, record){
-        var dataType, newValue, tmpDate, tmpDateFmt, separator, metadata;
-        metadata = record.metadata[colConfig.dataIndex];
-        separator = this.getListSeparator(colConfig);
-        newValue = '';
-
-        // handle non-categorized columns
-        if (colConfig.sortcategorize &amp;&amp; value.length == 0) {
-            newValue = this.notCategorizedText;
-        }
-
-        // need to make sure value is an array
-        // the loop below will format as needed
-        value = (Ext.isArray(value)) ? value : [''+value];
-
-
-        for (var i = 0, len = value.length; i &lt; len; i++) {
-            var nbf = colConfig.numberformat;
-            var sep = (i + 1 &lt; len) ? separator : '';
-            dataType = metadata.type; // set in the
-            // XmlReader.getNamedValue method
-            var tmpValue = value[i];
-
-            // handle columns set to show an icon a little differently
-            if (colConfig.icon) {
-                if (isNaN(parseInt(tmpValue, 10)) || tmpValue == 0) {
-                    return '';
-                }
-                else {
-                    // I believe domino only has view icon images
-                    // from 1 to 186
-                    newValue = (tmpValue &lt; 10) ? '00' + tmpValue : (tmpValue &lt; 100) ? '0' + tmpValue : (tmpValue &gt; 186) ? '186' : tmpValue;
-                    return '&lt;img src=&quot;/icons/vwicn' + newValue + '.gif&quot;/&gt;';
-                }
-            } else if (colConfig.totals == 'percentoverall' || colConfig.totals == 'percentparent') {
-                return Ext.util.Format.round(100 * parseFloat(tmpValue), nbf.digits) + '%';
-            }
-            else {
-                switch (dataType) {
-                    case 'datetimelist':
-                    case 'datetime':
-                        var dtf = colConfig.datetimeformat;
-                        if (typeof dtf.show == 'undefined') {
-                            dtf.show = this.dateTimeFormats.show;
-                        }
-                        if (tmpValue.indexOf('T') &gt; 0) {
-                            tmpDate = tmpValue.split(',')[0].replace('T', '.');
-                            tmpDateFmt = 'Ymd.His';
-                        }
-                        else {
-                            tmpDate = tmpValue;
-                            tmpDateFmt = 'Ymd';
-                            dtf.show = 'date'; // switch to date only since
-                        // there isn't a time component
-                        // present
-                        }
-                        var d = Ext.Date.parse(tmpDate, tmpDateFmt);
-                        switch (dtf.show) {
-                            case 'date':
-                                tmpValue = d ? Ext.Date.format(d, this.dateTimeFormats.dateFormat) : '';
-                                break;
-                            case 'datetime':
-                                tmpValue = d ? Ext.Date.format(d, this.dateTimeFormats.dateTimeFormat) : '';
-                                break;
-                        }
-                        break;
-                    case 'textlist':
-                    case 'text':
-                        tmpValue = tmpValue;
-                        break;
-                    case 'numberlist':
-                    case 'number':
-                        tmpValue = parseFloat(tmpValue);
-                        switch (nbf.format) {
-                            case 'currency' :
-                                tmpValue = Ext.isEmpty(tmpValue) ? this.formatCurrencyFnc(0) : this.formatCurrencyFnc(tmpValue);
-                                break;
-                                break;
-                            case 'fixed' :
-                            case 'scientific' :
-                                if (nbf.percent) {
-                                    tmpValue = Ext.util.Format.round(100 * tmpValue, nbf.digits) + '%';
-                                } else {
-                                    tmpValue = Ext.util.Format.round(tmpValue, nbf.digits);
-                                }
-                                break;
-                            default :
-                                tmpValue = tmpValue;
-                        }
-                        break;
-                    default:
-                        tmpValue = tmpValue;
-                } // end switch
-                newValue = newValue + tmpValue + sep;
-            } // end if (colConfig.icon)
-        } // end for
-        return newValue;
-    },
-
-    // private
-    getListSeparator : function(colConfig) {
-        var separator = '';
-
-        switch (colConfig.listseparator) {
-            case 'none':
-                separator = '';
-                break;
-            case 'space':
-                separator = ' ';
-                break;
-            case 'comma':
-                separator = ',';
-                break;
-            case 'newline':
-                separator = '&lt;br/&gt;';
-                break;
-            case 'semicolon':
-                separator = ';';
-                break;
-            default:
-                separator = '';
-        }
-
-        return separator;
-    },
-
-    // private - to handle expand/collapse of categories and responses
-    gridHandleCellClick: function(grid, rowIndex, colIndex, e){
+<span id='Ext-nd-grid-Panel-method-gridHandleCellClick'>    // private - to handle expand/collapse of categories and responses
+</span>    gridHandleCellClick: function(grid, rowIndex, colIndex, e){
         var ecImg = Ext.get(e.getTarget());
         var cellCat, cellResponse;
         var cell = false;

@@ -15,18 +15,24 @@
   </script>
 </head>
 <body onload="prettyPrint(); highlight();">
-  <pre class="prettyprint lang-js">Ext.define('Ext.nd.data.ViewDesign', {
+  <pre class="prettyprint lang-js"><span id='Ext-nd-data-ViewDesign'>/**
+</span> * Gets the design of a Domino view by making two Ajax calls.  The first is to view?ReadDesign and the second
+ * is to the custom DXLExporter agent.  After these calls are made, column and field defs are created.
+ */
+Ext.define('Ext.nd.data.ViewDesign', {
 
     mixins: {
         observable: 'Ext.util.Observable',
     },
 
     requires: [
-        'Ext.nd.data.ViewStore'
+        'Ext.nd.data.ViewStore',
+        'Ext.nd.data.ViewModel',
+        'Ext.nd.grid.ViewColumn'
     ],
 
-    constructor: function (config) {
-        var me = this;
+<span id='Ext-nd-data-ViewDesign-method-constructor'>    constructor: function (config) {
+</span>        var me = this;
 
         me.mixins.observable.constructor.call(me);
 
@@ -61,8 +67,8 @@
     },
 
 
-    getViewDesign: function () {
-        var me = this;
+<span id='Ext-nd-data-ViewDesign-method-getViewDesign'>    getViewDesign: function () {
+</span>        var me = this;
 
         Ext.Ajax.request({
             method          : 'GET',
@@ -74,8 +80,8 @@
         });
     },
 
-    getViewDesignStep2: function(res, req){
-        var me          = this,
+<span id='Ext-nd-data-ViewDesign-method-getViewDesignStep2'>    getViewDesignStep2: function(res, req){
+</span>        var me          = this,
             dxml        = res.responseXML,
             q           = Ext.DomQuery,
             arColumns   = q.select('column', dxml);
@@ -109,8 +115,8 @@
         });
     },
 
-    getViewDesignSuccess: function(res, req){
-        var me              = this,
+<span id='Ext-nd-data-ViewDesign-method-getViewDesignSuccess'>    getViewDesignSuccess: function(res, req){
+</span>        var me              = this,
             dxml            = res.responseXML,
             q               = Ext.DomQuery,
             arColumns       = q.select('column', dxml),
@@ -225,7 +231,7 @@
             var tmpDateTimeFormat = q.select('datetimeformat', col)[0];
             var datetimeformat = {};
             if (tmpDateTimeFormat) {
-            	type = 'date';
+                type = 'date';
                 datetimeformat.show = q.selectValue('@show', tmpDateTimeFormat);
                 datetimeformat.date = q.selectValue('@date', tmpDateTimeFormat);
                 datetimeformat.time = q.selectValue('@time', tmpDateTimeFormat);
@@ -255,8 +261,9 @@
             }
 
             var columnConfig = {
+                xtype               : 'xnd-viewcolumn',
                 id                  : columnnumber,
-                header              : (resorttoviewValue) ? title + '&lt;img src=&quot;/icons/viewsort.gif&quot; /&gt;' : title,
+                text                : (resorttoviewValue) ? title + '&lt;img src=&quot;/icons/viewsort.gif&quot; /&gt;' : title,
                 align               : alignValue,
                 dataIndex           : name,
                 width               : width,
@@ -277,8 +284,9 @@
 
             var recordConfig = {
                 name    : name,
-                mapping : columnnumber,
-                type    : type
+                mapping : 'entrydata[columnnumber=' + columnnumber + ']',
+                type    : type,
+                convert : Ext.nd.data.ViewModel.prototype.convertEntryData
             };
             arRecordConfig.push(recordConfig);
 
@@ -335,9 +343,7 @@
             fields: arRecordConfig
         };
 
-        // go ahead and setup our Record and our Reader
-        //me.ViewEntryRecord = Ext.data.Record.create(me.dominoView);
-        //me.viewEntryReader = new Ext.nd.data.ViewXmlReader(me.dominoView.meta, me.ViewEntryRecord);
+        // define the store
         me.setStore();
 
         if (me.scope) {
@@ -347,29 +353,33 @@
         }
     },
 
-    setStore : function() {
-        var me = this;
+<span id='Ext-nd-data-ViewDesign-method-setStore'>    setStore : function() {
+</span>        var me = this,
+            viewModel = Ext.define(&quot;Ext.nd.data.ViewModel-&quot; + Ext.id(), {
+                extend: 'Ext.nd.data.ViewModel',
+                fields: me.dominoView.fields
+            });
 
         // create the Data Store
         me.store = new Ext.nd.data[(me.isCategorized &amp;&amp; me.multiExpand) ? 'CategorizedStore' : 'ViewStore'](Ext.apply({
+            model               : viewModel,
             dbPath              : me.dbPath,
             viewName            : me.viewName,
             viewUrl             : me.viewUrl,
             baseParams          : me.baseParams,
             removeCategoryTotal : me.removeCategoryTotal,
-            fields              : me.dominoView.fields,
-            //reader              : me.viewEntryReader,
             remoteSort          : true
         }, me.storeConfig));
 
     },
 
-    // private
-    getViewDesignFailure: function(res, req){
+<span id='Ext-nd-data-ViewDesign-method-getViewDesignFailure'>    // private
+</span>    getViewDesignFailure: function(res, req){
         this.fireEvent('getdesignfailure', this, res, req);
     }
 
+
 });
-// eo Ext.nd.data.ViewDesign</pre>
+</pre>
 </body>
 </html>
