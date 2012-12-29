@@ -15,219 +15,226 @@
   </script>
 </head>
 <body onload="prettyPrint(); highlight();">
-  <pre class="prettyprint lang-js">Ext.nd.ACCESS_LEVELS = {
-	0 : &quot;No Access&quot;,
-	1 : &quot;Depositor&quot;,
-	2 : &quot;Reader&quot;,
-	3 : &quot;Author&quot;,
-	4 : &quot;Editor&quot;,
-	5 : &quot;Designer&quot;,
-	6 : &quot;Manager&quot;
+  <pre class="prettyprint lang-js"><span id='Ext-nd-property-ACCESS_LEVELS'>/**
+</span> * @member Ext.nd
+ * @property ACCESS_LEVELS
+ * The valid access levels to a NotesDatabase
+ */
+Ext.nd.ACCESS_LEVELS = {
+    0 : &quot;No Access&quot;,
+    1 : &quot;Depositor&quot;,
+    2 : &quot;Reader&quot;,
+    3 : &quot;Author&quot;,
+    4 : &quot;Editor&quot;,
+    5 : &quot;Designer&quot;,
+    6 : &quot;Manager&quot;
 }
 <span id='Ext-nd-Session'>/**
-</span> * @class Ext.nd.Session Provides JavaScript access to an object that mimics
- *        NotesSession in Lotuscript. This object is created from the Session.js
- *        agent within the notes database. You cannot create an instance of this
- *        object, and all properties are read-only.
+</span> * @class Ext.nd.Session
+ * Provides JavaScript access to an object that mimics the NotesSession class in LotusScript.
+ * This object is created from the Session.js agent within the Extnd database.
+ * You cannot create an instance of this object, and all properties are read-only.
  * @singleton
  */
 Ext.nd.Session.prototype = {
-<span id='Ext-nd-Session-property-commonUserName'>	/**
-</span>	 * common user name&lt;br/&gt;
-	 * example: &quot;Rich Waters&quot;
-	 * @type {String}
-	 */
-	commonUserName : &quot;Anonymous&quot;,
-<span id='Ext-nd-Session-property-effectiveUserName'>	/**
-</span>	 * effective user name&lt;br/&gt;
-	 * example: &quot;CN=Rich Waters/O=ExtND&quot;
-	 * @type {String}
-	 */
-	effectiveUserName : &quot;Anonymous&quot;,
-<span id='Ext-nd-Session-property-notesBuildVersion'>	/**
-</span>	 * notes build version
-	 * @type {Integer}
-	 */
-	&quot;notesBuildVersion&quot; : 261,
-<span id='Ext-nd-Session-property-notesVersion'>	/**
-</span>	 * notes version&lt;br/&gt;
-	 * example: &quot;Release 7.0.1|January 17, 2006&quot;
-	 * @type {String}
-	 */
-	&quot;notesVersion&quot; : &quot;Release 7.0.1|January 17, 2006&quot;,
-<span id='Ext-nd-Session-property-platform'>	/**
-</span>	 * platorm the server is running on
-	 * @type {String}
-	 */
-	&quot;platform&quot; : &quot;Windows/32&quot;,
-<span id='Ext-nd-Session-property-serverName'>	/**
-</span>	 * server name
-	 * @type {String}
-	 */
-	&quot;serverName&quot; : &quot;CN=Web/O=BlueCuda&quot;,
-<span id='Ext-nd-Session-property-userGroupNameList'>	/**
-</span>	 * list of groups current user is a member of&lt;br/&gt;
-	 * example: {&quot;abbreviated&quot; : &quot;ExtNDAdmin&quot;, &quot;addr821&quot; : &quot;&quot;, &quot;common&quot; : &quot;ExtNDAdmin&quot;}
-	 * @type {Array}
-	 */
-	&quot;userGroupNameList&quot; : [{
-		&quot;abbreviated&quot; : &quot;*/ExtND&quot;,
-		&quot;addr821&quot; : &quot;&quot;,
-		&quot;common&quot; : &quot;*&quot;
-	}, {
-		&quot;abbreviated&quot; : &quot;ExtNDAdmin&quot;,
-		&quot;addr821&quot; : &quot;&quot;,
-		&quot;common&quot; : &quot;ExtNDAdmin&quot;
-	}],
-<span id='Ext-nd-Session-property-userName'>	/**
-</span>	 * current user name&lt;br/&gt;
-	 * example: &quot;CN=Rich Waters/O=ExtND&quot;
-	 * @type {String}
-	 */
-	&quot;userName&quot; : &quot;CN=Rich Waters/O=ExtND&quot;,
-<span id='Ext-nd-Session-property-userNameList'>	/**
-</span>	 * user name list array
-	 * @type {Array}
-	 */
-	&quot;userNameList&quot; : [{
-		&quot;abbreviated&quot; : &quot;CN=Rich Waters/O=ExtND&quot;,
-		&quot;addr821&quot; : &quot;CN=Rich Waters/O=ExtND&quot;,
-		&quot;common&quot; : &quot;CN=Rich Waters/O=ExtND&quot;
-	}, {
-		&quot;abbreviated&quot; : &quot;CN=Web/O=BlueCuda&quot;,
-		&quot;addr821&quot; : &quot;CN=Web/O=BlueCuda&quot;,
-		&quot;common&quot; : &quot;CN=Web/O=BlueCuda&quot;
-	}],
-<span id='Ext-nd-Session-property-userRoles'>	/**
-</span>	 * user roles
-	 * @type {Array}
-	 */
-	&quot;userRoles&quot; : [&quot;&quot;],
-<span id='Ext-nd-Session-property-addressBooks'>	/**
-</span>	 * Array of {@link Ext.nd.Database} objects pertaining to the 
-	 * available address books
-	 * @type {Array}
-	 */
-	addressBooks : [],
-<span id='Ext-nd-Session-property-currentDatabase'>	/**
-</span>	 * Current {@link Ext.nd.Database} object
-	 * @type {Ext.nd.Database}
-	 */
-	currentDatabase : {}
+<span id='Ext-nd-Session-property-commonUserName'>    /**
+</span>     * common user name&lt;br/&gt;
+     * example: &quot;Rich Waters&quot;
+     * @type {String}
+     */
+    commonUserName : &quot;Anonymous&quot;,
+<span id='Ext-nd-Session-property-effectiveUserName'>    /**
+</span>     * effective user name&lt;br/&gt;
+     * example: &quot;CN=Rich Waters/O=ExtND&quot;
+     * @type {String}
+     */
+    effectiveUserName : &quot;Anonymous&quot;,
+<span id='Ext-nd-Session-property-notesBuildVersion'>    /**
+</span>     * notes build version
+     * @type {Integer}
+     */
+    &quot;notesBuildVersion&quot; : 261,
+<span id='Ext-nd-Session-property-notesVersion'>    /**
+</span>     * notes version&lt;br/&gt;
+     * example: &quot;Release 7.0.1|January 17, 2006&quot;
+     * @type {String}
+     */
+    &quot;notesVersion&quot; : &quot;Release 7.0.1|January 17, 2006&quot;,
+<span id='Ext-nd-Session-property-platform'>    /**
+</span>     * platform the server is running on
+     * @type {String}
+     */
+    &quot;platform&quot; : &quot;Windows/32&quot;,
+<span id='Ext-nd-Session-property-serverName'>    /**
+</span>     * server name
+     * @type {String}
+     */
+    &quot;serverName&quot; : &quot;CN=Web/O=ExtND&quot;,
+<span id='Ext-nd-Session-property-userGroupNameList'>    /**
+</span>     * list of groups current user is a member of&lt;br/&gt;
+     * example: {&quot;abbreviated&quot; : &quot;ExtNDAdmin&quot;, &quot;addr821&quot; : &quot;&quot;, &quot;common&quot; : &quot;ExtNDAdmin&quot;}
+     * @type {Array}
+     */
+    &quot;userGroupNameList&quot; : [{
+        &quot;abbreviated&quot; : &quot;*/ExtND&quot;,
+        &quot;addr821&quot; : &quot;&quot;,
+        &quot;common&quot; : &quot;*&quot;
+    }, {
+        &quot;abbreviated&quot; : &quot;ExtNDAdmin&quot;,
+        &quot;addr821&quot; : &quot;&quot;,
+        &quot;common&quot; : &quot;ExtNDAdmin&quot;
+    }],
+<span id='Ext-nd-Session-property-userName'>    /**
+</span>     * current user name&lt;br/&gt;
+     * example: &quot;CN=Rich Waters/O=ExtND&quot;
+     * @type {String}
+     */
+    &quot;userName&quot; : &quot;CN=Rich Waters/O=ExtND&quot;,
+<span id='Ext-nd-Session-property-userNameList'>    /**
+</span>     * user name list array
+     * @type {Array}
+     */
+    &quot;userNameList&quot; : [{
+        &quot;abbreviated&quot; : &quot;CN=Rich Waters/O=ExtND&quot;,
+        &quot;addr821&quot; : &quot;CN=Rich Waters/O=ExtND&quot;,
+        &quot;common&quot; : &quot;CN=Rich Waters/O=ExtND&quot;
+    }, {
+        &quot;abbreviated&quot; : &quot;CN=Web/O=ExtND&quot;,
+        &quot;addr821&quot; : &quot;CN=Web/O=ExtND&quot;,
+        &quot;common&quot; : &quot;CN=Web/O=ExtND&quot;
+    }],
+<span id='Ext-nd-Session-property-userRoles'>    /**
+</span>     * user roles
+     * @type {Array}
+     */
+    &quot;userRoles&quot; : [&quot;&quot;],
+<span id='Ext-nd-Session-property-addressBooks'>    /**
+</span>     * Array of {@link Ext.nd.Database} objects pertaining to the
+     * available address books
+     * @type {Array}
+     */
+    addressBooks : [],
+<span id='Ext-nd-Session-property-currentDatabase'>    /**
+</span>     * Current {@link Ext.nd.Database} object
+     * @type {Ext.nd.Database}
+     */
+    currentDatabase : {}
 }
 
 <span id='Ext-nd-Database'>/**
 </span> * @class Ext.nd.Database
- * all properties are read-only.
+ * Provides JavaScript access to an object that mimics the NotesDatabase class in LotusScript.
+ * This object is created from the Session.js agent for the Ext.nd.Session.currentDatabase property.
+ * You cannot create an instance of this object, and all properties are read-only.
  * @singleton
  */
 Ext.nd.Database.prototype = {
-<span id='Ext-nd-Database-property-acl'>	/**
-</span>	 * acl
-	 * @type {Object}
-	 */
-	&quot;acl&quot; : {},
-<span id='Ext-nd-Database-property-aclActivityLog'>	/**
-</span>	 * acl activity log&lt;br/&gt;
-	 * example: &quot;01/21/2008 11:47:01 PM Rich Waters/Rich-Waters updated -Default-&quot;
-	 * @type {Array}
-	 */
-	&quot;aclActivityLog&quot; : [&quot;01/21/2008 11:47:01 PM Rich Waters/Rich-Waters updated -Default-&quot;],
-<span id='Ext-nd-Database-property-currentAccessLevel'>	/**
-</span>	 * current access level (see Ext.nd.ACCESS_LEVELS)
-	 * @type {Integer}
-	 */
-	&quot;currentAccessLevel&quot; : 4,
-<span id='Ext-nd-Database-property-parent'>	/**
-</span>	 * parent {@link Ext.nd.Session} object
-	 * @type {Ext.nd.Session}
-	 */
-	&quot;parent&quot; : Ext.nd.Session,
-<span id='Ext-nd-Database-property-server'>	/**
-</span>	 * server name
-	 * @type {String}
-	 */
-	&quot;server&quot; : &quot;CN=Web/O=BlueCuda&quot;,
-<span id='Ext-nd-Database-property-fileName'>	/**
-</span>	 * file name of the database
-	 * @type {String}
-	 */
-	&quot;fileName&quot; : &quot;extnd2_b1.nsf&quot;,
-<span id='Ext-nd-Database-property-filePath'>	/**
-</span>	 * file system path to the database
-	 * @type {String}
-	 */
-	&quot;filePath&quot; : &quot;extnd\\extnd2_b1.nsf&quot;,
-<span id='Ext-nd-Database-property-webFilePath'>	/**
-</span>	 * analogous to @webdbname
-	 * @type {String}
-	 */
-	&quot;webFilePath&quot; : &quot;/extnd/extnd2_b1.nsf/&quot;,
-<span id='Ext-nd-Database-property-title'>	/**
-</span>	 * database title
-	 * @type {String}
-	 */
-	&quot;title&quot; : &quot;Ext.nd Beta 1&quot;,
-<span id='Ext-nd-Database-property-fileFormat'>	/**
-</span>	 * file format
-	 * @type {Integer}
-	 */
-	&quot;fileFormat&quot; : 43,
-<span id='Ext-nd-Database-property-created'>	/**
-</span>	 * database created on date
-	 * @type {String}
-	 */
-	&quot;created&quot; : &quot;1/30/2008 4:18:50 PM&quot;,
-<span id='Ext-nd-Database-property-designTemplateName'>	/**
-</span>	 * name of design template
-	 * @type {String}
-	 */
-	&quot;designTemplateName&quot; : &quot;&quot;,
-<span id='Ext-nd-Database-property-isDB2'>	/**
-</span>	 * is DB2
-	 * @type {Boolean}
-	 */
-	&quot;isDB2&quot; : false,
-<span id='Ext-nd-Database-property-httpURL'>	/**
-</span>	 * http url
-	 * @type {String}
-	 */
-	&quot;httpURL&quot; : &quot;http://web.bluecuda.com/__852573E0007514A8.nsf?OpenDatabase&quot;,
-<span id='Ext-nd-Database-property-replicaID'>	/**
-</span>	 * database replica idea
-	 * @type {String}
-	 */
-	&quot;replicaID&quot; : &quot;852573E0007514A8&quot;,
-<span id='Ext-nd-Database-property-isDocumentLockingEnabled'>	/**
-</span>	 * is document locking enabled
-	 * @type {Boolean}
-	 */
-	&quot;isDocumentLockingEnabled&quot; : false,
-<span id='Ext-nd-Database-property-isDesignLockingEnabled'>	/**
-</span>	 * is design locking enabled
-	 * @type {Boolean}
-	 */
-	&quot;isDesignLockingEnabled&quot; : true,
-<span id='Ext-nd-Database-property-size'>	/**
-</span>	 * database size
-	 * @type {Integer}
-	 */
-	&quot;size&quot; : 22282240,
-<span id='Ext-nd-Database-property-sizeQuota'>	/**
-</span>	 * size quota
-	 * @type {Integer}
-	 */
-	&quot;sizeQuota&quot; : 0,
-<span id='Ext-nd-Database-property-sizeWarning'>	/**
-</span>	 * size warning
-	 * @type {Integer}
-	 */
-	&quot;sizeWarning&quot; : 0,
-<span id='Ext-nd-Database-property-percentUsed'>	/**
-</span>	 * percentage used
-	 * @type {Number}
-	 */
-	&quot;percentUsed&quot; : 47.1
+<span id='Ext-nd-Database-property-acl'>    /**
+</span>     * acl
+     * @type {Object}
+     */
+    &quot;acl&quot; : {},
+<span id='Ext-nd-Database-property-aclActivityLog'>    /**
+</span>     * acl activity log&lt;br/&gt;
+     * example: &quot;01/21/2008 11:47:01 PM Rich Waters/Rich-Waters updated -Default-&quot;
+     * @type {Array}
+     */
+    &quot;aclActivityLog&quot; : [&quot;01/21/2008 11:47:01 PM Rich Waters/Rich-Waters updated -Default-&quot;],
+<span id='Ext-nd-Database-property-currentAccessLevel'>    /**
+</span>     * current access level (see Ext.nd.ACCESS_LEVELS)
+     * @type {Integer}
+     */
+    &quot;currentAccessLevel&quot; : 4,
+<span id='Ext-nd-Database-property-parent'>    /**
+</span>     * parent {@link Ext.nd.Session} object
+     * @type {Ext.nd.Session}
+     */
+    &quot;parent&quot; : Ext.nd.Session,
+<span id='Ext-nd-Database-property-server'>    /**
+</span>     * server name
+     * @type {String}
+     */
+    &quot;server&quot; : &quot;CN=Web/O=ExtND&quot;,
+<span id='Ext-nd-Database-property-fileName'>    /**
+</span>     * file name of the database
+     * @type {String}
+     */
+    &quot;fileName&quot; : &quot;extnd2_b1.nsf&quot;,
+<span id='Ext-nd-Database-property-filePath'>    /**
+</span>     * file system path to the database
+     * @type {String}
+     */
+    &quot;filePath&quot; : &quot;extnd\\extnd2_b1.nsf&quot;,
+<span id='Ext-nd-Database-property-webFilePath'>    /**
+</span>     * analogous to @webdbname
+     * @type {String}
+     */
+    &quot;webFilePath&quot; : &quot;/extnd/extnd2_b1.nsf/&quot;,
+<span id='Ext-nd-Database-property-title'>    /**
+</span>     * database title
+     * @type {String}
+     */
+    &quot;title&quot; : &quot;Ext.nd Beta 1&quot;,
+<span id='Ext-nd-Database-property-fileFormat'>    /**
+</span>     * file format
+     * @type {Integer}
+     */
+    &quot;fileFormat&quot; : 43,
+<span id='Ext-nd-Database-property-created'>    /**
+</span>     * database created on date
+     * @type {String}
+     */
+    &quot;created&quot; : &quot;1/30/2008 4:18:50 PM&quot;,
+<span id='Ext-nd-Database-property-designTemplateName'>    /**
+</span>     * name of design template
+     * @type {String}
+     */
+    &quot;designTemplateName&quot; : &quot;&quot;,
+<span id='Ext-nd-Database-property-isDB2'>    /**
+</span>     * is DB2
+     * @type {Boolean}
+     */
+    &quot;isDB2&quot; : false,
+<span id='Ext-nd-Database-property-httpURL'>    /**
+</span>     * http url
+     * @type {String}
+     */
+    &quot;httpURL&quot; : &quot;http://web.extnd.com/__852573E0007514A8.nsf?OpenDatabase&quot;,
+<span id='Ext-nd-Database-property-replicaID'>    /**
+</span>     * database replica idea
+     * @type {String}
+     */
+    &quot;replicaID&quot; : &quot;852573E0007514A8&quot;,
+<span id='Ext-nd-Database-property-isDocumentLockingEnabled'>    /**
+</span>     * is document locking enabled
+     * @type {Boolean}
+     */
+    &quot;isDocumentLockingEnabled&quot; : false,
+<span id='Ext-nd-Database-property-isDesignLockingEnabled'>    /**
+</span>     * is design locking enabled
+     * @type {Boolean}
+     */
+    &quot;isDesignLockingEnabled&quot; : true,
+<span id='Ext-nd-Database-property-size'>    /**
+</span>     * database size
+     * @type {Integer}
+     */
+    &quot;size&quot; : 22282240,
+<span id='Ext-nd-Database-property-sizeQuota'>    /**
+</span>     * size quota
+     * @type {Integer}
+     */
+    &quot;sizeQuota&quot; : 0,
+<span id='Ext-nd-Database-property-sizeWarning'>    /**
+</span>     * size warning
+     * @type {Integer}
+     */
+    &quot;sizeWarning&quot; : 0,
+<span id='Ext-nd-Database-property-percentUsed'>    /**
+</span>     * percentage used
+     * @type {Number}
+     */
+    &quot;percentUsed&quot; : 47.1
 };
 </pre>
 </body>

@@ -16,57 +16,49 @@
 </head>
 <body onload="prettyPrint(); highlight();">
   <pre class="prettyprint lang-js"><span id='Ext-nd-UIDocument-method-constructor'><span id='Ext-nd-UIDocument-cfg-defaultFieldWidth'><span id='Ext-nd-UIDocument-cfg-applyDominoKeywordRefresh'><span id='Ext-nd-UIDocument-cfg-convertFields'><span id='Ext-nd-UIDocument-cfg-createActionsFrom'><span id='Ext-nd-UIDocument-cfg-showActionbar'><span id='Ext-nd-UIDocument'>/**
-</span></span></span></span></span></span></span> * @class Ext.nd.UIDocument Converts fields and actionbars of a Domino form/page into
- *        Ext equivalents Simple example:
- * &lt;pre&gt;&lt;code&gt;
-  var uidoc = new Ext.nd.UIDocument();
-  uidoc.render('myDiv'); // to render to a specified location
-  -- or --
-  uidoc.render(); // to render to an Ext.Viewport
- &lt;/code&gt;&lt;/pre&gt; 
- * More complex example:&lt;pre&gt;&lt;code&gt;
-  var uidoc = new Ext.nd.UIDocument({
-    showActionbar : false,
-    convertFields : false
-  });
-  new Ext.Viewport({
-    layout: 'fit',
-    items: uidoc
-  });
- &lt;/code&gt;&lt;/pre&gt;
- * @cfg {Boolean} showActionbar Whether or not to read in the form/page DXL
- *      behind the scences and build an Ext.Toolbar from domino actions
- *      (Defaults to true)
- * @cfg {String} createActionsFrom Set to 'document' if you want to create the actionbar
- * from the actions domino sends after it evaluates hide-when formulas.  Set to 'dxl' if
- * you want to create the actionbar from what is defined in Designer.  
- * @cfg {Boolean} convertFields Determines whether to convert form fields to Ext
- *      fields. (Defaults to true)
- * @cfg {Boolean} applyDominoKeywordRefresh Determines whether to apply the
- *      postback onchange event that Domino sends for Keyword fields set to
- *      &quot;Refresh fields on keyword change&quot;. Defaults to true.
- * @cfg {Number} defaultFieldWidth
- * @constructor Creates a new Form component
- * @param {Object}
- *            config Configuration options
+</span></span></span></span></span></span></span> * Converts fields and actionbars of a Domino form/page into Ext equivalents
+ *
+ * Simple example:
+ *
+        var uidoc = new Ext.nd.UIDocument();
+        uidoc.render('myDiv'); // to render to a specified div
+ *
+ *
+ * More complex example:
+ *
+        var uidoc = new Ext.nd.UIDocument({
+            showActionbar : false,
+            convertFields : false
+        });
+        new Ext.Viewport({
+            layout: 'fit',
+            items: uidoc
+        });
+ *
+ * @constructor Creates a new UIDocument/Form component
+ * @cfg {boolean} [showActionbar=true] Whether or not to read in the form/page DXL behind the scences and build an Ext.Toolbar from domino actions.
+ * @cfg {string} [createActionsFrom='dxl'] Set to 'document' if you want to create the actionbar from the actions domino sends after it evaluates hide-when formulas.  Set to 'dxl' if you want to create the actionbar from what is defined in Designer.
+ * @cfg {boolean} [convertFields=true] Determines whether to convert form fields to Ext fields.
+ * @cfg {boolean} [applyDominoKeywordRefresh=true] Determines whether to apply the postback onchange event that Domino sends for Keyword fields set to &quot;Refresh fields on keyword change&quot;.
+ * @cfg {number} [defaultFieldWidth=120] The default width to use when a calculated width cannot be determined.
  */
 Ext.nd.UIDocument = function(config){
-    
+
     config = config || {};
-   
+
     var me = this,
-    	sess = Ext.nd.Session,
-    	db = sess.currentDatabase,
-    	//TODO: this needs to go away soon (the use of Ext.nd.currentUIDocument.*)
-    	currentUIDocument = Ext.nd.currentUIDocument || {};
-    
+        sess = Ext.nd.Session,
+        db = sess.currentDatabase,
+        //TODO: this needs to go away soon (the use of Ext.nd.currentUIDocument.*)
+        currentUIDocument = Ext.nd.currentUIDocument || {};
+
     // now just apply currentUIDocument to 'this' so we get what the agent says
     // about this uidocument (such as UNID, form name, etc.)
     Ext.apply(me, currentUIDocument);
-	me.document = me.document || {};
-	
+    me.document = me.document || {};
+
     // for backwards compat (not sure if any devs are using this)
-    me.uidoc = currentUIDocument; 
+    me.uidoc = currentUIDocument;
 
     // defaults
     me.dbPath = db.webFilePath;
@@ -80,29 +72,29 @@ Ext.nd.UIDocument = function(config){
     me.useDocumentWindowTitle = true;
     me.documentWindowTitleMaxLength = 16;
     me.refreshMessage = 'Refreshing document...';
-    
+
     // developer can specify where the toolbar should appear
-    me.toolbarRenderTo; 
+    me.toolbarRenderTo;
     me.dateTimeFormats = Ext.nd.dateTimeFormats;
-    
+
     // for a page we need this hack to get the page name (that we store in the formName variable)
     // we do this since the UIDocument.js agent couldn't get this info and
     // domino does not send the page name in the form tag like it does for forms
     // ALSO - for special forms like $$ViewTemplate or $$SearchTemplae, '_DominoForm' is sent as the form name
-    
+
     if (typeof me.formName == 'undefined') {
-    	var frms = document.forms,
-    		href, search, start, end;
-    		
+        var frms = document.forms,
+            href, search, start, end;
+
         if (frms.length == 0 || frms[0].name.substring(1) == '' || frms[0].name.substring(1) == 'DominoForm') {
-            
+
             href = location.href.toLowerCase();
-           	search = location.search.toLowerCase();
-           	start = href.indexOf(me.dbPath.toLowerCase()) + me.dbPath.length;
-           	end = (search != &quot;&quot;) ? href.indexOf(search) : href.length;
-            	
+            search = location.search.toLowerCase();
+            start = href.indexOf(me.dbPath.toLowerCase()) + me.dbPath.length;
+            end = (search != &quot;&quot;) ? href.indexOf(search) : href.length;
+
             me.formName = location.href.substring(start, end);
-            
+
         } else {
             me.formName = document.forms[0].name.substring(1);
         }
@@ -110,122 +102,128 @@ Ext.nd.UIDocument = function(config){
 
     // since we use Ext.form.BasicForm we need to make sure initialConfig is set now
     if (!me.initialConfig) {
-        me.initialConfig = {};    
+        me.initialConfig = {};
     }
     // now apply anything passed in
-    Ext.apply(me.initialConfig, config);  
+    Ext.apply(me.initialConfig, config);
     // and now set any config params passed in to override defaults
     Ext.apply(me, config);
-    
+
     // formUrl is either passed in or built from dbPath and formName
     me.formUrl = (me.formUrl) ? me.formUrl : me.dbPath + me.formName;
-    
+
     // call parent's constructor
     Ext.nd.UIDocument.superclass.constructor.apply(me, arguments);
 };
 
 Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
-   
+
     initComponent : function(){
-    	
-    	var me = this;
-    	
+
+        var me = this;
+
         me.setupToolbars();
-        
-        me.addEvents(        
+
+        me.addEvents(
 <span id='Ext-nd-UIDocument-event-beforeclose'>                /**
 </span>                 * @event beforeclose Fires just before the current document is closed (equivalent to the NotesUIDocument QueryClose event).
                  * @param {Ext.nd.UIDocument} this
                  */
-                'beforeclose',        
+                'beforeclose',
 <span id='Ext-nd-UIDocument-event-beforemodechange'>                /**
 </span>                 * @event beforemodechange Fires just before the current document changes modes (from Read to Edit mode, or from Edit to Read mode) (equivalent to the NotesUIDocument QueryModeChange event).
                  * @param {Ext.nd.UIDocument} this
                  */
-                'beforemodechange',        
+                'beforemodechange',
 <span id='Ext-nd-UIDocument-event-beforeopen'>                /**
 </span>                 * @event beforeopen (TODO: Not yet implemented) Fires just before the current document is opened (equivalent to the NotesUIDocument QueryOpen event).
                  * @param {Ext.nd.UIDocument} this
                  */
-                'beforeopen',        
+                'beforeopen',
 <span id='Ext-nd-UIDocument-event-beforesave'>                /**
 </span>                 * @event beforesave Fires just before the current document is saved (equivalent to NotesUIDocument QuerySave)
                  * @param {Ext.nd.UIDocument} this
                  */
-                'beforesave',        
+                'beforesave',
 <span id='Ext-nd-UIDocument-event-open'>                /**
 </span>                 * @event open Fires just after the current document is opened (equivalent to NotesUIDocument PostOpen and OnLoad events.)
                  * @param {Ext.nd.UIDocument} this
                  */
                 'open');
-             
-        // now call parent initComponent
-        Ext.nd.UIDocument.superclass.initComponent.call(me);   
 
-		// parent's initComponet create the form so let's now make sure the url is set
-		me.setPostUrl();
-		
+        // now call parent initComponent
+        Ext.nd.UIDocument.superclass.initComponent.call(me);
+
+        // parent's initComponet create the form so let's now make sure the url is set
+        me.setPostUrl();
+
         // take over Domino's generated _doClick function
         if (Ext.isFunction(_doClick)){
-        	_doClick = me._doClick.createDelegate(me);
+            _doClick = me._doClick.createDelegate(me);
         }
     },
-    
-    // private
-  	// change the hash reference by prepending xnd-goto
- 	// will fix an IE issue with the layout not positioning correctly
-    // when the page loads and 'jumps' to the &lt;a href&gt; reference in the hash
-    // TODO: need to add code to instead &quot;scroll&quot; to the hash reference
+
+<span id='Ext-nd-UIDocument-method-_doClick'>    /**
+</span>     * We take over Domino's generated _doClick method so that we can
+     * change the hash reference by prepending xnd-goto which will fix some IE layout issues
+     */
     _doClick : function(v, o, t, h) {
-		var form = this.getForm();
-	  	if (form.onsubmit) {
-		     var retVal = form.onsubmit();
-		     if (typeof retVal == &quot;boolean&quot; &amp;&amp; retVal == false)
-		       return false;
-		}
-		var target = document._domino_target;
-		if (o.href != null) {
-		  if (o.target != null)
-		     target = o.target;
-		} else {
-		  if (t != null)
-		    target = t;
-		}
-		form.el.dom.target = target;
-		form.findField(&quot;__Click&quot;).setValue(v);
-		
-		// modify hash to prepend 'xnd-goto'
-		if (h != null) {
-		  form.el.dom.action += h.replace('#','#xnd-goto');
-		}
-		
-		// call submit from the dom and not the Ext form since it will do an Ajax submit
-		// but the dom submit will do a standard submit which is what domino is needing to do
-		// if calling _doClick (usually a refresh fields on keyword change type of submit)
-		form.el.dom.submit({standardSubmit : true});
-		return false;
-	},
-	
-    // private
-    // overriding the FormPanels createForm method with our own 
-    // so we can reuse the domino generated form
+        // TODO: need to add code to instead &quot;scroll&quot; to the hash reference
+        var form = this.getForm();
+        if (form.onsubmit) {
+             var retVal = form.onsubmit();
+             if (typeof retVal == &quot;boolean&quot; &amp;&amp; retVal == false)
+               return false;
+        }
+        var target = document._domino_target;
+        if (o.href != null) {
+          if (o.target != null)
+             target = o.target;
+        } else {
+          if (t != null)
+            target = t;
+        }
+        form.el.dom.target = target;
+        form.findField(&quot;__Click&quot;).setValue(v);
+
+        // modify hash to prepend 'xnd-goto'
+        // will fix an IE issue with the layout not positioning correctly
+        // when the page loads and 'jumps' to the &lt;a href&gt; reference in the hash
+        if (h != null) {
+            form.el.dom.action += h.replace('#','#xnd-goto');
+        }
+
+        // call submit from the dom and not the Ext form since it will do an Ajax submit
+        // but the dom submit will do a standard submit which is what domino is needing to do
+        // if calling _doClick (usually a refresh fields on keyword change type of submit)
+        form.el.dom.submit({standardSubmit : true});
+        return false;
+    },
+
+<span id='Ext-nd-UIDocument-method-createForm'>    /**
+</span>     * @private
+     * overriding the FormPanels createForm method with our own
+     * so we can reuse the domino generated form
+     */
     createForm : function(){
         delete this.initialConfig.listeners;
         if (!this.items) {
             // this is just something to make FormPanel happy
             this.items = {xtype: 'label', hidden: true};
         }
-        /* TODO: for now we use document.forms[0] since we 
-         * currently only support loading forms/documents 
+        /* TODO: for now we use document.forms[0] since we
+         * currently only support loading forms/documents
          * by themselves or in an iframe.  Eventually we want
-         * to provide support to open forms/documents without 
+         * to provide support to open forms/documents without
          * the need to be in an iframe
          */
         return new Ext.form.BasicForm(document.forms[0], this.initialConfig);
     },
-    
-    /* to support users coming from older versions of Ext.nd where you did
-     * not have to specify 'where' to render to so we will render to
+
+<span id='Ext-nd-UIDocument-method-render'>    /**
+</span>     * Renders the UIDocument in the div with an id that matches the argument passed or,
+     * in order to support users coming from older versions of Ext.nd where you did
+     * not have to specify 'where' to render to, we will render to
      * an Ext.Viewport like previous versions did when the render method
      * is called without any arguments
      */
@@ -237,23 +235,23 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
              items: this
           });
         } else {
-            Ext.nd.UIDocument.superclass.render.apply(this, arguments);    
+            Ext.nd.UIDocument.superclass.render.apply(this, arguments);
         }
-        
+
     },
-    
+
    onRender : function(ct, position){
-        
-        /* make sure that body is already set to our domino 
-         * form's Element (this.form.el) we do this so that 
-         * superclass.onRender call will not create a 
-         * new body (which is a form element) but instead, 
+
+        /* make sure that body is already set to our domino
+         * form's Element (this.form.el) we do this so that
+         * superclass.onRender call will not create a
+         * new body (which is a form element) but instead,
          * use the form element (our domino one) instead
-         */        
+         */
         this.body = this.form.el;
-            
+
         Ext.nd.UIDocument.superclass.onRender.call(this, ct, position);
-        
+
         /* apply any custom styles from the bodyStyle config
          * the .supercalls.onRender normally does this but since
          * we forced this.body = this.form.el we need to now
@@ -262,60 +260,63 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         if(this.bodyStyle){
             this.body.applyStyles(this.bodyStyle);
         }
-        
+
         /* make sure any buttons know about uiView and uiDocument
          * we do this after the superclass.onRender since that
          * is where fbar for the buttons gets setup
          */
         this.setupButtons();
-    },
-    
+   },
+
     afterRender : function(){
-    
-    
-        /* make an Ajax call to our DXLExport agent 
-         * to get field info however, 
-         * only need to do this if convertFields is true, 
+
+
+        /* make an Ajax call to our DXLExport agent
+         * to get field info however,
+         * only need to do this if convertFields is true,
          * otherwise, there is no need
          */
         if (this.convertFields) {
-            
+
             Ext.Ajax.request({
                 method: 'GET',
                 disableCaching: true,
-                success : this.doConvertFieldsCB, 
+                success : this.doConvertFieldsCB,
                 failure : this.doConvertFieldsCB,
                 arguments : arguments,
                 scope: this,
                 url: Ext.nd.extndUrl + 'DXLExporter?OpenAgent&amp;db=' + this.dbPath + '&amp;type=form&amp;name=' + this.formName
             });
 
-            // need to go ahead and make sure we set the layout 
-			// since we are making the above Ajax call
-			if (Ext.isString(this.layout)) {
-				this.layout = new Ext.Container.LAYOUTS[this.layout.toLowerCase()](this.layoutConfig);
-			}
-			this.setLayout(this.layout);
-			Ext.nd.UIDocument.superclass.afterRender.apply(this, arguments);
-			
+            // need to go ahead and make sure we set the layout
+            // since we are making the above Ajax call
+            if (Ext.isString(this.layout)) {
+                this.layout = new Ext.Container.LAYOUTS[this.layout.toLowerCase()](this.layoutConfig);
+            }
+            this.setLayout(this.layout);
+            Ext.nd.UIDocument.superclass.afterRender.apply(this, arguments);
+
         } else {
 
             Ext.nd.UIDocument.superclass.afterRender.apply(this, arguments);
-            
+
             // seen some issues where this.layout is a string (this.layout = 'fit') and thus
             // does not have a layout() method which doLayout() calls
             if (typeof this.layout == 'object') {
                 this.doLayout();
-            } 
-            
+            }
+
             this.fireEvent('open', this);
 
         }
 
     },
 
+<span id='Ext-nd-UIDocument-method-edit'>    /**
+</span>     * Opens the UIDocument into Edit mode
+     */
     edit : function(config) {
-    	var me = this;
+        var me = this;
         if (me.fireEvent(&quot;beforemodechange&quot;, me) !== false) {
             me.onEdit(config);
         }
@@ -323,105 +324,115 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
 
     onEdit : function(config){
         var me = this,
-        	uiView = me.getUIView(),
-        	uiViewName = (uiView) ? uiView.viewName : '0',
-        	unid = me.document.universalID;
-        
+            uiView = me.getUIView(),
+            uiViewName = (uiView) ? uiView.viewName : '0',
+            unid = me.document.universalID;
+
         location.href = me.dbPath + uiViewName + '/' + unid + '?EditDocument'
     },
-    
+
+<span id='Ext-nd-UIDocument-method-save'>    /**
+</span>     * Saves the UIDocument
+     * @param {Boolean/Object} config Can either be a boolean or an object.  If a boolean, it specifies whether the UIDocument should be closed after the save
+     * @param {Function} config.success Success callback handler
+     * @param {Function} config.failure Failure callback handler
+     * @param {Object} config.scope The scope to run the callback handlers under
+     */
     save : function(config) {
-    	var me = this;
-    	if (me.fireEvent(&quot;beforesave&quot;, me) !== false) {
+        var me = this;
+        if (me.fireEvent(&quot;beforesave&quot;, me) !== false) {
             me.onSave(config);
         }
     },
-    
+
     onSave : function(config) {
-        
+
         var frm = this.getForm(),
-        	fieldModDate;
-        
+            fieldModDate;
+
         // TODO: need to add documentation code for the fact that config could be an object or a boolean
         config = (typeof config == 'undefined') ? {closeOnSave : false} : (typeof config == 'boolean') ? {closeOnSave : config} : config;
-    	
-    	// disable the %%ModDate field that domino adds since having it there could cause rep/save conflicts
-    	fieldModDate = frm.findField('%%ModDate');
-    	if (fieldModDate) {
-    		fieldModDate.disable();
-    	}
-    	
-    	var cb = {};
-    	if (config.success) {
-    		cb.success = config.success;
-    		delete config.success;
-    	}
-    	if (config.failure) {
-    		cb.failure = config.failure;
-    		delete config.failure;
-    	}
-    	if (config.scope) {
-    		cb.scope = config.scope;
-    		delete config.scope;
-    	}
-    	
+
+        // disable the %%ModDate field that domino adds since having it there could cause rep/save conflicts
+        fieldModDate = frm.findField('%%ModDate');
+        if (fieldModDate) {
+            fieldModDate.disable();
+        }
+
+        var cb = {};
+        if (config.success) {
+            cb.success = config.success;
+            delete config.success;
+        }
+        if (config.failure) {
+            cb.failure = config.failure;
+            delete config.failure;
+        }
+        if (config.scope) {
+            cb.scope = config.scope;
+            delete config.scope;
+        }
+
         frm.submit(Ext.apply({
-          	method: 'POST',
-          	//success: (config.closeOnSave) ? this.close : Ext.emptyFn,
-          	success: this.onSaveCallback,
-          	failure: this.onSaveCallback,
-          	cb : cb,
-          	scope: this            
+            method: 'POST',
+            //success: (config.closeOnSave) ? this.close : Ext.emptyFn,
+            success: this.onSaveCallback,
+            failure: this.onSaveCallback,
+            cb : cb,
+            scope: this
         },config));
     },
-       
+
     onSaveCallback : function(form, action){
-    	var me = this,
-    		options = action.options,
-    		cb = options.cb,
-    		result = action.result,
-    		msg = result.msg,
-    		unid = result.unid || result.universalID;
-    		
-    	if (unid) {
-    		me.setUniversalID(unid);
-    	}
-    	
-    	if (result.success) {
-    		if (cb.success) {
-    			cb.success.apply(cb.scope || me, arguments);
-    		}
-    	} else {
-    		if (cb.failure) {
-    			cb.failure.apply(cb.scope || me, arguments);
-    		}
-    	}
-    	
+        var me = this,
+            options = action.options,
+            cb = options.cb,
+            result = action.result,
+            msg = result.msg,
+            unid = result.unid || result.universalID;
+
+        if (unid) {
+            me.setUniversalID(unid);
+        }
+
+        if (result.success) {
+            if (cb.success) {
+                cb.success.apply(cb.scope || me, arguments);
+            }
+        } else {
+            if (cb.failure) {
+                cb.failure.apply(cb.scope || me, arguments);
+            }
+        }
+
     },
-    
+
+<span id='Ext-nd-UIDocument-method-close'>    /**
+</span>     * Closes the UIDocument
+     */
     close : function(unid){
         if (this.fireEvent(&quot;beforeclose&quot;, this) !== false) {
             this.onClose(unid);
         }
     },
-    
+
     onClose : function(unid) {
         /*
          * return true means that we were able to call the component's remove/hide/close action
          * return false means that we couldn't find a component and thus couldn't do anything
-         * 
+         *
          */
-        
+
         var returnValue = false;
         var target = this.getTarget();
-        
+
         if (target) {
-            
+
             switch (target.getXType()) {
                 case 'window':
                     if (target.closeAction == 'close') {
                         target.close();
-                        returnValue = true;  
+                        returnValue = true;
                     } else {
                         target.hide();
                         returnValue = true;
@@ -452,67 +463,67 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
                 var uiViewName = (uiView) ? uiView.viewName : '0';
                 var unid = (unid) ? unid : this.document.universalID;
                 if (unid) {
-                	location.href = this.dbPath + uiViewName + '/' + unid + '?OpenDocument'
+                    location.href = this.dbPath + uiViewName + '/' + unid + '?OpenDocument'
                 } else {
-                	location.href = this.dbPath;
+                    location.href = this.dbPath;
                 }
             } else {
                 returnValue = false;
             }
-        }   
-        
+        }
+
         return returnValue;
     },
-    
-    
-    // private 
+
+
+    // private
     setPostUrl : function() {
-    	
-    	// make sure we have a url to post to
+
+        // make sure we have a url to post to
         // it can be blank when the developer is opening a doc in read mode but still
         // wants to call the uidoc's save method.  since domino sets the action attribute to blank
         // when in read mode, we have to create it ourselves
-    	
-    	var me = this,
-    		frm = me.getForm(),
-    		action, uiView, uiViewName, unid;
-    	
-    	if (!frm.url) {
-    		action = me.getForm().el.dom.action;
-			if (action == &quot;&quot;) {
-				uiView = me.getUIView();
-				uiViewName = (uiView) ? uiView.viewName : '0';
-				unid = me.document.universalID;
-				frm.url = me.dbPath + uiViewName + '/' + unid + '?SaveDocument';
-			} else {
-				frm.url = action;
-			}
-    	}
+
+        var me = this,
+            frm = me.getForm(),
+            action, uiView, uiViewName, unid;
+
+        if (!frm.url) {
+            action = me.getForm().el.dom.action;
+            if (action == &quot;&quot;) {
+                uiView = me.getUIView();
+                uiViewName = (uiView) ? uiView.viewName : '0';
+                unid = me.document.universalID;
+                frm.url = me.dbPath + uiViewName + '/' + unid + '?SaveDocument';
+            } else {
+                frm.url = action;
+            }
+        }
     },
-    
-    // private 
+
+    // private
     setUniversalID : function(unid) {
-    	
-    	var me = this,
-    		frm = me.getForm(),
-    		uiView = me.getUIView(),
-			uiViewName = (uiView) ? uiView.viewName : '0',
-			unid = unid || me.document.universalID;
-			
-		frm.url = me.dbPath + uiViewName + '/' + unid + '?SaveDocument';
-		me.document.universalID = unid;
-		me.isNewDoc = false;
+
+        var me = this,
+            frm = me.getForm(),
+            uiView = me.getUIView(),
+            uiViewName = (uiView) ? uiView.viewName : '0',
+            unid = unid || me.document.universalID;
+
+        frm.url = me.dbPath + uiViewName + '/' + unid + '?SaveDocument';
+        me.document.universalID = unid;
+        me.isNewDoc = false;
     },
-    
+
     // private
     setupToolbars : function() {
-       
+
         var tbId;
-        
+
         if (this.tbar) {
-        
+
             tbId = 'xnd-doc-tbar-' + Ext.id();
-           
+
             if (Ext.isArray(this.tbar)) {
                 // add the tbar|bbar|buttons array to our on Actionbar items config
                 this.tbar = new Ext.nd.Actionbar({
@@ -533,7 +544,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
                 this.tbar.uiDocument = this.getUIDocument();
                 this.tbar.uiView = this.getUIView();
             }
-            // a tbar config will override the domino actionbar 
+            // a tbar config will override the domino actionbar
             // so be sure to remove the domino generated actionbar
             this.dominoActionbar = new Ext.nd.util.DominoActionbar();
             this.dominoActionbar.hide();
@@ -552,73 +563,74 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
                     renderTo : (this.toolbarRenderTo) ? this.toolbarRenderTo : null
                 });
             }
-            
+
         } // eo if (this.tbar)
-        
+
     },
-    
+
     setupButtons : function() {
-        
+
         // handle special case of 'buttons' and 'fbar'
-        if (this.buttons) { 
+        if (this.buttons) {
             // you can only have one and if buttons exist they will
             // supersede fbar.  however, keep in mind that the code
             // in Ext.Panel simply creates a fbar and sets the
             // items array to buttons.  So we only need to
             // add uiDocument and uiView to fbar
-            
+
             // make sure it exists (it should but just in case
             if (this.fbar) {
                 this.fbar.target = this.getTarget() || null;
                 this.fbar.uiDocument = this.getUIDocument();
-                this.fbar.uiView = this.getUIView();            
+                this.fbar.uiView = this.getUIView();
             }
         }
     },
-    
-    /* called only when convertFields is set to true
-     * and processes the response from the dxl export 
+
+<span id='Ext-nd-UIDocument-method-doConvertFieldsCB'>    /**
+</span>     * @private
+     * called only when convertFields is set to true
+     * and processes the response from the dxl export
      * of field info
      */
-    // private
     doConvertFieldsCB : function(response, options) {
 
         // load in our field defintions
         this.fieldDefinitions = new Ext.util.MixedCollection(false,this.getFieldDefinitionKey);
         this.fieldDefinitions.addAll(Ext.DomQuery.select('field', response.responseXML));
         var noteinfo = Ext.DomQuery.select('noteinfo', response.responseXML);
-      	this.noteinfo = {
-      		unid : Ext.DomQuery.selectValue('@unid', noteinfo),
-      		noteid : Ext.DomQuery.selectValue('@noteid', noteinfo),
-      		sequence : Ext.DomQuery.selectValue('@sequence', noteinfo)
-      	};
-  
+        this.noteinfo = {
+            unid : Ext.DomQuery.selectValue('@unid', noteinfo),
+            noteid : Ext.DomQuery.selectValue('@noteid', noteinfo),
+            sequence : Ext.DomQuery.selectValue('@sequence', noteinfo)
+        };
+
         // convert the fields
         this.doConvertFields();
 
-        /* this is called in the form panel's onRender method but we 
+        /* this is called in the form panel's onRender method but we
          * need to call it again here since the domino fields didn't exist
          * in the items array until now
-         */ 
+         */
         this.initFields();
-        
+
         /* need to call parent afterRender since this callback function
          * was called from this classes afterRender method
          * Ext.nd.UIDocument.superclass.afterRender.call(this);
-         */  
+         */
         Ext.nd.UIDocument.superclass.afterRender.apply(this, options.arguments)
-        
+
         // since we have dynamically added Ext form fields we need
         // to call doLayout
-        this.doLayout();	   
-		this.fireEvent('open', this);
-		
+        this.doLayout();
+        this.fireEvent('open', this);
+
     },
 
     doConvertFields : function(){
-    
+
         var elem, key;
-        
+
         // 1st, convert all elements that do not use an 'xnd-*' class
         var elements = this.form.el.dom.elements;
         var allElements = new Ext.util.MixedCollection();
@@ -632,38 +644,38 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
                 this.convertFromTagName(item);
             }
         },this);
-                
+
         /* now handle the elements with 'xnd-' classNames
-         * we do this second/last so that any new elements introduced 
+         * we do this second/last so that any new elements introduced
          * by Ext are not processed again
          */
         var xndElements = Ext.DomQuery.select('*[class*=xnd-]');
         Ext.each(xndElements, function(elem, index, allItems){
             this.convertFromClassName(elem, true);
         }, this);
-        
-        
-    }, // end function doConvertFields()
-    
+
+
+    },
+
     getFieldDefinition : function(el) {
         if (el.name) {
-            return this.fieldDefinitions ? this.fieldDefinitions.get(el.name) : null;    
+            return this.fieldDefinitions ? this.fieldDefinitions.get(el.name) : null;
         } else {
             return null;
         }
     },
-    
+
     // private
     convertFromTagName : function(el) {
-        
+
         switch (el.tagName) {
             case 'BUTTON':
                 // do nothing for now on buttons
                 break;
-                
+
             case 'SELECT':
-                /* for a dialoglist set to use a view for choices, 
-                 * domino causes problems in that it will send 
+                /* for a dialoglist set to use a view for choices,
+                 * domino causes problems in that it will send
                  * a select tag down without any options!
                  * so therefore, we have to check for that
                  */
@@ -687,7 +699,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
                     this.convertSelectToComboBox(el, true);
                 }
                 break;
-                
+
             case 'TEXTAREA':
                 this.convertToTextAreaField(el);
                 break;
@@ -695,7 +707,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
             case 'FIELDSET':
                 this.convertToFieldSet(el);
                 break;
-                
+
             case 'INPUT':
                 var type = el.getAttribute('type');
                 switch (type) {
@@ -709,25 +721,25 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
                         this.convertToRadio(el);
                         break;
                     case 'file':
-                    	this.convertToFileUpload(el);
-                    	break;
+                        this.convertToFileUpload(el);
+                        break;
                     default:
                         this.convertFromDominoFieldType(el);
-                        
+
                 } // end switch(type)
                 break;
-                
+
             default:
                 this.convertToTextField(el);
                 break;
-                
+
         } // end switch(el.tagName)
-            
+
     },
-    
+
     //private
     convertFromDominoFieldType : function(el) {
-        
+
         var dfield = this.getFieldDefinition(el);
         if (dfield) {
             var dtype = Ext.DomQuery.selectValue('@type',dfield);
@@ -738,39 +750,39 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
                     break;
                 case 'datetime':
                     this.convertToDateTimeField(el);
-                    break;   
+                    break;
                 case 'number':
                     this.convertToNumberField(el);
                     break;
                 case 'names':
                     this.convertNamesField(el);
-                    break;                                     
+                    break;
                 case 'keyword':
                     this.convertKeywordField(el);
                     break;
-                    
+
             } // eo switch
         } // eo if (dfield)
         else {
             this.convertToTextField(el);
-        }        
+        }
     },
-    
+
     // private
     getFieldDefinitionKey : function(theField){
-        
-        return Ext.DomQuery.selectValue('@name',theField);    
+
+        return Ext.DomQuery.selectValue('@name',theField);
     },
-    
+
     convertFromClassName : function(el, doConvert){
-    
+
         var arClasses = el.className.split(' ');
         var elHasXndClass = false;
-        
+
         // check classes first
         for (var c = 0; c &lt; arClasses.length; c++) {
             var cls = arClasses[c];
-            
+
             switch (cls) {
                 case 'xnd-combobox':
                     if (doConvert) {
@@ -778,7 +790,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
                     }
                     elHasXndClass = true;
                     break;
-                    
+
                 // doesn't work since domino sends a text field instead of a
                 // select when the option for 'allow values not in list' is
                 // selected
@@ -788,66 +800,66 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
                     }
                     elHasXndClass = true;
                     break;
-                    
+
                 case 'xnd-date':
                     if (doConvert) {
-                        this.convertToDateField(el)                        
+                        this.convertToDateField(el)
                     }
                     elHasXndClass = true;
                     break;
-                    
+
                 case 'xnd-number':
                     if (doConvert) {
                         this.convertToNumberField(el);
                     }
                     elHasXndClass = true;
                     break;
-                    
+
                 case 'xnd-time':
                     if (doConvert) {
                         this.convertToTimeField(el);
                     }
                     elHasXndClass = true;
                     break;
-    
+
                 case 'xnd-htmleditor':
                     if (doConvert) {
                         this.convertToHtmlEditor(el);
                     }
                     elHasXndClass = true;
                     break;
-                                                            
+
                 case 'xnd-picklist-names':
                     if (doConvert) {
                         this.convertToNamePicker(el);
                     }
                     elHasXndClass = true;
                     break;
-                    
+
                 case 'xnd-ignore':
                     elHasXndClass = true;
                     break;
-                    
+
                 default:
                     break;
             } // end switch(cls)
         } // end for arClasses
-        // return the value of elHasXndClass 
+        // return the value of elHasXndClass
         // so we know if this field was or could have been converted
 
         return elHasXndClass;
     },
-        
+
     // private
     convertToHiddenField : function(el){
         // not sure if we need to do anything more
         this.convertToTextField(el);
     },
-    
-    
+
+
     // private
     convertToTextField : function(el){
-        
+
         // for normal input fields
         var f = new Ext.form.TextField({
             id: (el.id ? el.id : el.name),
@@ -856,12 +868,12 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         f.applyToMarkup(el);
         // now add to items
         this.form.items.add(f);
-                                        
+
     },
 
     // private
     convertToFieldSet : function(el){
-        
+
         //var title = Ext.DomQuery.selectValue('legend',el,'');
         var fs = new Ext.form.FieldSet({
             id: (el.id ? el.id : el.name),
@@ -870,36 +882,36 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
             autoWidth : true
         });
         fs.applyToMarkup(el);
-                                        
+
     },
 
     // private
     convertNamesField : function(el){
-        
+
         var dfield = this.getFieldDefinition(el);
         if (dfield) {
             var allowMultiValues = (Ext.DomQuery.selectValue('@allowmultivalues',dfield) == 'true') ? true : false;
             var allowNew = (Ext.DomQuery.selectValue('keywords/@allownew',dfield) == 'true') ? true : false;
             var choicesdialog = Ext.DomQuery.selectValue('@choicesdialog',dfield, false);
-            
+
             if (choicesdialog) {
 
                 switch (choicesdialog) {
-                    
+
                     case 'addressbook':
                     this.convertToNamePicker(el, {
                         multipleSelection : allowMultiValues,
                         allowNew : allowNew
                     });
                     break;
-                    
+
                     case 'acl':
                     this.convertToACLDialog(el, {
                         multipleSelection : allowMultiValues,
-                        allowNew : allowNew                
+                        allowNew : allowNew
                     });
                     break;
-                
+
                     case 'view':
                     this.convertToPickList(el, {
                         type : 'custom',
@@ -907,22 +919,22 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
                         column : Ext.DomQuery.selectNumber('@viewcolumn', dfield),
                         multipleSelection : allowMultiValues,
                         useCheckboxSelection : true,
-                        allowNew : allowNew                    
+                        allowNew : allowNew
                     });
                     break;
                 } // eo switch
-                
+
             } else {
                 this.convertToTextField(el);
             }
         }
     },
-        
+
     // private
     convertToNamePicker : function(el, config){
-        
+
         config = config || {};
-        
+
         var nm = new Ext.nd.form.PickListField(Ext.apply({
             type: 'names',
             id: (el.id ? el.id : el.name),
@@ -933,7 +945,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         this.form.items.add(nm);
 
     },
-    
+
     // private
     convertToPickList : function(el, config){
 
@@ -944,118 +956,118 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         pl.applyToMarkup(el);
         // now add to items
         this.form.items.add(pl);
-        
+
     },
-    
+
     // private
     convertToTextAreaField : function(el){
-        
+
         var ta = new Ext.form.TextArea({
             id: (el.id ? el.id : el.name),
             resizable: true
         });
         ta.applyToMarkup(el);
         // now add to items
-        this.form.items.add(ta);                        
+        this.form.items.add(ta);
 
     },
-    
+
     // private : function(el) {
     convertToFileUpload : function(el){
-    	
-    	/* can only convert to the nicer Ext UploadField
-    	 * if the user has loaded the Ext.ux.form.FileUploadFile code
-    	 * 
-    	 * If you want to create file uploads on the fly
-    	 * then you will need to set this notes.ini parameter
-    	 * DominoDisableFileUploadChecks=1
-    	 * 
-    	 * That parameter will allow for you to create file inputs
-    	 * but note that the name attribute needs to start as '%%File.n'
-    	 * where n = a unique number/string for each file upload field
-    	 */ 
-    	
-    	if (Ext.ux.form.FileUploadField) {
-    		
-    		// make sure el has an id
-    		el.id = el.id || Ext.id();
-    		
-    		var attr = el.attributes;
-	        var style = '';
-	        var cls = '';
-	        if (attr) {
-	        	var oStyle = attr.getNamedItem('style');
-	        	var oCls = attr.getNamedItem('class');
-	            style = oStyle ? oStyle.value : '';
-	            cls = oCls ? oCls.value : '';
-	        }
-	        
-	        var sName = el.name;
-	        var sId = el.id;
-	        
-	        var dh = Ext.DomHelper;
-	    	
-	        var parentParagraphTag = Ext.get(el).findParentNode('p', true);
-	        if (parentParagraphTag) {
-	        	var innerMarkup = parentParagraphTag.innerHTML;
-	        	dh.insertBefore(parentParagraphTag, {
-	        		tag : 'div',
-	        		html : innerMarkup
-	        	});
-	       		Ext.removeNode(parentParagraphTag);
-	       		
-	       		// need a new reference to el since the original
-	       		// reference just got removed
-	       		el = Ext.getDom(sId);
-	        }
-	        	    	
-	        // define a place holder for the fileuploadfield
-        	var fileUploadContainer = dh.insertBefore(el, {
-            	tag : 'div',
-            	id : Ext.id()
-        	}, true);
 
-        	// render the new Ext fileupload field
-	        var uploadField = new Ext.ux.form.FileUploadField({
-	        	id : sId,
-	        	name : sName,
-				renderTo : fileUploadContainer.id,
-				width : this.getFieldWidth(el)
-			});
-			
-			el.name = Ext.id(); // wipe out the name in case somewhere else they have a reference
-	        // now remove the domino generated fileupload field
-	        Ext.removeNode(el);
-	        
-	        // now add to items
-	        this.form.items.add(uploadField);
-	        
-    	} else {
-    		// Ext's fileuploadfield code isn't loaded
-    		// so at least conver the input area to the Ext look-n-feel
-    		this.convertToTextField(el);
-    	}
-    	
+        /* can only convert to the nicer Ext UploadField
+         * if the user has loaded the Ext.ux.form.FileUploadFile code
+         *
+         * If you want to create file uploads on the fly
+         * then you will need to set this notes.ini parameter
+         * DominoDisableFileUploadChecks=1
+         *
+         * That parameter will allow for you to create file inputs
+         * but note that the name attribute needs to start as '%%File.n'
+         * where n = a unique number/string for each file upload field
+         */
+
+        if (Ext.ux.form.FileUploadField) {
+
+            // make sure el has an id
+            el.id = el.id || Ext.id();
+
+            var attr = el.attributes;
+            var style = '';
+            var cls = '';
+            if (attr) {
+                var oStyle = attr.getNamedItem('style');
+                var oCls = attr.getNamedItem('class');
+                style = oStyle ? oStyle.value : '';
+                cls = oCls ? oCls.value : '';
+            }
+
+            var sName = el.name;
+            var sId = el.id;
+
+            var dh = Ext.DomHelper;
+
+            var parentParagraphTag = Ext.get(el).findParentNode('p', true);
+            if (parentParagraphTag) {
+                var innerMarkup = parentParagraphTag.innerHTML;
+                dh.insertBefore(parentParagraphTag, {
+                    tag : 'div',
+                    html : innerMarkup
+                });
+                Ext.removeNode(parentParagraphTag);
+
+                // need a new reference to el since the original
+                // reference just got removed
+                el = Ext.getDom(sId);
+            }
+
+            // define a place holder for the fileuploadfield
+            var fileUploadContainer = dh.insertBefore(el, {
+                tag : 'div',
+                id : Ext.id()
+            }, true);
+
+            // render the new Ext fileupload field
+            var uploadField = new Ext.ux.form.FileUploadField({
+                id : sId,
+                name : sName,
+                renderTo : fileUploadContainer.id,
+                width : this.getFieldWidth(el)
+            });
+
+            el.name = Ext.id(); // wipe out the name in case somewhere else they have a reference
+            // now remove the domino generated fileupload field
+            Ext.removeNode(el);
+
+            // now add to items
+            this.form.items.add(uploadField);
+
+        } else {
+            // Ext's fileuploadfield code isn't loaded
+            // so at least conver the input area to the Ext look-n-feel
+            this.convertToTextField(el);
+        }
+
     },
     // private
     convertToHtmlEditor : function(el){
-    
+
         // Html Editor needs QuickTips inorder to work
         Ext.QuickTips.init();
-        
+
         // get the tagName since the developer may add the class to a rich text
         // field (textarea) or a div
         var tag = el.tagName.toLowerCase();
         var ed;
-        
+
         if (tag == 'div') {
             ed = new Ext.form.HtmlEditor({
                 id: (el.id ? el.id : el.name),
                 renderTo: el
             });
-            
+
         } else {
-                       
+
             // define a place holder for the HtmlEditor
             var heContainer = Ext.DomHelper.insertBefore(el, {
                 tag: 'div',
@@ -1063,45 +1075,45 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
                     width: 500
                 }
             }, true);
-            
+
             /* now append (move) the textarea into the heContainer
              * this is needed since the renderTo of HtmlEditor will try and
              * render into the parentNode of the textarea and since domino
-             * sometimes wraps &lt;font&gt; tags around the textarea, 
+             * sometimes wraps &lt;font&gt; tags around the textarea,
              * the renderTo code will break
              */
-            
+
             heContainer.dom.appendChild(el);
-            
+
             // make sure the textarea is at least 510px for the richtext toolbar
             Ext.get(el).setStyle({
                 width: 510
             });
-            
+
             // now create the HtmlEditor and apply it to the textarea field
             ed = new Ext.form.HtmlEditor();
             ed.applyToMarkup(el);
-            
-            
-            /* strip off the passthru square brackets and div we add 
+
+
+            /* strip off the passthru square brackets and div we add
              * in order to have passthru html when in read mode
              */
             ed.on('beforepush', function(editor, html){
                 var htmlBefore = &quot;[&lt;div class='xnd-htmleditor-read'&gt;&quot;;
                 var htmlAfter = &quot;&lt;/div&gt;]&quot;;
-                
+
                 var start = htmlBefore.length;
                 var end = html.length - htmlAfter.length;
-                
+
                 if (html.indexOf(htmlBefore) == 0) {
                     html = html.substring(start, end)
                 }
-                
+
                 editor.getEditorBody().innerHTML = html;
                 return false;
             });
-            
-            /* add back the passthru square brackets and div 
+
+            /* add back the passthru square brackets and div
              * in order to have passthru html when in read mode
              */
             ed.on('beforesync', function(editor, html){
@@ -1110,25 +1122,25 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
                 &quot;&lt;/div&gt;]&quot;;
                 return false;
             });
-            
+
         }
-        
+
         // now add to items
         this.form.items.add(ed);
-        
+
     },
-    
+
     convertToNumberField : function(el){
-        
+
         var nbr = new Ext.form.NumberField({
             width : this.getFieldWidth(el)
         });
         nbr.applyToMarkup(el);
         // now add to items
-        this.form.items.add(nbr);                        
+        this.form.items.add(nbr);
 
     },
-    
+
     // private
     convertToDateTimeField : function(el) {
         var dfield = this.getFieldDefinition(el);
@@ -1137,15 +1149,15 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
             switch (show) {
                 case &quot;date&quot;:
                     this.convertToDateField(el);
-                    break;  
+                    break;
                 case &quot;time&quot;:
                     this.convertToTimeField(el);
                     break;
-                
+
             }
         }
     },
-    
+
     // private
     convertToDateField : function(el) {
         var dt = new Ext.form.DateField({
@@ -1154,22 +1166,22 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
             format: this.dateTimeFormats.dateFormat,
             width : this.getFieldWidth(el)
         });
-        
+
         dt.applyToMarkup(el);
         // now add to items
         this.form.items.add(dt);
     },
-    
+
     // private
     convertToTimeField : function(el){
-    
+
         var tm = new Ext.nd.form.TimeField({
             width : this.getFieldWidth(el)
         });
         tm.applyToMarkup(el);
         // now add to items
-        this.form.items.add(tm);                        
-        
+        this.form.items.add(tm);
+
     },
 
     // private
@@ -1178,28 +1190,28 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         var boxLabel = this.getDominoGeneratedBoxLabel(el, true);
         // TODO: figure out how to use columns and checkbox group
         var columns = Ext.DomQuery.selectValue('keywords/@columns');
-        
+
         var ckb = new Ext.form.Checkbox({
             boxLabel : boxLabel
         });
         ckb.applyToMarkup(el);
-        this.form.items.add(ckb);            
+        this.form.items.add(ckb);
 
     },
-    
+
     // private
     convertToRadio : function(el){
         var dfield = this.getFieldDefinition(el);
         var boxLabel = this.getDominoGeneratedBoxLabel(el, true);
         // TODO: figure out how to use columns and radio group
         var columns = Ext.DomQuery.selectValue('keywords/@columns');
-        
+
         // Ext.form.Radio needs a unique id for each radio button
         // and this unique id needs to be on the corresponding
         // component
-        
+
         el.id = Ext.id();
-        
+
         var rd = new Ext.form.Radio({
             id : el.id,
             boxLabel : boxLabel
@@ -1214,16 +1226,16 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
 
         var boxLabel = '';
         var boxLabelNode = el.nextSibling;
-        
+
         if (boxLabelNode &amp;&amp; boxLabelNode.nodeType == 3) {
             boxLabel = boxLabelNode.nodeValue;
-            
+
             if (removeLabel) {
                 // remove domino's generated br tag
                 var br = Ext.get(el).next();
                 if (br != null &amp;&amp; br.dom.nodeName == 'BR') {
                     br.remove();
-                }    
+                }
                 // now remove the boxLabel node
                 boxLabelNode.parentNode.removeChild(boxLabelNode);
             }
@@ -1231,7 +1243,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
 
         return boxLabel;
     },
-    
+
     // private
     convertKeywordField : function(el){
 
@@ -1240,61 +1252,61 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
             var allowMultiValues = (Ext.DomQuery.selectValue('@allowmultivalues',dfield) == 'true') ? true : false;
             var allowNew = (Ext.DomQuery.selectValue('keywords/@allownew',dfield) == 'true') ? true : false;
             var choicesdialog = Ext.DomQuery.selectValue('@choicesdialog',dfield);
-            
+
             // for an addressbook dialog
             if (choicesdialog == &quot;addressbook&quot;) {
                 this.convertToNamePicker(el, {
                     multipleSelection : allowMultiValues,
-                    allowNew : allowNew                                    
+                    allowNew : allowNew
                 });
                 return;
             }
-            
+
             // for ACL dialog
             if (choicesdialog == &quot;acl&quot;) {
                 this.convertToACLDialog(el, {
                     multipleSelection : allowMultiValues,
-                    allowNew : allowNew                                    
+                    allowNew : allowNew
                 });
                 return;
             }
-            
+
             if (choicesdialog == 'view') {
                 this.convertToPickList(el, {
                     type : 'custom',
                     viewName : Ext.DomQuery.selectValue('@view', dfield),
                     column : Ext.DomQuery.selectNumber('@viewcolumn', dfield),
                     multipleSelection : allowMultiValues,
-                    allowNew : allowNew                    
+                    allowNew : allowNew
                 });
                 return;
             }
-            
+
             // check now for a textlist or formula node
             var textlist = Ext.DomQuery.select('keywords/textlist',dfield);
             var formula = Ext.DomQuery.selectValue('keywords/formula',dfield, null);
-            
+
             // if we have a textlist this process
             if (textlist.length &gt; 0) {
                 this.convertToSelectFromTextlist(el, textlist);
                 return;
             }
-            
+
             //if we have a formula process
             if (formula) {
                 this.convertToSelectFromFormula(el, formula);
                 return;
             }
-           
+
             return; //the below shouldn't be needed
-       
+
         }
-        
+
     },
 
     convertToSelectFromTextlist : function(el, textlist){
-        
-        // note that the mapping is to new String() due to a bug in Ext 
+
+        // note that the mapping is to new String() due to a bug in Ext
         // this bug is fixed in Ext 3.0 and in Ext 2.2.?
         // http://extjs.com/forum/showthread.php?t=63132
         var store = new Ext.data.Store({
@@ -1303,13 +1315,13 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
                     record: &quot;text&quot;
                 },
                 [{
-                    name:&quot;value&quot;, 
+                    name:&quot;value&quot;,
                     convert: function(v, n){
                         return Ext.DomQuery.selectValue('',n);
                     }
                 }])
         });
-        
+
         var combo = new Ext.form.ComboBox({
             //renderTo: el,
             displayField : &quot;value&quot;,
@@ -1320,28 +1332,28 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
             selectOnFocus:true,
             width : this.getFieldWidth(el)
         });
-        
+
         // renderTo config option didn't work
         combo.applyToMarkup(el);
-        
+
         // now add to items
         this.form.items.add(combo);
-        
+
     },
-    
+
     // private
     convertToACLDialog : function(el){
-        
+
         //TODO - create ACL dialog
-        
+
     },
-    
+
     // private
     convertToSelectFromFormula : function(el, formula) {
 
         // use the Evaluate agent that evaluates @formulas
         var url = Ext.nd.extndUrl + 'Evaluate?OpenAgent';
-        
+
         // make sure to set the baseParam to pass the current
         // db and unid as well as the formula to evaluate
         var store = new Ext.data.Store({
@@ -1354,12 +1366,12 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
             ),
             baseParams: {
                 formula : formula,
-                db : this.dbPath, 
+                db : this.dbPath,
                 unid : (this.document &amp;&amp; this.document.universalID) ? this.document.universalID : &quot;&quot;,
                 form : this.formName,
                 outputformat : 'json',
                 convertresulttoarray : true
-            }            
+            }
         });
 
         // for debugging TODO - remove when debugging complete
@@ -1368,8 +1380,8 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
             var r = records;
             var o = options;
         });
-        
-        
+
+
         var cb = new Ext.form.ComboBox({
             id: (el.id ? el.id : el.name),
             store : store,
@@ -1382,45 +1394,45 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
             resizable: true,
             width : this.getFieldWidth(el)
         });
-        
+
         cb.applyToMarkup(el);
         this.form.items.add(cb);
-},
-    
+    },
+
     // private
     convertToMultiSelect : function(el, forceSelection) {
         // TODO
     },
-    
-    // private 
+
+    // private
     convertToAllowMultiValueSelect : function(el, forceSelection){
         // TODO
         //alert('allow multi value')
-        //alert(el.name);    
+        //alert(el.name);
     },
-    
+
     // private
     convertSelectToComboBox : function(el, forceSelection){
-        
+
         // if Domino wrapped the select el in a font tag then we need to
-        // move this select out of this font tag and into div *before* 
+        // move this select out of this font tag and into div *before*
         // this font tag
         if (el.parentNode.tagName == 'FONT') {
-        	var cbContainer = Ext.DomHelper.insertBefore(el.parentNode, {
-				tag: 'div'
-			}, true);
-			cbContainer.dom.appendChild(el);	
+            var cbContainer = Ext.DomHelper.insertBefore(el.parentNode, {
+                tag: 'div'
+            }, true);
+            cbContainer.dom.appendChild(el);
         }
-        
+
         var s = Ext.getDom(el);
         var d = [], opts = s.options;
         var selectedValue = &quot;&quot;;
         var value;
-        
+
         for(var i = 0, len = opts.length;i &lt; len; i++){
             var o = opts[i];
             value = (o.hasAttribute ? o.hasAttribute('value') : o.getAttribute('value') !== null) ? o.value : o.text;
-            
+
             // correct the issue scene with IE when the option has an empty value tag
             value = (value == '' &amp;&amp; o.text != '') ? o.text : value;
             if(o.selected) {
@@ -1428,20 +1440,20 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
             }
             d.push([value, o.text]);
         }
-        
+
         var store = new Ext.data.ArrayStore({
             'id': 0,
             fields: ['value', 'text'],
             data : d,
             autoDestroy: true
         });
-        
+
         var attr = el.attributes;
         var style = '';
         var cls = '';
         if (attr) {
-        	var oStyle = attr.getNamedItem('style');
-        	var oCls = attr.getNamedItem('class');
+            var oStyle = attr.getNamedItem('style');
+            var oCls = attr.getNamedItem('class');
             style = oStyle ? oStyle.value : '';
             cls = oCls ? oCls.value : '';
         }
@@ -1463,11 +1475,11 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
             cls : cls,
             width : this.getFieldWidth(el)
         });
-        
+
         // only setup domino's onchange event for keyword refreshes if the user
         // wants this
         // domino will do a postback to the server which may not be desired
-        
+
         var extcallback = null;
         if (this.applyDominoKeywordRefresh) {
             // if domino sends an onchange attribute then grab it so we can
@@ -1475,50 +1487,50 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
             var attr = el.attributes;
             if (attr) {
                 var onChange = attr['onchange'];
-                
-                // for some reason IE returns an onchange of null 
-               	// if one isn't explicitly set    
+
+                // for some reason IE returns an onchange of null
+                // if one isn't explicitly set
                 if (onChange &amp;&amp; onChange.nodeValue != null) {
-                
-                	var sOnChange = onChange.nodeValue;
-                    
+
+                    var sOnChange = onChange.nodeValue;
+
                     extcallback = function(){
-                    	// only show the wait if this is a domino generated postback
-                    	if (sOnChange.indexOf('$Refresh') &gt; 0) {
-							Ext.MessageBox.wait(this.refreshMessage);
-						}	
-                    	eval(sOnChange);
+                        // only show the wait if this is a domino generated postback
+                        if (sOnChange.indexOf('$Refresh') &gt; 0) {
+                            Ext.MessageBox.wait(this.refreshMessage);
+                        }
+                        eval(sOnChange);
                     }
-                    
-					// add a listener for the select event so we can
-					// run the code we captured in the extcallback function
-					cb.on('select', extcallback, this);
+
+                    // add a listener for the select event so we can
+                    // run the code we captured in the extcallback function
+                    cb.on('select', extcallback, this);
                 }
             }
         } // end if (this.applyDominoKeywordRefresh)
-        
+
         // now add to items
         this.form.items.add(cb);
-        
+
     }, // end convertSelectToComboBox
-    
+
     // private
     getFieldWidth : function(el){
-    	var theEl = Ext.get(el);
+        var theEl = Ext.get(el);
         var w = theEl.getStyle('width');
         if (w.indexOf('%',0) &gt; 0) {
             return w; // support % widths
         } else if (parseFloat(w) == 0) {
-        	return parseFloat(w); // if the developer really set width : 0 then return it!	
+            return parseFloat(w); // if the developer really set width : 0 then return it!
         } else {
-        	var computedWidth = theEl.getComputedWidth(); 
-        	// sometimes computed width can return 0 when the field is hidden on
-        	// an inactive tab and thus we don't want to return 0
-        	// TODO : need a better fix however, than returning the defaultFieldWidth
+            var computedWidth = theEl.getComputedWidth();
+            // sometimes computed width can return 0 when the field is hidden on
+            // an inactive tab and thus we don't want to return 0
+            // TODO : need a better fix however, than returning the defaultFieldWidth
             return computedWidth == 0 ? this.defaultFieldWidth : computedWidth;
         }
     },
-    
+
     fieldGetText : function(fld) {
         var oField = this.getForm().findField(fld);
         return (oField) ? oField.getValue() : '';
@@ -1562,7 +1574,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         }
         return bContains;
     },
-    
+
     getTarget : function() {
         if (this.target) {
             return this.target;
@@ -1582,7 +1594,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
             }
         }
     },
-    
+
     getIframeOwnerCt : function() {
         if (this.iframeOwnerCt) {
             return this.iframeOwnerCt;
@@ -1610,7 +1622,7 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
             }
         }
     },
-    
+
     getUIDocument: function() {
         return this
     }
@@ -1618,8 +1630,9 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
 Ext.reg('xnd-uidocument', Ext.nd.UIDocument);
 
 //for backwards compat
-Ext.nd.Form = Ext.nd.UIDocument; 
+Ext.nd.Form = Ext.nd.UIDocument;
 //not sure why, but why not
-Ext.nd.Page = Ext.nd.UIDocument; </pre>
+Ext.nd.Page = Ext.nd.UIDocument;
+</pre>
 </body>
 </html>
