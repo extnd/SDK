@@ -1,3 +1,8 @@
+/**
+ * @member Ext.nd
+ * @property ACCESS_LEVELS
+ * The valid access levels to a NotesDatabase
+ */
 Ext.nd.ACCESS_LEVELS = {
     0 : "No Access",
     1 : "Depositor",
@@ -8,10 +13,10 @@ Ext.nd.ACCESS_LEVELS = {
     6 : "Manager"
 }
 /**
- * @class Ext.nd.Session Provides JavaScript access to an object that mimics
- *        NotesSession in Lotuscript. This object is created from the Session.js
- *        agent within the notes database. You cannot create an instance of this
- *        object, and all properties are read-only.
+ * @class Ext.nd.Session
+ * Provides JavaScript access to an object that mimics the NotesSession class in LotusScript.
+ * This object is created from the Session.js agent within the Extnd database.
+ * You cannot create an instance of this object, and all properties are read-only.
  * @singleton
  */
 Ext.nd.Session.prototype = {
@@ -39,7 +44,7 @@ Ext.nd.Session.prototype = {
      */
     "notesVersion" : "Release 7.0.1|January 17, 2006",
     /**
-     * platorm the server is running on
+     * platform the server is running on
      * @type {String}
      */
     "platform" : "Windows/32",
@@ -47,7 +52,7 @@ Ext.nd.Session.prototype = {
      * server name
      * @type {String}
      */
-    "serverName" : "CN=Web/O=BlueCuda",
+    "serverName" : "CN=Web/O=ExtND",
     /**
      * list of groups current user is a member of<br/>
      * example: {"abbreviated" : "ExtNDAdmin", "addr821" : "", "common" : "ExtNDAdmin"}
@@ -77,9 +82,9 @@ Ext.nd.Session.prototype = {
         "addr821" : "CN=Rich Waters/O=ExtND",
         "common" : "CN=Rich Waters/O=ExtND"
     }, {
-        "abbreviated" : "CN=Web/O=BlueCuda",
-        "addr821" : "CN=Web/O=BlueCuda",
-        "common" : "CN=Web/O=BlueCuda"
+        "abbreviated" : "CN=Web/O=ExtND",
+        "addr821" : "CN=Web/O=ExtND",
+        "common" : "CN=Web/O=ExtND"
     }],
     /**
      * user roles
@@ -101,7 +106,9 @@ Ext.nd.Session.prototype = {
 
 /**
  * @class Ext.nd.Database
- * all properties are read-only.
+ * Provides JavaScript access to an object that mimics the NotesDatabase class in LotusScript.
+ * This object is created from the Session.js agent for the Ext.nd.Session.currentDatabase property.
+ * You cannot create an instance of this object, and all properties are read-only.
  * @singleton
  */
 Ext.nd.Database.prototype = {
@@ -130,7 +137,7 @@ Ext.nd.Database.prototype = {
      * server name
      * @type {String}
      */
-    "server" : "CN=Web/O=BlueCuda",
+    "server" : "CN=Web/O=ExtND",
     /**
      * file name of the database
      * @type {String}
@@ -175,7 +182,7 @@ Ext.nd.Database.prototype = {
      * http url
      * @type {String}
      */
-    "httpURL" : "http://web.bluecuda.com/__852573E0007514A8.nsf?OpenDatabase",
+    "httpURL" : "http://web.extnd.com/__852573E0007514A8.nsf?OpenDatabase",
     /**
      * database replica idea
      * @type {String}

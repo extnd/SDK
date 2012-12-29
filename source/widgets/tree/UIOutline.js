@@ -1,51 +1,45 @@
 /**
  * @class Ext.nd.UIOutline
  * @extends Ext.tree.TreePanel A modified version of {@link Ext.tree.TreePanel} that utilizes an {@link Ext.nd.UIOutline.Loader} to load in a Notes outline.
- *          Handling of clicking on entries is dealt with by attaching an openentry event listener, see {@link Ext.nd.DominoUI} for an example.
- * 
- * Simple example:<pre><code>
-  new Ext.nd.UIOutline({
-      outlineName: 'mainOL',
-      renderTo: 'outlineDiv'
-  });
-  </code></pre> 
- * It may also be included within any standard Ext layout with the xnd-uioutline xtype: 
- * <pre><code>
-  new Ext.Viewport({ 
-      layout: 'border', 
-      items: [{ 
-         region: 'east',
-         width: 200, 
-         xtype: 'xnd-uioutline', 
-         outlineName: 'mainOL' 
-      }, { 
-         region: 'center', 
-         title: 'My Center Panel', 
-         html: '<p>Here\'s some Html</p>' 
-      }] 
-  });
-  </code></pre> 
- * @cfg {String} outlineName The name or alias of an outline as set in Domino Designer.
- * @cfg {String} outlineUrl The full web path to an outline (i.e. '/someDb/outlineName'). Used for when you want to load an outline from a different database.
- * @cfg {Boolean} useOutlineIcons Whether to use the icons as set in Domino Designer. If set to false, Ext folder and leaf icons will be used. (Defaults to
- *      false)
- * @cfg (Boolean} showIcons
- * @cfg {Component/String} target The component or id of an existing div where you want entries to open into.  If you need for
- * views to open differently you can also set the 'viewTarget' property.
- * @cfg {Object} targetDefaults A config object to pass along to the target for an entry being opened.  You can specify a different
- * set of target defaults for a view by setting the 'viewTargetDefaults' property.
+ * Handling of clicking on entries is dealt with by attaching an openentry event listener, see {@link Ext.nd.DominoUI} for an example.
+ *
+ * Simple example:
+ *
+        new Ext.nd.UIOutline({
+            outlineName: 'mainOL',
+            renderTo: 'outlineDiv'
+        });
+ *
+ * It may also be included within any standard Ext layout with the xnd-uioutline xtype:
+ *
+        new Ext.Viewport({
+            layout: 'border',
+            items: [{
+                region: 'east',
+                width: 200,
+                xtype: 'xnd-uioutline',
+                outlineName: 'mainOL'
+            }, {
+                region: 'center',
+                title: 'My Center Panel',
+                html: '<p>Here\'s some Html</p>'
+            }]
+        });
+ *
+ * @cfg {string} outlineName The name or alias of an outline as set in Domino Designer.
+ * @cfg {string} outlineUrl The full web path to an outline (i.e. '/someDb/outlineName'). Used for when you want to load an outline from a different database.
+ * @cfg {boolean} [useOutlineIcons=false] Whether to use the icons as set in Domino Designer. If set to false, Ext folder and leaf icons will be used.
+ * @cfg {boolean} showIcons Whether to show icons at all
+ * @cfg {Component/String} target The component or id of an existing div where you want entries to open into.  If you need for views to open differently you can also set the 'viewTarget' property.
+ * @cfg {object} targetDefaults A config object to pass along to the target for an entry being opened.  You can specify a different set of target defaults for a view by setting the 'viewTargetDefaults' property.
+ * @cfg {object} viewDefaults A config object to pass along to all views opened from this outline.
+ * @cfg {Ext.Component/string} viewTarget The component or id of an existing div where you want just view entries to open into.
+ * @cfg {object} viewTargetDefaults A config object to pass along to the target for a view entry being opened.  Use 'targetDefaults' for all other entries.
+ * @cfg {string} dbPath
+ * @cfg {string} filePath
+ * @cfg {boolean} useEntryTitleAsTargetTitle
 
- * @cfg {Object} viewDefaults A config object to pass along to all views opened from this outline.  
- * @cfg {Component/String} viewTarget The component or id of an existing div where you want just view entries to open into.
- * @cfg {Object} viewTargetDefaults A config object to pass along to the target for a view entry being opened.  Use 'targetDefaults'
- * for all other entries.  
-
- * @cfg {String} dbPath
- * @cfg {String} filePath
- * @cfg {Boolean} useEntryTitleAsTargetTitle
- 
  * @constructor Create a new UIOutline component
- * @param {Object} config Configuration options
  */
 
 Ext.nd.UIOutline = function(config) {
@@ -64,11 +58,11 @@ Ext.nd.UIOutline = function(config) {
     this.target = null;
     this.viewDefaults = {}; //applied to each view during an openEntry call
 
-	config = Ext.nd.util.cleanUpUIOutlineConfig(config);
+    config = Ext.nd.util.cleanUpUIOutlineConfig(config);
 
-	// TODO: is this Ext.apply needed? doesn't the call to the superclass.constructor do this as well?
+    // TODO: is this Ext.apply needed? doesn't the call to the superclass.constructor do this as well?
     Ext.apply(this, config);
-	
+
     Ext.nd.UIOutline.superclass.constructor.call(this);
 };
 
@@ -176,7 +170,7 @@ Ext.extend(Ext.nd.UIOutline, Ext.tree.TreePanel, {
         var unids = "";
         // don't even bother if not a folder
         if (this.isFolder) {
-            
+
             // if dragging a doc from a grid then fire its BeforeAddToFolder event
             // TODO: besides a grid, need to add support for dd a folder onto another folder
             if (this.fireEvent('beforeaddtofolder', this, source, e, data) !== false) {
@@ -184,7 +178,7 @@ Ext.extend(Ext.nd.UIOutline, Ext.tree.TreePanel, {
                     if (source.grid.fireEvent("beforeaddtofolder", source.grid, this.dropFolderName, source, e, data) !== false) {
                         var target = e.target;
                         var fromFolder = '';
-        
+
                         // data.selections are for rows in a grid
                         if (data.selections) {
                             var select = data.selections;
@@ -208,7 +202,7 @@ Ext.extend(Ext.nd.UIOutline, Ext.tree.TreePanel, {
                     } // eo view's beforeaddtofolder event
                 } // eo if (source.grid)
             }// eo folder's beforeaddtofolder event
-            
+
             // data.node is for other folders in the tree
             if (data.node) {
                 // need to do something here
@@ -218,7 +212,7 @@ Ext.extend(Ext.nd.UIOutline, Ext.tree.TreePanel, {
         } // if (this.isFolder)
 
         return false;
-        
+
     },// eo addToFolder
 
     addToFolderSuccess: function(response, request) {
@@ -233,7 +227,7 @@ Ext.extend(Ext.nd.UIOutline, Ext.tree.TreePanel, {
                 grid.getStore().remove(record);
             });
         }
-        
+
     },// eo addToFolderSuccess
 
     addToFolderFailure: function(response, request) {
@@ -261,20 +255,20 @@ Ext.extend(Ext.nd.UIOutline, Ext.tree.TreePanel, {
             // we need to first remove the old view and add
             // the new view
 
-            // get the correct target            
+            // get the correct target
             if (extndType == "2" || extndType == "20") {
                 target = (this.viewTarget) ? this.viewTarget : this.target;
-                targetDefaults = (this.viewTargetDefaults) ? this.viewTargetDefaults : this.targetDefaults; 
+                targetDefaults = (this.viewTargetDefaults) ? this.viewTargetDefaults : this.targetDefaults;
             } else {
                 target = this.target;
                 targetDefaults = this.targetDefaults;
             }
-            
+
             // if we have a target then check to see if it is a component and set to that
             // then if still not a component then check to see if an id of an existing element
             if (target) {
                 target = (target.getXType) ? target : Ext.getCmp(target);
-                target = (target && target.getXType) ? target : Ext.get(target);        
+                target = (target && target.getXType) ? target : Ext.get(target);
             }
 
             // first, check to see if this panel exists
@@ -301,35 +295,35 @@ Ext.extend(Ext.nd.UIOutline, Ext.tree.TreePanel, {
                     } else {
 
                         //setup the uiview property of this new view
-                    	// apply whatever viewDefaults were define for the uioutline
-                    	// and then apply the targetDefaults
+                        // apply whatever viewDefaults were define for the uioutline
+                        // and then apply the targetDefaults
                         var uiview = Ext.apply(
-                				Ext.apply({
+                                Ext.apply({
                                 xtype: 'xnd-uiview',
                                 id : panelId,
                                 layout: 'fit',
                                 title: title,
                                 viewUrl: viewUrl
-                            }, this.viewDefaults), 
+                            }, this.viewDefaults),
                         targetDefaults);
 
-                                    
+
                         if (target.getXType && target.add) {
-                            
+
                             xtype = target.getXType();
                             switch(xtype) {
 
-                                // if adding to an existing grid/xnd-uiview 
-                                // then we need to first remove the current 
+                                // if adding to an existing grid/xnd-uiview
+                                // then we need to first remove the current
                                 // view and then re-add it the new one
-                                
+
                                 case 'grid':
                                 case 'xnd-uiview':
-                                
+
                                     // TODO - we have to remove any old state info for this target.id
                                     // because the view is reusing the id and state is stored by
                                     // looking up the state using the component's id as the key
-                                    // so if a user changes view then the saved state will be for 
+                                    // so if a user changes view then the saved state will be for
                                     // the last view and not the new view and this causes problems
                                     // however, this means that currently users can sort a view
                                     // or move columns around and that these changes will be
@@ -339,19 +333,19 @@ Ext.extend(Ext.nd.UIOutline, Ext.tree.TreePanel, {
                                     // info is what initStates() sees instead of the real view and
                                     // therefore the saved state info can't be restored since there
                                     // will not be a match to the columns, sort, etc.
-                                
+
                                     var state = Ext.state.Manager.get(target.id);
                                     if (state) {
                                         Ext.state.Manager.clear(target.id);
                                     }
-                                    
-                                    // add the id back if we are just reusing the 
+
+                                    // add the id back if we are just reusing the
                                     // old uiview for the new uiview
                                     // we do this so that the target can be found again
                                     // also, make sure closable is false since this view
                                     // is supposed to exist as the target for all views
                                     // in the outline
-                                    
+
                                     Ext.apply(uiview,{id:target.id, closable: false})
 
                                     // first see if there is an ownerCt
@@ -362,14 +356,14 @@ Ext.extend(Ext.nd.UIOutline, Ext.tree.TreePanel, {
                                         ownerCt = target.ownerCt;
                                         var idx = ownerCt.items.indexOf(target);
                                         ownerCt.remove(target, true);
-                                        entry = ownerCt.insert(idx, uiview);                                    
+                                        entry = ownerCt.insert(idx, uiview);
                                     } else {
                                         // if we can't remove still do
                                         // the add anyway and hopefully
                                         // this component can handle
                                         // the add in a way so that
                                         // the new view is visible
-                                        entry = target.add(uiview);    
+                                        entry = target.add(uiview);
                                     }
                                     Ext.nd.util.doLayoutAndShow(entry);
                                     break;
@@ -382,16 +376,16 @@ Ext.extend(Ext.nd.UIOutline, Ext.tree.TreePanel, {
                             }
 
                         } else {
-                            
+
                             // add the panelId as the id
                             Ext.apply(uiview,{id:panelId});
-                            
-                            // not dealing with a component so the target is 
+
+                            // not dealing with a component so the target is
                             // probably the id to an existing div element
                             // so we'll use renderTo to render this uiview
                             entry = new Ext.nd.UIView(Ext.apply(uiview,{renderTo: target}));
                             Ext.nd.util.doLayoutAndShow(entry);
-                            
+
                         } // eo if (target.getXType && target.add)
                     } // eo if (!this.target)
 
@@ -436,6 +430,10 @@ Ext.extend(Ext.nd.UIOutline, Ext.tree.TreePanel, {
 });
 Ext.reg('xnd-uioutline', Ext.nd.UIOutline);
 
+/**
+ * @class Ext.nd.UIOutline.Loader
+ * Custom loader for Domino Outlines
+ */
 Ext.nd.UIOutline.Loader = function(config) {
     // Don't need to pass config to the super since we're
     // applying it in this constructor
@@ -455,7 +453,7 @@ Ext.extend(Ext.nd.UIOutline.Loader, Ext.tree.TreeLoader, {
         var expandable = a.getNamedItem('expandable');
         var isExpandable = (expandable) ? true : false;
         var isExpanded = (expandable && expandable.value == 'true') ? true : false;
-        
+
         var icon = a.getNamedItem('icon') ? a.getNamedItem('icon').value : '';
         var position = a.getNamedItem('position').value;
 
@@ -509,7 +507,7 @@ Ext.extend(Ext.nd.UIOutline.Loader, Ext.tree.TreeLoader, {
                         var parentPosition = curPosition.substring(0, curPosition.lastIndexOf('.'));
                         nodes[parentPosition].appendChild(n);
                     } else {
-                        
+
                         node.appendChild(n);
                     }
                 }
@@ -525,6 +523,10 @@ Ext.extend(Ext.nd.UIOutline.Loader, Ext.tree.TreeLoader, {
     }
 });
 
+/**
+ * @class Ext.nd.TreeNode
+ * Custom TreeNode class to use with the Ext.nd.Outline class
+ */
 Ext.nd.TreeNode = Ext.extend(Ext.tree.TreeNode, {
     // for the domino folders and categories we want to always return true;
     hasChildNodes: function() {

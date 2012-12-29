@@ -1,26 +1,26 @@
 /**
  * @class Ext.nd.DominoUI
- *        <p>
- *        Here's an example showing the creation of a typical DominoUI:
- *        </p>
- * 
- * <pre><code>
-  new Ext.nd.DominoUI({
-      uiOutline: {
-          outlineName: &quot;mainOL&quot;
-      },
-      uiView: {
-          viewName: &quot;Requests&quot;,
-          viewTitle: &quot;Requests&quot;
-      }
-  });
-  </code></pre>
- * 
+ * A convenience class that can be used to create a UI that is similar to a default Notes UI with a west region
+ * that contains an outline and a center region that contains a view.  Opening documents in this center region
+ * creates tabs for each document that is similar to the default behavior of a Notes UI.
+ *
+ * Here's an example showing the creation of a typical DominoUI:
+ *
+          new Ext.nd.DominoUI({
+              uiOutline: {
+                  outlineName: &quot;mainOL&quot;
+              },
+              uiView: {
+                  viewName: &quot;Requests&quot;,
+                  viewTitle: &quot;Requests&quot;
+              }
+          });
+ *
  * @cfg {Object} uiOutline A {@link Ext.nd.UIOutline} config object
  * @cfg {Object} uiView A {@link Ext.nd.UIView} config object
  * @constructor Create an integrated domino interface, with a view and an outline
  * @param {Object} config Configuration options
- * 
+ *
  */
 Ext.nd.DominoUI = function(config) {
 
@@ -54,11 +54,11 @@ Ext.nd.DominoUI.prototype = {
 
     // private
     createDominoUI: function() {
-        
+
         // west/outline - be sure to include the defaults property
         // so that for each view opened, the target property defaults
         // will be applied
-        
+
         var west = {
             region: 'west',
             title: Ext.nd.Session.currentDatabase.title,
@@ -73,12 +73,12 @@ Ext.nd.DominoUI.prototype = {
                 xtype: 'xnd-uioutline',
                 border : false,
                 target: 'xnd-center-panel',
-                viewTarget: 'xnd-grid-panel'               
+                viewTarget: 'xnd-grid-panel'
             }, this.uiOutline)]
         };
-            
-        
-        // center/view area    
+
+
+        // center/view area
         var center = {
             region: 'center',
             id: 'xnd-center-panel',
@@ -98,7 +98,7 @@ Ext.nd.DominoUI.prototype = {
                 closable: false
             }, this.uiView)]
         };
-                
+
         this.viewport = new Ext.Viewport({
             layout: 'border',
             id: 'extnd-viewport',
@@ -108,7 +108,7 @@ Ext.nd.DominoUI.prototype = {
         // include these since the alpha and beta 1x code
         // included these and some developers have custom
         // code that depends on these being defined
-        
+
         this.outlinePanel = Ext.getCmp('xnd-outline-panel');
         this.view = Ext.getCmp('xnd-grid-panel');
         this.tabPanel = Ext.getCmp('xnd-center-panel');
@@ -128,7 +128,7 @@ Ext.nd.DominoUI.prototype = {
 
             if (link) {
                 var unid = (link.indexOf('?') > 0) ? href.split('?')[0] : link;
-  
+
                 Ext.nd.util.addIFrame({
                     target: this.tabPanel,
                     uiView: this.view,
@@ -137,7 +137,7 @@ Ext.nd.DominoUI.prototype = {
                     title: 'Opening...',
                     useIFrameTitle: true
                 });
-    
+
             } // eo if(link)
         } // eo if(href.indexOf...)
     } // eo loadLink

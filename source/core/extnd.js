@@ -1,4 +1,101 @@
-/* 
+/**
+ * @class Ext.nd
+ * @singleton
+ *
+ * Ext.nd core utilities and functions.
+ *
+ * Ext.nd is used in IBM Lotus Domino applications and the code is usually written in the 'HTML Head Content' and the
+ * 'JS Header' sections of a Domino Page or Form.
+ *
+ * Below is an example of what the 'HTHML Head Content' looks like in the main.html page of the Tasks.nsf database:
+
+        ﻿thisWebDbName := @WebDbName;
+        extUrl := @GetProfileField("Ext.nd.Profile";"extUrl";@ServerName);
+        extndUrl := @GetProfileField("Ext.nd.Profile";"extndUrl";@ServerName);
+        mode := @If(@UrlQueryString("debug") = "true"; "-debug"; "");
+        unid := @If(@IsNewDoc;"";@Text(@DocumentUniqueID));
+        editMode := @If(@IsDocBeingEdited;"true";"false");
+
+
+        "<!-- Ext JS library -->" + @NewLine +
+        "<script type='text/javascript' src='" + extUrl + "adapter/ext/ext-base.js'></script>" + @NewLine +
+        "<script type='text/javascript' src='" + extUrl + "ext-all" + mode + ".js'></script>" + @NewLine +
+
+        "<!-- Ext.nd JS library -->" + @NewLine +
+        "<script type='text/javascript' src='" + extndUrl + "extnd-all" + mode + ".js'></script>" + @NewLine +
+        "<script type='text/javascript' src='" + extndUrl + "Session.js?OpenAgent&db=" + thisWebDbName + "'></script>" + @NewLine +
+        "<script type='text/javascript' src='" + extndUrl + "UIDocument.js?OpenAgent&db=" + thisWebDbName + "&unid=" + unid + "&editmode=" + editMode + "'></script>" + @NewLine +
+
+        "<!-- App JS code -->" + @NewLine +
+        "<script type='text/javascript' src='/" + thisWebDbName + "/overrides.js'></script>" + @NewLine +
+        "<script type='text/javascript' src='/" + thisWebDbName + "/taskHandler.js'></script>" + @NewLine +
+
+
+        "<link rel='stylesheet' type='text/css' href='" + extUrl + "resources/css/ext-all.css' />" + @NewLine +
+        "<link rel='stylesheet' type='text/css' href='" + extndUrl + "resources/css/domino.css' />"
+ *
+ * And this is what is in the JS Header:
+ *
+        ﻿var ExtndTasks = function() {
+
+            return {
+                init : function(){
+                    this.ui = new Ext.nd.DominoUI({
+                        uiOutline : {
+                            outlineName: 'mainOL',
+                            viewDefaults : {
+                                emptyText: 'No Tasks Found',
+                                stripeRows : true
+                            }
+                        },
+                        uiView : {
+                            viewName: 'Tasks\\All',
+                            stripeRows : true,
+                            listeners : {
+                                'open' : function(uiview) {
+                                    alert('view has been opened');
+                                },
+                                'beforeaddtofolder' : function(uiview, target) {
+                                    if (target == "Low") {
+                                        alert('you can not drag documents from the Tasks All view into the Low folder');
+                                        return false;
+                                    }
+                                },
+                                'beforeopendocument' : function(uiview) {
+                                    var doc = uiview.getSelectedDocument();
+                                    if (doc.data.Status == 'Complete') {
+                                        alert('Sorry, completed documents cannot be opened from this view.');
+                                        return false;
+                                    }
+                                }
+                            }
+                        }
+                    });
+                } // init
+            } // return
+
+        }();
+
+        ﻿if (typeof Ext == 'undefined') {
+
+            var href = location.href;
+            var locNSF = href.lastIndexOf(".nsf");
+            location.href = href.substring(0, locNSF) + ".nsf/Ext.nd.Profile?OpenForm";
+
+        } else {
+
+            Ext.onReady(ExtndTasks.init, ExtndTasks, true);
+
+        }
+ *
+ * The Ext.nd.DominoUI class is a class that creates a UI very similar to a typical Lotus Notes application and in many
+ * cases is a good starting point when web-enabling your Lotus Notes applications.  However, keep in mind that the various
+ * widgets can be used in any type of layout you wish so do not limit yourself to always just using the Ext.nd.DominoUI
+ * "convenience" class to build your UIs.  Think out of the box!
+ *
+ */
+
+/*
  * attempt 2 (http://extjs.com/forum/showthread.php?t=36418)
  */
 Ext.grid.RowSelectionModel.override(
@@ -12,11 +109,11 @@ Ext.grid.RowSelectionModel.override(
             // is not true (meaning you can select more than one row) then set
             // keepExisting to true, otherwise set it to false
             keepExisting = (this.id == "checker" && !this.singleSelect) ? true : false;
-            this.selectRow(rowIndex, keepExisting);        
+            this.selectRow(rowIndex, keepExisting);
             grid.view.focusRow(rowIndex);
         }
     },
-    
+
     initEvents: function ()
     {
         if(!this.grid.enableDragDrop && !this.grid.enableDrag){
@@ -109,7 +206,7 @@ Ext.grid.GridDragZone.override(
 
 // for all toolbars we add some custom methods that help domino apps
 Ext.Toolbar.override({
-   
+
     getUIView: function() {
         if (!this.uiView) {
             if (this.ownerCt && this.ownerCt.getXType() == 'xnd-uiview') {
@@ -120,7 +217,7 @@ Ext.Toolbar.override({
         }
         return this.uiView;
     },
-    
+
     getUIDocument: function() {
         if (!this.uiDocument) {
             if (this.ownerCt && this.ownerCt.getXType() == 'xnd-uidocument') {
@@ -135,26 +232,41 @@ Ext.Toolbar.override({
 
 Ext.namespace("Ext.nd", "Ext.nd.form", "Ext.nd.data", "Ext.nd.util");
 
+/**
+ * @property version
+ * The version of Extnd
+ */
 Ext.nd.version = '1.0 RC1 for ExtJS 3.x';
 
+/**
+ * @method getBlankImageUrl
+ * calculates the Ext.BLANK_IMAGE_URL based on the extndUrl property
+ */
 Ext.nd.getBlankImageUrl = function() {
     return this.extndUrl + "resources/images/s.gif";
 };
 
+/**
+ * @method init
+ * applies any configs and sets the Ext.BLANK_IMAGE_URL.  This is done automatically for you if you make a call
+ * to the Session.js agent
+ */
 Ext.nd.init = function(config) {
     Ext.apply(this, config);
     Ext.BLANK_IMAGE_URL = this.getBlankImageUrl();
 };
 
 /**
- * @class Ext.nd.util.addIFrame
- * @cfg {String} documentLoadingWindowTitle The loading text to display as the
- *      document is loading.
- * @cfg {String} documentUntitledWindowTitle The text to display if the loaded
- *      document does not have a window title defined.
- * @cfg {Boolean} useDocumentWindowTitle If set to true then an attempt will be
- *      made to get and set the title to the document's window title.
- * @cfg {String/Componet} target Where the iframe should load
+ * @class Ext.nd.util
+ * @singleton
+ * Various utility methods used by the framework.
+ */
+/**
+ * @method addIFrame
+ * @cfg {String} documentLoadingWindowTitle The loading text to display as the document is loading.
+ * @cfg {String} documentUntitledWindowTitle The text to display if the loaded document does not have a window title defined.
+ * @cfg {Boolean} useDocumentWindowTitle If set to true then an attempt will be made to get and set the title to the document's window title.
+ * @cfg {String/Ext.Component} target Where the iframe should load
  * @singleton
  */
 Ext.nd.util.addIFrame = function(config) {
@@ -204,10 +316,10 @@ Ext.nd.util.addIFrame = function(config) {
     // if we couldn't find the target, wheter a component or a div/element
     // then just open in a new window
     if (!target) {
-    	window.open(config.url);
-    	return;
+        window.open(config.url);
+        return;
     }
-    
+
     // if the add method exists then the 'target' is some kind of panel
     // otherwise, it might just be a div on the page
     if (target.add) {
@@ -252,19 +364,19 @@ Ext.nd.util.addIFrame = function(config) {
             if (targetPanel.getXType() == 'window') {
                 targetPanel.removeAll();
             }
-            
+
             // add the panel
             panel = targetPanel.add(panelConfig);
 
             // setup a beforedestory listener so we can make sure we don't add memory leaks to IE
-            
-            // TODO: another issue discovered is that the real issue appears to be with the 
+
+            // TODO: another issue discovered is that the real issue appears to be with the
             // fact that this code is in an anonymous function originating from the window that
-            // the grid is in (and thus could already be in an iframe) so if this window/iframe 
+            // the grid is in (and thus could already be in an iframe) so if this window/iframe
             // that the grid is in is closed before this tab is close this anonymous function
             // will no longer be available.  In IE you get the error about this code can't be
             // run from a "freed script" (or something like that) and in FireFox you get some kind
-            // of component exception and something about no data found.  So now I'm trying for 
+            // of component exception and something about no data found.  So now I'm trying for
             // a check to see if the window is the same as the window.top and only execute if
             // that is the case
             if (window == window.top) {
@@ -274,7 +386,7 @@ Ext.nd.util.addIFrame = function(config) {
                     // action originated could be gone and thus the Ext reference would be gone too
                     // since the Ext reference is coming from that iframe's global list of vars)
                     // TODO: figure out a way to have the Ext reference be the Ext of the panel so
-                    // that it will always be available; this try/catch only ignores the error and 
+                    // that it will always be available; this try/catch only ignores the error and
                     // doesn't fix it but Rich thinks he knows how to fix this.
                     if (typeof Ext != 'undefined') {
                         var iFrame = Ext.DomQuery.selectNode('iframe', panel.body.dom);
@@ -287,16 +399,16 @@ Ext.nd.util.addIFrame = function(config) {
                     }
                 });
             }
-            
+
             // this takes care setting the title of the panel and adding
             // refernces to uiView and target to the iframe
             panel.on('afterrender', function(panel){
-            
+
                 var dom = Ext.DomQuery.selectNode('iframe',panel.body.dom);
                 //var dom = Ext.get(ifId).dom;
                 var event = Ext.isIE ? 'onreadystatechange' : 'onload';
                 dom[event] = (function() {
-        
+
                     try {
                         var cd = this.contentWindow || window.frames[this.name];
                         cd.ownerCt = panel;
@@ -310,7 +422,7 @@ Ext.nd.util.addIFrame = function(config) {
                         // not doing anything if an error
                         // an error usually means a x-domain security violation
                     }
-        
+
                     // replace the panel's title with the the window title from the
                     // iframe
                     // if the useDocumentWindowTitle is set to true
@@ -324,7 +436,7 @@ Ext.nd.util.addIFrame = function(config) {
                                 } else {
                                     panel.setTitle(title);
                                 }
-        
+
                             } else {
                                 // there wasn't a title
                                 if (panel.title != config.title
@@ -332,7 +444,7 @@ Ext.nd.util.addIFrame = function(config) {
                                     panel.setTitle(documentUntitledWindowTitle);
                                 }
                             }
-        
+
                         } catch (e) {
                             // there was an error getting the iframe's title maybe
                             if (panel.title != config.title
@@ -341,9 +453,9 @@ Ext.nd.util.addIFrame = function(config) {
                             }
                         }
                     } // eo if (useDocumentWindowTitle)
-        
+
                 }).createDelegate(dom);
-                
+
             });
 
             // call doLayout so we can now see this
@@ -362,22 +474,24 @@ Ext.nd.util.addIFrame = function(config) {
 
 
     }  // eo if(!panel)
-    
-    
+
+
     // now show the panel (not sure if this is needed)
     if (panel.show) {
         panel.show();
     }
-    
+
     // and show the target if it has a show method (like in the case of an Ext.Window
     if (target.show) {
         target.show();
     }
 
-    
-} // eo addIFrame
 
-            
+}
+
+/**
+ * @method doLayoutAndShow
+ */
 Ext.nd.util.doLayoutAndShow = function(panel) {
     // all component's owner Ext.Container should have a doLayout
     // but check just in case
@@ -390,10 +504,13 @@ Ext.nd.util.doLayoutAndShow = function(panel) {
         panel.show();
     }
 
-} // eo doLayoutAndShow
+}
 
+/**
+ * @method cleanUpConfig
+ */
 Ext.nd.util.cleanUpConfig = function(config) {
-    
+
     // viewUrl is either passed in or built from dbPath and viewName
     if (typeof config.viewName == 'string') {
         if (!config.dbPath && Ext.nd.Session) {
@@ -413,10 +530,13 @@ Ext.nd.util.cleanUpConfig = function(config) {
 
     return config;
 
-} // eo cleanUpConfig
+}
 
+/**
+ * @method cleanUpUIViewConfig
+ */
 Ext.nd.util.cleanUpUIViewConfig = function(config) {
-    
+
     // viewUrl is either passed in or built from dbPath and viewName
     if (typeof config.viewName == 'string') {
         if (!config.dbPath && Ext.nd.Session) {
@@ -436,10 +556,13 @@ Ext.nd.util.cleanUpUIViewConfig = function(config) {
 
     return config;
 
-} // eo cleanUpUIViewConfig
+}
 
+/**
+ * @method cleanUpUIOutlineConfig
+ */
 Ext.nd.util.cleanUpUIOutlineConfig = function(config) {
-    
+
     // outlineUrl is either passed in or built from dbPath and outlineName
     if (typeof config.outlineName == 'string') {
         if (!config.dbPath && Ext.nd.Session) {
@@ -459,4 +582,4 @@ Ext.nd.util.cleanUpUIOutlineConfig = function(config) {
 
     return config;
 
-} // eo cleanUpUIOutlineConfig
+}

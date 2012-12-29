@@ -1,30 +1,29 @@
 /**
- * Converts fields and actionbars of a Domino form/page into Ext equivalents Simple example:
+ * Converts fields and actionbars of a Domino form/page into Ext equivalents
  *
- *   var uidoc = new Ext.nd.UIDocument();
- *   uidoc.render('myDiv'); // to render to a specified location
+ * Simple example:
  *
- * -- or --
+        var uidoc = new Ext.nd.UIDocument();
+        uidoc.render('myDiv'); // to render to a specified div
  *
- *   uidoc.render(); // to render to an Ext.Viewport
  *
  * More complex example:
- *   var uidoc = new Ext.nd.UIDocument({
- *       showActionbar : false,
- *       convertFields : false
- *   });
- *   new Ext.Viewport({
- *       layout: 'fit',
- *       items: uidoc
- *   });
  *
- * @constructor Creates a new Form component
- * @cfg {Object} config Configuration options
- * @cfg {Boolean} config.showActionbar [true] Whether or not to read in the form/page DXL behind the scences and build an Ext.Toolbar from domino actions
- * @cfg {String} config.createActionsFrom Set to 'document' if you want to create the actionbar from the actions domino sends after it evaluates hide-when formulas.  Set to 'dxl' if you want to create the actionbar from what is defined in Designer.
- * @cfg {Boolean} config.convertFields Determines whether to convert form fields to Ext fields. (Defaults to true)
- * @cfg {Boolean} config.applyDominoKeywordRefresh Determines whether to apply the postback onchange event that Domino sends for Keyword fields set to "Refresh fields on keyword change". Defaults to true.
- * @cfg {Number} config.defaultFieldWidth
+        var uidoc = new Ext.nd.UIDocument({
+            showActionbar : false,
+            convertFields : false
+        });
+        new Ext.Viewport({
+            layout: 'fit',
+            items: uidoc
+        });
+ *
+ * @constructor Creates a new UIDocument/Form component
+ * @cfg {boolean} [showActionbar=true] Whether or not to read in the form/page DXL behind the scences and build an Ext.Toolbar from domino actions.
+ * @cfg {string} [createActionsFrom='dxl'] Set to 'document' if you want to create the actionbar from the actions domino sends after it evaluates hide-when formulas.  Set to 'dxl' if you want to create the actionbar from what is defined in Designer.
+ * @cfg {boolean} [convertFields=true] Determines whether to convert form fields to Ext fields.
+ * @cfg {boolean} [applyDominoKeywordRefresh=true] Determines whether to apply the postback onchange event that Domino sends for Keyword fields set to "Refresh fields on keyword change".
+ * @cfg {number} [defaultFieldWidth=120] The default width to use when a calculated width cannot be determined.
  */
 Ext.nd.UIDocument = function(config){
 
@@ -147,12 +146,12 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         }
     },
 
-    // private
-    // change the hash reference by prepending xnd-goto
-    // will fix an IE issue with the layout not positioning correctly
-    // when the page loads and 'jumps' to the <a href> reference in the hash
-    // TODO: need to add code to instead "scroll" to the hash reference
+    /**
+     * We take over Domino's generated _doClick method so that we can
+     * change the hash reference by prepending xnd-goto which will fix some IE layout issues
+     */
     _doClick : function(v, o, t, h) {
+        // TODO: need to add code to instead "scroll" to the hash reference
         var form = this.getForm();
         if (form.onsubmit) {
              var retVal = form.onsubmit();
@@ -171,8 +170,10 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         form.findField("__Click").setValue(v);
 
         // modify hash to prepend 'xnd-goto'
+        // will fix an IE issue with the layout not positioning correctly
+        // when the page loads and 'jumps' to the <a href> reference in the hash
         if (h != null) {
-          form.el.dom.action += h.replace('#','#xnd-goto');
+            form.el.dom.action += h.replace('#','#xnd-goto');
         }
 
         // call submit from the dom and not the Ext form since it will do an Ajax submit
@@ -182,9 +183,11 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         return false;
     },
 
-    // private
-    // overriding the FormPanels createForm method with our own
-    // so we can reuse the domino generated form
+    /**
+     * @private
+     * overriding the FormPanels createForm method with our own
+     * so we can reuse the domino generated form
+     */
     createForm : function(){
         delete this.initialConfig.listeners;
         if (!this.items) {
@@ -200,8 +203,10 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         return new Ext.form.BasicForm(document.forms[0], this.initialConfig);
     },
 
-    /* to support users coming from older versions of Ext.nd where you did
-     * not have to specify 'where' to render to so we will render to
+    /**
+     * Renders the UIDocument in the div with an id that matches the argument passed or,
+     * in order to support users coming from older versions of Ext.nd where you did
+     * not have to specify 'where' to render to, we will render to
      * an Ext.Viewport like previous versions did when the render method
      * is called without any arguments
      */
@@ -290,6 +295,9 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
 
     },
 
+    /**
+     * Opens the UIDocument into Edit mode
+     */
     edit : function(config) {
         var me = this;
         if (me.fireEvent("beforemodechange", me) !== false) {
@@ -306,6 +314,13 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
         location.href = me.dbPath + uiViewName + '/' + unid + '?EditDocument'
     },
 
+    /**
+     * Saves the UIDocument
+     * @param {Boolean/Object} config Can either be a boolean or an object.  If a boolean, it specifies whether the UIDocument should be closed after the save
+     * @param {Function} config.success Success callback handler
+     * @param {Function} config.failure Failure callback handler
+     * @param {Object} config.scope The scope to run the callback handlers under
+     */
     save : function(config) {
         var me = this;
         if (me.fireEvent("beforesave", me) !== false) {
@@ -375,6 +390,9 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
 
     },
 
+    /**
+     * Closes the UIDocument
+     */
     close : function(unid){
         if (this.fireEvent("beforeclose", this) !== false) {
             this.onClose(unid);
@@ -553,11 +571,11 @@ Ext.extend(Ext.nd.UIDocument, Ext.form.FormPanel, {
     },
 
     /**
+     * @private
      * called only when convertFields is set to true
      * and processes the response from the dxl export
      * of field info
      */
-    // private
     doConvertFieldsCB : function(response, options) {
 
         // load in our field defintions
