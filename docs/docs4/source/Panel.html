@@ -37,12 +37,11 @@ Ext.define('Ext.nd.grid.Panel', {
     ],
 
     requires: [
-        'Ext.nd.data.ViewDesign'
+        'Ext.nd.data.ViewDesign',
+        'Ext.toolbar.Paging'
     ],
 
 <span id='Ext-nd-grid-Panel-cfg-viewType'>    viewType                : 'gridview',
-</span><span id='Ext-nd-grid-Panel-property-storeConfig'>    storeConfig             : {},
-</span><span id='Ext-nd-grid-Panel-cfg-viewConfig'>    viewConfig              : {},
 </span><span id='Ext-nd-grid-Panel-property-renderers'>    renderers               : [],
 </span><span id='Ext-nd-grid-Panel-property-quickSearchKeyStrokes'>    quickSearchKeyStrokes   : [],
 </span><span id='Ext-nd-grid-Panel-property-targetDefaults'>    targetDefaults          : {},
@@ -53,7 +52,7 @@ Ext.define('Ext.nd.grid.Panel', {
 </span>
 
 <span id='Ext-nd-grid-Panel-property-showActionbar'>    showActionbar                   : true,
-</span><span id='Ext-nd-grid-Panel-property-showPagingToolbar'>    showPagingToolbar               : false,
+</span><span id='Ext-nd-grid-Panel-property-showPagingToolbar'>    showPagingToolbar               : true,
 </span><span id='Ext-nd-grid-Panel-property-showSearch'>    showSearch                      : true,
 </span><span id='Ext-nd-grid-Panel-property-showSearchPosition'>    showSearchPosition              : 'bottom',
 </span><span id='Ext-nd-grid-Panel-property-showCategoryComboBox'>    showCategoryComboBox            : false,
@@ -76,10 +75,18 @@ Ext.define('Ext.nd.grid.Panel', {
 </span><span id='Ext-nd-grid-Panel-property-enableDragDrop'>    enableDragDrop                  : true,
 </span><span id='Ext-nd-grid-Panel-property-ddGroup'>    ddGroup                         : 'TreeDD',
 </span><span id='Ext-nd-grid-Panel-property-loadMask'>    loadMask                        : true,
-</span><span id='Ext-nd-grid-Panel-property-count'>    count                           : 40,
 </span>
+
 <span id='Ext-nd-grid-Panel-property-noteType'>    // private
 </span>    noteType                        : 'view',
+
+<span id='Ext-nd-grid-Panel-property-count'>    count: 40,
+</span><span id='Ext-nd-grid-Panel-property-storeConfig'>    storeConfig: {
+</span>        pageSize: 40
+    },
+
+<span id='Ext-nd-grid-Panel-cfg-viewConfig'>    viewConfig: {},
+</span>
 
 <span id='Ext-nd-grid-Panel-property-selModelConfig'>    // TODO ExtJS4 uses selModel that can be a config or a selection model instance
 </span>    selModelConfig: {
@@ -99,7 +106,8 @@ Ext.define('Ext.nd.grid.Panel', {
             dateTimeFormats     : Ext.nd.dateTimeFormats,
             formatCurrencyFnc   : Ext.util.Format.usMoney,
             columns             : me.getInitialColumns(),
-            store               : me.getInitialStore()
+            store               : me.getInitialStore(),
+            bbar                : me.getBottomBarCfg()
         });
 
         me.callParent(arguments);
@@ -270,13 +278,15 @@ Ext.define('Ext.nd.grid.Panel', {
         }
 
         if (me.showPagingToolbar) {
-            var pg = me.getBottomToolbar();
+            var pg = me.down('pagingtoolbar');
             // now that we know if the view is categorized or not we need to let
             // the paging toolbar know
             if (pg) {
                 pg.isCategorized = me.isCategorized;
-                pg.unbind(me.dmyId);
-                pg.bind(me.store);
+                pg.bindStore(null);
+                pg.bindStore(me.store);
+                pg.updateInfo();
+                console.log('pg');
             }
         }
 
@@ -359,6 +369,18 @@ Ext.define('Ext.nd.grid.Panel', {
         else {
             return; // not interested in click on images that are not in
             // categories
+        }
+    },
+
+<span id='Ext-nd-grid-Panel-method-getBottomBarCfg'>    getBottomBarCfg: function () {
+</span>        var me = this;
+
+        if (me.showPagingToolbar) {
+            return {
+                xtype       : 'pagingtoolbar',
+                displayInfo : true,
+                store       : me.store
+            }
         }
     }
 

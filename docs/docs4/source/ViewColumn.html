@@ -16,7 +16,8 @@
 </head>
 <body onload="prettyPrint(); highlight();">
   <pre class="prettyprint lang-js"><span id='Ext-nd-grid-ViewColumn'>/**
-</span> * A Grid header type which renders a column for a Domino view
+</span> * A Grid header type which renders a column for a Domino view.  This class is used by the Ext.nd.data.ViewDesign class
+ * and you typically do not need to use this class directly.
  */
 Ext.define('Ext.nd.grid.ViewColumn', {
 
@@ -27,8 +28,58 @@ Ext.define('Ext.nd.grid.ViewColumn', {
         'Ext.util.Format'
     ],
 
-<span id='Ext-nd-grid-ViewColumn-method-initComponent'>    initComponent: function () {
-</span>        var me = this;
+<span id='Ext-nd-grid-ViewColumn-property-align'>    /**
+</span>     * @property align
+     */
+<span id='Ext-nd-grid-ViewColumn-property-dataIndex'>    /**
+</span>     * @property dataIndex defaults to the name set for the column in Domino Designer
+     */
+<span id='Ext-nd-grid-ViewColumn-property-width'>    /**
+</span>     * @property width
+     */
+<span id='Ext-nd-grid-ViewColumn-property-totals'>    /**
+</span>     * @property totals
+     */
+<span id='Ext-nd-grid-ViewColumn-property-sortable'>    /**
+</span>     * @property sortable
+     */
+<span id='Ext-nd-grid-ViewColumn-property-resortascending'>    /**
+</span>     * @property resortascending
+     */
+<span id='Ext-nd-grid-ViewColumn-property-resortdescending'>    /**
+</span>     * @property resortdescending
+     */
+<span id='Ext-nd-grid-ViewColumn-property-resortviewunid'>    /**
+</span>     * @property resortviewunid
+     */
+<span id='Ext-nd-grid-ViewColumn-property-sortcategorize'>    /**
+</span>     * @property sortcategorize
+     */
+<span id='Ext-nd-grid-ViewColumn-property-resize'>    /**
+</span>     * @property resize
+     */
+<span id='Ext-nd-grid-ViewColumn-property-listseparator'>    /**
+</span>     * @property listseparator
+     */
+<span id='Ext-nd-grid-ViewColumn-property-response'>    /**
+</span>     * @property response
+     */
+<span id='Ext-nd-grid-ViewColumn-property-twistie'>    /**
+</span>     * @property twistie
+     */
+<span id='Ext-nd-grid-ViewColumn-property-icon'>    /**
+</span>     * @property icon
+     */
+<span id='Ext-nd-grid-ViewColumn-property-datetimeformat'>    /**
+</span>     * @property datetimeformat
+     */
+<span id='Ext-nd-grid-ViewColumn-property-numberformat'>    /**
+</span>     * @property numberformat
+     */
+
+
+    initComponent: function () {
+        var me = this;
 
         // applyIf so that these can all be overridden if passed into the config
         Ext.applyIf(me, {
@@ -39,8 +90,11 @@ Ext.define('Ext.nd.grid.ViewColumn', {
         me.callParent(arguments);
     },
 
-<span id='Ext-nd-grid-ViewColumn-method-defaultRenderer'>    defaultRenderer: function (value, cell, record, rowIndex, colIndex, store) {
-</span>        var me = this,
+<span id='Ext-nd-grid-ViewColumn-method-defaultRenderer'>    /**
+</span>     * Default renderer method to handle column data in Domino Views
+     */
+    defaultRenderer: function (value, cell, record, rowIndex, colIndex, store) {
+        var me = this,
             grid = me.up('grid');
 
         // first check to see if this is a 'phantom' (new record being dynamically added
@@ -70,11 +124,11 @@ Ext.define('Ext.nd.grid.ViewColumn', {
          */
 
         var returnValue = '';
-        var metadata = record.metadata[me.dataIndex];
+        var metaData = record.metaData[me.dataIndex];
 
         // if we don't have any data and this is not a response column
         // nor a category column then just return a blank
-        if (typeof value == 'string' &amp;&amp; value == '' &amp;&amp; !me.response &amp;&amp; !metadata.category) {
+        if (typeof value == 'string' &amp;&amp; value == '' &amp;&amp; !me.response &amp;&amp; !metaData.category) {
             return '';
         }
 
@@ -95,7 +149,7 @@ Ext.define('Ext.nd.grid.ViewColumn', {
 
         // has children and is a categorized column
         if (record.hasChildren() &amp;&amp; me.sortcategorize) {
-            indent = metadata.indent;
+            indent = metaData.indent;
             extraIndent = (indent &gt; 0) ? 'padding-left:' + indent * 20 + 'px;' : '';
             cell.attr = 'style=&quot;position: absolute; width: auto; white-space: nowrap; ' + extraIndent + '&quot;';
             if (nextViewentry) {
@@ -139,7 +193,7 @@ Ext.define('Ext.nd.grid.ViewColumn', {
 
                 // has children and IS a response doc
                 if (record.hasChildren() &amp;&amp; record.isResponse() &amp;&amp; me.response) {
-                    indent = metadata.indent;
+                    indent = metaData.indent;
                     extraIndent = (indent &gt; 0) ? 'padding-left:' + (20 + (indent * 20)) + 'px;' : '';
                     cell.attr = 'style=&quot;position: absolute; width: auto; white-space: nowrap; ' + extraIndent + '&quot;';
                     if (nextViewentry) {
@@ -162,7 +216,7 @@ Ext.define('Ext.nd.grid.ViewColumn', {
                     if (!record.hasChildren() &amp;&amp; record.isResponse() &amp;&amp; me.response) {
                         // does NOT have children and IS a response doc
                         cell.css = 'xnd-view-response';
-                        indent = metadata.indent;
+                        indent = metaData.indent;
                         extraIndent = (indent &gt; 0) ? 'padding-left:' + (20 + (indent * 20)) + 'px;' : '';
                         cell.attr = 'style=&quot;position: absolute; width: auto; white-space: nowrap; ' + extraIndent + '&quot;';
                         returnValue = this.getValue(value, record);
@@ -215,9 +269,9 @@ Ext.define('Ext.nd.grid.ViewColumn', {
             tmpDate,
             tmpDateFmt,
             separator,
-            metadata;
+            metaData;
 
-        metadata = record.metadata[me.dataIndex];
+        metaData = record.metaData[me.dataIndex];
         separator = this.getListSeparator();
         newValue = '';
 
@@ -234,7 +288,7 @@ Ext.define('Ext.nd.grid.ViewColumn', {
         for (var i = 0, len = value.length; i &lt; len; i++) {
             var nbf = me.numberformat;
             var sep = (i + 1 &lt; len) ? separator : '';
-            dataType = metadata.type; // set in the XmlReader.getNamedValue method
+            dataType = metaData.type;
             var tmpValue = value[i];
 
             // handle columns set to show an icon a little differently
@@ -338,6 +392,7 @@ Ext.define('Ext.nd.grid.ViewColumn', {
         return separator;
     }
 
-});</pre>
+});
+</pre>
 </body>
 </html>
