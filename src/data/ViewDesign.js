@@ -11,6 +11,7 @@ Ext.define('Ext.nd.data.ViewDesign', {
     requires: [
         'Ext.nd.data.ViewStore',
         'Ext.nd.data.ViewModel',
+        'Ext.nd.data.ViewXmlReader',
         'Ext.nd.grid.ViewColumn'
     ],
 
@@ -268,8 +269,7 @@ Ext.define('Ext.nd.data.ViewDesign', {
             var recordConfig = {
                 name    : name,
                 mapping : 'entrydata[columnnumber=' + columnnumber + ']',
-                type    : type,
-                convert : Ext.nd.data.ViewModel.prototype.convertEntryData
+                type    : type
             };
             arRecordConfig.push(recordConfig);
 
