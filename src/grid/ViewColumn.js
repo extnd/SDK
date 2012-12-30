@@ -12,52 +12,52 @@ Ext.define('Ext.nd.grid.ViewColumn', {
     ],
 
     /**
-     * @cfg align
+     * @property align
      */
     /**
-     * @cfg dataIndex defaults to the name set for the column in Domino Designer
+     * @property dataIndex defaults to the name set for the column in Domino Designer
      */
     /**
-     * @cfg width
+     * @property width
      */
     /**
-     * @cfg totals
+     * @property totals
      */
     /**
-     * @cfg sortable
+     * @property sortable
      */
     /**
-     * @cfg resortascending
+     * @property resortascending
      */
     /**
-     * @cfg resortdescending
+     * @property resortdescending
      */
     /**
-     * @cfg resortviewunid
+     * @property resortviewunid
      */
     /**
-     * @cfg sortcategorize
+     * @property sortcategorize
      */
     /**
-     * @cfg resize
+     * @property resize
      */
     /**
-     * @cfg listseparator
+     * @property listseparator
      */
     /**
-     * @cfg response
+     * @property response
      */
     /**
-     * @cfg twistie
+     * @property twistie
      */
     /**
-     * @cfg icon
+     * @property icon
      */
     /**
-     * @cfg datetimeformat
+     * @property datetimeformat
      */
     /**
-     * @cfg numberformat
+     * @property numberformat
      */
 
 
