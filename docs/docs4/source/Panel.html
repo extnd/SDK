@@ -38,7 +38,7 @@ Ext.define('Ext.nd.grid.Panel', {
 
     requires: [
         'Ext.nd.data.ViewDesign',
-        'Ext.toolbar.Paging'
+        'Ext.nd.toolbar.Paging'
     ],
 
 <span id='Ext-nd-grid-Panel-cfg-viewType'>    viewType                : 'gridview',
@@ -278,7 +278,7 @@ Ext.define('Ext.nd.grid.Panel', {
         }
 
         if (me.showPagingToolbar) {
-            var pg = me.down('pagingtoolbar');
+            var pg = me.down('xnd-pagingtoolbar');
             // now that we know if the view is categorized or not we need to let
             // the paging toolbar know
             if (pg) {
@@ -286,7 +286,6 @@ Ext.define('Ext.nd.grid.Panel', {
                 pg.bindStore(null);
                 pg.bindStore(me.store);
                 pg.updateInfo();
-                console.log('pg');
             }
         }
 
@@ -377,7 +376,7 @@ Ext.define('Ext.nd.grid.Panel', {
 
         if (me.showPagingToolbar) {
             return {
-                xtype       : 'pagingtoolbar',
+                xtype       : 'xnd-pagingtoolbar',
                 displayInfo : true,
                 store       : me.store
             }
