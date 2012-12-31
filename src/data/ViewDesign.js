@@ -5,7 +5,7 @@
 Ext.define('Ext.nd.data.ViewDesign', {
 
     mixins: {
-        observable: 'Ext.util.Observable',
+        observable: 'Ext.util.Observable'
     },
 
     requires: [
@@ -42,9 +42,6 @@ Ext.define('Ext.nd.data.ViewDesign', {
             me.viewUrl = me.dbPath + me.viewName;
         }
 
-
-        // TODO just hardcoded for now
-        Ext.nd.extndUrl = '/extnd/extnd_b4.nsf/extnd/3x/',
         // now call our getViewDesign method
         me.getViewDesign();
 
@@ -78,7 +75,7 @@ Ext.define('Ext.nd.data.ViewDesign', {
         Ext.each(arColumns, function(item, index, allItems){
             var colName = Ext.DomQuery.selectValue('@name', item);
             // we can only check columns that have a name defined
-            if (typeof colName != 'undefined') {
+            if (colName !== undefined) {
                 // Ext doesn't like '$' at the beginning like domino automatically will add
                 //colName = colName.replace(/^$/, '_');
                 colName = colName.replace('$', '_');
@@ -104,34 +101,63 @@ Ext.define('Ext.nd.data.ViewDesign', {
             dxml            = res.responseXML,
             q               = Ext.DomQuery,
             arColumns       = q.select('column', dxml),
+            col,
             colLen          = arColumns.length,
-            arRecordConfig  = [],
+            fieldConfigs    = [],
+            fieldConfig,
             colCount        = 0,
+            columnnumber,
+            name,
+            title,
+            width,
+            totals,
+            visible,
+            response,
+            twistie,
+            listseparatorValue,
+            resize,
+            resort,
+            resortascendingValue,
+            resortdescendingValue,
+            resorttoviewValue,
+            resortviewunidValue,
+            isSortable,
+            icon,
+            align,
+            headerAlign,
+            tmpDateTimeFormat,
+            datetimeformat = {},
+            tmpNumberFormat,
+            numberformat = {},
+            sortcategorize,
+            columnConfig,
+            viewtype,
+            isView,
+            root,
+            type,
             i;
 
 
         me.columns = new Ext.util.MixedCollection();
 
-
         for (i = 0; i < colLen; i++) {
 
-            var col = arColumns[i];
-            var type = 'string'; // default type
+            type = 'string'; // default type
+            col = arColumns[i];
 
-            var sortcategorize = q.selectValue('@categorized', col, false);
-            var sortcategorizeValue = (sortcategorize) ? true : false;
-            me.isCategorized = me.isCategorized || sortcategorizeValue;
+            sortcategorize = !!q.selectValue('@categorized', col, false);
+            me.isCategorized = me.isCategorized || sortcategorize;
 
 
             // don't process first column if category is set AND
             // this is an actual categorized column
-            if (i == 0 && me.isCategorized && (typeof me.category === 'string')) {
+            if (i === 0 && me.isCategorized && (typeof me.category === 'string')) {
                 continue;
             }
 
-            var columnnumber = colCount;
+            columnnumber = colCount;
             // if name is blank, give it a new unique name
-            var name = q.selectValue('@itemname', col, 'columnnumber_' + columnnumber);
+            name = q.selectValue('@itemname', col, 'columnnumber_' + columnnumber);
             // Ext doesn't like '$'
             //name = name.replace(/^$/, '_');
             name = name.replace('$', '_');
@@ -143,7 +169,7 @@ Ext.define('Ext.nd.data.ViewDesign', {
 
             // new way to check for hidden that uses the results of the ?readdesign
             // call since domino then takes care of evaluating all hidewhen formulas
-            var visible = me.visibleCols.getByKey(name);
+            visible = me.visibleCols.getByKey(name);
             if (!visible) {
                 continue; // skip to next column if this is set to hidden
             }
@@ -158,97 +184,85 @@ Ext.define('Ext.nd.data.ViewDesign', {
             // still be good :)
             colCount++; // not hidden so increment our column count
 
-            var title = q.selectValue('columnheader/@title', col, '&nbsp;');
+            title = q.selectValue('columnheader/@title', col, '&nbsp;');
 
             // multiplying by 11.28 converts the inch width to pixels
-            var width = Math.max(q.selectNumber('@width', col) * 11.28, 22);
+            width = Math.max(q.selectNumber('@width', col) * 11.28, 22);
 
             // totals column (and if it is a totals column, set type to 'float')
-            var totals = q.selectValue('@totals', col, 'none');
+            totals = q.selectValue('@totals', col, 'none');
             type = (totals !== 'none') ? 'float' : type;
 
             // response
-            var response = q.selectValue('@responsesonly', col, false);
-            var responseValue = (response) ? true : false;
+            response = !!q.selectValue('@responsesonly', col, false);
 
             // twistie
-            var twistie = q.selectValue('@twisties', col, false);
-            var twistieValue = (twistie) ? true : false;
+            twistie = !!q.selectValue('@twisties', col, false);
 
             // listseparator
-            var listseparatorValue = q.selectValue('@listseparator', col, 'none');
+            listseparatorValue = q.selectValue('@listseparator', col, 'none');
 
             // resize
-            var resize = q.selectValue('@resizable', col, false);
-            var resizeValue = (resize) ? true : false;
+            resize = !!q.selectValue('@resizable', col, false);
 
             // resort asc
-            var resort = q.selectValue('@resort', col, false);
-            var resortascendingValue = (resort == 'ascending' || resort == 'both') ? true : false;
+            resort = q.selectValue('@resort', col, false);
+            resortascendingValue = (resort === 'ascending' || resort === 'both') ? true : false;
 
             // resort desc
-            var resortdescendingValue = (resort == 'descending' || resort == 'both') ? true : false;
+            resortdescendingValue = (resort === 'descending' || resort === 'both') ? true : false;
 
             // jump to view
-            var resorttoviewValue = (resort == 'toview') ? true : false;
-            var resortviewunidValue = (resorttoviewValue) ? q.selectValue('@resorttoview', col, '') : '';
+            resorttoviewValue = (resort === 'toview') ? true : false;
+            resortviewunidValue = resorttoviewValue ? q.selectValue('@resorttoview', col, '') : '';
 
             // check the storeConfig.remoteSort property to see if the user wants to do sorting from cache
             // if so then it will be set to false (true will do the sorting 'remotely' on the server)
             // this is useful if you know you will load all data into the grid like in perhaps
             // a restricttocategory view with a small and known number of docs
-            var isSortable = (me.storeConfig.remoteSort === false) ? true : (resortascendingValue || resortdescendingValue) ? true : false;
+            isSortable = (me.storeConfig.remoteSort === false) ? true : (resortascendingValue || resortdescendingValue) ? true : false;
 
             // icon
-            var icon = q.selectValue('@showasicons', col, false);
-            var iconValue = (icon) ? true : false;
+            icon = q.selectValue('@showasicons', col, false);
 
             // align
-            var align = q.selectValue('@align', col, false);
-            var alignValue = (align) ? align : 'left';
+            align = q.selectValue('@align', col, 'left');
 
-            // headerAlign
-            var headerAlign = q.selectValue('columnheader/@align', col, false);
-            var headerAlignValue = (headerAlign) ? headerAlign : 'left';
+            // headerAlign TODO - we are not using this anywhere yet
+            headerAlign = q.selectValue('columnheader/@align', col, 'left');
 
             // date formatting
-            var tmpDateTimeFormat = q.select('datetimeformat', col)[0];
-            var datetimeformat = {};
+            tmpDateTimeFormat = q.select('datetimeformat', col)[0];
             if (tmpDateTimeFormat) {
                 type = 'date';
-                datetimeformat.show = q.selectValue('@show', tmpDateTimeFormat);
-                datetimeformat.date = q.selectValue('@date', tmpDateTimeFormat);
-                datetimeformat.time = q.selectValue('@time', tmpDateTimeFormat);
-                datetimeformat.zone = q.selectValue('@zone', tmpDateTimeFormat);
+                datetimeformat = {
+                    show: q.selectValue('@show', tmpDateTimeFormat),
+                    date: q.selectValue('@date', tmpDateTimeFormat),
+                    time: q.selectValue('@time', tmpDateTimeFormat),
+                    zone: q.selectValue('@zone', tmpDateTimeFormat)
+                };
             }
 
             // number formatting
-            var tmpNumberFormat= q.select('numberformat', col)[0];
-            var numberformat = {};
+            tmpNumberFormat= q.select('numberformat', col)[0];
             if (tmpNumberFormat) {
                 type = 'float';
+
                 // this will be either fixed, scientific, or currency
-                numberformat.format = q.selectValue('@format', tmpNumberFormat);
-
-                var tmpDigits = q.selectValue('@digits', tmpNumberFormat);
-                numberformat.digits = (tmpDigits != 'varying') ? parseInt(tmpDigits,10) : 'varying';
-
-                var tmpParens = q.selectValue('@parens', tmpNumberFormat);
-                numberformat.parens = (tmpParens == 'true') ? true : false;
-
-                var tmpPer = q.selectValue('@percent', tmpNumberFormat);
-                numberformat.percent = (tmpPer == 'true') ? true : false;
-
-                var tmpPunc = q.selectValue('@punctuated', tmpNumberFormat);
-                numberformat.punctuated = (tmpPunc == 'true') ? true : false;
-
+                numberformat = {
+                    format      : q.selectValue('@format', tmpNumberFormat),
+                    digits      : q.selectNumber('@digits', tmpNumberFormat),
+                    parens      : !!q.selectValue('@parens', tmpNumberFormat, false),
+                    percent     : !!q.selectValue('@percent', tmpNumberFormat, false),
+                    punctuated  : !!q.selectValue('@punctuated', tmpNumberFormat, false)
+                };
             }
 
-            var columnConfig = {
+            columnConfig = {
                 xtype               : 'xnd-viewcolumn',
                 id                  : columnnumber,
-                text                : (resorttoviewValue) ? title + '<img src="/icons/viewsort.gif" />' : title,
-                align               : alignValue,
+                text                : resorttoviewValue ? title + '<img src="/icons/viewsort.gif" />' : title,
+                align               : align,
                 dataIndex           : name,
                 width               : width,
                 totals              : totals,
@@ -256,22 +270,22 @@ Ext.define('Ext.nd.data.ViewDesign', {
                 resortascending     : resortascendingValue,
                 resortdescending    : resortdescendingValue,
                 resortviewunid      : resortviewunidValue,
-                sortcategorize      : sortcategorizeValue,
-                resize              : resizeValue,
+                sortcategorize      : sortcategorize,
+                resize              : resize,
                 listseparator       : listseparatorValue,
-                response            : responseValue,
-                twistie             : twistieValue,
-                icon                : iconValue,
+                response            : response,
+                twistie             : twistie,
+                icon                : icon,
                 datetimeformat      : datetimeformat,
                 numberformat        : numberformat
             };
 
-            var recordConfig = {
+            fieldConfig = {
                 name    : name,
                 mapping : 'entrydata[columnnumber=' + columnnumber + ']',
                 type    : type
             };
-            arRecordConfig.push(recordConfig);
+            fieldConfigs.push(fieldConfig);
 
             // add to me.columns since it might have a custom selection model
             me.columns.add(name, columnConfig);
@@ -279,10 +293,10 @@ Ext.define('Ext.nd.data.ViewDesign', {
         } // end for loop that processed each column
 
         // is this a view or a folder?
-        var isView = q.select('view', dxml);
+        isView = q.select('view', dxml);
         me.isView = (isView.length > 0) ? true : false;
         me.isFolder = !me.isView;
-        var root = (me.isView) ? 'view' : 'folder';
+        root = (me.isView) ? 'view' : 'folder';
 
         // does this view need to have it's last column extended? or did the developer specify an autoExpandColumn?
         if (!me.autoExpandColumn) {
@@ -292,24 +306,22 @@ Ext.define('Ext.nd.data.ViewDesign', {
                 if (me.extendLastColumn === true) {
                     me.autoExpandColumn = colCount-1;
                 } else {
-                    var extendlastcolumn = q.selectValue(root+'/@extendlastcolumn', dxml, false);
-                    me.extendLastColumn = (extendlastcolumn == 'true') ? true : false;
+                    me.extendLastColumn = !!q.selectValue(root+'/@extendlastcolumn', dxml, false);
                     me.autoExpandColumn = (me.extendLastColumn) ? colCount-1 : false;
                }
             }
         }
 
         // on web access property to allow docs to be selected with a checkbox
-        var allowdocselection = q.selectValue(root+'/@allowdocselection', dxml, false);
-        me.allowDocSelection = (allowdocselection == 'true') ? true : false;
+        me.allowDocSelection = !!q.selectValue(root+'/@allowdocselection', dxml, false);
 
         // TODO: need to get the value of useapplet since if true, it causes opening docs from a view not to work
         // and therefore a dummy viewname is needed instead
 
-        // type will either be 'view' or 'calendar'
-        var type = q.selectValue(root+'/@type', dxml, 'view');
+        // viewtype will either be 'view' or 'calendar'
+        viewtype = q.selectValue(root+'/@type', dxml, 'view');
         // now set isCalendar if not already set from the passed in config
-        me.isCalendar = me.isCalendar || (type == 'calendar' ? true : false);
+        me.isCalendar = me.isCalendar || (viewtype === 'calendar' ? true : false);
 
         // the dominoView object holds all of the design information for the
         // view
@@ -323,7 +335,7 @@ Ext.define('Ext.nd.data.ViewDesign', {
                 isCategorized   : me.isCategorized,
                 fromViewDesign  : true
             },
-            fields: arRecordConfig
+            fields: fieldConfigs
         };
 
         // define the store

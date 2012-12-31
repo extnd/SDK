@@ -77,167 +77,155 @@ Ext.define('Ext.nd.grid.ViewColumn', {
      * Default renderer method to handle column data in Domino Views
      */
     defaultRenderer: function (value, cell, record, rowIndex, colIndex, store) {
-        var me = this,
-            grid = me.up('grid');
+        var me                  = this,
+            grid                = me.up('grid'),
+            entryData           = record.viewEntry.entryData[me.dataIndex] || {},
+            returnValue         = '',
+            newValue,
+            nextRecord          = store.getAt(rowIndex + 1),
+            recordLevel         = record.viewEntry.depth,
+            sCollapseImage      = '<img src="' + grid.collapseIcon + '" style="vertical-align:bottom; margin-right:8px;"/>',
+            sExpandImage        = '<img src="' + grid.expandIcon + '" style="vertical-align:bottom; margin-right:8px;"/>',
+            indentPadding       = (20 * recordLevel) + 'px',
+            indentPaddingNoIcon = (20 + (20 * recordLevel)) + 'px',
+            nextRecordLevel,
+            indent,
+            extraIndent,
+            tmpReturnValue      = '',
+            tmpValue            = '',
+            separator           = me.getListSeparator(),
+            clearFloat          = '',
+            i,
+            len = 0;
+
 
         // first check to see if this is a 'phantom' (new record being dynamically added
         // like in the RowEditor example and if so, just let it pass
         if (record.phantom === true) {
-            return (typeof value == 'undefined') ? '' : value;
+            return (value === undefined) ? '' : value;
         }
 
         // TODO: need to figure out why we sometimes get a null for the value
-        if (value == null) {
+        if (value === null) {
             return '';
         }
 
-        /* next, let's split value into an array so that we can
-         * process the listseparator.  we use '\n' since that is how
-         * we stored multi-values in the XmlReader.getValue
-         * method.
-         */
+        // next, let's split value into an array so that we can process the listseparator.  we use '\n' since that is how
+        // we stored multi-values in the Ext.nd.data.ViewXmlReader#parseEntryDataChildNodes method.
         if (value && value.split) {
             value = value.split('\n');
+            len = value.length;
         }
-
-        /* if value has a length of zero, assume this is a column in domino
-         * that is not currently displaying any data like a 'show response only'
-         * column, or a multi-categorized view that is collapsed and you can't
-         * see the data for the other columns
-         */
-
-        var returnValue = '';
-        var metaData = record.metaData[me.dataIndex];
 
         // if we don't have any data and this is not a response column
         // nor a category column then just return a blank
-        if (typeof value == 'string' && value == '' && !me.response && !metaData.category) {
+        if (typeof value === 'string' && value === '' && !me.response && !entryData.category) {
             return '';
         }
 
-        // get the next record/viewentry for this record
-        var nextViewentry = store.getAt(rowIndex + 1);
-
-        // indent padding
-        var viewentryLevel = record.get('depth');
-
-        // for the expand/collapse icon width + indent width
-        var sCollapseImage = '<img src="' + grid.collapseIcon + '" style="vertical-align:bottom; margin-right:8px;"/>';
-        var sExpandImage = '<img src="' + grid.expandIcon + '" style="vertical-align:bottom; margin-right:8px;"/>';
-        var indentPadding = (20 * viewentryLevel) + 'px';
-        var indentPaddingNoIcon = (20 + (20 * viewentryLevel)) + 'px';
-
-
-        var nextViewentryLevel, extraIndent;
 
         // has children and is a categorized column
         if (record.hasChildren() && me.sortcategorize) {
-            indent = metaData.indent;
+            indent = entryData.indent;
             extraIndent = (indent > 0) ? 'padding-left:' + indent * 20 + 'px;' : '';
             cell.attr = 'style="position: absolute; width: auto; white-space: nowrap; ' + extraIndent + '"';
-            if (nextViewentry) {
-                nextViewentryLevel = nextViewentry.get('depth');
-                if (nextViewentryLevel > viewentryLevel) {
+
+            if (nextRecord) {
+                nextRecordLevel = nextRecord.viewEntry.depth;
+                if (nextRecordLevel > recordLevel) {
                     cell.css = ' xnd-view-collapse xnd-view-category';
-                    returnValue = sCollapseImage + this.getValue(value, record);
-                }
-                else {
+                    returnValue = sCollapseImage + me.getValue(value, record);
+                } else {
                     cell.css = ' xnd-view-expand xnd-view-category';
-                    returnValue = sExpandImage + this.getValue(value, record);
+                    returnValue = sExpandImage + me.getValue(value, record);
                 }
-            }
-            else { // should be a categorized column on the last record
+            } else { // should be a categorized column on the last record
                 cell.css = ' xnd-view-expand xnd-view-category';
-                returnValue = sExpandImage + this.getValue(value, record);
+                returnValue = sExpandImage + me.getValue(value, record);
             }
-        }
-        else
+
+        } else {
 
             // is NOT a category but has children and IS NOT a response doc BUT IS a response COLUMN
-            if (!record.isCategory && record.hasChildren() && !record.isResponse() && me.response) {
+            if (!record.isCategory() && record.hasChildren() && !record.isResponse() && me.response) {
 
-                if (nextViewentry) {
-                    nextViewentryLevel = nextViewentry.get('depth');
-                    if (nextViewentryLevel > viewentryLevel) {
+                if (nextRecord) {
+                    nextRecordLevel = nextRecord.viewEntry.depth;
+                    if (nextRecordLevel > recordLevel) {
                         cell.css = 'xnd-view-collapse xnd-view-response';
                         returnValue = sCollapseImage;
-                    }
-                    else {
+                    } else {
                         cell.css = 'xnd-view-expand xnd-view-response';
                         returnValue = sExpandImage;
                     }
-                }
-                else { // should be a categorized column on the last record
+                } else { // should be a categorized column on the last record
                     cell.css = 'xnd-view-expand xnd-view-response';
                     returnValue = sExpandImage;
                 }
-            }
-            else
+
+            } else {
 
                 // has children and IS a response doc
                 if (record.hasChildren() && record.isResponse() && me.response) {
-                    indent = metaData.indent;
+                    indent = entryData.indent;
                     extraIndent = (indent > 0) ? 'padding-left:' + (20 + (indent * 20)) + 'px;' : '';
                     cell.attr = 'style="position: absolute; width: auto; white-space: nowrap; ' + extraIndent + '"';
-                    if (nextViewentry) {
-                        nextViewentryLevel = nextViewentry.get('depth');
-                        if (nextViewentryLevel > viewentryLevel) {
+                    if (nextRecord) {
+                        nextRecordLevel = nextRecord.viewEntry.depth;
+                        if (nextRecordLevel > recordLevel) {
                             cell.css = 'xnd-view-collapse xnd-view-response';
-                            returnValue = sCollapseImage + this.getValue(value, record);
-                        }
-                        else {
+                            returnValue = sCollapseImage + me.getValue(value, record);
+                        } else {
                             cell.css = 'xnd-view-expand xnd-view-response';
-                            returnValue = sExpandImage + this.getValue(value, record);
+                            returnValue = sExpandImage + me.getValue(value, record);
                         }
-                    }
-                    else { // should be a categorized column on the last record
+                    } else { // should be a categorized column on the last record
                         cell.css = 'xnd-view-expand xnd-view-response';
-                        returnValue = sExpandImage + this.getValue(value, record);
+                        returnValue = sExpandImage + me.getValue(value, record);
                     }
-                }
-                else
+                } else {
+
+                    // does NOT have children and IS a response doc
                     if (!record.hasChildren() && record.isResponse() && me.response) {
-                        // does NOT have children and IS a response doc
+
                         cell.css = 'xnd-view-response';
-                        indent = metaData.indent;
+                        indent = entryData.indent;
                         extraIndent = (indent > 0) ? 'padding-left:' + (20 + (indent * 20)) + 'px;' : '';
                         cell.attr = 'style="position: absolute; width: auto; white-space: nowrap; ' + extraIndent + '"';
-                        returnValue = this.getValue(value, record);
-                    }
-                    else {
+                        returnValue = me.getValue(value, record);
+
+                    } else {
+
                         if (me.icon) {
-                            var tmpReturnValue = '';
-                            var tmpValue = '';
-                            var separator = this.getListSeparator();
-                            var clearFloat = '';
-                            for (var i = 0; i < value.length; i++) {
+                            for (i = 0; i < len; i++) {
                                 tmpValue = value[i];
 
-                                if (isNaN(parseInt(tmpValue, 10)) || tmpValue == '0') {
+                                if (isNaN(parseInt(tmpValue, 10)) || tmpValue === '0') {
                                     return '';
-                                }
-                                else {
-                                    // I believe the domino only has view icon images from 1 to
-                                    // 186
+                                } else {
+                                    // I believe the domino only has view icon images from 1 to 186
                                     newValue = (tmpValue < 10) ? '00' + tmpValue : (tmpValue < 100) ? '0' + tmpValue : (tmpValue > 186) ? '186' : tmpValue;
-                                    clearFloat = (me.listseparator == 'newline') ? 'style="clear: left;"' : '';
+                                    clearFloat = (me.listseparator === 'newline') ? 'style="clear: left;"' : '';
                                     tmpReturnValue = '<div class="xnd-icon-vw xnd-icon-vwicn' + newValue + '" ' + clearFloat + '>&nbsp;</div>';
-                                    if (i == 0) {
+                                    if (i === 0) {
                                         returnValue = tmpReturnValue;
                                     } else {
                                         returnValue = returnValue + separator + tmpReturnValue;
                                     }
                                 }
                             }
-                        }
-                        else {
+
+                        } else {
                             // just normal data but check first to see if a 'totals' column
-                            if (me.totals != 'none') {
+                            if (me.totals !== 'none') {
                                 cell.css = ' xnd-view-totals xnd-view-' + me.totals;
                             }
-                            returnValue = this.getValue(value, record);
+                            returnValue = me.getValue(value, record);
                         }
                     }
+                }
+            }
+        }
 
         // now return our domino formatted value
         return returnValue;
@@ -245,87 +233,90 @@ Ext.define('Ext.nd.grid.ViewColumn', {
     },
 
     // private
-    getValue: function(value, record){
+    getValue: function (value, record) {
         var me = this,
-            dataType,
-            newValue,
+            sep,
             tmpDate,
             tmpDateFmt,
-            separator,
-            metaData;
-
-        metaData = record.metaData[me.dataIndex];
-        separator = this.getListSeparator();
-        newValue = '';
+            tmpValue,
+            entryData   = record.viewEntry.entryData[me.dataIndex] || {},
+            dataType    = entryData.type,
+            nbf         = me.numberformat,
+            dtf         = me.datetimeformat,
+            separator   = me.getListSeparator(),
+            newValue    = '',
+            i,
+            len;
 
         // handle non-categorized columns
-        if (me.sortcategorize && value.length == 0) {
-            newValue = this.notCategorizedText;
+        if (me.sortcategorize && value.length === 0) {
+            newValue = me.notCategorizedText;
         }
 
         // need to make sure value is an array
         // the loop below will format as needed
-        value = (Ext.isArray(value)) ? value : [''+value];
+        value = (Ext.isArray(value)) ? value : ['' + value];
+        len = value.length;
 
-
-        for (var i = 0, len = value.length; i < len; i++) {
-            var nbf = me.numberformat;
-            var sep = (i + 1 < len) ? separator : '';
-            dataType = metaData.type;
-            var tmpValue = value[i];
+        for (i = 0, len; i < len; i++) {
+            sep = (i + 1 < len) ? separator : '';
+            tmpValue = value[i];
 
             // handle columns set to show an icon a little differently
             if (me.icon) {
-                if (isNaN(parseInt(tmpValue, 10)) || tmpValue == 0) {
+                if (isNaN(parseInt(tmpValue, 10)) || tmpValue === 0) {
                     return '';
-                }
-                else {
+                } else {
                     // I believe domino only has view icon images from 1 to 186
                     newValue = (tmpValue < 10) ? '00' + tmpValue : (tmpValue < 100) ? '0' + tmpValue : (tmpValue > 186) ? '186' : tmpValue;
                     return '<img src="/icons/vwicn' + newValue + '.gif"/>';
                 }
-            } else if (me.totals == 'percentoverall' || me.totals == 'percentparent') {
+
+            } else if (me.totals === 'percentoverall' || me.totals === 'percentparent') {
                 return Ext.util.Format.round(100 * parseFloat(tmpValue), nbf.digits) + '%';
-            }
-            else {
+
+            } else {
+
                 switch (dataType) {
+
                     case 'datetimelist':
                     case 'datetime':
-                        var dtf = me.datetimeformat;
-                        if (typeof dtf.show == 'undefined') {
-                            dtf.show = this.dateTimeFormats.show;
+                        if (dtf.show === undefined) {
+                            dtf.show = me.dateTimeFormats.show;
                         }
                         if (tmpValue.indexOf('T') > 0) {
                             tmpDate = tmpValue.split(',')[0].replace('T', '.');
                             tmpDateFmt = 'Ymd.His';
-                        }
-                        else {
+                        } else {
                             tmpDate = tmpValue;
                             tmpDateFmt = 'Ymd';
                             dtf.show = 'date'; // switch to date only since there isn't a time component present
                         }
-                        var d = Ext.Date.parse(tmpDate, tmpDateFmt);
+                        tmpDate = Ext.Date.parse(tmpDate, tmpDateFmt);
                         switch (dtf.show) {
                             case 'date':
-                                tmpValue = d ? Ext.Date.format(d, this.dateTimeFormats.dateFormat) : '';
+                                tmpValue = tmpDate ? Ext.Date.format(tmpDate, me.dateTimeFormats.dateFormat) : '';
                                 break;
                             case 'datetime':
-                                tmpValue = d ? Ext.Date.format(d, this.dateTimeFormats.dateTimeFormat) : '';
+                                tmpValue = tmpDate ? Ext.Date.format(tmpDate, me.dateTimeFormats.dateTimeFormat) : '';
                                 break;
                         }
                         break;
+
                     case 'textlist':
                     case 'text':
                         tmpValue = tmpValue;
                         break;
+
                     case 'numberlist':
                     case 'number':
                         tmpValue = parseFloat(tmpValue);
+
                         switch (nbf.format) {
-                            case 'currency' :
-                                tmpValue = Ext.isEmpty(tmpValue) ? this.formatCurrencyFnc(0) : this.formatCurrencyFnc(tmpValue);
+                            case 'currency':
+                                tmpValue = Ext.isEmpty(tmpValue) ? me.formatCurrencyFnc(0) : me.formatCurrencyFnc(tmpValue);
                                 break;
-                                break;
+
                             case 'fixed' :
                             case 'scientific' :
                                 if (nbf.percent) {
@@ -334,21 +325,28 @@ Ext.define('Ext.nd.grid.ViewColumn', {
                                     tmpValue = Ext.util.Format.round(tmpValue, nbf.digits);
                                 }
                                 break;
+
                             default :
                                 tmpValue = tmpValue;
                         }
                         break;
+
                     default:
                         tmpValue = tmpValue;
-                } // end switch
+                }
+
                 newValue = newValue + tmpValue + sep;
-            } // end if (me.icon)
-        } // end for
+
+            }
+        }
+
         return newValue;
     },
 
-    // private
-    getListSeparator : function() {
+    /**
+     * Returns an appropriate separator string that can be used in html
+     */
+    getListSeparator : function () {
         var me = this,
             separator = '';
 

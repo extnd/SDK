@@ -25,24 +25,21 @@ Ext.define('Ext.nd.data.ViewStore', {
         config = Ext.apply({
 
             proxy: {
-                type    : 'ajax',
-                url     : config.viewUrl + '?ReadViewEntries',
+                type        : 'ajax',
+                url         : config.viewUrl + '?ReadViewEntries',
+
+                // remap paramNames to work with Domino views
+                startParam  : 'start',
+                limitParam  : 'count', // domino uses count
+                sortParam   : 'sort',
+                dirParam    : 'dir',
 
                 reader: {
-                    type            : 'xml',
+                    type            : 'xnd-viewxml',
                     root            : 'viewentries',
                     record          : 'viewentry',
-                    totalRecords    : '@toplevelentries',
-                    id              : '@position'
+                    totalProperty   : '@toplevelentries'
                 }
-            },
-
-            // remap paramNames to work with Domino views
-            paramNames : {
-                start   : 'start',
-                limit   : 'count', // domino uses count
-                sort    : 'sort',
-                dir     : 'dir'
             }
 
         }, config);
@@ -79,50 +76,38 @@ Ext.define('Ext.nd.data.ViewStore', {
 
 
     /**
-     * Loads the Record cache from the configured Proxy using the configured Reader.
-     * <p>
-     * This version is specifically geared towards Domino Views
-     * @param {Object} options An object containing properties which control loading options:
-     * <pre><code>
-     params {Object} An object containing properties to pass as HTTP parameters to a remote data source.
-     callback {Function} A function to be called after the Records have been loaded. The callback is
-     passed the following arguments:
-     r : Ext.data.Record[]
-     options: Options object from the load call
-     success: Boolean success indicator
-     scope {Object} Scope with which to call the callback (defaults to the Store object)
-     append {Boolean} indicator to append loaded records rather than replace the current cache.
-     * </code></pre>
+     * Custom override that makes sure the params that Domino knows about are set correctly
      */
-    loadzz: function(options){
+    load: function (options) {
+        var me = this;
+
         options = options || {};
 
         if (this.fireEvent("beforeload", this, options) !== false) {
-            this.storeOptions(options);
 
             // make sure options has a params property
             options.params = (options.params) ? options.params : {};
 
-            // do some baseParams cleanup
+            // do some extraParams cleanup
             if (options.params.expand || options.params.expandview) {
-                if (this.baseParams.collapse) {
-                    delete this.baseParams.collapse;
+                if (this.extraParams.collapse) {
+                    delete this.extraParams.collapse;
                 }
-                if (this.baseParams.collapseview) {
-                    delete this.baseParams.collapseview;
+                if (this.extraParams.collapseview) {
+                    delete this.extraParams.collapseview;
                 }
             }
             if (options.params.collapse || options.params.collapseview) {
-                if (this.baseParams.expand) {
-                    delete this.baseParams.expand;
+                if (this.extraParams.expand) {
+                    delete this.extraParams.expand;
                 }
-                if (this.baseParams.expandview) {
-                    delete this.baseParams.expandview;
+                if (this.extraParams.expandview) {
+                    delete this.extraParams.expandview;
                 }
             }
 
-            // now merge the baseParams and passed in params
-            var p = Ext.apply(this.baseParams, options.params || {});
+            // now merge the extraParams and passed in params
+            var p = Ext.apply(this.extraParams, options.params || {});
 
 
             if (this.sortInfo && this.remoteSort) {
@@ -191,32 +176,31 @@ Ext.define('Ext.nd.data.ViewStore', {
                     }
                 }
             }
-
-            this.proxy.doRequest(
-                    'read',
-                    null,
-                    p,
-                    this.reader,
-                    this.loadRecords,
-                    this, options);
         }
+
+        me.callParent([options]);
     },
 
-    // override to get rid of a category total
-    loadRecords : function(o, options, success) {
-        var lastRecord, len;
+    /**
+     * Custom override that removes the last record if it is a special 'category total' record returned from
+     * the Domino server AND the #removeCategoryTotal config is set to true.
+     */
+    loadRecords : function( records, options) {
+        var me = this,
+            lastRecord,
+            len;
 
-        if (this.removeCategoryTotal) {
-            len = o.records.length;
+        if (me.removeCategoryTotal) {
+            len = records.length;
             if (len > 0) {
-                lastRecord = o.records[len-1];
-                if (lastRecord.isCategoryTotal) {
-                    o.records.pop(); // remove this last record
+                lastRecord = records[len-1];
+                if (lastRecord.isCategoryTotal()) {
+                    records.pop(); // remove this last record
                 }
             }
         }
         // now continue on and call our superclass.loadRecords
-        Ext.nd.data.ViewStore.superclass.loadRecords.call(this, o, options, success);
+        me.callParent(arguments);
     },
 
     /**
@@ -225,7 +209,7 @@ Ext.define('Ext.nd.data.ViewStore', {
      * @param {String} fieldName The name of the field to sort by.
      * @param {String} dir (optional) The sort order, "ASC" or "DESC" (defaults to "ASC")
      */
-    sort: function(fieldName, dir){
+    sortzz: function(fieldName, dir){
         var f = this.fields.get(fieldName);
         if (!f) {
             return false;
