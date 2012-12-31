@@ -20,12 +20,11 @@ Ext.define('Ext.nd.grid.Panel', {
     ],
 
     requires: [
-        'Ext.nd.data.ViewDesign'
+        'Ext.nd.data.ViewDesign',
+        'Ext.nd.toolbar.Paging'
     ],
 
     viewType                : 'gridview',
-    storeConfig             : {},
-    viewConfig              : {},
     renderers               : [],
     quickSearchKeyStrokes   : [],
     targetDefaults          : {},
@@ -36,7 +35,7 @@ Ext.define('Ext.nd.grid.Panel', {
 
 
     showActionbar                   : true,
-    showPagingToolbar               : false,
+    showPagingToolbar               : true,
     showSearch                      : true,
     showSearchPosition              : 'bottom',
     showCategoryComboBox            : false,
@@ -59,10 +58,18 @@ Ext.define('Ext.nd.grid.Panel', {
     enableDragDrop                  : true,
     ddGroup                         : 'TreeDD',
     loadMask                        : true,
-    count                           : 40,
+
 
     // private
     noteType                        : 'view',
+
+    count: 40,
+    storeConfig: {
+        pageSize: 40
+    },
+
+    viewConfig: {},
+
 
     // TODO ExtJS4 uses selModel that can be a config or a selection model instance
     selModelConfig: {
@@ -82,7 +89,8 @@ Ext.define('Ext.nd.grid.Panel', {
             dateTimeFormats     : Ext.nd.dateTimeFormats,
             formatCurrencyFnc   : Ext.util.Format.usMoney,
             columns             : me.getInitialColumns(),
-            store               : me.getInitialStore()
+            store               : me.getInitialStore(),
+            bbar                : me.getBottomBarCfg()
         });
 
         me.callParent(arguments);
@@ -253,13 +261,14 @@ Ext.define('Ext.nd.grid.Panel', {
         }
 
         if (me.showPagingToolbar) {
-            var pg = me.getBottomToolbar();
+            var pg = me.down('xnd-pagingtoolbar');
             // now that we know if the view is categorized or not we need to let
             // the paging toolbar know
             if (pg) {
                 pg.isCategorized = me.isCategorized;
-                pg.unbind(me.dmyId);
-                pg.bind(me.store);
+                pg.bindStore(null);
+                pg.bindStore(me.store);
+                pg.updateInfo();
             }
         }
 
@@ -342,6 +351,18 @@ Ext.define('Ext.nd.grid.Panel', {
         else {
             return; // not interested in click on images that are not in
             // categories
+        }
+    },
+
+    getBottomBarCfg: function () {
+        var me = this;
+
+        if (me.showPagingToolbar) {
+            return {
+                xtype       : 'xnd-pagingtoolbar',
+                displayInfo : true,
+                store       : me.store
+            }
         }
     }
 

@@ -58,6 +58,11 @@ Ext.define('Ext.nd.data.ViewStore', {
         */
         me.removeCategoryTotal = true;
 
+        /**
+         * @property {Ext.util.MixedCollection} previousStartMC
+         * Cache of previous start positions
+         */
+        me.previousStartMC = new Ext.util.MixedCollection();
 
         me.callParent([config]);
 
@@ -242,6 +247,75 @@ Ext.define('Ext.nd.data.ViewStore', {
         } else {
             this.load(this.lastOptions);
         }
-    }
+    },
+
+    // PAGING METHODS
+    /**
+     * Customized version for Domino views
+     * @param {String} start The 'start' position of the view to load.
+     * @param {Object} [options] See options for {@link #method-load}.
+     */
+    loadPage: function(start, options) {
+        var me = this;
+
+        me.currentPage = start;
+
+        // Copy options into a new object so as not to mutate passed in objects
+        options = Ext.apply({
+            params: {
+                start: start,
+                count: me.pageSize,
+            },
+            addRecords: !me.clearOnPageLoad
+        }, options);
+
+        if (me.buffered) {
+            return me.loadToPrefetch(options);
+        }
+        me.load(options);
+    },
+
+    /**
+     * Custom version for Domino views
+     * Loads the next 'page' in the current data set
+     * @param {Object} options See options for {@link #method-load}
+     */
+    nextPage: function (options) {
+        var me      = this,
+            lastRec = me.last(),
+            start   = lastRec.viewEntry.position;
+
+        // never start a category total row on a new page
+        if (lastRec.isCategoryTotal()) {
+            lastRec = me.getAt(lastRec.index - 1);
+            start = lastRec.viewEntry.position;
+        }
+
+        // add to our previousStartMC cache
+        me.previousStartMC.add(start, lastRec);
+        me.loadPage(start, options);
+    },
+
+    /**
+     * Custom version for Domino views
+     * Loads the previous 'page' in the current data set
+     * @param {Object} options See options for {@link #method-load}
+     */
+    previousPage: function (options) {
+        var me              = this,
+            firstRec        = me.first(),
+            firstPosition   = firstRec.viewEntry.position,
+            indexFirst      = me.previousStartMC.indexOfKey(firstPosition);
+
+        if (indexFirst !== -1) {
+            if (indexFirst === 0) {
+                start = 1;
+            } else {
+                start = me.previousStartMC.get(indexFirst - 1).viewEntry.position
+            }
+        }
+
+        me.loadPage(start, options);
+    },
 
 });
