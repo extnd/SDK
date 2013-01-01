@@ -86,6 +86,8 @@ Ext.define('Ext.nd.grid.Panel', {
 
         // applyIf so that these can all be overridden if passed into the config
         Ext.applyIf(me, {
+            collapseIcon        : Ext.nd.extndUrl + 'resources/images/minus.gif',
+            expandIcon          : Ext.nd.extndUrl + 'resources/images/plus.gif',
             dateTimeFormats     : Ext.nd.dateTimeFormats,
             formatCurrencyFnc   : Ext.util.Format.usMoney,
             columns             : me.getInitialColumns(),

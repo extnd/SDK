@@ -9,23 +9,27 @@ html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,p,bloc
   font-family: tahoma,verdana,helvetica;
   font-size: 11px;
 }
- 
- 
- 
+
+
+
 /*----------------------------------------------------
- * view styles 
+ * view styles
  *----------------------------------------------------
  */
- 
+
 td.xnd-view-category{
    font-weight : bold;
+   overflow: visible;
+}
+td.xnd-view-category div.x-grid-cell-inner {
+    overflow: visible;
 }
 td.xnd-view-totals{
    font-weight : bold;
    text-align : right;
 }
 td.xnd-view-response {
-   z-index:2; 
+   z-index:2;
 }
 /* to allow for rows to grow in height */
 .x-grid-row td, .x-grid3-row td, .x-grid3-cell-inner {
@@ -57,8 +61,8 @@ td.xnd-view-response {
  *----------------------------------------------------
  */
 
-/* fix button padding for domino's larger buttons 
- * domino's icons are 21px + add 2px for padding 
+/* fix button padding for domino's larger buttons
+ * domino's icons are 21px + add 2px for padding
  */
 .x-btn-text-icon .x-btn-center .x-btn-text{
   padding-left:23px;
@@ -86,7 +90,7 @@ td.xnd-view-response {
  */
 
 /* give form and page contents a little margin since they
- * are loaded in a viewport that has 0 margin 
+ * are loaded in a viewport that has 0 margin
  */
 
 #xnd-form-ui {
@@ -103,7 +107,7 @@ td.xnd-view-response {
     /*height: 23px;*/
 }
 .ext-ie6 .x-form-field-wrap, .ext-ie7 .x-form-field-wrap {
-    height: 23px;        
+    height: 23px;
 }
 
 /* fix an IE + Domino issue with form triggers */
@@ -137,4 +141,3 @@ td.xnd-view-response {
 .x-form-field-wrap .x-form-trigger-over .xnd-form-time-trigger{
     /*background-position: -17px 0;*/
 }
- 
