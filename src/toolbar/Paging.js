@@ -25,7 +25,7 @@ Ext.define('Ext.nd.toolbar.Paging', {
          */
         Ext.each(this.items.items, function(item, index, allItems){
             if (item.getXType && item.isXType('numberfield', true)){
-                allItems[index] = this.inputItem = new Ext.form.TextField(item.initialConfig);
+                allItems[index] = this.inputItem = new Ext.form.TextField(Ext.apply(item.initialConfig, { grow: true }));
             }
         }, this)
 
@@ -89,9 +89,72 @@ Ext.define('Ext.nd.toolbar.Paging', {
         }
     },
 
-    // TODO need to redo this
-    getPageDatazz : function () {
+    /**
+     * Custom Domino version that uses 'start positions' instead of 'pages'.  So all references to currPage
+     * have been replaced with currStart and pageCount is not used at all since it is difficult to calculate
+     * the 'page count' of a Domino view when you consider categories and Reader fields.
+     */
+    onLoad : function(){
+        var me = this,
+            pageData,
+            currStart,
+            afterText,
+            count,
+            isEmpty;
 
+        count = me.store.getCount();
+        isEmpty = count === 0;
+        if (!isEmpty) {
+            pageData = me.getPageData();
+            currStart = pageData.currentStart;
+            toRecord = pageData.toRecord;
+            afterText = Ext.String.format(me.afterPageText, toRecord);
+        } else {
+            currStart = '1';
+            toRecord = '1';
+            afterText = Ext.String.format(me.afterPageText, 0);
+        }
+
+        Ext.suspendLayouts();
+        me.child('#afterTextItem').setText(afterText);
+        me.child('#inputItem').setDisabled(isEmpty).setValue(currStart);
+        me.child('#first').setDisabled(currStart === '1' || isEmpty);
+        me.child('#prev').setDisabled(currStart === '1'  || isEmpty);
+        me.child('#next').setDisabled(currStart === toRecord  || isEmpty);
+        me.child('#last').setDisabled(currStart === toRecord  || isEmpty);
+        me.child('#refresh').enable();
+        me.updateInfo();
+        Ext.resumeLayouts(true);
+
+        if (me.rendered) {
+            me.fireEvent('change', me, pageData);
+        }
+    },
+
+    /**
+     * Custom version for Domino that deals with the 'start position' of a view
+     * instead of 'pages'.  The fromRecord and toRecord variables are done differently
+     * as well since we cannot calculate them like the ExtJS version of the Paging toolbar can.
+     *
+     */
+    getPageData : function(){
+        var store       = this.store,
+            totalCount  = store.getTotalCount(),
+            firstRec    = store.first(),
+            lastRec     = store.last();
+
+        return {
+            total           : totalCount,
+
+            // Domino does not use currentPage and pageCount
+            currentPage     : store.currentPage,
+            pageCount       : Math.ceil(totalCount / store.pageSize),
+
+            // Domino uses the 'start position' to know which viewentry to start with when loading a page of data in a view
+            currentStart    : store.currentPage,
+            fromRecord      : firstRec ? firstRec.viewEntry.position : 0,
+            toRecord        : lastRec ? lastRec.viewEntry.position : 0
+        };
     }
 
 });
