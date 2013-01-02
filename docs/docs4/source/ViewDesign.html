@@ -47,7 +47,7 @@ Ext.define('Ext.nd.data.ViewDesign', {
         me.viewName = '';
         me.multiExpand = false;
         me.storeConfig = {};
-        me.baseParams = {};
+        me.extraParams = {};
         me.removeCategoryTotal = true;
         me.isCategorized = false;
         me.callback = Ext.emptyFn;
@@ -118,42 +118,33 @@ Ext.define('Ext.nd.data.ViewDesign', {
             dxml            = res.responseXML,
             q               = Ext.DomQuery,
             arColumns       = q.select('column', dxml),
-            col,
+            columnConfig    = {},
             colLen          = arColumns.length,
-            fieldConfigs    = [],
-            fieldConfig,
             colCount        = 0,
             columnnumber,
+            col,
+            fieldConfigs    = [],
+            fieldConfig,
             name,
             title,
-            width,
             totals,
             visible,
-            response,
-            twistie,
-            listseparatorValue,
-            resize,
             resort,
-            resortascendingValue,
-            resortdescendingValue,
-            resorttoviewValue,
-            resortviewunidValue,
+            isResortAscending,
+            isResortDescending,
+            isResortToView,
             isSortable,
-            icon,
-            align,
             headerAlign,
             tmpDateTimeFormat,
             datetimeformat = {},
             tmpNumberFormat,
             numberformat = {},
-            sortcategorize,
-            columnConfig,
+            isCategory,
             viewtype,
             isView,
             root,
             type,
             i;
-
 
         me.columns = new Ext.util.MixedCollection();
 
@@ -162,8 +153,8 @@ Ext.define('Ext.nd.data.ViewDesign', {
             type = 'string'; // default type
             col = arColumns[i];
 
-            sortcategorize = !!q.selectValue('@categorized', col, false);
-            me.isCategorized = me.isCategorized || sortcategorize;
+            isCategory = !!q.selectValue('@categorized', col, false);
+            me.isCategorized = me.isCategorized || isCategory;
 
 
             // don't process first column if category is set AND
@@ -203,47 +194,22 @@ Ext.define('Ext.nd.data.ViewDesign', {
 
             title = q.selectValue('columnheader/@title', col, '&amp;nbsp;');
 
-            // multiplying by 11.28 converts the inch width to pixels
-            width = Math.max(q.selectNumber('@width', col) * 11.28, 22);
-
             // totals column (and if it is a totals column, set type to 'float')
             totals = q.selectValue('@totals', col, 'none');
             type = (totals !== 'none') ? 'float' : type;
 
-            // response
-            response = !!q.selectValue('@responsesonly', col, false);
-
-            // twistie
-            twistie = !!q.selectValue('@twisties', col, false);
-
-            // listseparator
-            listseparatorValue = q.selectValue('@listseparator', col, 'none');
-
-            // resize
-            resize = !!q.selectValue('@resizable', col, false);
-
-            // resort asc
+            // resort properties
             resort = q.selectValue('@resort', col, false);
-            resortascendingValue = (resort === 'ascending' || resort === 'both') ? true : false;
-
-            // resort desc
-            resortdescendingValue = (resort === 'descending' || resort === 'both') ? true : false;
-
-            // jump to view
-            resorttoviewValue = (resort === 'toview') ? true : false;
-            resortviewunidValue = resorttoviewValue ? q.selectValue('@resorttoview', col, '') : '';
+            isResortAscending = (resort === 'ascending' || resort === 'both') ? true : false;
+            isResortDescending = (resort === 'descending' || resort === 'both') ? true : false;
+            isResortToView = (resort === 'toview') ? true : false;
 
             // check the storeConfig.remoteSort property to see if the user wants to do sorting from cache
             // if so then it will be set to false (true will do the sorting 'remotely' on the server)
             // this is useful if you know you will load all data into the grid like in perhaps
             // a restricttocategory view with a small and known number of docs
-            isSortable = (me.storeConfig.remoteSort === false) ? true : (resortascendingValue || resortdescendingValue) ? true : false;
+            isSortable = (me.storeConfig.remoteSort === false) ? true : (isResortAscending || isResortDescending) ? true : false;
 
-            // icon
-            icon = q.selectValue('@showasicons', col, false);
-
-            // align
-            align = q.selectValue('@align', col, 'left');
 
             // headerAlign TODO - we are not using this anywhere yet
             headerAlign = q.selectValue('columnheader/@align', col, 'left');
@@ -277,22 +243,22 @@ Ext.define('Ext.nd.data.ViewDesign', {
 
             columnConfig = {
                 xtype               : 'xnd-viewcolumn',
-                id                  : columnnumber,
-                text                : resorttoviewValue ? title + '&lt;img src=&quot;/icons/viewsort.gif&quot; /&gt;' : title,
-                align               : align,
+                title               : isResortToView ? title + '&lt;img src=&quot;/icons/viewsort.gif&quot; /&gt;' : title,
+                align               : q.selectValue('@align', col, 'left'),
                 dataIndex           : name,
-                width               : width,
+                width               : Math.max(q.selectNumber('@width', col) * 11.28, 22), // multiplying by 11.28 converts the inch width to pixels
                 totals              : totals,
                 sortable            : isSortable,
-                resortascending     : resortascendingValue,
-                resortdescending    : resortdescendingValue,
-                resortviewunid      : resortviewunidValue,
-                sortcategorize      : sortcategorize,
-                resize              : resize,
-                listseparator       : listseparatorValue,
-                response            : response,
-                twistie             : twistie,
-                icon                : icon,
+                isResortToView      : isResortToView,
+                resortToViewName    : isResortToView ? q.selectValue('@resorttoview', col, '') : '',
+                isResortAscending   : isResortAscending,
+                isResortDescending  : isResortDescending,
+                isCategory          : isCategory,
+                isResize            : !!q.selectValue('@resizable', col, false),
+                listSeparator       : q.selectValue('@listseparator', col, 'none'),
+                isResponse          : !!q.selectValue('@responsesonly', col, false),
+                isShowTwistie       : !!q.selectValue('@twisties', col, false),
+                isIcon              : q.selectValue('@showasicons', col, false),
                 datetimeformat      : datetimeformat,
                 numberformat        : numberformat
             };
@@ -330,6 +296,7 @@ Ext.define('Ext.nd.data.ViewDesign', {
         }
 
         // on web access property to allow docs to be selected with a checkbox
+        // TODO we aren't using this anywhere but probably should
         me.allowDocSelection = !!q.selectValue(root+'/@allowdocselection', dxml, false);
 
         // TODO: need to get the value of useapplet since if true, it causes opening docs from a view not to work
@@ -378,7 +345,7 @@ Ext.define('Ext.nd.data.ViewDesign', {
             dbPath              : me.dbPath,
             viewName            : me.viewName,
             viewUrl             : me.viewUrl,
-            baseParams          : me.baseParams,
+            extraParams         : me.extraParams,
             removeCategoryTotal : me.removeCategoryTotal,
             remoteSort          : true
         }, me.storeConfig));
