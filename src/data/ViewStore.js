@@ -184,7 +184,8 @@ Ext.define('Ext.nd.data.ViewStore', {
             }
         }
 
-        me.callParent([options]);
+        // now callParenet with our custom 'p' object that is Domino friendly
+        me.callParent([{ params: p }]);
     },
 
     /**

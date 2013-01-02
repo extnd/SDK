@@ -145,7 +145,11 @@ Ext.define('Ext.nd.grid.Panel', {
 
     // private
     getViewDesignCB: function (o) {
-       var me = this;
+        var me = this,
+            pg,
+            col,
+            len,
+            i;
 
         // get the properties we need
         me.store = me.viewDesign.store;
@@ -159,43 +163,39 @@ Ext.define('Ext.nd.grid.Panel', {
 
         /* if the view is set to allow for docs to be selected with checkbox AND
          * the developer has not explicitly set me.selModelConfig.type
-         * to something OTHER than'checkbox' then change the selModel to the
+         * to something OTHER than 'checkbox' then change the selModel to the
          * CheckboxSelectionModel and push that onto the colsFromDesign array
          */
-        if (me.selModelConfig.type === 'checkbox') {
-            // do nothing if type is already 'checkbox' since the checkbox sm was added earlier already
-        } else {
-            // don't do this if type was explicitly set to something else
-            if (me.allowDocSelection &&
-                (typeof me.selModelConfig.type === 'undefined' ||
-                (typeof me.selModelConfig.type === 'string' && me.selModelConfig.type !== 'checkbox'))) {
 
-                // remove the grid's current rowclick event if it is using
-                // our custom handleDDRowClick override
-                // TODO
-                //me.un('rowclick', me.selModel.handleDDRowClick, me.selModel);
+        // don't do this if type was explicitly set to something else
+        if (me.allowDocSelection && me.selModelConfig.type !== 'checkbox') {
 
-                // now destroy the old selModel
-                // TODO do we need this since it appears that destroy is just an emptyFn call
+            // remove the grid's current rowclick event if it is using
+            // our custom handleDDRowClick override
+            // TODO
+            //me.un('rowclick', me.selModel.handleDDRowClick, me.selModel);
+
+            // now destroy the old selModel
+            // TODO do we need this since it appears that destroy is just an emptyFn call
 //                if (me.selModel && me.selModel.destroy){
 //                    me.selModel.destroy();
 //                }
 
-                // add in the new selection model
-                //me.selModel = new Ext.selection.CheckboxModel(me.selModelConfig);
+            // add in the new selection model
+            //me.selModel = new Ext.selection.CheckboxModel(me.selModelConfig);
 
-                // call the init manually (you are not supposed to do this since the grid
-                // does this automatically, but since we are changing the selModel on the
-                // fly, we need to do this now)
-                // TODO don't think we need this now since calling me.reconfigure later on handles selModel
-                //me.selModel.init(me);
+            // call the init manually (you are not supposed to do this since the grid
+            // does this automatically, but since we are changing the selModel on the
+            // fly, we need to do this now)
+            // TODO don't think we need this now since calling me.reconfigure later on handles selModel
+            //me.selModel.init(me);
 
-                /*
-                 * this function is a copy/paste from the CheckboxSelectionModel
-                 * and what it does it make sure that we have mousedown events
-                 * defined to capture clicking on the checkboxes
-                 */
-                 // TODO do we need this?  if so, need to fix the errors it throws
+            /*
+             * this function is a copy/paste from the CheckboxSelectionModel
+             * and what it does it make sure that we have mousedown events
+             * defined to capture clicking on the checkboxes
+             */
+             // TODO do we need this?  if so, need to fix the errors it throws
 //                me.on('getdesignsuccess', function(){
 //                    var view = me.grid.getView();
 //                    view.mainBody.on('mousedown', me.onMouseDown, me);
@@ -203,18 +203,18 @@ Ext.define('Ext.nd.grid.Panel', {
 //                }, me.selModel);
 
 
-                me.colsFromDesign.length = 0; // make sure nothing is in our colsFromDesign array
-                // TODO looks like we don't need this since ExtJS 4 takes care of adding a checkbox column if needed
-                //me.colsFromDesign.push(me.selModel);
-            }
+            me.colsFromDesign.length = 0; // make sure nothing is in our colsFromDesign array
+            // TODO looks like we don't need this since ExtJS 4 takes care of adding a checkbox column if needed
+            //me.colsFromDesign.push(me.selModel);
+        }
 
-        } // eo if (me.selModelConfig.type === 'checkbox')
 
         // add our columns from the viewDesign call and dominoRenderer or any custom renderers if defined
         // TODO add back support for developer defined custom renderers
-        for (var i=0; i < me.viewDesign.columns.items.length; i++) {
+        len = me.viewDesign.columns.items.length;
+        for (i = 0; i < len; i++) {
             //var rendr = (me.renderers[i]) ? me.renderers[i] : Ext.bind(me.dominoRenderer, me);
-            var col = me.viewDesign.columns.items[i];
+            col = me.viewDesign.columns.items[i];
             //col.renderer = rendr;
             me.colsFromDesign.push(col) ;
         }
@@ -263,7 +263,7 @@ Ext.define('Ext.nd.grid.Panel', {
         }
 
         if (me.showPagingToolbar) {
-            var pg = me.down('xnd-pagingtoolbar');
+            pg = me.down('xnd-pagingtoolbar');
             // now that we know if the view is categorized or not we need to let
             // the paging toolbar know
             if (pg) {
@@ -306,7 +306,7 @@ Ext.define('Ext.nd.grid.Panel', {
             isCollapse;
 
         // since we add IMG tags for the expand/collapse icon we only check for this and ignore all other clicks
-        if (ecImg.dom.tagName == 'IMG') {
+        if (ecImg.dom.tagName === 'IMG') {
             cellCat = ecImg.findParent('td.xnd-view-category');
             cell = cellCat;
 
@@ -345,7 +345,7 @@ Ext.define('Ext.nd.grid.Panel', {
 
                         // need to collapse (count is determined by the lastOptions.params.count)
                         newParams = {
-                            count: (typeof lastCount != 'undefined') ? lastCount : this.count,
+                            count: (lastCount !== undefined) ? lastCount : me.count,
                             collapse: record.position
                         };
                         /*
@@ -370,7 +370,7 @@ Ext.define('Ext.nd.grid.Panel', {
                 xtype       : 'xnd-pagingtoolbar',
                 displayInfo : true,
                 store       : me.store
-            }
+            };
         }
     }
 
