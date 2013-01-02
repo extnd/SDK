@@ -1,51 +1,76 @@
 /**
- * Base model for Domino views.  The #fields property is created dynamically from Ext.nd.data.ViewDesign.
+ * ﻿Represents a view entry. A view entry represents a row in a view.
+ * The #fields property is created dynamically from Ext.nd.data.ViewDesign.
+ * The LotusScript and Java equivalents in Domino are NotesViewEntry and ViewEntry.
  */
 Ext.define('Ext.nd.data.ViewModel', {
 
     extend: 'Ext.data.Model',
+    alternateClassName: [
+        'Ext.nd.data.ViewEntry'
+    ],
 
     /**
      * @property idProperty For a Domino view we use the @position attribute since that is unique for each row
      */
     idProperty: 'position',
 
+    /**
+     * @property {String} position
+     * ﻿Returns the position of the entry in the view hierarchy; for example, "2.3" for the third document of the second category.
+     * Note that Reader fields can cause 'viewentry' nodes to be missing for users not authorized.
+     */
 
-    constructor: function(data, id, raw, convertedData) {
-        var me = this,
-            q  = Ext.DomQuery;
+    /**
+     * @property {String} universalId ﻿The universal ID of a document, associated with a view entry. The ID is a 32-character combination of hexadecimal digits (0-9, A-F) that uniquely identifies a document across all replicas of a database.
+     */
 
-        /**
-         * @property {Object} viewEntry Object containing the meta data Domino sends for each 'viewentry' (row)
-         * @property {String} viewEntry.position The position of this 'viewentry' in the view.  Note that Reader fields can cause 'viewentry' nodes to be missing for users not authorized.
-         * @property {String} viewEntry.unid If the row represents a document, then unid will be the UniversalID of the document.
-         * @property {String} viewEntry.noteid The NoteId of the row.  Could represent a document in the database.
-         * @property {Number} viewEntry.children Then number of immediate child documents under this document or category.
-         * @property {Number} viewEntry.descendants The total number of child documents, regardless of level, under this document or category.
-         * @property {Number} viewEntry.siblings The number of siblings in this view for the document represented by this 'viewentry' node.
-         * @property {Boolean} viewEntry.categorytotal Whether or not this is a 'category total' column.
-         * @property {Boolean} viewEntry.response Whether or not this is a response document.
-         * @property {Number} viewEntry.depth How many levels deep a category or a response document is. Used by Ext.nd.grid.ViewColumn#defaultRenderer
-         */
-        me.viewEntry = {};
+    /**
+     * @property {String} unid
+     * @inheritdoc #universalId
+     */
 
-        Ext.apply(me.viewEntry, {
-            position        : q.selectValue('@position', raw),
-            unid            : q.selectValue('@unid', raw),
-            noteid          : q.selectValue('@noteid', raw),
-            children        : q.selectNumber('@children', raw),
-            descendants     : q.selectNumber('@descendants', raw),
-            siblings        : q.selectNumber('@siblings', raw),
-            categorytotal   : !!q.selectValue('@categorytotal', raw, false),
-            response        : !!q.selectValue('@response', raw, false)
-        });
+    /**
+     * @property {String} noteId The noteId of the row.  Could represent a document in the database.
+     */
 
-        // add a depth property used by Ext.nd.grid.ViewColumn#defaultRenderer
-        me.viewEntry.depth = me.viewEntry.position.split('.').length;
+    /**
+     * @property {Number} childCount ﻿The number of immediate children belonging to the current view entry.
+     */
 
-        me.callParent(arguments);
+    /**
+     * @property {Number} descendantCount ﻿The number of descendants belonging to the current view entry.
+     */
 
-    },
+    /**
+     * @property {Number} siblingCount ﻿The number of siblings belonging to the current view entry.
+     */
+
+    /**
+     * @property {Number} indentLevel ﻿The indent level of a view entry.
+     * ﻿The return value for the indentLevel property always matches the levels in the position string. For example:
+     *
+     * - if position string is '1', indentLevel = 0
+     * - if position string is '1.1', indentLevel = 1
+     * - if position string is '1.1.1', indentLevel = 2
+     */
+
+    /**
+     * @property {Boolean} isCategory ﻿Indicates whether a view entry is a category.
+     */
+
+    /**
+     * @property {Boolean} isCategoryTotal Indicates whether this is a 'category total' column.
+     */
+
+    /**
+     * @property {Boolean} isResponse Indicates whether this viewentry represents a response document.
+     */
+
+    /**
+     * @property {Number} columnIndentLevel How many levels deep a category or a response document is. Used by Ext.nd.grid.ViewColumn#defaultRenderer
+     */
+
 
     /**
      * Fields are created dynamically form the Ext.nd.data.ViewDesign class when it processes the ?ReadDesign and DXLExport for a view.
@@ -54,36 +79,20 @@ Ext.define('Ext.nd.data.ViewModel', {
 
 
     /**
-     * If the viewentry/record has children
+     * ﻿Returns the position of the entry in the view hierarchy using the separator param passed to separator each level.
+     * @param {String} separator The string to use to separator each level in the hierarchy.
+     * @return {String} The formatted string
+     */
+    getPosition: function (separator) {
+        return (this.position.split('.').join(separator));
+    },
+
+    /**
+     * Indicates whether the viewentry/record has children
      * @return {Boolean}
      */
     hasChildren: function () {
-        return !!this.viewEntry.children;
-    },
-
-    /**
-     * If the viewentry/record is a response
-     * @return {Boolean}
-     */
-    isResponse: function () {
-        return this.viewEntry.response;
-    },
-
-    /**
-     * If the viewentry/record is a category
-     * @return {Boolean}
-     */
-    isCategory: function () {
-        var me = this;
-        return (me.hasChildren() && !me.viewEntry.unid) ? true : false;
-    },
-
-    /**
-     * If the viewentry/record is a category total
-     * @return {Boolean}
-     */
-    isCategoryTotal: function () {
-        return this.viewEntry.categorytotal;
+        return !!this.childCount;
     }
 
 });

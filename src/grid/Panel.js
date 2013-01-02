@@ -31,7 +31,7 @@ Ext.define('Ext.nd.grid.Panel', {
     tbarPlugins             : [],
     bbarPlugins             : [],
     colsFromDesign          : [],
-    baseParams              : {},
+    extraParams             : {},
 
 
     showActionbar                   : true,
@@ -135,7 +135,7 @@ Ext.define('Ext.nd.grid.Panel', {
             category            : me.category,
             multiExpand         : me.multiExpand,
             storeConfig         : me.storeConfig,
-            baseParams          : me.baseParams,
+            extraParams         : me.extraParams,
             removeCategoryTotal : false,
             callback            : me.getViewDesignCB,
             scope               : me
@@ -289,70 +289,76 @@ Ext.define('Ext.nd.grid.Panel', {
     },
 
 
-    // private - to handle expand/collapse of categories and responses
-    gridHandleCellClick: function(grid, rowIndex, colIndex, e){
-        var ecImg = Ext.get(e.getTarget());
-        var cellCat, cellResponse;
-        var cell = false;
-        var newParams = {};
-        var ds = grid.getStore();
-        var lastCount = ds.lastOptions.params.count;
-        lastCount = (typeof lastCount == 'undefined') ? this.count : lastCount;
-        var record = ds.getAt(rowIndex);
+    /**
+     * Custom #cellclick handler to handle expand/collapse of categories and responses
+     */
+    gridHandleCellClick: function (grid, td, colIndex, record, tr, rowIndex, e){
+        var me          = this,
+            ecImg       = Ext.get(e.getTarget()),
+            cell        = false,
+            newParams   = {},
+            store       = grid.getStore(),
+            lastCount   = store.lastOptions.params.count || me.count,
+            cellCat,
+            cellResponse,
+            cellEl,
+            isExpand,
+            isCollapse;
 
+        // since we add IMG tags for the expand/collapse icon we only check for this and ignore all other clicks
         if (ecImg.dom.tagName == 'IMG') {
             cellCat = ecImg.findParent('td.xnd-view-category');
             cell = cellCat;
+
             if (!cellCat) {
                 cellResponse = ecImg.findParent('td.xnd-view-response');
                 cell = cellResponse;
             }
+
             if (cell) {
-                var cellEl = Ext.get(cell);
-                var isExpand = cellEl.hasClass('xnd-view-expand');
+
+                cellEl = Ext.get(cell);
+                isExpand = cellEl.hasCls('xnd-view-expand');
+
                 if (isExpand) {
+
                     // need to expand (count is determined by taking the
                     // rowIndex and adding this.count, unless lastCount
                     // is -1 and in that case just use it)
                     newParams = {
-                        count: ((typeof lastCount != 'undefined') && lastCount != -1) ? rowIndex + this.count : lastCount,
+                        count: ((lastCount !== undefined) && lastCount !== -1) ? rowIndex + me.count : lastCount,
                         expand: record.position
                     };
-                    ds.load({params : newParams});
                     /*
-                     * since we are loading the entire store above
-                     * we do not need the remove/addClass methods
-                     * add this back when we just remove/add to the grid
-                     * the data for the category
+                     * since we are loading the entire store, we do not need the remove/addClass methods
+                     * add this back when we just remove/add to the grid the data for the category
                      * cellEl.removeClass('xnd-view-expand');
                      * cellEl.addClass('xnd-view-collapse');
                      */
-                }
-                else {
-                    var isCollapse = cellEl.hasClass('xnd-view-collapse');
+                     store.load({params : newParams});
+
+                } else {
+
+                    isCollapse = cellEl.hasCls('xnd-view-collapse');
+
                     if (isCollapse) {
-                        // need to collapse (count is determined by the
-                        // lastOptions.params.count)
+
+                        // need to collapse (count is determined by the lastOptions.params.count)
                         newParams = {
                             count: (typeof lastCount != 'undefined') ? lastCount : this.count,
                             collapse: record.position
                         };
-                        ds.load({params : newParams});
                         /*
-                         * since we are loading the entire store above
-                         * we do not need the remove/addClass methods
-                         * add this back when we just remove/add to the grid
-                         * the data for the category
+                         * since we are loading the entire store, we do not need the remove/addClass methods
+                         * add this back when we just remove/add to the grid the data for the category
                          * cellEl.removeClass('xnd-view-collapse');
                          * cellEl.addClass('xnd-view-expand');
                          */
+                         store.load({params : newParams});
+
                     }
-                } // eo else
-            } // eo if (cell)
-        }
-        else {
-            return; // not interested in click on images that are not in
-            // categories
+                }
+            }
         }
     },
 

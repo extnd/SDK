@@ -27,25 +27,25 @@ Ext.define('Ext.nd.toolbar.Paging', {
             if (item.getXType && item.isXType('numberfield', true)){
                 allItems[index] = this.inputItem = new Ext.form.TextField(Ext.apply(item.initialConfig, { grow: true }));
             }
-        }, this)
+        }, this);
 
     },
 
     // private override since pageNum could represent a deeply nested domino heirarchy (ie 3.22.1.2)
     // and the normal Ext pageNum expects a number
     // TODO need to redo this
-    onPagingKeyDownzzz : function(field, e){
+    onPagingKeyDownzzz : function (field, e) {
 
     },
 
     /**
      * Move to the first page of a Domino view.
      */
-    moveFirst : function(){
+    moveFirst : function () {
         var me = this;
 
         if (me.fireEvent('beforechange', me) !== false) {
-            me.store.loadPage(1);
+            me.store.loadPage('1');
         }
     },
 
@@ -94,10 +94,11 @@ Ext.define('Ext.nd.toolbar.Paging', {
      * have been replaced with currStart and pageCount is not used at all since it is difficult to calculate
      * the 'page count' of a Domino view when you consider categories and Reader fields.
      */
-    onLoad : function(){
+    onLoad : function () {
         var me = this,
             pageData,
             currStart,
+            toRecord,
             afterText,
             count,
             isEmpty;
@@ -135,9 +136,8 @@ Ext.define('Ext.nd.toolbar.Paging', {
      * Custom version for Domino that deals with the 'start position' of a view
      * instead of 'pages'.  The fromRecord and toRecord variables are done differently
      * as well since we cannot calculate them like the ExtJS version of the Paging toolbar can.
-     *
      */
-    getPageData : function(){
+    getPageData : function () {
         var store       = this.store,
             totalCount  = store.getTotalCount(),
             firstRec    = store.first(),
@@ -145,15 +145,9 @@ Ext.define('Ext.nd.toolbar.Paging', {
 
         return {
             total           : totalCount,
-
-            // Domino does not use currentPage and pageCount
-            currentPage     : store.currentPage,
-            pageCount       : Math.ceil(totalCount / store.pageSize),
-
-            // Domino uses the 'start position' to know which viewentry to start with when loading a page of data in a view
-            currentStart    : store.currentPage,
-            fromRecord      : firstRec ? firstRec.viewEntry.position : 0,
-            toRecord        : lastRec ? lastRec.viewEntry.position : 0
+            currentStart    : store.currentStart,
+            fromRecord      : firstRec ? firstRec.position : 0,
+            toRecord        : lastRec ? lastRec.position : 0
         };
     }
 

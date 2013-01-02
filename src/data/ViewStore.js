@@ -12,6 +12,12 @@ Ext.define('Ext.nd.data.ViewStore', {
     ],
 
     /**
+     * @property {String} currentStart
+     * The viewentry start position of the Domino View that the Store has most recently loaded (see {@link #loadPage})
+     */
+    currentStart: '1',
+
+    /**
      * Creates a new ViewStore
      * @param {Object} config A config object containing the objects needed for
      * the ViewStore to access data, and read the data into Records.
@@ -69,7 +75,7 @@ Ext.define('Ext.nd.data.ViewStore', {
         * the category to restrict to for views that are categorized
         */
         if (me.category && typeof me.category == 'string') {
-            me.baseParams.RestrictToCategory = me.category;
+            me.extraParams.RestrictToCategory = me.category;
         }
 
     },
@@ -122,7 +128,7 @@ Ext.define('Ext.nd.data.ViewStore', {
                 var sortColumn = f.mapping; // to support older domino versions we will use colnumber (however, this will probably cause DND column reordering to break when sorting)
                 // get the config info for this column
                 var colConfig = this.reader.meta.columnConfig.items[sortColumn];
-                if (colConfig.resortviewunid != "") {
+                if (colConfig.resortToViewName != "") {
                     return; // the grid should have handled the request to change view
                 }
 
@@ -194,7 +200,7 @@ Ext.define('Ext.nd.data.ViewStore', {
             len = records.length;
             if (len > 0) {
                 lastRecord = records[len-1];
-                if (lastRecord.isCategoryTotal()) {
+                if (lastRecord.isCategoryTotal) {
                     records.pop(); // remove this last record
                 }
             }
@@ -242,7 +248,9 @@ Ext.define('Ext.nd.data.ViewStore', {
     loadPage: function(start, options) {
         var me = this;
 
-        me.currentPage = start;
+        // for Domino, we have to make sure that 'start' is a string
+        start = '' + start;
+        me.currentStart = start;
 
         // Copy options into a new object so as not to mutate passed in objects
         options = Ext.apply({
@@ -267,12 +275,12 @@ Ext.define('Ext.nd.data.ViewStore', {
     nextPage: function (options) {
         var me      = this,
             lastRec = me.last(),
-            start   = lastRec.viewEntry.position;
+            start   = lastRec.position;
 
         // never start a category total row on a new page
-        if (lastRec.isCategoryTotal()) {
+        if (lastRec.isCategoryTotal) {
             lastRec = me.getAt(lastRec.index - 1);
-            start = lastRec.viewEntry.position;
+            start = lastRec.position;
         }
 
         // add to our previousStartMC cache
@@ -288,14 +296,14 @@ Ext.define('Ext.nd.data.ViewStore', {
     previousPage: function (options) {
         var me              = this,
             firstRec        = me.first(),
-            firstPosition   = firstRec.viewEntry.position,
+            firstPosition   = firstRec.position,
             indexFirst      = me.previousStartMC.indexOfKey(firstPosition);
 
         if (indexFirst !== -1) {
             if (indexFirst === 0) {
                 start = 1;
             } else {
-                start = me.previousStartMC.get(indexFirst - 1).viewEntry.position
+                start = me.previousStartMC.get(indexFirst - 1).position
             }
         }
 

@@ -9,6 +9,112 @@ Ext.define('Ext.nd.data.ViewXmlReader', {
 
 
     /**
+     * Custom Domino version that combines the Ext.data.reader.Xml#extractData and the Ext.data.reader.Reader#extractData
+     * methods and then adds on a call to #addDominoViewEntryProps in order to add on the typically properties one would
+     * find on the NotesViewEntry LotusScript class.
+     *
+     * Returns extracted, type-cast rows of data.
+     * @param {Object[]/Object} root from server response
+     * @return {Array} An array of records containing the extracted data
+     * @private
+     */
+    extractData : function(root) {
+        var me      = this,
+            records = [],
+            Model   = me.model,
+            length,
+            convertedValues,
+            node,
+            record,
+            i;
+
+        // we are passed 'viewentries' as our root but what we need
+        // is for root to be an array of our 'viewntry' nodes
+        // and me.record should equal to 'viewentry'
+        root = Ext.DomQuery.select(me.record, root);
+        length  = root.length;
+
+        if (!root.length && Ext.isObject(root)) {
+            root = [root];
+            length = 1;
+        }
+
+        for (i = 0; i < length; i++) {
+            node = root[i];
+            if (!node.isModel) {
+                // Create a record with an empty data object.
+                // Populate that data object by extracting and converting field values from raw data
+                record = new Model(undefined, me.getId(node), node, convertedValues = {});
+
+                // If the server did not include an id in the response data, the Model constructor will mark the record as phantom.
+                // We  need to set phantom to false here because records created from a server response using a reader by definition are not phantom records.
+                record.phantom = false;
+
+                // Use generated function to extract all fields at once
+                me.convertRecordData(convertedValues, node, record);
+
+                // now add our Domino specific 'ViewEntry' properties
+                me.addDominoViewEntryProps(record, node);
+
+                records.push(record);
+
+                if (me.implicitIncludes) {
+                    me.readAssociated(record, node);
+                }
+            } else {
+                // If we're given a model instance in the data, just push it on
+                // without doing any conversion
+                records.push(node);
+            }
+        }
+
+        return records;
+    },
+
+    /**
+     * Adds the properties typically found on a NotesViewEntry LotusScript class
+     */
+    addDominoViewEntryProps: function (record, raw) {
+        var me = this,
+            q = Ext.DomQuery;
+
+        Ext.apply(record, {
+            position        : q.selectValue('@position', raw),
+            universalId     : q.selectValue('@unid', raw),
+            noteId          : q.selectValue('@noteid', raw),
+            descendantCount : q.selectNumber('@descendants', raw),
+            siblingCount    : q.selectNumber('@siblings', raw),
+            isCategoryTotal : !!q.selectValue('@categorytotal', raw, false),
+            isResponse      : !!q.selectValue('@response', raw, false)
+        });
+
+        // add a columnIndentLevel property used by Ext.nd.grid.ViewColumn#defaultRenderer
+        // TODO what is the difference between columnIndentLevel and indentLevel?
+        record.columnIndentLevel = record.position.split('.').length -1;
+        record.indentLevel = record.columnIndentLevel;
+
+        record.childCount = me.getChildCount(raw);
+        record.isCategory = (record.hasChildren() && !record.universalId) ? true : false;
+
+        // unid and universalId are the same so copy over universalId to unid
+        record.unid = record.universalId;
+    },
+
+
+    /**
+     * Custom method to extract the @children attribute from a Domino viewntry node since Ext.DomQuery.selectNode
+     * returns children nodes instead of returning the @children 'attribute'.
+     */
+    getChildCount: function (raw) {
+        var me = this,
+            children;
+
+        children = raw.attributes.getNamedItem('children');
+        return children ? parseFloat(children.nodeValue, 0) : 0;
+
+    },
+
+    /**
      * Used to parse the 'entrydata' nodes of Domino's ReadViewEntries format.
      * Besides returning a value for the 'entrydata' node, a custom entryData property is added to the record
      * to be used by the Ext.nd.grid.ViewColumn#defaultRenderer method
@@ -42,7 +148,7 @@ Ext.define('Ext.nd.data.ViewXmlReader', {
 
             // now get the other needed attributes
             // category and indent are needed for categories built with the backslash
-            entryData.category = (q.selectValue('@category', entryDataNode) == 'true')
+            entryData.category = (q.selectValue('@category', entryDataNode) === 'true')
                     ? true
                     : false;
             entryData.indent = (q.select('@indent', entryDataNode))
@@ -52,8 +158,8 @@ Ext.define('Ext.nd.data.ViewXmlReader', {
         }
 
         // now add the entryData to the record
-        record.viewEntry.entryData = record.viewEntry.entryData || {};
-        record.viewEntry.entryData[fieldName] = entryData;
+        record.entryData = record.entryData || {};
+        record.entryData[fieldName] = entryData;
 
         // and return the data/value
         return entryData.data;
@@ -83,14 +189,14 @@ Ext.define('Ext.nd.data.ViewXmlReader', {
                 childNode = childNodes[i];
 
                 // determine the type
-                if (childNode.firstChild.nodeName != '#text') {
+                if (childNode.firstChild.nodeName !== '#text') {
                     entryData.type = childNode.firstChild.nodeName;
                 } else {
                     entryData.type = type;
                 }
 
                 // set the data property using a newline as the separator
-                if (i == 0) {
+                if (i === 0) {
                     entryData.data = childNode.firstChild.nodeValue;
                 } else {
                     entryData.data += '\n' + childNode.firstChild.nodeValue;

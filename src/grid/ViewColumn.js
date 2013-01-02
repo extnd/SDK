@@ -1,6 +1,7 @@
 /**
- * A Grid header type which renders a column for a Domino view.  This class is used by the Ext.nd.data.ViewDesign class
- * and you typically do not need to use this class directly.
+ * A Grid header type which renders a column for a Domino view.
+ * This class is used by the Ext.nd.data.ViewDesign class to create the column model dynamically from the design of a View..
+ * The LotusScript and Java equivalents in Domino are NotesViewColumn and ViewColumn.
  */
 Ext.define('Ext.nd.grid.ViewColumn', {
 
@@ -12,52 +13,63 @@ Ext.define('Ext.nd.grid.ViewColumn', {
     ],
 
     /**
-     * @property align
+     * @property {String} align ﻿The alignment (justification) of data in a column.
      */
     /**
-     * @property dataIndex defaults to the name set for the column in Domino Designer
+     * @property {Number} alignment ﻿Not used, see #align instead.
      */
     /**
-     * @property width
+     * @property {String} dataIndex Defaults to the 'Programmatic Use Name' set for the column in Domino Designer.
      */
     /**
-     * @property totals
+     * @property {Number} width ﻿The width of a column.
      */
     /**
-     * @property sortable
+     * @property {String} title
+     * @inheritdoc #text
      */
     /**
-     * @property resortascending
+     * @property {String} totals
      */
     /**
-     * @property resortdescending
+     * @property {Boolean} isResortAscending ﻿Indicates whether a column is a user-sorted column that can be sorted in ascending order.
      */
     /**
-     * @property resortviewunid
+     * @property {Boolean} isResortDescending ﻿Indicates whether a column is a user-sorted column that can be sorted in descending order.
      */
     /**
-     * @property sortcategorize
+     * @property {Boolean} isResortToView ﻿Indicates whether a column is a user-sorted column that allows the user to change to another view.
      */
     /**
-     * @property resize
+     * @property {String} resortToViewName ﻿The name of the target view for a user-sorted column that allows the user to change to another view.
      */
     /**
-     * @property listseparator
+     * @property {Boolean} isCategory ﻿Indicates whether a column is categorized.
      */
     /**
-     * @property response
+     * @property {Boolean} isResize
+     * @inheritdoc #resizable
      */
     /**
-     * @property twistie
+     * @property {String} listSeparator ﻿List (multi-value) separator for values in a column.
      */
     /**
-     * @property icon
+     * @property {Number} listSep Not used, see #listSeparator instead
      */
     /**
-     * @property datetimeformat
+     * @property {Boolean} isResponse  Indicates whether a column contains only response documents.
      */
     /**
-     * @property numberformat
+     * @property {Boolean} isShowTwistie ﻿Indicates whether an expandable column displays a twistie.
+     */
+    /**
+     * @property {Boolean} isIcon  Indicates whether column values are displayed as icons.
+     */
+    /**
+     * @property {Object} datetimeformat ﻿The format for time-date data in a column.
+     */
+    /**
+     * @property {Object} numberformat ﻿The format for numeric values in a column.
      */
 
 
@@ -67,8 +79,14 @@ Ext.define('Ext.nd.grid.ViewColumn', {
         // applyIf so that these can all be overridden if passed into the config
         Ext.applyIf(me, {
             dateTimeFormats     : Ext.nd.dateTimeFormats,
-            formatCurrencyFnc   : Ext.util.Format.usMoney
+            formatCurrencyFnc   : Ext.util.Format.usMoney,
         });
+
+        // ExtJS uses 'resizable' so copy over the viewentry.isResize config
+        me.resizable = me.isResize || me.resizable;
+
+        // ExtJS uses 'text' so copy over the viewentry.title config
+        me.text = me.title || me.text;
 
         me.callParent(arguments);
     },
@@ -79,15 +97,13 @@ Ext.define('Ext.nd.grid.ViewColumn', {
     defaultRenderer: function (value, cell, record, rowIndex, colIndex, store) {
         var me                  = this,
             grid                = me.up('grid'),
-            entryData           = record.viewEntry.entryData[me.dataIndex] || {},
+            entryData           = record.entryData[me.dataIndex] || {},
             returnValue         = '',
             newValue,
             nextRecord          = store.getAt(rowIndex + 1),
-            recordLevel         = record.viewEntry.depth,
+            recordLevel         = record.columnIndentLevel,
             sCollapseImage      = '<img src="' + grid.collapseIcon + '" style="vertical-align:bottom; margin-right:8px;"/>',
             sExpandImage        = '<img src="' + grid.expandIcon + '" style="vertical-align:bottom; margin-right:8px;"/>',
-            indentPadding       = (20 * recordLevel) + 'px',
-            indentPaddingNoIcon = (20 + (20 * recordLevel)) + 'px',
             nextRecordLevel,
             indent,
             extraIndent,
@@ -110,7 +126,7 @@ Ext.define('Ext.nd.grid.ViewColumn', {
             return '';
         }
 
-        // next, let's split value into an array so that we can process the listseparator.  we use '\n' since that is how
+        // next, let's split value into an array so that we can process the listSeparator.  we use '\n' since that is how
         // we stored multi-values in the Ext.nd.data.ViewXmlReader#parseEntryDataChildNodes method.
         if (value && value.split) {
             value = value.split('\n');
@@ -119,19 +135,19 @@ Ext.define('Ext.nd.grid.ViewColumn', {
 
         // if we don't have any data and this is not a response column
         // nor a category column then just return a blank
-        if (typeof value === 'string' && value === '' && !me.response && !entryData.category) {
+        if (typeof value === 'string' && value === '' && !me.isResponse && !entryData.category) {
             return '';
         }
 
 
         // has children and is a categorized column
-        if (record.hasChildren() && me.sortcategorize) {
+        if (record.hasChildren() && me.isCategory) {
             indent = entryData.indent;
             extraIndent = (indent > 0) ? 'padding-left:' + indent * 20 + 'px;' : '';
             cell.attr = 'style="position: absolute; width: auto; white-space: nowrap; ' + extraIndent + '"';
 
             if (nextRecord) {
-                nextRecordLevel = nextRecord.viewEntry.depth;
+                nextRecordLevel = nextRecord.columnIndentLevel;
                 if (nextRecordLevel > recordLevel) {
                     cell.css = ' xnd-view-collapse xnd-view-category';
                     returnValue = sCollapseImage + me.getValue(value, record);
@@ -147,10 +163,10 @@ Ext.define('Ext.nd.grid.ViewColumn', {
         } else {
 
             // is NOT a category but has children and IS NOT a response doc BUT IS a response COLUMN
-            if (!record.isCategory() && record.hasChildren() && !record.isResponse() && me.response) {
+            if (!record.isCategory && record.hasChildren() && !record.isResponse && me.isResponse) {
 
                 if (nextRecord) {
-                    nextRecordLevel = nextRecord.viewEntry.depth;
+                    nextRecordLevel = nextRecord.columnIndentLevel;
                     if (nextRecordLevel > recordLevel) {
                         cell.css = 'xnd-view-collapse xnd-view-response';
                         returnValue = sCollapseImage;
@@ -166,12 +182,12 @@ Ext.define('Ext.nd.grid.ViewColumn', {
             } else {
 
                 // has children and IS a response doc
-                if (record.hasChildren() && record.isResponse() && me.response) {
+                if (record.hasChildren() && record.isResponse && me.isResponse) {
                     indent = entryData.indent;
                     extraIndent = (indent > 0) ? 'padding-left:' + (20 + (indent * 20)) + 'px;' : '';
                     cell.attr = 'style="position: absolute; width: auto; white-space: nowrap; ' + extraIndent + '"';
                     if (nextRecord) {
-                        nextRecordLevel = nextRecord.viewEntry.depth;
+                        nextRecordLevel = nextRecord.columnIndentLevel;
                         if (nextRecordLevel > recordLevel) {
                             cell.css = 'xnd-view-collapse xnd-view-response';
                             returnValue = sCollapseImage + me.getValue(value, record);
@@ -186,7 +202,7 @@ Ext.define('Ext.nd.grid.ViewColumn', {
                 } else {
 
                     // does NOT have children and IS a response doc
-                    if (!record.hasChildren() && record.isResponse() && me.response) {
+                    if (!record.hasChildren() && record.isResponse && me.isResponse) {
 
                         cell.css = 'xnd-view-response';
                         indent = entryData.indent;
@@ -196,7 +212,7 @@ Ext.define('Ext.nd.grid.ViewColumn', {
 
                     } else {
 
-                        if (me.icon) {
+                        if (me.isIcon) {
                             for (i = 0; i < len; i++) {
                                 tmpValue = value[i];
 
@@ -205,7 +221,7 @@ Ext.define('Ext.nd.grid.ViewColumn', {
                                 } else {
                                     // I believe the domino only has view icon images from 1 to 186
                                     newValue = (tmpValue < 10) ? '00' + tmpValue : (tmpValue < 100) ? '0' + tmpValue : (tmpValue > 186) ? '186' : tmpValue;
-                                    clearFloat = (me.listseparator === 'newline') ? 'style="clear: left;"' : '';
+                                    clearFloat = (me.listSeparator === 'newline') ? 'style="clear: left;"' : '';
                                     tmpReturnValue = '<div class="xnd-icon-vw xnd-icon-vwicn' + newValue + '" ' + clearFloat + '>&nbsp;</div>';
                                     if (i === 0) {
                                         returnValue = tmpReturnValue;
@@ -239,7 +255,7 @@ Ext.define('Ext.nd.grid.ViewColumn', {
             tmpDate,
             tmpDateFmt,
             tmpValue,
-            entryData   = record.viewEntry.entryData[me.dataIndex] || {},
+            entryData   = record.entryData[me.dataIndex] || {},
             dataType    = entryData.type,
             nbf         = me.numberformat,
             dtf         = me.datetimeformat,
@@ -249,7 +265,7 @@ Ext.define('Ext.nd.grid.ViewColumn', {
             len;
 
         // handle non-categorized columns
-        if (me.sortcategorize && value.length === 0) {
+        if (me.isCategory && value.length === 0) {
             newValue = me.notCategorizedText;
         }
 
@@ -263,7 +279,7 @@ Ext.define('Ext.nd.grid.ViewColumn', {
             tmpValue = value[i];
 
             // handle columns set to show an icon a little differently
-            if (me.icon) {
+            if (me.isIcon) {
                 if (isNaN(parseInt(tmpValue, 10)) || tmpValue === 0) {
                     return '';
                 } else {
@@ -350,7 +366,7 @@ Ext.define('Ext.nd.grid.ViewColumn', {
         var me = this,
             separator = '';
 
-        switch (me.listseparator) {
+        switch (me.listSeparator) {
             case 'none':
                 separator = '';
                 break;
