@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Ext-nd-data-OutlineModel'>/**
+</span> * Represents an entry in an Ext.nd.UIOutline.
+ * The LotusScript and Java equivalents in Domino are NotesOutlineEntry and OutlineEntry.
+ */
+Ext.define('Ext.nd.data.OutlineModel', {
+
+    extend: 'Ext.data.Model',
+
+    alternateClassName: [
+        'Ext.nd.data.OutlineEntry'
+    ],
+
+<span id='Ext-nd-data-OutlineModel-property-fields'>    fields: [
+</span><span id='Ext-nd-data-OutlineModel-property-id'>        /**
+</span>         * @property {String} id
+         */
+        {
+            name    : 'id',
+            mapping : '@position'
+        },
+
+<span id='Ext-nd-data-OutlineModel-property-text'>        /**
+</span>         * @property {String} text
+         */
+        {
+            name    : 'text',
+            mapping : '@title'
+        },
+
+<span id='Ext-nd-data-OutlineModel-property-leaf'>        /**
+</span>         * @property {Boolean} leaf
+         */
+        {
+            name    : 'leaf',
+            mapping : '@expandable',
+            /*
+             * Domino sends a string value down for the expandable attribute
+             * so if the value is a boolean, it means that somewhere in code
+             * a call to rec.set('leaf',boolean) was done and if that happens,
+             * we use it.
+             * If we have string then it is sent from Domino and now we
+             * convert it to true or false here.
+             * if 'true' or 'false' are sent then we do not have a leaf
+             * if Domino does not send an 'expandable' attribute at all
+             * it means that this node IS a leaf
+             */
+            convert : function (v, rec) {
+                var returnVal;
+
+                if (Ext.isBoolean(v)) {
+                    returnVal = v;
+                } else {
+                    if (rec.get('id') === 'root' || (v === 'true' || v === 'false')) {
+                        returnVal = false;
+                    } else {
+                        returnVal = true;
+                    }
+                }
+
+                return returnVal;
+
+            }
+        },
+
+<span id='Ext-nd-data-OutlineModel-property-expanded'>        /**
+</span>         * @property {Boolean} expanded
+         */
+        {
+            name    : 'expanded',
+            mapping : '@expandable',
+<span id='Ext-nd-data-OutlineModel-method-convert'>            /**
+</span>             * Domino sends a string value down for the expandable attribute
+             * so if the value is a boolean, it means that somewhere in code
+             * a call to rec.set('leaf',boolean) was done and if that happens,
+             * we use it.
+             * If we have string then it is sent from Domino and now we
+             * convert it to true or false here.
+             * if 'true' or 'false' are sent then we do not have a leaf
+             * if Domino does not send an 'expandable' attribute at all
+             * it means that this node IS a leaf
+             */
+            convert : function (v, rec) {
+                var returnVal;
+
+                if (Ext.isBoolean(v)) {
+                    returnVal = v;
+                } else {
+                    if (rec.get('id') === 'root' || v === 'true') {
+                        returnVal = true;
+                    } else {
+                        returnVal = false;
+                    }
+                }
+
+                return returnVal;
+
+            }
+        }
+    ]
+});
+</pre>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Ext-nd-data-OutlineStore'>/**
+</span> * A specialized version of {@link Ext.data.TreeStore} to deal with oddities from
+ * reading a Domino Outline via ?ReadEntries.  Use for widgets such as the {@link Ext.nd.UIOutline}.
+ */
+Ext.define('Ext.nd.data.OutlineStore', {
+
+    extend  : 'Ext.data.TreeStore',
+<span id='Ext-nd-data-OutlineStore-cfg-model'>    model   : 'Ext.nd.data.OutlineModel',
+</span>
+    requires: [
+        'Ext.nd.data.OutlineXmlReader'
+    ],
+
+
+<span id='Ext-nd-data-OutlineStore-method-constructor'>    /**
+</span>     * Creates a new OutlineStore
+     * @param {Object} config A config object containing the objects needed for
+     * the OutlineStore to access data, and read the data into Records.
+     */
+    constructor: function (config) {
+        var me = this;
+
+        // just to make sure that viewName, viewUrl, and dbPath get set
+        //config = Ext.nd.util.cleanUpConfig(config);
+
+        // make sure we have a outlineUrl
+        if (!config.outlineUrl) {
+            config.outlineUrl = config.dbPath + config.outlineName + '?ReadEntries';
+        }
+
+        config = Ext.apply({
+
+            proxy: {
+                type    : 'ajax',
+                url     : config.outlineUrl,
+
+                reader: {
+                    type            : 'xnd-outlinexml',
+                    root            : 'outlinedata',
+                    record          : 'outlineentry'
+                }
+            }
+
+        }, config);
+
+        me.callParent([config]);
+
+    }
+
+
+});
+</pre>
+</body>
+</html>
