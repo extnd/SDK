@@ -216,7 +216,7 @@ Ext.define('Ext.nd.grid.Panel', {
             //var rendr = (me.renderers[i]) ? me.renderers[i] : Ext.bind(me.dominoRenderer, me);
             col = me.viewDesign.columns.items[i];
             //col.renderer = rendr;
-            me.colsFromDesign.push(col) ;
+            me.colsFromDesign.push(col);
         }
 
 
@@ -227,8 +227,7 @@ Ext.define('Ext.nd.grid.Panel', {
             me.enableColumnMove = false;
             me.view.init(me);
             me.view.render();
-        }
-        else {
+        } else {
             // the grid cellclick will allow us to capture clicking on an
             // expand/collapse icon for the classic domino way
             // but only do this if 'multiExpand' is set to false
@@ -292,7 +291,7 @@ Ext.define('Ext.nd.grid.Panel', {
     /**
      * Custom #cellclick handler to handle expand/collapse of categories and responses
      */
-    gridHandleCellClick: function (grid, td, colIndex, record, tr, rowIndex, e){
+    gridHandleCellClick: function (grid, td, colIndex, record, tr, rowIndex, e) {
         var me          = this,
             ecImg       = Ext.get(e.getTarget()),
             cell        = false,
@@ -335,7 +334,7 @@ Ext.define('Ext.nd.grid.Panel', {
                      * cellEl.removeClass('xnd-view-expand');
                      * cellEl.addClass('xnd-view-collapse');
                      */
-                     store.load({params : newParams});
+                    store.load({params : newParams});
 
                 } else {
 
@@ -354,7 +353,7 @@ Ext.define('Ext.nd.grid.Panel', {
                          * cellEl.removeClass('xnd-view-collapse');
                          * cellEl.addClass('xnd-view-expand');
                          */
-                         store.load({params : newParams});
+                        store.load({params : newParams});
 
                     }
                 }
