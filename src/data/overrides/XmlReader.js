@@ -7,13 +7,9 @@ Ext.define('Ext.nd.data.overrides.XmlReader', {
     override: 'Ext.data.reader.Xml',
 
     /**
-     * @private
      * This override fixes the issue where nested data can be handled by the reader and used in a TreeStore.
      * The fix is a simple one in that we just add '> ' before the recordName and this ensures we only get
      * direct children that match recordName instead of ALL descendants.
-     *
-     * @param {XMLElement} root The XML root node
-     * @return {Ext.data.Model[]} The records
      */
     extractData: function (root) {
         var recordName = this.record;
@@ -37,6 +33,28 @@ Ext.define('Ext.nd.data.overrides.XmlReader', {
         //return this.callParent([root]);
         return this.callSuper([root]);
         // END OVERRIDE
+    },
+
+    /**
+     * This override fixes the issue where nested data can be handled by the reader and used in a TreeStore.
+     * The fix is a simple one in that we just add '> ' before the recordName and this ensures we only get
+     * direct children that match recordName instead of ALL descendants.
+     */
+    createFieldAccessExpression: function(field, fieldVarName, dataName) {
+        var namespace = this.namespace,
+            selector, result;
+
+        selector = field.mapping || ((namespace ? namespace + '|' : '') + field.name);
+
+        if (typeof selector === 'function') {
+            result = fieldVarName + '.mapping(' + dataName + ', this)';
+        } else {
+            // BEGIN OVERRIDE
+            //result = 'me.getNodeValue(Ext.DomQuery.selectNode("' + selector + '", ' + dataName + '))';
+            result = 'me.getNodeValue(Ext.DomQuery.selectNode("> ' + selector + '", ' + dataName + '))';
+            // END OVERRIDE
+        }
+        return result;
     }
 
 });
