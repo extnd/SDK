@@ -28,11 +28,18 @@ Ext.define('Ext.nd.data.ViewStore', {
         // just to make sure that viewName, viewUrl, and dbPath get set
         //config = Ext.nd.util.cleanUpConfig(config);
 
+        // make sure we have a viewUrl
+        if (!config.viewUrl) {
+            config.viewUrl = config.dbPath + config.viewName + '?ReadViewEntries';
+        } else {
+            config.viewUrl = (config.viewUrl.indexOf('?') !== -1) ? config.viewUrl : config.viewUrl + '?ReadViewEntries';
+        }
+
         config = Ext.apply({
 
             proxy: {
                 type        : 'ajax',
-                url         : config.viewUrl + '?ReadViewEntries',
+                url         : config.viewUrl,
 
                 // remap paramNames to work with Domino views
                 startParam  : 'start',

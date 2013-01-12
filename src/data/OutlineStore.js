@@ -20,12 +20,14 @@ Ext.define('Ext.nd.data.OutlineStore', {
     constructor: function (config) {
         var me = this;
 
-        // just to make sure that viewName, viewUrl, and dbPath get set
+        // just to make sure that outlineName, outlineUrl, and dbPath get set
         //config = Ext.nd.util.cleanUpConfig(config);
 
         // make sure we have a outlineUrl
         if (!config.outlineUrl) {
             config.outlineUrl = config.dbPath + config.outlineName + '?ReadEntries';
+        } else {
+            config.outlineUrl = (config.outlineUrl.indexOf('?') !== -1) ? config.outlineUrl : config.outlineUrl + '?ReadEntries';
         }
 
         config = Ext.apply({
