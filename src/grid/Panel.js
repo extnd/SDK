@@ -70,6 +70,8 @@ Ext.define('Ext.nd.grid.Panel', {
 
     viewConfig: {},
 
+    isCategorized   : false,
+    needsColumns    : false,
 
     // TODO ExtJS4 uses selModel that can be a config or a selection model instance
     selModelConfig: {
@@ -81,8 +83,14 @@ Ext.define('Ext.nd.grid.Panel', {
         width: 200
     },
 
+
+
     initComponent: function () {
-        var me = this;
+        var me = this,
+            store;
+
+        store = me.store || me.createStore();
+        me.needsColumns = me.columns ? false : true;
 
         // applyIf so that these can all be overridden if passed into the config
         Ext.applyIf(me, {
@@ -91,7 +99,6 @@ Ext.define('Ext.nd.grid.Panel', {
             dateTimeFormats     : Ext.nd.dateTimeFormats,
             formatCurrencyFnc   : Ext.util.Format.usMoney,
             columns             : me.getInitialColumns(),
-            store               : me.getInitialStore(),
             bbar                : me.getBottomBarCfg()
         });
 
@@ -109,22 +116,51 @@ Ext.define('Ext.nd.grid.Panel', {
         ];
     },
 
-    getInitialStore: function () {
+    createStore: function () {
         var me = this;
 
-        me.dmyId = 'xnd-dummy-store-' + Ext.id();
+        // only create a dummy store if one was not provided
+        // in the callback from fetching the design info, we'll create a new store and do a reconfigure
+        if (!me.store) {
 
-        return Ext.create('Ext.data.Store', {
-            id: me.dmyId,
-            fields: ['dummy']
-        });
+            me.dmyId = 'xnd-dummy-store-' + Ext.id();
+            store = Ext.create('Ext.data.Store', {
+                id: me.dmyId,
+                fields: ['dummy']
+            });
+        }
+
+        me.store = store;
+        return store;
+
     },
 
 
     onRender: function () {
-        this.callParent(arguments);
-        this.getViewDesign();
+        var me = this;
+
+        me.callParent(arguments);
+
+        if (me.needsColumns) {
+            me.getViewDesign();
+
+        } else {
+            if (me.showPagingToolbar) {
+                me.updatePagingToolbar()
+            }
+
+            me.store.load({
+                params: {
+                    count: me.count,
+                    start: 1
+                }
+            });
+
+            me.fireEvent('open', me);
+        }
+
     },
+
 
     getViewDesign: function () {
         var me = this;
@@ -262,15 +298,7 @@ Ext.define('Ext.nd.grid.Panel', {
         }
 
         if (me.showPagingToolbar) {
-            pg = me.down('xnd-pagingtoolbar');
-            // now that we know if the view is categorized or not we need to let
-            // the paging toolbar know
-            if (pg) {
-                pg.isCategorized = me.isCategorized;
-                pg.bindStore(null);
-                pg.bindStore(me.store);
-                pg.updateInfo();
-            }
+            me.updatePagingToolbar()
         }
 
         // update me.documents property when a row is selected/deselected
@@ -287,6 +315,19 @@ Ext.define('Ext.nd.grid.Panel', {
         me.fireEvent('open', me);
     },
 
+    updatePagingToolbar: function () {
+        var me = this,
+            pg = me.down('xnd-pagingtoolbar');
+
+        // now that we know if the view is categorized or not we need to let
+        // the paging toolbar know
+        if (pg) {
+            pg.isCategorized = me.isCategorized;
+            pg.bindStore(null);
+            pg.bindStore(me.store);
+            pg.updateInfo();
+        }
+    },
 
     /**
      * Custom #cellclick handler to handle expand/collapse of categories and responses

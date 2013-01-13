@@ -31,40 +31,51 @@ Ext.define('Ext.nd.grid.ViewColumn', {
     /**
      * @property {String} totals
      */
+     totals: 'none',
     /**
      * @property {Boolean} isResortAscending ﻿Indicates whether a column is a user-sorted column that can be sorted in ascending order.
      */
+     isResortAscending: false,
     /**
      * @property {Boolean} isResortDescending ﻿Indicates whether a column is a user-sorted column that can be sorted in descending order.
      */
+     isResortDescending: false,
     /**
      * @property {Boolean} isResortToView ﻿Indicates whether a column is a user-sorted column that allows the user to change to another view.
      */
+     isResortToView: false,
     /**
      * @property {String} resortToViewName ﻿The name of the target view for a user-sorted column that allows the user to change to another view.
      */
+     resortToViewName: '',
     /**
      * @property {Boolean} isCategory ﻿Indicates whether a column is categorized.
      */
+     isCategory: false,
     /**
      * @property {Boolean} isResize
      * @inheritdoc #resizable
      */
+     isResize: false,
     /**
      * @property {String} listSeparator ﻿List (multi-value) separator for values in a column.
      */
+     listSeparator: ',',
     /**
      * @property {Number} listSep Not used, see #listSeparator instead
      */
     /**
      * @property {Boolean} isResponse  Indicates whether a column contains only response documents.
      */
+     isResponse: false,
     /**
      * @property {Boolean} isShowTwistie ﻿Indicates whether an expandable column displays a twistie.
      */
+     isShowTwistie: false,
     /**
      * @property {Boolean} isIcon  Indicates whether column values are displayed as icons.
      */
+     isIcon: false,
     /**
      * @property {Object} datetimeformat ﻿The format for time-date data in a column.
      */
@@ -75,6 +86,9 @@ Ext.define('Ext.nd.grid.ViewColumn', {
 
     initComponent: function () {
         var me = this;
+
+        me.datetimeformat = me.datetimeformat || {},
+        me.numberformat = me.numberformat || {},
 
         // applyIf so that these can all be overridden if passed into the config
         Ext.applyIf(me, {

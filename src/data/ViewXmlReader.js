@@ -229,9 +229,17 @@ Ext.define('Ext.nd.data.ViewXmlReader', {
      * @param {Ext.nd.data.ViewModel} record The record being processed.
      */
     getNodeValue: function (node, fieldName, record) {
-        if (node && node.nodeName === 'entrydata') {
-            return this.getEntryDataNodeValue(node, fieldName, record);
+        var me          = this,
+            parentNode  = node ? node.parentNode : undefined;
+
+        if (node) {
+            if (node.nodeName === 'entrydata') {
+                return me.getEntryDataNodeValue(node, fieldName, record);
+            } else if (parentNode && parentNode.nodeName === 'entrydata') {
+                return me.getEntryDataNodeValue(parentNode, fieldName, record);
+            }
         }
+
         if (node && node.firstChild) {
             return node.firstChild.nodeValue;
         }

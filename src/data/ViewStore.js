@@ -95,52 +95,53 @@ Ext.define('Ext.nd.data.ViewStore', {
         var me = this;
 
         options = options || {};
+        me.extraParams = me.extraParams || {};
 
-        if (this.fireEvent("beforeload", this, options) !== false) {
+        if (me.fireEvent("beforeload", me. options) !== false) {
 
             // make sure options has a params property
             options.params = (options.params) ? options.params : {};
 
             // do some extraParams cleanup
             if (options.params.expand || options.params.expandview) {
-                if (this.extraParams.collapse) {
-                    delete this.extraParams.collapse;
+                if (me.extraParams.collapse) {
+                    delete me.extraParams.collapse;
                 }
-                if (this.extraParams.collapseview) {
-                    delete this.extraParams.collapseview;
+                if (me.extraParams.collapseview) {
+                    delete me.extraParams.collapseview;
                 }
             }
             if (options.params.collapse || options.params.collapseview) {
-                if (this.extraParams.expand) {
-                    delete this.extraParams.expand;
+                if (me.extraParams.expand) {
+                    delete me.extraParams.expand;
                 }
-                if (this.extraParams.expandview) {
-                    delete this.extraParams.expandview;
+                if (me.extraParams.expandview) {
+                    delete me.extraParams.expandview;
                 }
             }
 
             // now merge the extraParams and passed in params
-            var p = Ext.apply(this.extraParams, options.params || {});
+            var p = Ext.apply(me.extraParams, options.params || {});
 
 
-            if (this.sortInfo && this.remoteSort) {
-                var pn = this.paramNames;
+            if (me.sortInfo && me.remoteSort) {
+                var pn = me.paramNames;
 
                 // domino does not have separate params for sort and dir
                 // instead, domino combines them into one of two choices
                 // resortascending=colNbr
                 // resortdescending=colNbr
 
-                var f = this.fields.get(this.sortInfo.field);
+                var f = me.fields.get(me.sortInfo.field);
                 var sortColumn = f.mapping; // to support older domino versions we will use colnumber (however, this will probably cause DND column reordering to break when sorting)
                 // get the config info for this column
-                var colConfig = this.reader.meta.columnConfig.items[sortColumn];
+                var colConfig = me.reader.meta.columnConfig.items[sortColumn];
                 if (colConfig.resortToViewName != "") {
                     return; // the grid should have handled the request to change view
                 }
 
-                //p[pn["dir"]] = this.sortInfo.direction;
-                var sortDir = this.sortInfo.direction;
+                //p[pn["dir"]] = me.sortInfo.direction;
+                var sortDir = me.sortInfo.direction;
 
                 // TODO: need to refactor this section into it's own method
                 if (sortDir == "ASC") {
