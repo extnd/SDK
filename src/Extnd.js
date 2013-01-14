@@ -40,3 +40,33 @@ Ext.define('Extnd', {
     }
 
 });
+
+Ext.override(Ext.ClassManager, {
+    /**
+     * Override to fix issue of the array index not being added to alternates[className][i]
+     */
+    addNameAlternateMappings: function (alternates) {
+        var alternateToName = this.maps.alternateToName,
+            nameToAlternates = this.maps.nameToAlternates,
+            className,
+            aliasList,
+            alternate,
+            i;
+
+        for (className in alternates) {
+            aliasList = nameToAlternates[className] ||
+                (nameToAlternates[className] = []);
+
+            for (i  = 0; i < alternates[className].length; i++) {
+                alternate = alternates[className][i];
+                if (!alternateToName[alternate]) {
+                    alternateToName[alternate] = className;
+                    aliasList.push(alternate);
+                }
+            }
+
+        }
+        return this;
+    }
+
+});
