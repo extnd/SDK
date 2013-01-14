@@ -2,8 +2,8 @@ Ext.Loader.setConfig({
     enabled         : true,
     disableCaching  : false,
     paths: {
-        'Ext.nd': '../src'
         'Ext'   : '../extjs/src',
+        'Extnd' : '../src',
     }
 });
 
@@ -20,9 +20,9 @@ Ext.application({
 
     requires: [
         'Ext.container.Viewport',
-        'Ext.tab.Panel',
-        'Ext.nd.grid.Panel',
-        'Ext.nd.tree.Panel'
+        'Ext.TabPanel',
+        'Extnd.UIView',
+        'Extnd.UIOutline'
     ],
 
 
@@ -77,11 +77,51 @@ Ext.application({
 
 
     getUIView2: function () {
+        var model,
+            store;
+
+
+        // creating an inner function to use as a custom column renderer
+        function renderTotal (value, cell, record, rowIndex, colIndex, store) {
+            return value * 10;
+        }
+
+        model = Ext.define('Demo.model.MyCustomModel', {
+            extend: 'Ext.nd.data.ViewModel',
+            fields: [
+                { name: 'totals',   mapping: 'entrydata[columnnumber=0]',   type: 'float'   },
+                { name: 'subject',  mapping: 'entrydata[name=subject]',     type: 'string'  },
+                { name: 'date',     mapping: 'entrydata[columnnumber=6]',   type: 'string'    }
+            ]
+        });
+
+        store = Ext.create('Ext.nd.data.ViewStore', {
+            model       : model,
+            dbPath      : '/extnd/demo.nsf/',
+            viewName    : 'f1'
+        });
+
         return {
             xtype       : 'xnd-grid',
             title       : 'f1',
-            dbPath      : '/extnd/demo.nsf/',
-            viewName    : 'f1'
+            store       : store,
+            columns: [
+                {
+                    text        : 'Totals',
+                    dataIndex   : 'totals',
+                    renderer    : renderTotal
+                },
+                {
+                    xtype       : 'xnd-viewcolumn',
+                    text        : 'Subject',
+                    dataIndex   : 'subject'
+                },
+                {
+                    xtype       : 'xnd-viewcolumn',
+                    text        : 'Date',
+                    dataIndex   : 'date'
+                }
+            ]
         };
     }
 
