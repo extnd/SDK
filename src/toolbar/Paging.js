@@ -1,7 +1,7 @@
 /**
  * A specialized toolbar that is bound to a {@link Ext.nd.data.ViewStore} and provides automatic paging controls geared towards Domino
  */
-Ext.define('Ext.nd.toolbar.Paging', {
+Ext.define('Extnd.toolbar.Paging', {
 
     extend  : 'Ext.toolbar.Paging',
     alias   : [
@@ -9,12 +9,18 @@ Ext.define('Ext.nd.toolbar.Paging', {
         'widget.xnd-paging'
     ],
 
+    alternateClassName: [
+        'Extnd.PagingToolbar',
+        'Ext.nd.toolbar.Paging',
+        'Ext.nd.PagingToolbar'
+    ],
+
     // change the displayed text
     beforePageText  : 'Showing entries ',
     afterPageText   : ' - {0}',
     middlePageText  : ' of ',
 
-    initComponent : function() {
+    initComponent : function () {
         var me = this;
 
         me.callParent(arguments);
@@ -23,8 +29,8 @@ Ext.define('Ext.nd.toolbar.Paging', {
          * to a number field so we need to change it back so that it will work
          * with Domino's hierarchical start params (i.e. 2.3.2.1, etc.)
          */
-        Ext.each(this.items.items, function(item, index, allItems){
-            if (item.getXType && item.isXType('numberfield', true)){
+        Ext.each(this.items.items, function (item, index, allItems) {
+            if (item.getXType && item.isXType('numberfield', true)) {
                 allItems[index] = this.inputItem = new Ext.form.TextField(Ext.apply(item.initialConfig, { grow: true }));
             }
         }, this);

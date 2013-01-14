@@ -3,7 +3,7 @@
  * This class is used by the Ext.nd.data.ViewDesign class to create the column model dynamically from the design of a View..
  * The LotusScript and Java equivalents in Domino are NotesViewColumn and ViewColumn.
  */
-Ext.define('Ext.nd.grid.ViewColumn', {
+Ext.define('Extnd.grid.ViewColumn', {
 
     extend  : 'Ext.grid.column.Column',
     alias   : ['widget.xnd-viewcolumn'],
@@ -12,17 +12,22 @@ Ext.define('Ext.nd.grid.ViewColumn', {
         'Ext.util.Format'
     ],
 
+    alternateClassName: [
+        'Ext.nd.data.ViewColumn'
+    ],
+
     /**
-     * @property {String} align ﻿The alignment (justification) of data in a column.
+     *
+     @property {String} align The alignment (justification) of data in a column.
      */
     /**
-     * @property {Number} alignment ﻿Not used, see #align instead.
+     * @property {Number} alignment Not used, see #align instead.
      */
     /**
      * @property {String} dataIndex Defaults to the 'Programmatic Use Name' set for the column in Domino Designer.
      */
     /**
-     * @property {Number} width ﻿The width of a column.
+     * @property {Number} width The width of a column.
      */
     /**
      * @property {String} title
@@ -31,69 +36,69 @@ Ext.define('Ext.nd.grid.ViewColumn', {
     /**
      * @property {String} totals
      */
-     totals: 'none',
+    totals: 'none',
     /**
-     * @property {Boolean} isResortAscending ﻿Indicates whether a column is a user-sorted column that can be sorted in ascending order.
+     * @property {Boolean} isResortAscending Indicates whether a column is a user-sorted column that can be sorted in ascending order.
      */
-     isResortAscending: false,
+    isResortAscending: false,
     /**
-     * @property {Boolean} isResortDescending ﻿Indicates whether a column is a user-sorted column that can be sorted in descending order.
+     * @property {Boolean} isResortDescending Indicates whether a column is a user-sorted column that can be sorted in descending order.
      */
-     isResortDescending: false,
+    isResortDescending: false,
     /**
-     * @property {Boolean} isResortToView ﻿Indicates whether a column is a user-sorted column that allows the user to change to another view.
+     * @property {Boolean} isResortToView Indicates whether a column is a user-sorted column that allows the user to change to another view.
      */
-     isResortToView: false,
+    isResortToView: false,
     /**
-     * @property {String} resortToViewName ﻿The name of the target view for a user-sorted column that allows the user to change to another view.
+     * @property {String} resortToViewName The name of the target view for a user-sorted column that allows the user to change to another view.
      */
-     resortToViewName: '',
+    resortToViewName: '',
     /**
-     * @property {Boolean} isCategory ﻿Indicates whether a column is categorized.
+     * @property {Boolean} isCategory Indicates whether a column is categorized.
      */
-     isCategory: false,
+    isCategory: false,
     /**
      * @property {Boolean} isResize
      * @inheritdoc #resizable
      */
-     isResize: false,
+    isResize: false,
     /**
-     * @property {String} listSeparator ﻿List (multi-value) separator for values in a column.
+     * @property {String} listSeparator List (multi-value) separator for values in a column.
      */
-     listSeparator: ',',
+    listSeparator: ',',
     /**
      * @property {Number} listSep Not used, see #listSeparator instead
      */
     /**
      * @property {Boolean} isResponse  Indicates whether a column contains only response documents.
      */
-     isResponse: false,
+    isResponse: false,
     /**
-     * @property {Boolean} isShowTwistie ﻿Indicates whether an expandable column displays a twistie.
+     * @property {Boolean} isShowTwistie Indicates whether an expandable column displays a twistie.
      */
-     isShowTwistie: false,
+    isShowTwistie: false,
     /**
      * @property {Boolean} isIcon  Indicates whether column values are displayed as icons.
      */
-     isIcon: false,
+    isIcon: false,
     /**
-     * @property {Object} datetimeformat ﻿The format for time-date data in a column.
+     * @property {Object} datetimeformat The format for time-date data in a column.
      */
     /**
-     * @property {Object} numberformat ﻿The format for numeric values in a column.
+     * @property {Object} numberformat The format for numeric values in a column.
      */
 
 
     initComponent: function () {
         var me = this;
 
-        me.datetimeformat = me.datetimeformat || {},
-        me.numberformat = me.numberformat || {},
+        me.datetimeformat = me.datetimeformat || {};
+        me.numberformat = me.numberformat || {};
 
         // applyIf so that these can all be overridden if passed into the config
         Ext.applyIf(me, {
-            dateTimeFormats     : Ext.nd.dateTimeFormats,
-            formatCurrencyFnc   : Ext.util.Format.usMoney,
+            dateTimeFormats     : Extnd.dateTimeFormats || {},
+            formatCurrencyFnc   : Ext.util.Format.usMoney
         });
 
         // ExtJS uses 'resizable' so copy over the viewentry.isResize config
@@ -231,7 +236,7 @@ Ext.define('Ext.nd.grid.ViewColumn', {
                                 tmpValue = value[i];
 
                                 if (isNaN(parseInt(tmpValue, 10)) || tmpValue === '0') {
-                                    return '';
+                                    returnValue = '';
                                 } else {
                                     // I believe the domino only has view icon images from 1 to 186
                                     newValue = (tmpValue < 10) ? '00' + tmpValue : (tmpValue < 100) ? '0' + tmpValue : (tmpValue > 186) ? '186' : tmpValue;
@@ -276,7 +281,8 @@ Ext.define('Ext.nd.grid.ViewColumn', {
             separator   = me.getListSeparator(),
             newValue    = '',
             i,
-            len;
+            len,
+            returnVal;
 
         // handle non-categorized columns
         if (me.isCategory && value.length === 0) {
@@ -285,7 +291,7 @@ Ext.define('Ext.nd.grid.ViewColumn', {
 
         // need to make sure value is an array
         // the loop below will format as needed
-        value = (Ext.isArray(value)) ? value : ['' + value];
+        value = (Ext.isArray(value)) ? value : [value];
         len = value.length;
 
         for (i = 0, len; i < len; i++) {
@@ -295,82 +301,82 @@ Ext.define('Ext.nd.grid.ViewColumn', {
             // handle columns set to show an icon a little differently
             if (me.isIcon) {
                 if (isNaN(parseInt(tmpValue, 10)) || tmpValue === 0) {
-                    return '';
+                    returnVal = '';
                 } else {
                     // I believe domino only has view icon images from 1 to 186
                     newValue = (tmpValue < 10) ? '00' + tmpValue : (tmpValue < 100) ? '0' + tmpValue : (tmpValue > 186) ? '186' : tmpValue;
-                    return '<img src="/icons/vwicn' + newValue + '.gif"/>';
+                    returnVal = '<img src="/icons/vwicn' + newValue + '.gif"/>';
                 }
 
             } else if (me.totals === 'percentoverall' || me.totals === 'percentparent') {
-                return Ext.util.Format.round(100 * parseFloat(tmpValue), nbf.digits) + '%';
+                returnVal = Ext.util.Format.round(100 * parseFloat(tmpValue), nbf.digits) + '%';
 
             } else {
 
                 switch (dataType) {
 
-                    case 'datetimelist':
+                case 'datetimelist':
+                case 'datetime':
+                    if (dtf.show === undefined) {
+                        dtf.show = me.dateTimeFormats.show;
+                    }
+                    if (tmpValue.indexOf('T') > 0) {
+                        tmpDate = tmpValue.split(',')[0].replace('T', '.');
+                        tmpDateFmt = 'Ymd.His';
+                    } else {
+                        tmpDate = tmpValue;
+                        tmpDateFmt = 'Ymd';
+                        dtf.show = 'date'; // switch to date only since there isn't a time component present
+                    }
+                    tmpDate = Ext.Date.parse(tmpDate, tmpDateFmt);
+                    switch (dtf.show) {
+                    case 'date':
+                        tmpValue = tmpDate ? Ext.Date.format(tmpDate, me.dateTimeFormats.dateFormat) : '';
+                        break;
                     case 'datetime':
-                        if (dtf.show === undefined) {
-                            dtf.show = me.dateTimeFormats.show;
-                        }
-                        if (tmpValue.indexOf('T') > 0) {
-                            tmpDate = tmpValue.split(',')[0].replace('T', '.');
-                            tmpDateFmt = 'Ymd.His';
+                        tmpValue = tmpDate ? Ext.Date.format(tmpDate, me.dateTimeFormats.dateTimeFormat) : '';
+                        break;
+                    }
+                    break;
+
+                case 'textlist':
+                case 'text':
+                    // do nothing to tmpValue if text or textlist
+                    break;
+
+                case 'numberlist':
+                case 'number':
+                    tmpValue = parseFloat(tmpValue);
+
+                    switch (nbf.format) {
+                    case 'currency':
+                        tmpValue = Ext.isEmpty(tmpValue) ? me.formatCurrencyFnc(0) : me.formatCurrencyFnc(tmpValue);
+                        break;
+
+                    case 'fixed':
+                    case 'scientific':
+                        if (nbf.percent) {
+                            tmpValue = Ext.util.Format.round(100 * tmpValue, nbf.digits) + '%';
                         } else {
-                            tmpDate = tmpValue;
-                            tmpDateFmt = 'Ymd';
-                            dtf.show = 'date'; // switch to date only since there isn't a time component present
-                        }
-                        tmpDate = Ext.Date.parse(tmpDate, tmpDateFmt);
-                        switch (dtf.show) {
-                            case 'date':
-                                tmpValue = tmpDate ? Ext.Date.format(tmpDate, me.dateTimeFormats.dateFormat) : '';
-                                break;
-                            case 'datetime':
-                                tmpValue = tmpDate ? Ext.Date.format(tmpDate, me.dateTimeFormats.dateTimeFormat) : '';
-                                break;
-                        }
-                        break;
-
-                    case 'textlist':
-                    case 'text':
-                        tmpValue = tmpValue;
-                        break;
-
-                    case 'numberlist':
-                    case 'number':
-                        tmpValue = parseFloat(tmpValue);
-
-                        switch (nbf.format) {
-                            case 'currency':
-                                tmpValue = Ext.isEmpty(tmpValue) ? me.formatCurrencyFnc(0) : me.formatCurrencyFnc(tmpValue);
-                                break;
-
-                            case 'fixed' :
-                            case 'scientific' :
-                                if (nbf.percent) {
-                                    tmpValue = Ext.util.Format.round(100 * tmpValue, nbf.digits) + '%';
-                                } else {
-                                    tmpValue = Ext.util.Format.round(tmpValue, nbf.digits);
-                                }
-                                break;
-
-                            default :
-                                tmpValue = tmpValue;
+                            tmpValue = Ext.util.Format.round(tmpValue, nbf.digits);
                         }
                         break;
 
                     default:
-                        tmpValue = tmpValue;
+                        // do nothing to tmpValue if we do not have a nbr.format we are interested in
+                    }
+                    break;
+
+                default:
+                    // do nothing to tmpValue if we do not have a dataType we are interested in
                 }
 
-                newValue = newValue + tmpValue + sep;
+                returnVal = newValue + tmpValue + sep;
 
             }
         }
 
-        return newValue;
+        return returnVal;
     },
 
     /**
@@ -381,23 +387,23 @@ Ext.define('Ext.nd.grid.ViewColumn', {
             separator = '';
 
         switch (me.listSeparator) {
-            case 'none':
-                separator = '';
-                break;
-            case 'space':
-                separator = ' ';
-                break;
-            case 'comma':
-                separator = ',';
-                break;
-            case 'newline':
-                separator = '<br/>';
-                break;
-            case 'semicolon':
-                separator = ';';
-                break;
-            default:
-                separator = '';
+        case 'none':
+            separator = '';
+            break;
+        case 'space':
+            separator = ' ';
+            break;
+        case 'comma':
+            separator = ',';
+            break;
+        case 'newline':
+            separator = '<br/>';
+            break;
+        case 'semicolon':
+            separator = ';';
+            break;
+        default:
+            separator = '';
         }
 
         return separator;

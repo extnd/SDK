@@ -3,12 +3,16 @@
  * reading a Domino view via ?ReadViewEntries.  Use for widgets such as the
  * {@link Ext.nd.UIView}, or the {@link Ext.nd.form.ComboBox}.
  */
-Ext.define('Ext.nd.data.ViewStore', {
+Ext.define('Extnd.data.ViewStore', {
 
     extend: 'Ext.data.Store',
 
     requires: [
-        'Ext.nd.data.ViewXmlReader'
+        'Extnd.data.ViewXmlReader'
+    ],
+
+    alternateClassName: [
+        'Ext.nd.data.ViewStore'
     ],
 
     /**
@@ -81,7 +85,7 @@ Ext.define('Ext.nd.data.ViewStore', {
         * @cfg {String} category (optional)
         * the category to restrict to for views that are categorized
         */
-        if (me.category && typeof me.category == 'string') {
+        if (me.category && typeof me.category === 'string') {
             me.extraParams.RestrictToCategory = me.category;
         }
 
@@ -92,15 +96,20 @@ Ext.define('Ext.nd.data.ViewStore', {
      * Custom override that makes sure the params that Domino knows about are set correctly
      */
     load: function (options) {
-        var me = this;
+        var me = this,
+            p,
+            pn,
+            f,
+            sortColumn,
+            colConfig;
 
         options = options || {};
         me.extraParams = me.extraParams || {};
 
-        if (me.fireEvent("beforeload", me. options) !== false) {
+        if (me.fireEvent("beforeload", me, options) !== false) {
 
             // make sure options has a params property
-            options.params = (options.params) ? options.params : {};
+            options.params = options.params || {};
 
             // do some extraParams cleanup
             if (options.params.expand || options.params.expandview) {
@@ -121,32 +130,29 @@ Ext.define('Ext.nd.data.ViewStore', {
             }
 
             // now merge the extraParams and passed in params
-            var p = Ext.apply(me.extraParams, options.params || {});
+            p = Ext.apply(me.extraParams, options.params || {});
 
 
             if (me.sortInfo && me.remoteSort) {
-                var pn = me.paramNames;
+                pn = me.paramNames;
 
                 // domino does not have separate params for sort and dir
                 // instead, domino combines them into one of two choices
                 // resortascending=colNbr
                 // resortdescending=colNbr
 
-                var f = me.fields.get(me.sortInfo.field);
-                var sortColumn = f.mapping; // to support older domino versions we will use colnumber (however, this will probably cause DND column reordering to break when sorting)
+                f = me.fields.get(me.sortInfo.field);
+                sortColumn = f.mapping; // to support older domino versions we will use colnumber (however, this will probably cause DND column reordering to break when sorting)
                 // get the config info for this column
-                var colConfig = me.reader.meta.columnConfig.items[sortColumn];
-                if (colConfig.resortToViewName != "") {
+                colConfig = me.reader.meta.columnConfig.items[sortColumn];
+                if (colConfig.resortToViewName !== "") {
                     return; // the grid should have handled the request to change view
                 }
 
-                //p[pn["dir"]] = me.sortInfo.direction;
-                var sortDir = me.sortInfo.direction;
-
                 // TODO: need to refactor this section into it's own method
-                if (sortDir == "ASC") {
-                    if (typeof p.resortascending != 'undefined') {
-                        if (p.resortascending != sortColumn) { // changing to a new sort column, so reset
+                if (me.sortInfo.direction === "ASC") {
+                    if (p.resortascending !== undefined) {
+                        if (p.resortascending !== sortColumn) { // changing to a new sort column, so reset
                             p.resortascending = sortColumn;
                             if (p.start) {
                                 delete p.start;
@@ -168,8 +174,8 @@ Ext.define('Ext.nd.data.ViewStore', {
 
                     // else part of - sortDir == "ASC"
                 } else {
-                    if (typeof p.resortdescending != 'undefined') {
-                        if (p.resortdescending != sortColumn) { // changing to a new sort column so reset
+                    if (p.resortdescending !== undefined) {
+                        if (p.resortdescending !== sortColumn) { // changing to a new sort column so reset
                             p.resortdescending = sortColumn;
                             if (p.start) {
                                 delete p.start;
@@ -200,7 +206,7 @@ Ext.define('Ext.nd.data.ViewStore', {
      * Custom override that removes the last record if it is a special 'category total' record returned from
      * the Domino server AND the #removeCategoryTotal config is set to true.
      */
-    loadRecords : function( records, options) {
+    loadRecords : function (records, options) {
         var me = this,
             lastRecord,
             len;
@@ -208,7 +214,7 @@ Ext.define('Ext.nd.data.ViewStore', {
         if (me.removeCategoryTotal) {
             len = records.length;
             if (len > 0) {
-                lastRecord = records[len-1];
+                lastRecord = records[len - 1];
                 if (lastRecord.isCategoryTotal) {
                     records.pop(); // remove this last record
                 }
@@ -224,13 +230,13 @@ Ext.define('Ext.nd.data.ViewStore', {
      * @param {String} fieldName The name of the field to sort by.
      * @param {String} dir (optional) The sort order, "ASC" or "DESC" (defaults to "ASC")
      */
-    sortzz: function(fieldName, dir){
+    sortzz: function (fieldName, dir) {
         var f = this.fields.get(fieldName);
         if (!f) {
             return false;
         }
         if (!dir) {
-            if (this.sortInfo && this.sortInfo.field == f.name) { // toggle sort dir
+            if (this.sortInfo && this.sortInfo.field === f.name) { // toggle sort dir
                 dir = (this.sortToggle[f.name] || "ASC").toggle("ASC", "DESC");
             } else {
                 dir = f.sortDir;
@@ -254,18 +260,18 @@ Ext.define('Ext.nd.data.ViewStore', {
      * @param {String} start The 'start' position of the view to load.
      * @param {Object} [options] See options for {@link #method-load}.
      */
-    loadPage: function(start, options) {
+    loadPage: function (start, options) {
         var me = this;
 
         // for Domino, we have to make sure that 'start' is a string
-        start = '' + start;
+        start = start.toString();
         me.currentStart = start;
 
         // Copy options into a new object so as not to mutate passed in objects
         options = Ext.apply({
             params: {
                 start: start,
-                count: me.pageSize,
+                count: me.pageSize
             },
             addRecords: !me.clearOnPageLoad
         }, options);
@@ -306,17 +312,18 @@ Ext.define('Ext.nd.data.ViewStore', {
         var me              = this,
             firstRec        = me.first(),
             firstPosition   = firstRec.position,
-            indexFirst      = me.previousStartMC.indexOfKey(firstPosition);
+            indexFirst      = me.previousStartMC.indexOfKey(firstPosition),
+            start;
 
         if (indexFirst !== -1) {
             if (indexFirst === 0) {
                 start = 1;
             } else {
-                start = me.previousStartMC.get(indexFirst - 1).position
+                start = me.previousStartMC.get(indexFirst - 1).position;
             }
         }
 
         me.loadPage(start, options);
-    },
+    }
 
 });

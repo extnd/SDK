@@ -2,11 +2,14 @@
  * An expanded version of Ext's XmlReader to deal with Domino's unique ?ReadViewEntries format.
  *
  */
-Ext.define('Ext.nd.data.ViewXmlReader', {
+Ext.define('Extnd.data.ViewXmlReader', {
 
     extend  : 'Ext.data.reader.Xml',
     alias   : 'reader.xnd-viewxml',
 
+    alternateClassName: [
+        'Ext.nd.data.ViewXmlReader'
+    ],
 
     /**
      * Custom Domino version that combines the Ext.data.reader.Xml#extractData and the Ext.data.reader.Reader#extractData
@@ -18,7 +21,7 @@ Ext.define('Ext.nd.data.ViewXmlReader', {
      * @return {Array} An array of records containing the extracted data
      * @private
      */
-    extractData : function(root) {
+    extractData : function (root) {
         var me      = this,
             records = [],
             Model   = me.model,
@@ -90,7 +93,7 @@ Ext.define('Ext.nd.data.ViewXmlReader', {
 
         // add a columnIndentLevel property used by Ext.nd.grid.ViewColumn#defaultRenderer
         // TODO what is the difference between columnIndentLevel and indentLevel?
-        record.columnIndentLevel = record.position.split('.').length -1;
+        record.columnIndentLevel = record.position.split('.').length - 1;
         record.indentLevel = record.columnIndentLevel;
 
         record.childCount = me.getChildCount(raw);
@@ -230,20 +233,20 @@ Ext.define('Ext.nd.data.ViewXmlReader', {
      */
     getNodeValue: function (node, fieldName, record) {
         var me          = this,
-            parentNode  = node ? node.parentNode : undefined;
+            parentNode  = node ? node.parentNode : undefined,
+            returnVal;
 
         if (node) {
             if (node.nodeName === 'entrydata') {
-                return me.getEntryDataNodeValue(node, fieldName, record);
+                returnVal = me.getEntryDataNodeValue(node, fieldName, record);
             } else if (parentNode && parentNode.nodeName === 'entrydata') {
-                return me.getEntryDataNodeValue(parentNode, fieldName, record);
+                returnVal = me.getEntryDataNodeValue(parentNode, fieldName, record);
+            } else if (node.firstChild) {
+                returnVal = node.firstChild.nodeValue;
             }
         }
 
-        if (node && node.firstChild) {
-            return node.firstChild.nodeValue;
-        }
-        return undefined;
+        return returnVal;
     },
 
     /**
@@ -251,7 +254,7 @@ Ext.define('Ext.nd.data.ViewXmlReader', {
      * Custom version for Domino that passes the 'field' and 'record' to the #getNodeValue method
      * so that the entryData can be added
      */
-    createFieldAccessExpression: function(field, fieldVarName, dataName) {
+    createFieldAccessExpression: function (field, fieldVarName, dataName) {
         return 'me.getNodeValue(Ext.DomQuery.selectNode("' + field.mapping + '", ' + dataName + '), "' + field.name + '", record)';
     }
 

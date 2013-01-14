@@ -2,17 +2,21 @@
  * Gets the design of a Domino view by making two Ajax calls.  The first is to view?ReadDesign and the second
  * is to the custom DXLExporter agent.  After these calls are made, column and field defs are created.
  */
-Ext.define('Ext.nd.data.ViewDesign', {
+Ext.define('Extnd.data.ViewDesign', {
 
     mixins: {
         observable: 'Ext.util.Observable'
     },
 
     requires: [
-        'Ext.nd.data.ViewStore',
-        'Ext.nd.data.ViewModel',
-        'Ext.nd.data.ViewXmlReader',
-        'Ext.nd.grid.ViewColumn'
+        'Extnd.data.ViewStore',
+        'Extnd.data.ViewModel',
+        'Extnd.data.ViewXmlReader',
+        'Extnd.grid.ViewColumn'
+    ],
+
+    alternateClassName: [
+        'Ext.nd.data.ViewDesign'
     ],
 
     constructor: function (config) {
@@ -35,7 +39,7 @@ Ext.define('Ext.nd.data.ViewDesign', {
         me.isCategorized = false;
         me.callback = Ext.emptyFn;
 
-        Ext.apply(me,config);
+        Ext.apply(me, config);
 
         // make sure we have a viewUrl
         if (!me.viewUrl) {
@@ -61,7 +65,7 @@ Ext.define('Ext.nd.data.ViewDesign', {
         });
     },
 
-    getViewDesignStep2: function(res, req){
+    getViewDesignStep2: function (res, req) {
         var me          = this,
             dxml        = res.responseXML,
             q           = Ext.DomQuery,
@@ -72,7 +76,7 @@ Ext.define('Ext.nd.data.ViewDesign', {
         // has taken care of evaluating the hidewhens for us
         me.visibleCols = new Ext.util.MixedCollection();
 
-        Ext.each(arColumns, function(item, index, allItems){
+        Ext.each(arColumns, function (item, index, allItems) {
             var colName = Ext.DomQuery.selectValue('@name', item);
             // we can only check columns that have a name defined
             if (colName !== undefined) {
@@ -92,11 +96,11 @@ Ext.define('Ext.nd.data.ViewDesign', {
             failure         : me.getViewDesignFailure,
             scope           : me,
             //url: me.viewUrl + '?ReadDesign'
-            url             : Ext.nd.extndUrl + 'DXLExporter?OpenAgent&db=' + me.dbPath + '&type=' + me.noteType + '&name=' + me.viewName
+            url             : Extnd.extndUrl + 'DXLExporter?OpenAgent&db=' + me.dbPath + '&type=' + me.noteType + '&name=' + me.viewName
         });
     },
 
-    getViewDesignSuccess: function(res, req){
+    getViewDesignSuccess: function (res, req) {
         var me              = this,
             dxml            = res.responseXML,
             q               = Ext.DomQuery,
@@ -210,7 +214,7 @@ Ext.define('Ext.nd.data.ViewDesign', {
             }
 
             // number formatting
-            tmpNumberFormat= q.select('numberformat', col)[0];
+            tmpNumberFormat = q.select('numberformat', col)[0];
             if (tmpNumberFormat) {
                 type = 'float';
 
@@ -270,23 +274,23 @@ Ext.define('Ext.nd.data.ViewDesign', {
                 me.autoExpandColumn = false;
             } else {
                 if (me.extendLastColumn === true) {
-                    me.autoExpandColumn = colCount-1;
+                    me.autoExpandColumn = colCount - 1;
                 } else {
-                    me.extendLastColumn = !!q.selectValue(root+'/@extendlastcolumn', dxml, false);
-                    me.autoExpandColumn = (me.extendLastColumn) ? colCount-1 : false;
-               }
+                    me.extendLastColumn = !!q.selectValue(root + '/@extendlastcolumn', dxml, false);
+                    me.autoExpandColumn = (me.extendLastColumn) ? colCount - 1 : false;
+                }
             }
         }
 
         // on web access property to allow docs to be selected with a checkbox
         // TODO we aren't using this anywhere but probably should
-        me.allowDocSelection = !!q.selectValue(root+'/@allowdocselection', dxml, false);
+        me.allowDocSelection = !!q.selectValue(root + '/@allowdocselection', dxml, false);
 
         // TODO: need to get the value of useapplet since if true, it causes opening docs from a view not to work
         // and therefore a dummy viewname is needed instead
 
         // viewtype will either be 'view' or 'calendar'
-        viewtype = q.selectValue(root+'/@type', dxml, 'view');
+        viewtype = q.selectValue(root + '/@type', dxml, 'view');
         // now set isCalendar if not already set from the passed in config
         me.isCalendar = me.isCalendar || (viewtype === 'calendar' ? true : false);
 
@@ -315,15 +319,15 @@ Ext.define('Ext.nd.data.ViewDesign', {
         }
     },
 
-    setStore : function() {
+    setStore: function () {
         var me = this,
-            viewModel = Ext.define("Ext.nd.data.ViewModel-" + Ext.id(), {
-                extend: 'Ext.nd.data.ViewModel',
+            viewModel = Ext.define("Extnd.data.ViewModel-" + Ext.id(), {
+                extend: 'Extnd.data.ViewModel',
                 fields: me.dominoView.fields
             });
 
         // create the Data Store
-        me.store = new Ext.nd.data[(me.isCategorized && me.multiExpand) ? 'CategorizedStore' : 'ViewStore'](Ext.apply({
+        me.store = new Extnd.data[(me.isCategorized && me.multiExpand) ? 'CategorizedStore' : 'ViewStore'](Ext.apply({
             model               : viewModel,
             dbPath              : me.dbPath,
             viewName            : me.viewName,
@@ -336,7 +340,7 @@ Ext.define('Ext.nd.data.ViewDesign', {
     },
 
     // private
-    getViewDesignFailure: function(res, req){
+    getViewDesignFailure: function (res, req) {
         this.fireEvent('getdesignfailure', this, res, req);
     }
 

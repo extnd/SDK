@@ -2,15 +2,18 @@
  * A specialized version of {@link Ext.data.TreeStore} to deal with oddities from
  * reading a Domino Outline via ?ReadEntries.  Use for widgets such as the {@link Ext.nd.UIOutline}.
  */
-Ext.define('Ext.nd.data.OutlineStore', {
+Ext.define('Extnd.data.OutlineStore', {
 
     extend  : 'Ext.data.TreeStore',
-    model   : 'Ext.nd.data.OutlineModel',
+    model   : 'Extnd.data.OutlineModel',
 
     requires: [
-        'Ext.nd.data.OutlineXmlReader'
+        'Extnd.data.OutlineXmlReader'
     ],
 
+    alternateClassName: [
+        'Ext.nd.data.OutlineStore'
+    ],
 
     /**
      * Creates a new OutlineStore

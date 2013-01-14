@@ -1,10 +1,14 @@
 /**
- * @class Ext.nd
+ * @class Extnd
  * @singleton
  */
- Ext.define('Ext.nd', {
+Ext.define('Extnd', {
 
     singleton: true,
+
+    alternateClassName: [
+        'Ext.nd'
+    ],
 
     /**
      * The version of the Extnd framework

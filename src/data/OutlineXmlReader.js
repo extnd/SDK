@@ -4,13 +4,17 @@
  * we have to convert this flat data into hierarchical data ourselves.
  *
  */
-Ext.define('Ext.nd.data.OutlineXmlReader', {
+Ext.define('Extnd.data.OutlineXmlReader', {
 
     extend  : 'Ext.data.reader.Xml',
     alias   : 'reader.xnd-outlinexml',
 
     requires: [
-        'Ext.nd.data.overrides.XmlReader'
+        'Extnd.data.overrides.XmlReader'
+    ],
+
+    alternateClassName: [
+        'Ext.nd.data.OutlineXmlReader'
     ],
 
     readRecords: function (doc) {

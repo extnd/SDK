@@ -2,7 +2,7 @@
  * Some patches Ext.data.reader.Xml
  *
  */
-Ext.define('Ext.nd.data.overrides.XmlReader', {
+Ext.define('Extnd.data.overrides.XmlReader', {
 
     override: 'Ext.data.reader.Xml',
 
@@ -20,7 +20,7 @@ Ext.define('Ext.nd.data.overrides.XmlReader', {
         }
         //</debug>
 
-        if (recordName != root.nodeName) {
+        if (recordName !== root.nodeName) {
             // BEGIN OVERRIDE
             //root = Ext.DomQuery.select(recordName, root);
             root = Ext.DomQuery.select('> ' + recordName, root);
@@ -40,9 +40,10 @@ Ext.define('Ext.nd.data.overrides.XmlReader', {
      * The fix is a simple one in that we just add '> ' before the recordName and this ensures we only get
      * direct children that match recordName instead of ALL descendants.
      */
-    createFieldAccessExpression: function(field, fieldVarName, dataName) {
+    createFieldAccessExpression: function (field, fieldVarName, dataName) {
         var namespace = this.namespace,
-            selector, result;
+            selector,
+            result;
 
         selector = field.mapping || ((namespace ? namespace + '|' : '') + field.name);
 

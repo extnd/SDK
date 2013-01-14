@@ -1,12 +1,15 @@
 /**
- * ﻿Represents a view entry. A view entry represents a row in a view.
+ * Represents a view entry. A view entry represents a row in a view.
  * The #fields property is created dynamically from Ext.nd.data.ViewDesign.
  * The LotusScript and Java equivalents in Domino are NotesViewEntry and ViewEntry.
  */
-Ext.define('Ext.nd.data.ViewModel', {
+Ext.define('Extnd.data.ViewModel', {
 
     extend: 'Ext.data.Model',
+
     alternateClassName: [
+        'Extnd.data.ViewEntry',
+        'Ext.nd.data.ViewModel',
         'Ext.nd.data.ViewEntry'
     ],
 
@@ -17,12 +20,13 @@ Ext.define('Ext.nd.data.ViewModel', {
 
     /**
      * @property {String} position
-     * ﻿Returns the position of the entry in the view hierarchy; for example, "2.3" for the third document of the second category.
+     *
+     * Returns the position of the entry in the view hierarchy; for example, "2.3" for the third document of the second category
      * Note that Reader fields can cause 'viewentry' nodes to be missing for users not authorized.
      */
 
     /**
-     * @property {String} universalId ﻿The universal ID of a document, associated with a view entry. The ID is a 32-character combination of hexadecimal digits (0-9, A-F) that uniquely identifies a document across all replicas of a database.
+     * @property {String} universalId Tuniversal ID of a document, associated with a view entry. The ID is a 32-character combination of hexadecimal digits (0-9, A-F) that uniquely identifies a document across all replicas of a database.
      */
 
     /**
@@ -35,20 +39,21 @@ Ext.define('Ext.nd.data.ViewModel', {
      */
 
     /**
-     * @property {Number} childCount ﻿The number of immediate children belonging to the current view entry.
+     *
+     * @property {Number} childCount The number of immediate children belonging to the current view entry.
      */
 
     /**
-     * @property {Number} descendantCount ﻿The number of descendants belonging to the current view entry.
+     * @property {Number} descendantCount The number of descendants belonging to the current view entry.
      */
 
     /**
-     * @property {Number} siblingCount ﻿The number of siblings belonging to the current view entry.
+     * @property {Number} siblingCount The number of siblings belonging to the current view entry.
      */
 
     /**
-     * @property {Number} indentLevel ﻿The indent level of a view entry.
-     * ﻿The return value for the indentLevel property always matches the levels in the position string. For example:
+     * @property {Number} indentLevel The indent level of a view entry.
+     * The return value for the indentLevel property always matches the levels in the position string. For example:
      *
      * - if position string is '1', indentLevel = 0
      * - if position string is '1.1', indentLevel = 1
@@ -56,7 +61,7 @@ Ext.define('Ext.nd.data.ViewModel', {
      */
 
     /**
-     * @property {Boolean} isCategory ﻿Indicates whether a view entry is a category.
+     * @property {Boolean} isCategory Indicates whether a view entry is a category.
      */
 
     /**
@@ -79,7 +84,7 @@ Ext.define('Ext.nd.data.ViewModel', {
 
 
     /**
-     * ﻿Returns the position of the entry in the view hierarchy using the separator param passed to separator each level.
+     * Returns the position of the entry in the view hierarchy using the separator param passed to separator each level.
      * @param {String} separator The string to use to separator each level in the hierarchy.
      * @return {String} The formatted string
      */

@@ -2,7 +2,7 @@
  * Customized tree to work with Domino Outlines.
  * The minimum config needed is the outlineUrl or the dbPath and outlineName.
  */
-Ext.define('Ext.nd.tree.Panel', {
+Ext.define('Extnd.tree.Panel', {
 
     extend: 'Ext.tree.Panel',
 
@@ -14,11 +14,13 @@ Ext.define('Ext.nd.tree.Panel', {
 
     alternateClassName: [
         'Ext.nd.UIOutline',
+        'Extnd.UIOutline',
+        'Ext.nd.tree.Panel',
         'Ext.nd.TreePanel'
     ],
 
     requires: [
-        'Ext.nd.data.OutlineStore'
+        'Extnd.data.OutlineStore'
     ],
 
     rootVisible : false,
@@ -34,7 +36,7 @@ Ext.define('Ext.nd.tree.Panel', {
 
         } else if (!store || (Ext.isObject(store) && !store.isStore)) {
 
-            store = me.store = Ext.create('Ext.nd.data.OutlineStore', Ext.apply({
+            store = me.store = Ext.create('Extnd.data.OutlineStore', Ext.apply({
                 outlineUrl  : me.outlineUrl,
                 dbPath      : me.dbPath,
                 outlineName : me.outlineName,

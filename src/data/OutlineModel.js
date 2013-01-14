@@ -2,11 +2,12 @@
  * Represents an entry in an Ext.nd.UIOutline.
  * The LotusScript and Java equivalents in Domino are NotesOutlineEntry and OutlineEntry.
  */
-Ext.define('Ext.nd.data.OutlineModel', {
+Ext.define('Extnd.data.OutlineModel', {
 
     extend: 'Ext.data.Model',
 
     alternateClassName: [
+        'Ext.nd.data.OutlineModel',
         'Ext.nd.data.OutlineEntry'
     ],
 

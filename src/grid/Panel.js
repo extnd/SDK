@@ -4,7 +4,7 @@
  * The minimum config needed is the viewUrl or the dbPath and viewName.  Based on this information, a call to ?ReadDesign
  * is made and a Model is then dynamically created for you based on the design of the Domino View.
  */
-Ext.define('Ext.nd.grid.Panel', {
+Ext.define('Extnd.grid.Panel', {
 
     extend: 'Ext.grid.Panel',
 
@@ -15,13 +15,14 @@ Ext.define('Ext.nd.grid.Panel', {
     ],
 
     alternateClassName: [
+        'Extnd.UIView',
         'Ext.nd.UIView',
         'Ext.nd.GridPanel'
     ],
 
     requires: [
-        'Ext.nd.data.ViewDesign',
-        'Ext.nd.toolbar.Paging'
+        'Extnd.data.ViewDesign',
+        'Extnd.toolbar.Paging'
     ],
 
     viewType                : 'gridview',
@@ -71,7 +72,8 @@ Ext.define('Ext.nd.grid.Panel', {
     viewConfig: {},
 
     isCategorized   : false,
-    needsColumns    : false,
+    needsColumns    : true,
+    needsFields     : true,
 
     // TODO ExtJS4 uses selModel that can be a config or a selection model instance
     selModelConfig: {
@@ -86,17 +88,14 @@ Ext.define('Ext.nd.grid.Panel', {
 
 
     initComponent: function () {
-        var me = this,
-            store;
-
-        store = me.store || me.createStore();
-        me.needsColumns = me.columns ? false : true;
+        var me = this;
 
         // applyIf so that these can all be overridden if passed into the config
         Ext.applyIf(me, {
-            collapseIcon        : Ext.nd.extndUrl + 'resources/images/minus.gif',
-            expandIcon          : Ext.nd.extndUrl + 'resources/images/plus.gif',
-            dateTimeFormats     : Ext.nd.dateTimeFormats,
+            store               : me.createStore(),
+            collapseIcon        : Extnd.extndUrl + 'resources/images/minus.gif',
+            expandIcon          : Extnd.extndUrl + 'resources/images/plus.gif',
+            dateTimeFormats     : Extnd.dateTimeFormats,
             formatCurrencyFnc   : Ext.util.Format.usMoney,
             columns             : me.getInitialColumns(),
             bbar                : me.getBottomBarCfg()
@@ -107,30 +106,42 @@ Ext.define('Ext.nd.grid.Panel', {
 
 
     getInitialColumns: function () {
-        return [
-            {
-                dataIndex   : 'dummy',
-                header      : '&nbsp;',
-                flex        : 1
-            }
-        ];
+        var me = this,
+            returnVal;
+
+        if (me.columns) {
+            me.needsColumns = false;
+        } else {
+            returnVal = [
+                {
+                    dataIndex   : 'dummy',
+                    header      : '&nbsp;',
+                    flex        : 1
+                }
+            ];
+        }
+
+        return returnVal;
+
     },
 
     createStore: function () {
-        var me = this;
+        var me = this,
+            store;
 
         // only create a dummy store if one was not provided
         // in the callback from fetching the design info, we'll create a new store and do a reconfigure
         if (!me.store) {
 
+            me.needsFields = true;
             me.dmyId = 'xnd-dummy-store-' + Ext.id();
+
             store = Ext.create('Ext.data.Store', {
                 id: me.dmyId,
                 fields: ['dummy']
             });
         }
 
-        me.store = store;
         return store;
 
     },
@@ -146,7 +157,7 @@ Ext.define('Ext.nd.grid.Panel', {
 
         } else {
             if (me.showPagingToolbar) {
-                me.updatePagingToolbar()
+                me.updatePagingToolbar();
             }
 
             me.store.load({
@@ -259,7 +270,7 @@ Ext.define('Ext.nd.grid.Panel', {
         if (me.isCategorized && me.multiExpand) {
             //me.selModel = new Ext.nd.CategorizedRowSelectionModel();
             //console.log(['categorized', me]);
-            me.view = new Ext.nd.CategorizedView({});
+            me.view = new Extnd.CategorizedView({});
             me.enableColumnMove = false;
             me.view.init(me);
             me.view.render();
@@ -298,7 +309,7 @@ Ext.define('Ext.nd.grid.Panel', {
         }
 
         if (me.showPagingToolbar) {
-            me.updatePagingToolbar()
+            me.updatePagingToolbar();
         }
 
         // update me.documents property when a row is selected/deselected
