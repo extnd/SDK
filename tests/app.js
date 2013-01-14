@@ -2,8 +2,8 @@ Ext.Loader.setConfig({
     enabled         : true,
     disableCaching  : false,
     paths: {
-        'Ext': '../extjs-4.1.3/src',
         'Ext.nd': '../src'
+        'Ext'   : '../extjs/src',
     }
 });
 
