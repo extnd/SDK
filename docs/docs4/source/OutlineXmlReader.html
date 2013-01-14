@@ -15,22 +15,26 @@
   </script>
 </head>
 <body onload="prettyPrint(); highlight();">
-  <pre class="prettyprint lang-js"><span id='Ext-nd-data-OutlineXmlReader'>/**
+  <pre class="prettyprint lang-js"><span id='Extnd-data-OutlineXmlReader'>/**
 </span> * An expanded version of Ext's XmlReader to deal with Domino's unique outline?ReadEntries format.
  * Since Domino sends the hierarchical data down flat and uses a position attribute to note the hierarchy level,
  * we have to convert this flat data into hierarchical data ourselves.
  *
  */
-Ext.define('Ext.nd.data.OutlineXmlReader', {
+Ext.define('Extnd.data.OutlineXmlReader', {
 
     extend  : 'Ext.data.reader.Xml',
     alias   : 'reader.xnd-outlinexml',
 
     requires: [
-        'Ext.nd.data.overrides.XmlReader'
+        'Extnd.data.overrides.XmlReader'
     ],
 
-<span id='Ext-nd-data-OutlineXmlReader-method-readRecords'>    readRecords: function (doc) {
+    alternateClassName: [
+        'Ext.nd.data.OutlineXmlReader'
+    ],
+
+<span id='Extnd-data-OutlineXmlReader-method-readRecords'>    readRecords: function (doc) {
 </span>        var me              = this,
             q               = Ext.DomQuery,
             cache           = [],

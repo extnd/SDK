@@ -15,13 +15,13 @@
   </script>
 </head>
 <body onload="prettyPrint(); highlight();">
-  <pre class="prettyprint lang-js"><span id='Ext-nd-grid-Panel'>/**
+  <pre class="prettyprint lang-js"><span id='Extnd-grid-Panel'>/**
 </span> * Customized grid to work with Domino views.  All of the work to define the columns and the underlying store, model, proxy, etc.
  * is handled for you.
  * The minimum config needed is the viewUrl or the dbPath and viewName.  Based on this information, a call to ?ReadDesign
  * is made and a Model is then dynamically created for you based on the design of the Domino View.
  */
-Ext.define('Ext.nd.grid.Panel', {
+Ext.define('Extnd.grid.Panel', {
 
     extend: 'Ext.grid.Panel',
 
@@ -32,83 +32,89 @@ Ext.define('Ext.nd.grid.Panel', {
     ],
 
     alternateClassName: [
+        'Extnd.UIView',
         'Ext.nd.UIView',
         'Ext.nd.GridPanel'
     ],
 
     requires: [
-        'Ext.nd.data.ViewDesign',
-        'Ext.nd.toolbar.Paging'
+        'Extnd.data.ViewDesign',
+        'Extnd.toolbar.Paging'
     ],
 
-<span id='Ext-nd-grid-Panel-cfg-viewType'>    viewType                : 'gridview',
-</span><span id='Ext-nd-grid-Panel-property-renderers'>    renderers               : [],
-</span><span id='Ext-nd-grid-Panel-property-quickSearchKeyStrokes'>    quickSearchKeyStrokes   : [],
-</span><span id='Ext-nd-grid-Panel-property-targetDefaults'>    targetDefaults          : {},
-</span><span id='Ext-nd-grid-Panel-property-tbarPlugins'>    tbarPlugins             : [],
-</span><span id='Ext-nd-grid-Panel-property-bbarPlugins'>    bbarPlugins             : [],
-</span><span id='Ext-nd-grid-Panel-property-colsFromDesign'>    colsFromDesign          : [],
-</span><span id='Ext-nd-grid-Panel-property-extraParams'>    extraParams             : {},
+<span id='Extnd-grid-Panel-cfg-viewType'>    viewType                : 'gridview',
+</span><span id='Extnd-grid-Panel-property-renderers'>    renderers               : [],
+</span><span id='Extnd-grid-Panel-property-quickSearchKeyStrokes'>    quickSearchKeyStrokes   : [],
+</span><span id='Extnd-grid-Panel-property-targetDefaults'>    targetDefaults          : {},
+</span><span id='Extnd-grid-Panel-property-tbarPlugins'>    tbarPlugins             : [],
+</span><span id='Extnd-grid-Panel-property-bbarPlugins'>    bbarPlugins             : [],
+</span><span id='Extnd-grid-Panel-property-colsFromDesign'>    colsFromDesign          : [],
+</span><span id='Extnd-grid-Panel-property-extraParams'>    extraParams             : {},
 </span>
 
-<span id='Ext-nd-grid-Panel-property-showActionbar'>    showActionbar                   : true,
-</span><span id='Ext-nd-grid-Panel-property-showPagingToolbar'>    showPagingToolbar               : true,
-</span><span id='Ext-nd-grid-Panel-property-showSearch'>    showSearch                      : true,
-</span><span id='Ext-nd-grid-Panel-property-showSearchPosition'>    showSearchPosition              : 'bottom',
-</span><span id='Ext-nd-grid-Panel-property-showCategoryComboBox'>    showCategoryComboBox            : false,
-</span><span id='Ext-nd-grid-Panel-property-showCategoryComboBoxPosition'>    showCategoryComboBoxPosition    : 'top',
-</span><span id='Ext-nd-grid-Panel-property-buildActionBarFromDXL'>    buildActionBarFromDXL           : true,
-</span><span id='Ext-nd-grid-Panel-property-editMode'>    editMode                        : true,
-</span><span id='Ext-nd-grid-Panel-property-multiExpand'>    multiExpand                     : false,
-</span><span id='Ext-nd-grid-Panel-property-multiExpandCount'>    multiExpandCount                : 40,
-</span><span id='Ext-nd-grid-Panel-property-notCategorizedText'>    notCategorizedText              : '(Not Categorized)',
-</span><span id='Ext-nd-grid-Panel-property-loadInitialData'>    loadInitialData                 : true,
-</span><span id='Ext-nd-grid-Panel-cfg-layout'>    layout                          : 'fit',
+<span id='Extnd-grid-Panel-property-showActionbar'>    showActionbar                   : true,
+</span><span id='Extnd-grid-Panel-property-showPagingToolbar'>    showPagingToolbar               : true,
+</span><span id='Extnd-grid-Panel-property-showSearch'>    showSearch                      : true,
+</span><span id='Extnd-grid-Panel-property-showSearchPosition'>    showSearchPosition              : 'bottom',
+</span><span id='Extnd-grid-Panel-property-showCategoryComboBox'>    showCategoryComboBox            : false,
+</span><span id='Extnd-grid-Panel-property-showCategoryComboBoxPosition'>    showCategoryComboBoxPosition    : 'top',
+</span><span id='Extnd-grid-Panel-property-buildActionBarFromDXL'>    buildActionBarFromDXL           : true,
+</span><span id='Extnd-grid-Panel-property-editMode'>    editMode                        : true,
+</span><span id='Extnd-grid-Panel-property-multiExpand'>    multiExpand                     : false,
+</span><span id='Extnd-grid-Panel-property-multiExpandCount'>    multiExpandCount                : 40,
+</span><span id='Extnd-grid-Panel-property-notCategorizedText'>    notCategorizedText              : '(Not Categorized)',
+</span><span id='Extnd-grid-Panel-property-loadInitialData'>    loadInitialData                 : true,
+</span><span id='Extnd-grid-Panel-cfg-layout'>    layout                          : 'fit',
 </span>
-<span id='Ext-nd-grid-Panel-property-documentWindowTitle'>    documentWindowTitle             : '',
-</span><span id='Ext-nd-grid-Panel-property-documentLoadingWindowTitle'>    documentLoadingWindowTitle      : 'Opening...',
-</span><span id='Ext-nd-grid-Panel-property-documentUntitledWindowTitle'>    documentUntitledWindowTitle     : '(Untitled)',
-</span><span id='Ext-nd-grid-Panel-property-documentWindowTitleMaxLength'>    documentWindowTitleMaxLength    : 16,
-</span><span id='Ext-nd-grid-Panel-property-useDocumentWindowTitle'>    useDocumentWindowTitle          : true,
+<span id='Extnd-grid-Panel-property-documentWindowTitle'>    documentWindowTitle             : '',
+</span><span id='Extnd-grid-Panel-property-documentLoadingWindowTitle'>    documentLoadingWindowTitle      : 'Opening...',
+</span><span id='Extnd-grid-Panel-property-documentUntitledWindowTitle'>    documentUntitledWindowTitle     : '(Untitled)',
+</span><span id='Extnd-grid-Panel-property-documentWindowTitleMaxLength'>    documentWindowTitleMaxLength    : 16,
+</span><span id='Extnd-grid-Panel-property-useDocumentWindowTitle'>    useDocumentWindowTitle          : true,
 </span>
-<span id='Ext-nd-grid-Panel-property-extendLastColumn'>    extendLastColumn                : undefined,
-</span><span id='Ext-nd-grid-Panel-property-enableDragDrop'>    enableDragDrop                  : true,
-</span><span id='Ext-nd-grid-Panel-property-ddGroup'>    ddGroup                         : 'TreeDD',
-</span><span id='Ext-nd-grid-Panel-property-loadMask'>    loadMask                        : true,
+<span id='Extnd-grid-Panel-property-extendLastColumn'>    extendLastColumn                : undefined,
+</span><span id='Extnd-grid-Panel-property-enableDragDrop'>    enableDragDrop                  : true,
+</span><span id='Extnd-grid-Panel-property-ddGroup'>    ddGroup                         : 'TreeDD',
+</span><span id='Extnd-grid-Panel-property-loadMask'>    loadMask                        : true,
 </span>
 
-<span id='Ext-nd-grid-Panel-property-noteType'>    // private
+<span id='Extnd-grid-Panel-property-noteType'>    // private
 </span>    noteType                        : 'view',
 
-<span id='Ext-nd-grid-Panel-property-count'>    count: 40,
-</span><span id='Ext-nd-grid-Panel-property-storeConfig'>    storeConfig: {
+<span id='Extnd-grid-Panel-property-count'>    count: 40,
+</span><span id='Extnd-grid-Panel-property-storeConfig'>    storeConfig: {
 </span>        pageSize: 40
     },
 
-<span id='Ext-nd-grid-Panel-cfg-viewConfig'>    viewConfig: {},
+<span id='Extnd-grid-Panel-cfg-viewConfig'>    viewConfig: {},
 </span>
-
-<span id='Ext-nd-grid-Panel-property-selModelConfig'>    // TODO ExtJS4 uses selModel that can be a config or a selection model instance
+<span id='Extnd-grid-Panel-property-isCategorized'>    isCategorized   : false,
+</span><span id='Extnd-grid-Panel-property-needsColumns'>    needsColumns    : true,
+</span><span id='Extnd-grid-Panel-property-needsFields'>    needsFields     : true,
+</span>
+<span id='Extnd-grid-Panel-property-selModelConfig'>    // TODO ExtJS4 uses selModel that can be a config or a selection model instance
 </span>    selModelConfig: {
         singleSelect : false,
         checkOnly : true
     },
 
-<span id='Ext-nd-grid-Panel-property-quickSearchConfig'>    quickSearchConfig: {
+<span id='Extnd-grid-Panel-property-quickSearchConfig'>    quickSearchConfig: {
 </span>        width: 200
     },
 
-<span id='Ext-nd-grid-Panel-method-initComponent'>    initComponent: function () {
+
+
+<span id='Extnd-grid-Panel-method-initComponent'>    initComponent: function () {
 </span>        var me = this;
 
         // applyIf so that these can all be overridden if passed into the config
         Ext.applyIf(me, {
-            collapseIcon        : Ext.nd.extndUrl + 'resources/images/minus.gif',
-            expandIcon          : Ext.nd.extndUrl + 'resources/images/plus.gif',
-            dateTimeFormats     : Ext.nd.dateTimeFormats,
+            store               : me.createStore(),
+            collapseIcon        : Extnd.extndUrl + 'resources/images/minus.gif',
+            expandIcon          : Extnd.extndUrl + 'resources/images/plus.gif',
+            dateTimeFormats     : Extnd.dateTimeFormats,
             formatCurrencyFnc   : Ext.util.Format.usMoney,
             columns             : me.getInitialColumns(),
-            store               : me.getInitialStore(),
             bbar                : me.getBottomBarCfg()
         });
 
@@ -116,34 +122,75 @@ Ext.define('Ext.nd.grid.Panel', {
     },
 
 
-<span id='Ext-nd-grid-Panel-method-getInitialColumns'>    getInitialColumns: function () {
-</span>        return [
-            {
-                dataIndex   : 'dummy',
-                header      : '&amp;nbsp;',
-                flex        : 1
-            }
-        ];
+<span id='Extnd-grid-Panel-method-getInitialColumns'>    getInitialColumns: function () {
+</span>        var me = this,
+            returnVal;
+
+        if (me.columns) {
+            me.needsColumns = false;
+        } else {
+            returnVal = [
+                {
+                    dataIndex   : 'dummy',
+                    header      : '&amp;nbsp;',
+                    flex        : 1
+                }
+            ];
+        }
+
+        return returnVal;
+
     },
 
-<span id='Ext-nd-grid-Panel-method-getInitialStore'>    getInitialStore: function () {
+<span id='Extnd-grid-Panel-method-createStore'>    createStore: function () {
+</span>        var me = this,
+            store;
+
+        // only create a dummy store if one was not provided
+        // in the callback from fetching the design info, we'll create a new store and do a reconfigure
+        if (!me.store) {
+
+            me.needsFields = true;
+            me.dmyId = 'xnd-dummy-store-' + Ext.id();
+
+            store = Ext.create('Ext.data.Store', {
+                id: me.dmyId,
+                fields: ['dummy']
+            });
+        }
+
+        return store;
+
+    },
+
+
+<span id='Extnd-grid-Panel-method-onRender'>    onRender: function () {
 </span>        var me = this;
 
-        me.dmyId = 'xnd-dummy-store-' + Ext.id();
+        me.callParent(arguments);
 
-        return Ext.create('Ext.data.Store', {
-            id: me.dmyId,
-            fields: ['dummy']
-        });
+        if (me.needsColumns) {
+            me.getViewDesign();
+
+        } else {
+            if (me.showPagingToolbar) {
+                me.updatePagingToolbar();
+            }
+
+            me.store.load({
+                params: {
+                    count: me.count,
+                    start: 1
+                }
+            });
+
+            me.fireEvent('open', me);
+        }
+
     },
 
 
-<span id='Ext-nd-grid-Panel-method-onRender'>    onRender: function () {
-</span>        this.callParent(arguments);
-        this.getViewDesign();
-    },
-
-<span id='Ext-nd-grid-Panel-method-getViewDesign'>    getViewDesign: function () {
+<span id='Extnd-grid-Panel-method-getViewDesign'>    getViewDesign: function () {
 </span>        var me = this;
 
         me.viewDesign = Ext.create('Ext.nd.data.ViewDesign', {
@@ -160,7 +207,7 @@ Ext.define('Ext.nd.grid.Panel', {
 
     },
 
-<span id='Ext-nd-grid-Panel-method-getViewDesignCB'>    // private
+<span id='Extnd-grid-Panel-method-getViewDesignCB'>    // private
 </span>    getViewDesignCB: function (o) {
         var me = this,
             pg,
@@ -240,7 +287,7 @@ Ext.define('Ext.nd.grid.Panel', {
         if (me.isCategorized &amp;&amp; me.multiExpand) {
             //me.selModel = new Ext.nd.CategorizedRowSelectionModel();
             //console.log(['categorized', me]);
-            me.view = new Ext.nd.CategorizedView({});
+            me.view = new Extnd.CategorizedView({});
             me.enableColumnMove = false;
             me.view.init(me);
             me.view.render();
@@ -279,15 +326,7 @@ Ext.define('Ext.nd.grid.Panel', {
         }
 
         if (me.showPagingToolbar) {
-            pg = me.down('xnd-pagingtoolbar');
-            // now that we know if the view is categorized or not we need to let
-            // the paging toolbar know
-            if (pg) {
-                pg.isCategorized = me.isCategorized;
-                pg.bindStore(null);
-                pg.bindStore(me.store);
-                pg.updateInfo();
-            }
+            me.updatePagingToolbar();
         }
 
         // update me.documents property when a row is selected/deselected
@@ -304,8 +343,21 @@ Ext.define('Ext.nd.grid.Panel', {
         me.fireEvent('open', me);
     },
 
+<span id='Extnd-grid-Panel-method-updatePagingToolbar'>    updatePagingToolbar: function () {
+</span>        var me = this,
+            pg = me.down('xnd-pagingtoolbar');
 
-<span id='Ext-nd-grid-Panel-method-gridHandleCellClick'>    /**
+        // now that we know if the view is categorized or not we need to let
+        // the paging toolbar know
+        if (pg) {
+            pg.isCategorized = me.isCategorized;
+            pg.bindStore(null);
+            pg.bindStore(me.store);
+            pg.updateInfo();
+        }
+    },
+
+<span id='Extnd-grid-Panel-method-gridHandleCellClick'>    /**
 </span>     * Custom #cellclick handler to handle expand/collapse of categories and responses
      */
     gridHandleCellClick: function (grid, td, colIndex, record, tr, rowIndex, e) {
@@ -378,7 +430,7 @@ Ext.define('Ext.nd.grid.Panel', {
         }
     },
 
-<span id='Ext-nd-grid-Panel-method-getBottomBarCfg'>    getBottomBarCfg: function () {
+<span id='Extnd-grid-Panel-method-getBottomBarCfg'>    getBottomBarCfg: function () {
 </span>        var me = this;
 
         if (me.showPagingToolbar) {

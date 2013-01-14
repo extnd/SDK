@@ -15,20 +15,21 @@
   </script>
 </head>
 <body onload="prettyPrint(); highlight();">
-  <pre class="prettyprint lang-js"><span id='Ext-nd-data-OutlineModel'>/**
+  <pre class="prettyprint lang-js"><span id='Extnd-data-OutlineModel'>/**
 </span> * Represents an entry in an Ext.nd.UIOutline.
  * The LotusScript and Java equivalents in Domino are NotesOutlineEntry and OutlineEntry.
  */
-Ext.define('Ext.nd.data.OutlineModel', {
+Ext.define('Extnd.data.OutlineModel', {
 
     extend: 'Ext.data.Model',
 
     alternateClassName: [
+        'Ext.nd.data.OutlineModel',
         'Ext.nd.data.OutlineEntry'
     ],
 
-<span id='Ext-nd-data-OutlineModel-property-fields'>    fields: [
-</span><span id='Ext-nd-data-OutlineModel-property-id'>        /**
+<span id='Extnd-data-OutlineModel-property-fields'>    fields: [
+</span><span id='Extnd-data-OutlineModel-property-id'>        /**
 </span>         * @property {String} id
          */
         {
@@ -36,7 +37,7 @@ Ext.define('Ext.nd.data.OutlineModel', {
             mapping : '@position'
         },
 
-<span id='Ext-nd-data-OutlineModel-property-text'>        /**
+<span id='Extnd-data-OutlineModel-property-text'>        /**
 </span>         * @property {String} text
          */
         {
@@ -44,7 +45,7 @@ Ext.define('Ext.nd.data.OutlineModel', {
             mapping : '@title'
         },
 
-<span id='Ext-nd-data-OutlineModel-property-leaf'>        /**
+<span id='Extnd-data-OutlineModel-property-leaf'>        /**
 </span>         * @property {Boolean} leaf
          */
         {
@@ -79,13 +80,13 @@ Ext.define('Ext.nd.data.OutlineModel', {
             }
         },
 
-<span id='Ext-nd-data-OutlineModel-property-expanded'>        /**
+<span id='Extnd-data-OutlineModel-property-expanded'>        /**
 </span>         * @property {Boolean} expanded
          */
         {
             name    : 'expanded',
             mapping : '@expandable',
-<span id='Ext-nd-data-OutlineModel-method-convert'>            /**
+<span id='Extnd-data-OutlineModel-method-convert'>            /**
 </span>             * Domino sends a string value down for the expandable attribute
              * so if the value is a boolean, it means that somewhere in code
              * a call to rec.set('leaf',boolean) was done and if that happens,

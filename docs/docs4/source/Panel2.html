@@ -15,11 +15,11 @@
   </script>
 </head>
 <body onload="prettyPrint(); highlight();">
-  <pre class="prettyprint lang-js"><span id='Ext-nd-tree-Panel'>/**
+  <pre class="prettyprint lang-js"><span id='Extnd-tree-Panel'>/**
 </span> * Customized tree to work with Domino Outlines.
  * The minimum config needed is the outlineUrl or the dbPath and outlineName.
  */
-Ext.define('Ext.nd.tree.Panel', {
+Ext.define('Extnd.tree.Panel', {
 
     extend: 'Ext.tree.Panel',
 
@@ -31,16 +31,18 @@ Ext.define('Ext.nd.tree.Panel', {
 
     alternateClassName: [
         'Ext.nd.UIOutline',
+        'Extnd.UIOutline',
+        'Ext.nd.tree.Panel',
         'Ext.nd.TreePanel'
     ],
 
     requires: [
-        'Ext.nd.data.OutlineStore'
+        'Extnd.data.OutlineStore'
     ],
 
-<span id='Ext-nd-tree-Panel-cfg-rootVisible'>    rootVisible : false,
+<span id='Extnd-tree-Panel-cfg-rootVisible'>    rootVisible : false,
 </span>
-<span id='Ext-nd-tree-Panel-method-initComponent'>    initComponent: function () {
+<span id='Extnd-tree-Panel-method-initComponent'>    initComponent: function () {
 </span>        var me = this,
             store = me.store;
 
@@ -51,7 +53,7 @@ Ext.define('Ext.nd.tree.Panel', {
 
         } else if (!store || (Ext.isObject(store) &amp;&amp; !store.isStore)) {
 
-            store = me.store = Ext.create('Ext.nd.data.OutlineStore', Ext.apply({
+            store = me.store = Ext.create('Extnd.data.OutlineStore', Ext.apply({
                 outlineUrl  : me.outlineUrl,
                 dbPath      : me.dbPath,
                 outlineName : me.outlineName,

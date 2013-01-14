@@ -15,12 +15,12 @@
   </script>
 </head>
 <body onload="prettyPrint(); highlight();">
-  <pre class="prettyprint lang-js"><span id='Ext-nd-grid-ViewColumn'>/**
+  <pre class="prettyprint lang-js"><span id='Extnd-grid-ViewColumn'>/**
 </span> * A Grid header type which renders a column for a Domino view.
  * This class is used by the Ext.nd.data.ViewDesign class to create the column model dynamically from the design of a View..
  * The LotusScript and Java equivalents in Domino are NotesViewColumn and ViewColumn.
  */
-Ext.define('Ext.nd.grid.ViewColumn', {
+Ext.define('Extnd.grid.ViewColumn', {
 
     extend  : 'Ext.grid.column.Column',
     alias   : ['widget.xnd-viewcolumn'],
@@ -29,74 +29,93 @@ Ext.define('Ext.nd.grid.ViewColumn', {
         'Ext.util.Format'
     ],
 
-<span id='Ext-nd-grid-ViewColumn-property-align'>    /**
-</span>     * @property {String} align ﻿The alignment (justification) of data in a column.
+    alternateClassName: [
+        'Ext.nd.data.ViewColumn'
+    ],
+
+<span id='Extnd-grid-ViewColumn-property-align'>    /**
+</span>     *
+     @property {String} align The alignment (justification) of data in a column.
      */
-<span id='Ext-nd-grid-ViewColumn-property-alignment'>    /**
-</span>     * @property {Number} alignment ﻿Not used, see #align instead.
+<span id='Extnd-grid-ViewColumn-property-alignment'>    /**
+</span>     * @property {Number} alignment Not used, see #align instead.
      */
-<span id='Ext-nd-grid-ViewColumn-property-dataIndex'>    /**
+<span id='Extnd-grid-ViewColumn-property-dataIndex'>    /**
 </span>     * @property {String} dataIndex Defaults to the 'Programmatic Use Name' set for the column in Domino Designer.
      */
-<span id='Ext-nd-grid-ViewColumn-property-width'>    /**
-</span>     * @property {Number} width ﻿The width of a column.
-<span id='Ext-nd-grid-ViewColumn-property-title'>     */
-</span>    /**
-     * @property {String} title
+<span id='Extnd-grid-ViewColumn-property-width'>    /**
+</span>     * @property {Number} width The width of a column.
+     */
+<span id='Extnd-grid-ViewColumn-property-title'>    /**
+</span>     * @property {String} title
      * @inheritdoc #text
-<span id='Ext-nd-grid-ViewColumn-property-totals'>     */
-</span>    /**
-     * @property {String} totals
-<span id='Ext-nd-grid-ViewColumn-property-isResortAscending'>     */
-</span>    /**
-     * @property {Boolean} isResortAscending ﻿Indicates whether a column is a user-sorted column that can be sorted in ascending order.
-<span id='Ext-nd-grid-ViewColumn-property-isResortDescending'>     */
-</span>    /**
-     * @property {Boolean} isResortDescending ﻿Indicates whether a column is a user-sorted column that can be sorted in descending order.
-<span id='Ext-nd-grid-ViewColumn-property-isResortToView'>     */
-</span>    /**
-     * @property {Boolean} isResortToView ﻿Indicates whether a column is a user-sorted column that allows the user to change to another view.
-<span id='Ext-nd-grid-ViewColumn-property-resortToViewName'>     */
-</span>    /**
-<span id='Ext-nd-grid-ViewColumn-property-isCategory'>     * @property {String} resortToViewName ﻿The name of the target view for a user-sorted column that allows the user to change to another view.
-</span>     */
-    /**
-<span id='Ext-nd-grid-ViewColumn-property-isResize'>     * @property {Boolean} isCategory ﻿Indicates whether a column is categorized.
-</span>     */
-    /**
-     * @property {Boolean} isResize
-<span id='Ext-nd-grid-ViewColumn-property-listSeparator'>     * @inheritdoc #resizable
-</span>     */
-    /**
-<span id='Ext-nd-grid-ViewColumn-property-listSep'>     * @property {String} listSeparator ﻿List (multi-value) separator for values in a column.
-</span>     */
-    /**
-<span id='Ext-nd-grid-ViewColumn-property-isResponse'>     * @property {Number} listSep Not used, see #listSeparator instead
-</span>     */
-    /**
-<span id='Ext-nd-grid-ViewColumn-property-isShowTwistie'>     * @property {Boolean} isResponse  Indicates whether a column contains only response documents.
-</span>     */
-    /**
-<span id='Ext-nd-grid-ViewColumn-property-isIcon'>     * @property {Boolean} isShowTwistie ﻿Indicates whether an expandable column displays a twistie.
-</span>     */
-    /**
-<span id='Ext-nd-grid-ViewColumn-property-datetimeformat'>     * @property {Boolean} isIcon  Indicates whether column values are displayed as icons.
-</span>     */
-    /**
-<span id='Ext-nd-grid-ViewColumn-property-numberformat'>     * @property {Object} datetimeformat ﻿The format for time-date data in a column.
-</span>     */
-    /**
-     * @property {Object} numberformat ﻿The format for numeric values in a column.
+     */
+<span id='Extnd-grid-ViewColumn-property-totals'>    /**
+</span>     * @property {String} totals
+     */
+    totals: 'none',
+<span id='Extnd-grid-ViewColumn-property-isResortAscending'>    /**
+</span>     * @property {Boolean} isResortAscending Indicates whether a column is a user-sorted column that can be sorted in ascending order.
+     */
+    isResortAscending: false,
+<span id='Extnd-grid-ViewColumn-property-isResortDescending'>    /**
+</span>     * @property {Boolean} isResortDescending Indicates whether a column is a user-sorted column that can be sorted in descending order.
+     */
+    isResortDescending: false,
+<span id='Extnd-grid-ViewColumn-property-isResortToView'>    /**
+</span>     * @property {Boolean} isResortToView Indicates whether a column is a user-sorted column that allows the user to change to another view.
+     */
+    isResortToView: false,
+<span id='Extnd-grid-ViewColumn-property-resortToViewName'>    /**
+</span>     * @property {String} resortToViewName The name of the target view for a user-sorted column that allows the user to change to another view.
+     */
+    resortToViewName: '',
+<span id='Extnd-grid-ViewColumn-property-isCategory'>    /**
+</span>     * @property {Boolean} isCategory Indicates whether a column is categorized.
+     */
+    isCategory: false,
+<span id='Extnd-grid-ViewColumn-property-isResize'>    /**
+</span>     * @property {Boolean} isResize
+     * @inheritdoc #resizable
+     */
+    isResize: false,
+<span id='Extnd-grid-ViewColumn-property-listSeparator'>    /**
+</span>     * @property {String} listSeparator List (multi-value) separator for values in a column.
+     */
+    listSeparator: ',',
+<span id='Extnd-grid-ViewColumn-property-listSep'>    /**
+</span>     * @property {Number} listSep Not used, see #listSeparator instead
+     */
+<span id='Extnd-grid-ViewColumn-property-isResponse'>    /**
+</span>     * @property {Boolean} isResponse  Indicates whether a column contains only response documents.
+     */
+    isResponse: false,
+<span id='Extnd-grid-ViewColumn-property-isShowTwistie'>    /**
+</span>     * @property {Boolean} isShowTwistie Indicates whether an expandable column displays a twistie.
+     */
+    isShowTwistie: false,
+<span id='Extnd-grid-ViewColumn-property-isIcon'>    /**
+</span>     * @property {Boolean} isIcon  Indicates whether column values are displayed as icons.
+     */
+    isIcon: false,
+<span id='Extnd-grid-ViewColumn-property-datetimeformat'>    /**
+</span>     * @property {Object} datetimeformat The format for time-date data in a column.
+     */
+<span id='Extnd-grid-ViewColumn-property-numberformat'>    /**
+</span>     * @property {Object} numberformat The format for numeric values in a column.
      */
 
 
     initComponent: function () {
         var me = this;
 
+        me.datetimeformat = me.datetimeformat || {};
+        me.numberformat = me.numberformat || {};
+
         // applyIf so that these can all be overridden if passed into the config
         Ext.applyIf(me, {
-            dateTimeFormats     : Ext.nd.dateTimeFormats,
-            formatCurrencyFnc   : Ext.util.Format.usMoney,
+            dateTimeFormats     : Extnd.dateTimeFormats || {},
+            formatCurrencyFnc   : Ext.util.Format.usMoney
         });
 
         // ExtJS uses 'resizable' so copy over the viewentry.isResize config
@@ -105,11 +124,11 @@ Ext.define('Ext.nd.grid.ViewColumn', {
         // ExtJS uses 'text' so copy over the viewentry.title config
         me.text = me.title || me.text;
 
-<span id='Ext-nd-grid-ViewColumn-method-defaultRenderer'>        me.callParent(arguments);
-</span>    },
+        me.callParent(arguments);
+    },
 
-    /**
-     * Default renderer method to handle column data in Domino Views
+<span id='Extnd-grid-ViewColumn-method-defaultRenderer'>    /**
+</span>     * Default renderer method to handle column data in Domino Views
      */
     defaultRenderer: function (value, cell, record, rowIndex, colIndex, store) {
         var me                  = this,
@@ -234,7 +253,7 @@ Ext.define('Ext.nd.grid.ViewColumn', {
                                 tmpValue = value[i];
 
                                 if (isNaN(parseInt(tmpValue, 10)) || tmpValue === '0') {
-                                    return '';
+                                    returnValue = '';
                                 } else {
                                     // I believe the domino only has view icon images from 1 to 186
                                     newValue = (tmpValue &lt; 10) ? '00' + tmpValue : (tmpValue &lt; 100) ? '0' + tmpValue : (tmpValue &gt; 186) ? '186' : tmpValue;
@@ -261,12 +280,12 @@ Ext.define('Ext.nd.grid.ViewColumn', {
         }
 
         // now return our domino formatted value
-<span id='Ext-nd-grid-ViewColumn-method-getValue'>        return returnValue;
-</span>
+        return returnValue;
+
     },
 
-    // private
-    getValue: function (value, record) {
+<span id='Extnd-grid-ViewColumn-method-getValue'>    // private
+</span>    getValue: function (value, record) {
         var me = this,
             sep,
             tmpDate,
@@ -279,7 +298,8 @@ Ext.define('Ext.nd.grid.ViewColumn', {
             separator   = me.getListSeparator(),
             newValue    = '',
             i,
-            len;
+            len,
+            returnVal;
 
         // handle non-categorized columns
         if (me.isCategory &amp;&amp; value.length === 0) {
@@ -288,7 +308,7 @@ Ext.define('Ext.nd.grid.ViewColumn', {
 
         // need to make sure value is an array
         // the loop below will format as needed
-        value = (Ext.isArray(value)) ? value : ['' + value];
+        value = (Ext.isArray(value)) ? value : [value];
         len = value.length;
 
         for (i = 0, len; i &lt; len; i++) {
@@ -298,109 +318,109 @@ Ext.define('Ext.nd.grid.ViewColumn', {
             // handle columns set to show an icon a little differently
             if (me.isIcon) {
                 if (isNaN(parseInt(tmpValue, 10)) || tmpValue === 0) {
-                    return '';
+                    returnVal = '';
                 } else {
                     // I believe domino only has view icon images from 1 to 186
                     newValue = (tmpValue &lt; 10) ? '00' + tmpValue : (tmpValue &lt; 100) ? '0' + tmpValue : (tmpValue &gt; 186) ? '186' : tmpValue;
-                    return '&lt;img src=&quot;/icons/vwicn' + newValue + '.gif&quot;/&gt;';
+                    returnVal = '&lt;img src=&quot;/icons/vwicn' + newValue + '.gif&quot;/&gt;';
                 }
 
             } else if (me.totals === 'percentoverall' || me.totals === 'percentparent') {
-                return Ext.util.Format.round(100 * parseFloat(tmpValue), nbf.digits) + '%';
+                returnVal = Ext.util.Format.round(100 * parseFloat(tmpValue), nbf.digits) + '%';
 
             } else {
 
                 switch (dataType) {
 
-                    case 'datetimelist':
+                case 'datetimelist':
+                case 'datetime':
+                    if (dtf.show === undefined) {
+                        dtf.show = me.dateTimeFormats.show;
+                    }
+                    if (tmpValue.indexOf('T') &gt; 0) {
+                        tmpDate = tmpValue.split(',')[0].replace('T', '.');
+                        tmpDateFmt = 'Ymd.His';
+                    } else {
+                        tmpDate = tmpValue;
+                        tmpDateFmt = 'Ymd';
+                        dtf.show = 'date'; // switch to date only since there isn't a time component present
+                    }
+                    tmpDate = Ext.Date.parse(tmpDate, tmpDateFmt);
+                    switch (dtf.show) {
+                    case 'date':
+                        tmpValue = tmpDate ? Ext.Date.format(tmpDate, me.dateTimeFormats.dateFormat) : '';
+                        break;
                     case 'datetime':
-                        if (dtf.show === undefined) {
-                            dtf.show = me.dateTimeFormats.show;
-                        }
-                        if (tmpValue.indexOf('T') &gt; 0) {
-                            tmpDate = tmpValue.split(',')[0].replace('T', '.');
-                            tmpDateFmt = 'Ymd.His';
+                        tmpValue = tmpDate ? Ext.Date.format(tmpDate, me.dateTimeFormats.dateTimeFormat) : '';
+                        break;
+                    }
+                    break;
+
+                case 'textlist':
+                case 'text':
+                    // do nothing to tmpValue if text or textlist
+                    break;
+
+                case 'numberlist':
+                case 'number':
+                    tmpValue = parseFloat(tmpValue);
+
+                    switch (nbf.format) {
+                    case 'currency':
+                        tmpValue = Ext.isEmpty(tmpValue) ? me.formatCurrencyFnc(0) : me.formatCurrencyFnc(tmpValue);
+                        break;
+
+                    case 'fixed':
+                    case 'scientific':
+                        if (nbf.percent) {
+                            tmpValue = Ext.util.Format.round(100 * tmpValue, nbf.digits) + '%';
                         } else {
-                            tmpDate = tmpValue;
-                            tmpDateFmt = 'Ymd';
-                            dtf.show = 'date'; // switch to date only since there isn't a time component present
-                        }
-                        tmpDate = Ext.Date.parse(tmpDate, tmpDateFmt);
-                        switch (dtf.show) {
-                            case 'date':
-                                tmpValue = tmpDate ? Ext.Date.format(tmpDate, me.dateTimeFormats.dateFormat) : '';
-                                break;
-                            case 'datetime':
-                                tmpValue = tmpDate ? Ext.Date.format(tmpDate, me.dateTimeFormats.dateTimeFormat) : '';
-                                break;
-                        }
-                        break;
-
-                    case 'textlist':
-                    case 'text':
-                        tmpValue = tmpValue;
-                        break;
-
-                    case 'numberlist':
-                    case 'number':
-                        tmpValue = parseFloat(tmpValue);
-
-                        switch (nbf.format) {
-                            case 'currency':
-                                tmpValue = Ext.isEmpty(tmpValue) ? me.formatCurrencyFnc(0) : me.formatCurrencyFnc(tmpValue);
-                                break;
-
-                            case 'fixed' :
-                            case 'scientific' :
-                                if (nbf.percent) {
-                                    tmpValue = Ext.util.Format.round(100 * tmpValue, nbf.digits) + '%';
-                                } else {
-                                    tmpValue = Ext.util.Format.round(tmpValue, nbf.digits);
-                                }
-                                break;
-
-                            default :
-                                tmpValue = tmpValue;
+                            tmpValue = Ext.util.Format.round(tmpValue, nbf.digits);
                         }
                         break;
 
                     default:
-                        tmpValue = tmpValue;
+                        // do nothing to tmpValue if we do not have a nbr.format we are interested in
+                    }
+                    break;
+
+                default:
+                    // do nothing to tmpValue if we do not have a dataType we are interested in
                 }
 
-                newValue = newValue + tmpValue + sep;
+                returnVal = newValue + tmpValue + sep;
 
             }
         }
 
-<span id='Ext-nd-grid-ViewColumn-method-getListSeparator'>        return newValue;
-</span>    },
+        return returnVal;
+    },
 
-    /**
-     * Returns an appropriate separator string that can be used in html
+<span id='Extnd-grid-ViewColumn-method-getListSeparator'>    /**
+</span>     * Returns an appropriate separator string that can be used in html
      */
     getListSeparator : function () {
         var me = this,
             separator = '';
 
         switch (me.listSeparator) {
-            case 'none':
-                separator = '';
-                break;
-            case 'space':
-                separator = ' ';
-                break;
-            case 'comma':
-                separator = ',';
-                break;
-            case 'newline':
-                separator = '&lt;br/&gt;';
-                break;
-            case 'semicolon':
-                separator = ';';
-                break;
-            default:
-                separator = '';
+        case 'none':
+            separator = '';
+            break;
+        case 'space':
+            separator = ' ';
+            break;
+        case 'comma':
+            separator = ',';
+            break;
+        case 'newline':
+            separator = '&lt;br/&gt;';
+            break;
+        case 'semicolon':
+            separator = ';';
+            break;
+        default:
+            separator = '';
         }
 
         return separator;

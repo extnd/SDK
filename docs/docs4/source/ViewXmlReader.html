@@ -15,17 +15,20 @@
   </script>
 </head>
 <body onload="prettyPrint(); highlight();">
-  <pre class="prettyprint lang-js"><span id='Ext-nd-data-ViewXmlReader'>/**
+  <pre class="prettyprint lang-js"><span id='Extnd-data-ViewXmlReader'>/**
 </span> * An expanded version of Ext's XmlReader to deal with Domino's unique ?ReadViewEntries format.
  *
  */
-Ext.define('Ext.nd.data.ViewXmlReader', {
+Ext.define('Extnd.data.ViewXmlReader', {
 
     extend  : 'Ext.data.reader.Xml',
     alias   : 'reader.xnd-viewxml',
 
+    alternateClassName: [
+        'Ext.nd.data.ViewXmlReader'
+    ],
 
-<span id='Ext-nd-data-ViewXmlReader-method-extractData'>    /**
+<span id='Extnd-data-ViewXmlReader-method-extractData'>    /**
 </span>     * Custom Domino version that combines the Ext.data.reader.Xml#extractData and the Ext.data.reader.Reader#extractData
      * methods and then adds on a call to #addDominoViewEntryProps in order to add on the properties one would
      * find on the NotesViewEntry LotusScript class.
@@ -35,7 +38,7 @@ Ext.define('Ext.nd.data.ViewXmlReader', {
      * @return {Array} An array of records containing the extracted data
      * @private
      */
-    extractData : function(root) {
+    extractData : function (root) {
         var me      = this,
             records = [],
             Model   = me.model,
@@ -88,7 +91,7 @@ Ext.define('Ext.nd.data.ViewXmlReader', {
         return records;
     },
 
-<span id='Ext-nd-data-ViewXmlReader-method-addDominoViewEntryProps'>    /**
+<span id='Extnd-data-ViewXmlReader-method-addDominoViewEntryProps'>    /**
 </span>     * Adds the properties typically found on a NotesViewEntry LotusScript class
      */
     addDominoViewEntryProps: function (record, raw) {
@@ -107,7 +110,7 @@ Ext.define('Ext.nd.data.ViewXmlReader', {
 
         // add a columnIndentLevel property used by Ext.nd.grid.ViewColumn#defaultRenderer
         // TODO what is the difference between columnIndentLevel and indentLevel?
-        record.columnIndentLevel = record.position.split('.').length -1;
+        record.columnIndentLevel = record.position.split('.').length - 1;
         record.indentLevel = record.columnIndentLevel;
 
         record.childCount = me.getChildCount(raw);
@@ -118,7 +121,7 @@ Ext.define('Ext.nd.data.ViewXmlReader', {
     },
 
 
-<span id='Ext-nd-data-ViewXmlReader-method-getChildCount'>    /**
+<span id='Extnd-data-ViewXmlReader-method-getChildCount'>    /**
 </span>     * Custom method to extract the @children attribute from a Domino viewntry node since Ext.DomQuery.selectNode
      * returns children nodes instead of returning the @children 'attribute'.
      */
@@ -131,7 +134,7 @@ Ext.define('Ext.nd.data.ViewXmlReader', {
 
     },
 
-<span id='Ext-nd-data-ViewXmlReader-method-getEntryDataNodeValue'>    /**
+<span id='Extnd-data-ViewXmlReader-method-getEntryDataNodeValue'>    /**
 </span>     * Used to parse the 'entrydata' nodes of Domino's ReadViewEntries format.
      * Besides returning a value for the 'entrydata' node, a custom entryData property is added to the record
      * to be used by the Ext.nd.grid.ViewColumn#defaultRenderer method
@@ -183,7 +186,7 @@ Ext.define('Ext.nd.data.ViewXmlReader', {
 
     },
 
-<span id='Ext-nd-data-ViewXmlReader-method-parseEntryDataChildNodes'>    /**
+<span id='Extnd-data-ViewXmlReader-method-parseEntryDataChildNodes'>    /**
 </span>     * Parses out the data within the childNodes of an 'entrydata' node.
      * @param {Object} node The 'entrydata' node from a Domino view.
      */
@@ -236,7 +239,7 @@ Ext.define('Ext.nd.data.ViewXmlReader', {
 
     },
 
-<span id='Ext-nd-data-ViewXmlReader-method-getNodeValue'>    /**
+<span id='Extnd-data-ViewXmlReader-method-getNodeValue'>    /**
 </span>     * @private
      * Custom version for Domino that can handle the 'entrydata' nodes.
      * The custom #createFieldAccessExpression makes sure that the 'field' and 'record' are also passed in.
@@ -246,21 +249,29 @@ Ext.define('Ext.nd.data.ViewXmlReader', {
      * @param {Ext.nd.data.ViewModel} record The record being processed.
      */
     getNodeValue: function (node, fieldName, record) {
-        if (node &amp;&amp; node.nodeName === 'entrydata') {
-            return this.getEntryDataNodeValue(node, fieldName, record);
+        var me          = this,
+            parentNode  = node ? node.parentNode : undefined,
+            returnVal;
+
+        if (node) {
+            if (node.nodeName === 'entrydata') {
+                returnVal = me.getEntryDataNodeValue(node, fieldName, record);
+            } else if (parentNode &amp;&amp; parentNode.nodeName === 'entrydata') {
+                returnVal = me.getEntryDataNodeValue(parentNode, fieldName, record);
+            } else if (node.firstChild) {
+                returnVal = node.firstChild.nodeValue;
+            }
         }
-        if (node &amp;&amp; node.firstChild) {
-            return node.firstChild.nodeValue;
-        }
-        return undefined;
+
+        return returnVal;
     },
 
-<span id='Ext-nd-data-ViewXmlReader-method-createFieldAccessExpression'>    /**
+<span id='Extnd-data-ViewXmlReader-method-createFieldAccessExpression'>    /**
 </span>     * @private
      * Custom version for Domino that passes the 'field' and 'record' to the #getNodeValue method
      * so that the entryData can be added
      */
-    createFieldAccessExpression: function(field, fieldVarName, dataName) {
+    createFieldAccessExpression: function (field, fieldVarName, dataName) {
         return 'me.getNodeValue(Ext.DomQuery.selectNode(&quot;' + field.mapping + '&quot;, ' + dataName + '), &quot;' + field.name + '&quot;, record)';
     }
 

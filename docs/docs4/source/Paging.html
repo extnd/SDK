@@ -15,10 +15,10 @@
   </script>
 </head>
 <body onload="prettyPrint(); highlight();">
-  <pre class="prettyprint lang-js"><span id='Ext-nd-toolbar-Paging'>/**
+  <pre class="prettyprint lang-js"><span id='Extnd-toolbar-Paging'>/**
 </span> * A specialized toolbar that is bound to a {@link Ext.nd.data.ViewStore} and provides automatic paging controls geared towards Domino
  */
-Ext.define('Ext.nd.toolbar.Paging', {
+Ext.define('Extnd.toolbar.Paging', {
 
     extend  : 'Ext.toolbar.Paging',
     alias   : [
@@ -26,12 +26,18 @@ Ext.define('Ext.nd.toolbar.Paging', {
         'widget.xnd-paging'
     ],
 
-<span id='Ext-nd-toolbar-Paging-cfg-beforePageText'>    // change the displayed text
+    alternateClassName: [
+        'Extnd.PagingToolbar',
+        'Ext.nd.toolbar.Paging',
+        'Ext.nd.PagingToolbar'
+    ],
+
+<span id='Extnd-toolbar-Paging-cfg-beforePageText'>    // change the displayed text
 </span>    beforePageText  : 'Showing entries ',
-<span id='Ext-nd-toolbar-Paging-cfg-afterPageText'>    afterPageText   : ' - {0}',
-</span><span id='Ext-nd-toolbar-Paging-property-middlePageText'>    middlePageText  : ' of ',
+<span id='Extnd-toolbar-Paging-cfg-afterPageText'>    afterPageText   : ' - {0}',
+</span><span id='Extnd-toolbar-Paging-property-middlePageText'>    middlePageText  : ' of ',
 </span>
-<span id='Ext-nd-toolbar-Paging-method-initComponent'>    initComponent : function() {
+<span id='Extnd-toolbar-Paging-method-initComponent'>    initComponent : function () {
 </span>        var me = this;
 
         me.callParent(arguments);
@@ -40,22 +46,22 @@ Ext.define('Ext.nd.toolbar.Paging', {
          * to a number field so we need to change it back so that it will work
          * with Domino's hierarchical start params (i.e. 2.3.2.1, etc.)
          */
-        Ext.each(this.items.items, function(item, index, allItems){
-            if (item.getXType &amp;&amp; item.isXType('numberfield', true)){
+        Ext.each(this.items.items, function (item, index, allItems) {
+            if (item.getXType &amp;&amp; item.isXType('numberfield', true)) {
                 allItems[index] = this.inputItem = new Ext.form.TextField(Ext.apply(item.initialConfig, { grow: true }));
             }
         }, this);
 
     },
 
-<span id='Ext-nd-toolbar-Paging-method-onPagingKeyDownzzz'>    // private override since pageNum could represent a deeply nested domino heirarchy (ie 3.22.1.2)
+<span id='Extnd-toolbar-Paging-method-onPagingKeyDownzzz'>    // private override since pageNum could represent a deeply nested domino heirarchy (ie 3.22.1.2)
 </span>    // and the normal Ext pageNum expects a number
     // TODO need to redo this
     onPagingKeyDownzzz : function (field, e) {
 
     },
 
-<span id='Ext-nd-toolbar-Paging-method-moveFirst'>    /**
+<span id='Extnd-toolbar-Paging-method-moveFirst'>    /**
 </span>     * Move to the first page of a Domino view.
      */
     moveFirst : function () {
@@ -66,7 +72,7 @@ Ext.define('Ext.nd.toolbar.Paging', {
         }
     },
 
-<span id='Ext-nd-toolbar-Paging-method-movePrevious'>    /**
+<span id='Extnd-toolbar-Paging-method-movePrevious'>    /**
 </span>     * Move to the previous page of a Domino view.
      */
     movePrevious : function () {
@@ -77,7 +83,7 @@ Ext.define('Ext.nd.toolbar.Paging', {
         }
     },
 
-<span id='Ext-nd-toolbar-Paging-method-moveNext'>    /**
+<span id='Extnd-toolbar-Paging-method-moveNext'>    /**
 </span>     * Move to the next page of a Domino view.
      */
     moveNext : function () {
@@ -89,7 +95,7 @@ Ext.define('Ext.nd.toolbar.Paging', {
 
     },
 
-<span id='Ext-nd-toolbar-Paging-method-moveLast'>    /**
+<span id='Extnd-toolbar-Paging-method-moveLast'>    /**
 </span>     * Move to the last page of a Domino view.  This is somewhat tricky since categories
      * and Reader fields on documents make it difficult to calculate where the last page
      * is for a user to see.
@@ -106,7 +112,7 @@ Ext.define('Ext.nd.toolbar.Paging', {
         }
     },
 
-<span id='Ext-nd-toolbar-Paging-method-onLoad'>    /**
+<span id='Extnd-toolbar-Paging-method-onLoad'>    /**
 </span>     * Custom Domino version that uses 'start positions' instead of 'pages'.  So all references to currPage
      * have been replaced with currStart and pageCount is not used at all since it is difficult to calculate
      * the 'page count' of a Domino view when you consider categories and Reader fields.
@@ -149,7 +155,7 @@ Ext.define('Ext.nd.toolbar.Paging', {
         }
     },
 
-<span id='Ext-nd-toolbar-Paging-method-getPageData'>    /**
+<span id='Extnd-toolbar-Paging-method-getPageData'>    /**
 </span>     * Custom version for Domino that deals with the 'start position' of a view
      * instead of 'pages'.  The fromRecord and toRecord variables are done differently
      * as well since we cannot calculate them like the ExtJS version of the Paging toolbar can.

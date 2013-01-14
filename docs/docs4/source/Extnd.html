@@ -15,20 +15,24 @@
   </script>
 </head>
 <body onload="prettyPrint(); highlight();">
-  <pre class="prettyprint lang-js"><span id='Ext-nd'>/**
-</span> * @class Ext.nd
+  <pre class="prettyprint lang-js"><span id='Extnd'>/**
+</span> * @class Extnd
  * @singleton
  */
- Ext.define('Ext.nd', {
+Ext.define('Extnd', {
 
     singleton: true,
 
-<span id='Ext-nd-property-version'>    /**
+    alternateClassName: [
+        'Ext.nd'
+    ],
+
+<span id='Extnd-property-version'>    /**
 </span>     * The version of the Extnd framework
      * @type String
      */
     version : '2.0.0',
-<span id='Ext-nd-property-versionDetails'>    /**
+<span id='Extnd-property-versionDetails'>    /**
 </span>     * The version of the framework, broken out into its numeric parts. This returns an
      * object that contains the following integer properties: major, minor and patch.
      * @type Object
@@ -38,18 +42,48 @@
         minor: 0,
         patch: 0
     },
-<span id='Ext-nd-property-extVersion'>    /**
+<span id='Extnd-property-extVersion'>    /**
 </span>     * The minimum version of Ext required to work with this version of Extnd
      * @type String
      */
     extVersion : '4.1.3',
 
 
-<span id='Ext-nd-property-dateTimeFormats'>    dateTimeFormats: {
+<span id='Extnd-property-dateTimeFormats'>    dateTimeFormats: {
 </span>        dateFormat      : 'm/d/Y',
         timeFormat      : 'h:i:s A',
         dateTimeFormat  : 'm/d/Y h:i:s A',
         show            : 'date'
+    }
+
+});
+
+Ext.override(Ext.ClassManager, {
+<span id='Extnd-method-addNameAlternateMappings'>    /**
+</span>     * Override to fix issue of the array index not being added to alternates[className][i]
+     */
+    addNameAlternateMappings: function (alternates) {
+        var alternateToName = this.maps.alternateToName,
+            nameToAlternates = this.maps.nameToAlternates,
+            className,
+            aliasList,
+            alternate,
+            i;
+
+        for (className in alternates) {
+            aliasList = nameToAlternates[className] ||
+                (nameToAlternates[className] = []);
+
+            for (i  = 0; i &lt; alternates[className].length; i++) {
+                alternate = alternates[className][i];
+                if (!alternateToName[alternate]) {
+                    alternateToName[alternate] = className;
+                    aliasList.push(alternate);
+                }
+            }
+
+        }
+        return this;
     }
 
 });
