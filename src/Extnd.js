@@ -37,6 +37,15 @@ Ext.define('Extnd', {
         timeFormat      : 'h:i:s A',
         dateTimeFormat  : 'm/d/Y h:i:s A',
         show            : 'date'
+    },
+
+    getBlankImageUrl: function () {
+        return this.extndUrl + "resources/images/s.gif";
+    },
+
+    init: function (config) {
+        Ext.apply(this, config);
+        Ext.BLANK_IMAGE_URL = this.getBlankImageUrl();
     }
 
 });
