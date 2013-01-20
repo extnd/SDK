@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Extnd-Database'>/**
+</span> * @class Extnd.Database
+ * @singleton
+ */
+Ext.define('Extnd.Database', {
+
+
+<span id='Extnd-Database-property-acl'>    /**
+</span>     * acl
+     * @type {Object}
+     */
+    &quot;acl&quot; : {},
+<span id='Extnd-Database-property-aclActivityLog'>    /**
+</span>     * acl activity log&lt;br/&gt;
+     * example: &quot;01/21/2008 11:47:01 PM Rich Waters/Rich-Waters updated -Default-&quot;
+     * @type {Array}
+     */
+    &quot;aclActivityLog&quot; : [&quot;01/21/2008 11:47:01 PM Rich Waters/Rich-Waters updated -Default-&quot;],
+<span id='Extnd-Database-property-currentAccessLevel'>    /**
+</span>     * current access level (see Ext.nd.ACCESS_LEVELS)
+     * @type {Integer}
+     */
+    &quot;currentAccessLevel&quot; : 4,
+<span id='Extnd-Database-property-parent'>    /**
+</span>     * parent {@link Ext.nd.Session} object
+     * @type {Ext.nd.Session}
+     */
+    &quot;parent&quot; : Ext.nd.Session,
+<span id='Extnd-Database-property-server'>    /**
+</span>     * server name
+     * @type {String}
+     */
+    &quot;server&quot; : &quot;CN=Web/O=BlueCuda&quot;,
+<span id='Extnd-Database-property-fileName'>    /**
+</span>     * file name of the database
+     * @type {String}
+     */
+    &quot;fileName&quot; : &quot;extnd2_b1.nsf&quot;,
+<span id='Extnd-Database-property-filePath'>    /**
+</span>     * file system path to the database
+     * @type {String}
+     */
+    &quot;filePath&quot; : &quot;extnd\\extnd2_b1.nsf&quot;,
+<span id='Extnd-Database-property-webFilePath'>    /**
+</span>     * analogous to @webdbname
+     * @type {String}
+     */
+    &quot;webFilePath&quot; : &quot;/extnd/extnd2_b1.nsf/&quot;,
+<span id='Extnd-Database-property-title'>    /**
+</span>     * database title
+     * @type {String}
+     */
+    &quot;title&quot; : &quot;Ext.nd Beta 1&quot;,
+<span id='Extnd-Database-property-fileFormat'>    /**
+</span>     * file format
+     * @type {Integer}
+     */
+    &quot;fileFormat&quot; : 43,
+<span id='Extnd-Database-property-created'>    /**
+</span>     * database created on date
+     * @type {String}
+     */
+    &quot;created&quot; : &quot;1/30/2008 4:18:50 PM&quot;,
+<span id='Extnd-Database-property-designTemplateName'>    /**
+</span>     * name of design template
+     * @type {String}
+     */
+    &quot;designTemplateName&quot; : &quot;&quot;,
+<span id='Extnd-Database-property-isDB2'>    /**
+</span>     * is DB2
+     * @type {Boolean}
+     */
+    &quot;isDB2&quot; : false,
+<span id='Extnd-Database-property-httpURL'>    /**
+</span>     * http url
+     * @type {String}
+     */
+    &quot;httpURL&quot; : &quot;http://web.bluecuda.com/__852573E0007514A8.nsf?OpenDatabase&quot;,
+<span id='Extnd-Database-property-replicaID'>    /**
+</span>     * database replica idea
+     * @type {String}
+     */
+    &quot;replicaID&quot; : &quot;852573E0007514A8&quot;,
+<span id='Extnd-Database-property-isDocumentLockingEnabled'>    /**
+</span>     * is document locking enabled
+     * @type {Boolean}
+     */
+    &quot;isDocumentLockingEnabled&quot; : false,
+<span id='Extnd-Database-property-isDesignLockingEnabled'>    /**
+</span>     * is design locking enabled
+     * @type {Boolean}
+     */
+    &quot;isDesignLockingEnabled&quot; : true,
+<span id='Extnd-Database-property-size'>    /**
+</span>     * database size
+     * @type {Integer}
+     */
+    &quot;size&quot; : 22282240,
+<span id='Extnd-Database-property-sizeQuota'>    /**
+</span>     * size quota
+     * @type {Integer}
+     */
+    &quot;sizeQuota&quot; : 0,
+<span id='Extnd-Database-property-sizeWarning'>    /**
+</span>     * size warning
+     * @type {Integer}
+     */
+    &quot;sizeWarning&quot; : 0,
+<span id='Extnd-Database-property-percentUsed'>    /**
+</span>     * percentage used
+     * @type {Number}
+     */
+    &quot;percentUsed&quot; : 47.1
+
+});
+</pre>
+</body>
+</html>

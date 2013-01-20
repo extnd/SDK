@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Extnd-Session'>/**
+</span> * @class Extnd.Session
+ * @singleton
+ */
+Ext.define('Extnd.Session', {
+
+    singleton: true,
+
+<span id='Extnd-Session-property-commonUserName'>    /**
+</span>     * common user name
+     * example: &quot;Rich Waters&quot;
+     * @type {String}
+     */
+    commonUserName : &quot;Anonymous&quot;,
+<span id='Extnd-Session-property-effectiveUserName'>    /**
+</span>     * effective user name
+     * example: &quot;CN=Rich Waters/O=ExtND&quot;
+     * @type {String}
+     */
+    effectiveUserName : &quot;Anonymous&quot;,
+<span id='Extnd-Session-property-notesBuildVersion'>    /**
+</span>     * notes build version
+     * @type {Integer}
+     */
+    notesBuildVersion : 261,
+<span id='Extnd-Session-property-notesVersion'>    /**
+</span>     * notes version
+     * example: &quot;Release 7.0.1|January 17, 2006&quot;
+     * @type {String}
+     */
+    notesVersion : &quot;Release 7.0.1|January 17, 2006&quot;,
+<span id='Extnd-Session-property-platform'>    /**
+</span>     * platform the server is running on
+     * @type {String}
+     */
+    platform : &quot;Windows/32&quot;,
+<span id='Extnd-Session-property-serverName'>    /**
+</span>     * server name
+     * @type {String}
+     */
+    serverName : &quot;CN=Web/O=BlueCuda&quot;,
+<span id='Extnd-Session-property-userGroupNameList'>    /**
+</span>     * list of groups current user is a member of
+     * example: {&quot;abbreviated&quot; : &quot;ExtNDAdmin&quot;, &quot;addr821&quot; : &quot;&quot;, &quot;common&quot; : &quot;ExtNDAdmin&quot;}
+     * @type {Array}
+     */
+    userGroupNameList : [{
+        &quot;abbreviated&quot; : &quot;*/ExtND&quot;,
+        &quot;addr821&quot; : &quot;&quot;,
+        &quot;common&quot; : &quot;*&quot;
+    }, {
+        &quot;abbreviated&quot; : &quot;ExtNDAdmin&quot;,
+        &quot;addr821&quot; : &quot;&quot;,
+        &quot;common&quot; : &quot;ExtNDAdmin&quot;
+    }],
+<span id='Extnd-Session-property-userName'>    /**
+</span>     * current user name
+     * example: &quot;CN=Rich Waters/O=ExtND&quot;
+     * @type {String}
+     */
+    userName : &quot;CN=Rich Waters/O=ExtND&quot;,
+<span id='Extnd-Session-property-userNameList'>    /**
+</span>     * user name list array
+     * @type {Array}
+     */
+    userNameList : [{
+        &quot;abbreviated&quot; : &quot;CN=Rich Waters/O=ExtND&quot;,
+        &quot;addr821&quot; : &quot;CN=Rich Waters/O=ExtND&quot;,
+        &quot;common&quot; : &quot;CN=Rich Waters/O=ExtND&quot;
+    }, {
+        &quot;abbreviated&quot; : &quot;CN=Web/O=BlueCuda&quot;,
+        &quot;addr821&quot; : &quot;CN=Web/O=BlueCuda&quot;,
+        &quot;common&quot; : &quot;CN=Web/O=BlueCuda&quot;
+    }],
+<span id='Extnd-Session-property-userRoles'>    /**
+</span>     * user roles
+     * @type {Array}
+     */
+    userRoles : [&quot;&quot;],
+<span id='Extnd-Session-property-addressBooks'>    /**
+</span>     * Array of {@link Ext.nd.Database} objects pertaining to the
+     * available address books
+     * @type {Array}
+     */
+    addressBooks : [],
+<span id='Extnd-Session-property-currentDatabase'>    /**
+</span>     * Current {@link Ext.nd.Database} object
+     * @type {Ext.nd.Database}
+     */
+    currentDatabase : null
+
+});
+</pre>
+</body>
+</html>
