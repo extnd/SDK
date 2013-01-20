@@ -3,6 +3,20 @@
  * is handled for you.
  * The minimum config needed is the viewUrl or the dbPath and viewName.  Based on this information, a call to ?ReadDesign
  * is made and a Model is then dynamically created for you based on the design of the Domino View.
+
+    @example
+    Ext.create('Extnd.UIView', {
+        title       : 'Flat View Example',
+        dbPath      : '/extnd/demo.nsf/',
+        viewName    : 'f1',
+        width       : 400,
+        height      : 500,
+        renderTo    : Ext.getBody()
+    });
+
+
+ * {@img Extnd.UIView.png Flat View Example}
+ *
  */
 Ext.define('Extnd.grid.Panel', {
 
@@ -22,7 +36,8 @@ Ext.define('Extnd.grid.Panel', {
 
     requires: [
         'Extnd.data.ViewDesign',
-        'Extnd.toolbar.Paging'
+        'Extnd.toolbar.Paging',
+        'Extnd.toolbar.Actionbar'
     ],
 
     viewType                : 'gridview',
@@ -101,6 +116,7 @@ Ext.define('Extnd.grid.Panel', {
             bbar                : me.getBottomBarCfg()
         });
 
+        me.setupToolbars();
         me.callParent(arguments);
     },
 
@@ -408,6 +424,120 @@ Ext.define('Extnd.grid.Panel', {
                         store.load({params : newParams});
 
                     }
+                }
+            }
+        }
+    },
+
+    getPlugins : function(){
+
+        // category combo plugin
+        if (this.showCategoryComboBox) {
+            var cp = new Ext.nd.SingleCategoryCombo({
+                viewUrl: this.viewUrl,
+                value: this.category,
+                count: this.categoryComboBoxCount || -1
+            });
+            // make sure category has some value
+            if (typeof this.category == 'undefined') {
+                this.category = '';
+            }
+            if (this.showCategoryComboBoxPosition == 'top') {
+                this.tbarPlugins.push(cp);
+            } else {
+                this.bbarPlugins.push(cp);
+            }
+        } // eo showCategoryComboBox plugin
+
+
+        // search plugin
+        if (this.showSearch) {
+            console.log('TODO add back search plugin support');
+//            var sp = new Ext.nd.SearchPlugin(this)
+//            if (this.showSearchPosition == 'top') {
+//                this.tbarPlugins.push(sp)
+//            } else {
+//                this.bbarPlugins.push(sp)
+//            }
+        }
+
+    },
+
+    // private
+    setupToolbars : function() {
+
+        // the actionbar/toolbar plugins
+        this.getPlugins();
+
+        var tbId = 'xnd-view-toolbar-' + Ext.id();
+
+        // if a tbar was passed in, just use that and add the plugins to it
+        if (this.tbar) {
+            if (Ext.isArray(this.tbar)) {
+                this.tbar = new Ext.nd.Actionbar({
+                    id: tbId,
+                    noteName: '',
+                    uiView: this,
+                    target: this.getTarget() || null,
+                    items: this.tbar,
+                    plugins: this.tbarPlugins
+                });
+            }
+            else {
+                if (this.tbar.add) {
+                    this.tbar.add(this.tbarPlugins);
+                }
+                this.tbar.uiView = this;
+                this.tbar.id = tbId;
+            }
+        } else {
+            if (this.showActionbar) {
+                this.tbar = new Extnd.toolbar.Actionbar({
+                    id: tbId,
+                    noteType: this.noteType,
+                    dbPath: this.dbPath,
+                    noteName: this.viewName,
+                    uiView: this,
+                    useDxl: this.buildActionBarFromDXL,
+                    useViewTitleFromDxl: this.useViewTitleFromDxl,
+                    removeEmptyActionbar: this.removeEmptyActionbar,
+                    target: this.getTarget() || null,
+                    plugins: this.tbarPlugins
+                });
+            } else {
+                // if plugins are wanted but not the actionbar then create an Ext.nd.Actionbar
+                // anyway but don't pass in a noteName so that the actions will not be created
+                // and then add the plugins to it
+                if (this.tbarPlugins.length > 0) {
+                    this.tbar = new Ext.nd.Actionbar({
+                        id: tbId,
+                        noteName: '', //intentional
+                        uiView: this,
+                        target: this.getTarget() || null,
+                        plugins: this.tbarPlugins
+                    });
+                }
+            }
+        }
+    },
+
+    // private
+    // TODO should we support this or should developers add their own listeners to handle opening of documents
+    getTarget : function() {
+        if (this.target) {
+            return this.target;
+        } else {
+            // if a target property is available then set it
+            if (window && window.target) {
+                this.target = window.target;
+                return this.target;
+            } else {
+                // for an uiview or uidoc you need to go a level
+                if (this.ownerCt && this.ownerCt.getXType && this.ownerCt.getXType() == 'tabpanel') {
+                    this.target = this.ownerCt.id;
+                    return this.target;
+                } else {
+                    return null;
                 }
             }
         }
