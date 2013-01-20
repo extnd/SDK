@@ -181,15 +181,15 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Ext.menu.Manager": [],
   "Ext.util.KeyMap": [],
-  "Extnd.tree.Panel": [
-    "widget.xnd-uioutline",
-    "widget.xnd-treepanel",
-    "widget.xnd-tree"
-  ],
   "Extnd.grid.Panel": [
     "widget.xnd-uiview",
     "widget.xnd-gridpanel",
     "widget.xnd-grid"
+  ],
+  "Extnd.tree.Panel": [
+    "widget.xnd-uioutline",
+    "widget.xnd-treepanel",
+    "widget.xnd-tree"
   ],
   "Ext.data.Batch": [],
   "Ext.resizer.Handle": [],
@@ -539,6 +539,7 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.field"
   ],
   "Extnd.data.OutlineModel": [],
+  "Extnd.Session": [],
   "Ext.dom.AbstractElement_insertion": [],
   "Ext.data.SequentialIdGenerator": [
     "idgen.sequential"
@@ -804,6 +805,7 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Ext.data.Errors": [],
   "Ext.dom.AbstractQuery": [],
+  "Extnd.Database": [],
   "Ext.selection.TreeModel": [
     "selection.treemodel"
   ],
@@ -1048,16 +1050,16 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.util.KeyMap": [
     "Ext.KeyMap"
   ],
+  "Extnd.grid.Panel": [
+    "Extnd.UIView",
+    "Ext.nd.UIView",
+    "Ext.nd.GridPanel"
+  ],
   "Extnd.tree.Panel": [
     "Ext.nd.UIOutline",
     "Extnd.UIOutline",
     "Ext.nd.tree.Panel",
     "Ext.nd.TreePanel"
-  ],
-  "Extnd.grid.Panel": [
-    "Extnd.UIView",
-    "Ext.nd.UIView",
-    "Ext.nd.GridPanel"
   ],
   "Ext.data.Batch": [],
   "Ext.resizer.Handle": [],
@@ -1370,6 +1372,7 @@ Ext.ClassManager.addNameAliasMappings({
     "Ext.nd.data.OutlineModel",
     "Ext.nd.data.OutlineEntry"
   ],
+  "Extnd.Session": [],
   "Ext.dom.AbstractElement_insertion": [],
   "Ext.data.SequentialIdGenerator": [],
   "Ext.grid.header.Container": [],
@@ -1571,6 +1574,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.layout.container.Editor": [],
   "Ext.data.Errors": [],
   "Ext.dom.AbstractQuery": [],
+  "Extnd.Database": [],
   "Ext.selection.TreeModel": [],
   "Ext.form.Labelable": [],
   "Ext.grid.column.Number": [
