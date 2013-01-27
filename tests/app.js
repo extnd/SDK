@@ -9,6 +9,10 @@ Ext.Loader.setConfig({
 
 Ext.application({
 
+    extend              : 'Extnd.app.Application',
+    extndUrl            : '/extnd/extnd_b4.nsf/extnd/3x/',
+    dbPath              : 'extnd/demo.nsf',
+
     name                : 'Demo',
     appFolder           : 'app',
     autoCreateViewport  : false,
@@ -21,16 +25,44 @@ Ext.application({
     requires: [
         'Ext.container.Viewport',
         'Ext.TabPanel',
+        'Extnd.Session',
+        'Extnd.Database',
         'Extnd.UIView',
         'Extnd.UIOutline'
     ],
 
 
     launch: function() {
-        var me = this;
+        var me = this,
+            db;
 
-        // TODO just hardcoded for now
-        Ext.nd.extndUrl = '/extnd/extnd_b4.nsf/extnd/3x/';
+        db = Ext.create('Extnd.Database', {
+            dbPath  : me.dbPath,
+            //dbPath  : 'extnd/demo.nsf',
+            scope   : me,
+
+            success: function (db) {
+                console.log('we did it!');
+            },
+
+            failure: function (db) {
+                console.log('no fun!');
+            },
+
+            callback: function (db) {
+                console.log('something happened');
+            }
+        });
+
+
+//        Ext.create('Extnd.UIView', {
+//            title       : 'sc1',
+//            dbPath      : '/extnd/demo.nsf/',
+//            viewName    : 'sc1',
+//            width       : 400,
+//            height      : 500,
+//            renderTo    : Ext.getBody()
+//        });
 
         Ext.create('Ext.Viewport', {
             layout: 'fit',
@@ -50,7 +82,7 @@ Ext.application({
             items: [
                 me.getUIOutline(),
                 me.getUIView1(),
-                me.getUIView2()
+                me.getUIView2(),
             ]
         }
     },
