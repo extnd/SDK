@@ -1,115 +1,144 @@
 /**
  * @class Extnd.Database
- * @singleton
  */
 Ext.define('Extnd.Database', {
-
-
     /**
      * acl
      * @type {Object}
      */
-    "acl" : {},
+    "acl" : null,
     /**
-     * acl activity log<br/>
-     * example: "01/21/2008 11:47:01 PM Rich Waters/Rich-Waters updated -Default-"
+     * acl activity log
      * @type {Array}
      */
-    "aclActivityLog" : ["01/21/2008 11:47:01 PM Rich Waters/Rich-Waters updated -Default-"],
+    "aclActivityLog" : null,
     /**
-     * current access level (see Ext.nd.ACCESS_LEVELS)
+     * current access level (see Extnd.ACCESS_LEVELS)
      * @type {Integer}
      */
-    "currentAccessLevel" : 4,
+    "currentAccessLevel" : null,
     /**
-     * parent {@link Ext.nd.Session} object
-     * @type {Ext.nd.Session}
+     * parent {@link Extnd.Session} object
+     * @type {Extnd.Session}
      */
-    "parent" : Ext.nd.Session,
+    "parent" : null,
     /**
      * server name
      * @type {String}
      */
-    "server" : "CN=Web/O=BlueCuda",
+    "server" : null,
     /**
      * file name of the database
      * @type {String}
      */
-    "fileName" : "extnd2_b1.nsf",
+    "fileName" : null,
     /**
      * file system path to the database
      * @type {String}
      */
-    "filePath" : "extnd\\extnd2_b1.nsf",
+    "filePath" : null,
     /**
      * analogous to @webdbname
      * @type {String}
      */
-    "webFilePath" : "/extnd/extnd2_b1.nsf/",
+    "webFilePath" : "",
     /**
      * database title
      * @type {String}
      */
-    "title" : "Ext.nd Beta 1",
+    "title" : null,
     /**
      * file format
      * @type {Integer}
      */
-    "fileFormat" : 43,
+    "fileFormat" : null,
     /**
      * database created on date
      * @type {String}
      */
-    "created" : "1/30/2008 4:18:50 PM",
+    "created" : null,
     /**
      * name of design template
      * @type {String}
      */
-    "designTemplateName" : "",
+    "designTemplateName" : null,
     /**
      * is DB2
      * @type {Boolean}
      */
-    "isDB2" : false,
+    "isDB2" : null,
     /**
      * http url
      * @type {String}
      */
-    "httpURL" : "http://web.bluecuda.com/__852573E0007514A8.nsf?OpenDatabase",
+    "httpURL" : null,
     /**
      * database replica idea
      * @type {String}
      */
-    "replicaID" : "852573E0007514A8",
+    "replicaID" : null,
     /**
      * is document locking enabled
      * @type {Boolean}
      */
-    "isDocumentLockingEnabled" : false,
+    "isDocumentLockingEnabled" : null,
     /**
      * is design locking enabled
      * @type {Boolean}
      */
-    "isDesignLockingEnabled" : true,
+    "isDesignLockingEnabled" : null,
     /**
      * database size
      * @type {Integer}
      */
-    "size" : 22282240,
+    "size" : null,
     /**
      * size quota
      * @type {Integer}
      */
-    "sizeQuota" : 0,
+    "sizeQuota" : null,
     /**
      * size warning
      * @type {Integer}
      */
-    "sizeWarning" : 0,
+    "sizeWarning" : null,
     /**
      * percentage used
      * @type {Number}
      */
-    "percentUsed" : 47.1
+    "percentUsed" : null,
+
+
+    constructor: function (config) {
+        var me = this;
+
+        Ext.apply(me, config);
+
+        Ext.Ajax.request({
+            method          : 'GET',
+            disableCaching  : true,
+            success         : me.handleSuccess,
+            failure         : me.handleFailure,
+            scope           : me,
+            options         : config,
+            url             : Ext.nd.extndUrl + 'Database?OpenAgent&db=' + me.dbPath
+        });
+
+    },
+
+    handleSuccess: function (response, request) {
+        var dbData  = Ext.decode(response.responseText),
+            options = request.options;
+
+        // apply dbData to this
+        Ext.apply(this, dbData);
+
+        // now call the callback and pass the session (this) to it
+        Ext.callback(options.success, options.scope, [this]);
+    },
+
+    handleFailure: function (response) {
+        console.log('failed');
+    }
 
 });
