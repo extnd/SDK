@@ -16,118 +16,155 @@
 </head>
 <body onload="prettyPrint(); highlight();">
   <pre class="prettyprint lang-js"><span id='Extnd-Database'>/**
-</span> * @class Extnd.Database
- * @singleton
+</span> * Represents a Domino Database
  */
 Ext.define('Extnd.Database', {
-
-
 <span id='Extnd-Database-property-acl'>    /**
-</span>     * acl
-     * @type {Object}
+</span>     * The access control list for a Extnd.Database
+     * @property {Object} acl
      */
-    &quot;acl&quot; : {},
+
 <span id='Extnd-Database-property-aclActivityLog'>    /**
-</span>     * acl activity log&lt;br/&gt;
-     * example: &quot;01/21/2008 11:47:01 PM Rich Waters/Rich-Waters updated -Default-&quot;
-     * @type {Array}
+</span>     * The log from the access control list for a database
+     * @property {Array} aclActivityLog
      */
-    &quot;aclActivityLog&quot; : [&quot;01/21/2008 11:47:01 PM Rich Waters/Rich-Waters updated -Default-&quot;],
+
 <span id='Extnd-Database-property-currentAccessLevel'>    /**
-</span>     * current access level (see Ext.nd.ACCESS_LEVELS)
-     * @type {Integer}
+</span>     * current access level (see Extnd.ACCESS_LEVELS)
+     * @property {Number} currentAccessLevel
      */
-    &quot;currentAccessLevel&quot; : 4,
+
 <span id='Extnd-Database-property-parent'>    /**
-</span>     * parent {@link Ext.nd.Session} object
-     * @type {Ext.nd.Session}
+</span>     * parent {@link Extnd.Session} object
+     * @property {Extnd.Session} parent
      */
-    &quot;parent&quot; : Ext.nd.Session,
+
 <span id='Extnd-Database-property-server'>    /**
 </span>     * server name
-     * @type {String}
+     * @property {String} server
      */
-    &quot;server&quot; : &quot;CN=Web/O=BlueCuda&quot;,
+
 <span id='Extnd-Database-property-fileName'>    /**
 </span>     * file name of the database
-     * @type {String}
+     * @property {String} fileName
      */
-    &quot;fileName&quot; : &quot;extnd2_b1.nsf&quot;,
+
 <span id='Extnd-Database-property-filePath'>    /**
 </span>     * file system path to the database
-     * @type {String}
+     * @property {String} filePath
      */
-    &quot;filePath&quot; : &quot;extnd\\extnd2_b1.nsf&quot;,
+
 <span id='Extnd-Database-property-webFilePath'>    /**
 </span>     * analogous to @webdbname
-     * @type {String}
+     * @property {String} webFilePath
      */
-    &quot;webFilePath&quot; : &quot;/extnd/extnd2_b1.nsf/&quot;,
+
 <span id='Extnd-Database-property-title'>    /**
 </span>     * database title
-     * @type {String}
+     * @property {String} title
      */
-    &quot;title&quot; : &quot;Ext.nd Beta 1&quot;,
+
 <span id='Extnd-Database-property-fileFormat'>    /**
 </span>     * file format
-     * @type {Integer}
+     * @property {Number} fileFormat
      */
-    &quot;fileFormat&quot; : 43,
+
 <span id='Extnd-Database-property-created'>    /**
 </span>     * database created on date
-     * @type {String}
+     * @property {Date} created
      */
-    &quot;created&quot; : &quot;1/30/2008 4:18:50 PM&quot;,
+
 <span id='Extnd-Database-property-designTemplateName'>    /**
 </span>     * name of design template
-     * @type {String}
+     * @property {String} designTemplateName
      */
-    &quot;designTemplateName&quot; : &quot;&quot;,
+
 <span id='Extnd-Database-property-isDB2'>    /**
 </span>     * is DB2
-     * @type {Boolean}
+     * @property {Boolean} isDB2
      */
-    &quot;isDB2&quot; : false,
+
 <span id='Extnd-Database-property-httpURL'>    /**
 </span>     * http url
-     * @type {String}
+     * @property {String} httpURL
      */
-    &quot;httpURL&quot; : &quot;http://web.bluecuda.com/__852573E0007514A8.nsf?OpenDatabase&quot;,
+
 <span id='Extnd-Database-property-replicaID'>    /**
-</span>     * database replica idea
-     * @type {String}
+</span>     * database replica ID
+     * @property {String} replicaID
      */
-    &quot;replicaID&quot; : &quot;852573E0007514A8&quot;,
+
 <span id='Extnd-Database-property-isDocumentLockingEnabled'>    /**
 </span>     * is document locking enabled
-     * @type {Boolean}
+     * @property {Boolean} isDocumentLockingEnabled
      */
-    &quot;isDocumentLockingEnabled&quot; : false,
+
 <span id='Extnd-Database-property-isDesignLockingEnabled'>    /**
 </span>     * is design locking enabled
-     * @type {Boolean}
+     * @property {Boolean} isDesignLockingEnabled
      */
-    &quot;isDesignLockingEnabled&quot; : true,
+
 <span id='Extnd-Database-property-size'>    /**
 </span>     * database size
-     * @type {Integer}
+     * @property {Number} size
      */
-    &quot;size&quot; : 22282240,
+
 <span id='Extnd-Database-property-sizeQuota'>    /**
 </span>     * size quota
-     * @type {Integer}
+     * @property {Number} sizeQuota
      */
-    &quot;sizeQuota&quot; : 0,
+
 <span id='Extnd-Database-property-sizeWarning'>    /**
 </span>     * size warning
-     * @type {Integer}
+     * @property {Number} sizeWarning
      */
-    &quot;sizeWarning&quot; : 0,
+
 <span id='Extnd-Database-property-percentUsed'>    /**
 </span>     * percentage used
-     * @type {Number}
+     * @property {Number} percentUsed
      */
-    &quot;percentUsed&quot; : 47.1
+
+<span id='Extnd-Database-method-constructor'>    /**
+</span>     * Creates a new Extnd.Database instance by making an Ajax call to the Extnd database to get the Database
+     * properties for the database referred to in the #dbPath config.
+     */
+    constructor: function (config) {
+        var me = this;
+
+        Ext.apply(me, config);
+
+        Ext.Ajax.request({
+            method          : 'GET',
+            disableCaching  : true,
+            success         : me.onGetDatabaseSuccess,
+            failure         : me.onGetDatabaseFailure,
+            scope           : me,
+            options         : config,
+            url             : Ext.nd.extndUrl + 'Database?OpenAgent&amp;db=' + me.dbPath
+        });
+
+    },
+
+<span id='Extnd-Database-method-onGetDatabaseSuccess'>    /**
+</span>     * @private
+     */
+    onGetDatabaseSuccess: function (response, request) {
+        var dbData  = Ext.decode(response.responseText),
+            options = request.options;
+
+        // apply dbData to this
+        Ext.apply(this, dbData);
+
+        // now call the callback and pass the database (this) to it
+        Ext.callback(options.success, options.scope, [this]);
+    },
+
+<span id='Extnd-Database-method-onGetDatabaseFailure'>    /**
+</span>     * @private
+     */
+    onGetDatabaseFailure: function (response) {
+        console.log('failed');
+    }
 
 });
 </pre>

@@ -16,95 +16,149 @@
 </head>
 <body onload="prettyPrint(); highlight();">
   <pre class="prettyprint lang-js"><span id='Extnd-Session'>/**
-</span> * @class Extnd.Session
- * @singleton
+</span> * Represents the environment of the current script, providing access to environment variables, Address Books, information
+ * about the current user, and information about the current Domino Server platform and release number.
  */
 Ext.define('Extnd.Session', {
 
-    singleton: true,
+<span id='Extnd-Session-property-addressBooks'>    /**
+</span>     * @property {Extnd.Database[]} addressBooks
+     * The Domino Directories and Personal Address Books, including directory catalogs, known to the current session.
+     */
 
 <span id='Extnd-Session-property-commonUserName'>    /**
-</span>     * common user name
-     * example: &quot;Rich Waters&quot;
-     * @type {String}
+</span>     * @property {String} commonUserName
+     * The common name portion of the current user's name.
      */
-    commonUserName : &quot;Anonymous&quot;,
-<span id='Extnd-Session-property-effectiveUserName'>    /**
-</span>     * effective user name
-     * example: &quot;CN=Rich Waters/O=ExtND&quot;
-     * @type {String}
-     */
-    effectiveUserName : &quot;Anonymous&quot;,
-<span id='Extnd-Session-property-notesBuildVersion'>    /**
-</span>     * notes build version
-     * @type {Integer}
-     */
-    notesBuildVersion : 261,
-<span id='Extnd-Session-property-notesVersion'>    /**
-</span>     * notes version
-     * example: &quot;Release 7.0.1|January 17, 2006&quot;
-     * @type {String}
-     */
-    notesVersion : &quot;Release 7.0.1|January 17, 2006&quot;,
-<span id='Extnd-Session-property-platform'>    /**
-</span>     * platform the server is running on
-     * @type {String}
-     */
-    platform : &quot;Windows/32&quot;,
-<span id='Extnd-Session-property-serverName'>    /**
-</span>     * server name
-     * @type {String}
-     */
-    serverName : &quot;CN=Web/O=BlueCuda&quot;,
-<span id='Extnd-Session-property-userGroupNameList'>    /**
-</span>     * list of groups current user is a member of
-     * example: {&quot;abbreviated&quot; : &quot;ExtNDAdmin&quot;, &quot;addr821&quot; : &quot;&quot;, &quot;common&quot; : &quot;ExtNDAdmin&quot;}
-     * @type {Array}
-     */
-    userGroupNameList : [{
-        &quot;abbreviated&quot; : &quot;*/ExtND&quot;,
-        &quot;addr821&quot; : &quot;&quot;,
-        &quot;common&quot; : &quot;*&quot;
-    }, {
-        &quot;abbreviated&quot; : &quot;ExtNDAdmin&quot;,
-        &quot;addr821&quot; : &quot;&quot;,
-        &quot;common&quot; : &quot;ExtNDAdmin&quot;
-    }],
-<span id='Extnd-Session-property-userName'>    /**
-</span>     * current user name
-     * example: &quot;CN=Rich Waters/O=ExtND&quot;
-     * @type {String}
-     */
-    userName : &quot;CN=Rich Waters/O=ExtND&quot;,
-<span id='Extnd-Session-property-userNameList'>    /**
-</span>     * user name list array
-     * @type {Array}
-     */
-    userNameList : [{
-        &quot;abbreviated&quot; : &quot;CN=Rich Waters/O=ExtND&quot;,
-        &quot;addr821&quot; : &quot;CN=Rich Waters/O=ExtND&quot;,
-        &quot;common&quot; : &quot;CN=Rich Waters/O=ExtND&quot;
-    }, {
-        &quot;abbreviated&quot; : &quot;CN=Web/O=BlueCuda&quot;,
-        &quot;addr821&quot; : &quot;CN=Web/O=BlueCuda&quot;,
-        &quot;common&quot; : &quot;CN=Web/O=BlueCuda&quot;
-    }],
-<span id='Extnd-Session-property-userRoles'>    /**
-</span>     * user roles
-     * @type {Array}
-     */
-    userRoles : [&quot;&quot;],
-<span id='Extnd-Session-property-addressBooks'>    /**
-</span>     * Array of {@link Ext.nd.Database} objects pertaining to the
-     * available address books
-     * @type {Array}
-     */
-    addressBooks : [],
+
 <span id='Extnd-Session-property-currentDatabase'>    /**
-</span>     * Current {@link Ext.nd.Database} object
-     * @type {Ext.nd.Database}
+</span>     * @property {Extnd.Database} currentDatabase
+     * The database first accessed when this session was initialized.  If no database was specified, then this will be the Extnd database.
      */
-    currentDatabase : null
+
+<span id='Extnd-Session-property-effectiveUserName'>    /**
+</span>     * @property {String} effectiveUserName
+     * The user name that is in effect for the current program.
+     */
+
+<span id='Extnd-Session-property-httpURL'>    /**
+</span>     * @property {String} httpURL
+     * The Domino URL of a session when HTTP protocols are in effect.
+     */
+
+<span id='Extnd-Session-property-notesBuildVersion'>    /**
+</span>     * @property {Float} notesBuildVersion
+     * The Domino server's release number.
+     */
+
+<span id='Extnd-Session-property-notesVersion'>    /**
+</span>     * @property {String} notesVersion
+     * The Domino server's release version.  Example: &quot;Release 7.0.1|January 17, 2006&quot;
+     */
+
+<span id='Extnd-Session-property-platform'>    /**
+</span>     * @property {String} platform
+     * The name of the platform the server is running on.
+     */
+
+<span id='Extnd-Session-property-serverName'>    /**
+</span>     * @property {String} serverName
+     * The full name of the server that the session is running on.
+     */
+
+<span id='Extnd-Session-property-userGroupNameList'>    /**
+</span>     * @property {Extnd.NotesName[]} userGroupNameList
+     * The groups to which the current user belongs.
+     * example: {&quot;abbreviated&quot; : &quot;ExtNDAdmin&quot;, &quot;addr821&quot; : &quot;&quot;, &quot;common&quot; : &quot;ExtNDAdmin&quot;}
+     */
+
+<span id='Extnd-Session-property-userName'>    /**
+</span>     * @property {String} userName
+     * The current user's name.
+     * example: &quot;CN=Rich Waters/O=ExtND&quot;
+     */
+
+<span id='Extnd-Session-property-userNameList'>    /**
+</span>     * @property {String[]} userNameList
+     * The name of the user that created the session, and the alternate name if it exists.
+     */
+
+<span id='Extnd-Session-property-userRoles'>    /**
+</span>     * @property {String[]} userRoles
+     * user roles
+     */
+
+<span id='Extnd-Session-method-constructor'>    /**
+</span>     * Creates a new Extnd.Session instance by making an Ajax call to the Extnd database to get the Session
+     * properties for the current user and optionally the current database information referred to in the #dbPath config.
+     */
+    constructor: function (config) {
+        var me = this;
+
+        Ext.apply(me, config);
+
+        Ext.Ajax.request({
+            method          : 'GET',
+            disableCaching  : true,
+            success         : me.onGetSessionSuccess,
+            failure         : me.onGetSessionFailure,
+            scope           : me,
+            options         : config,
+            url             : me.extndUrl + 'Session.json?OpenAgent&amp;db=' + me.dbPath || ''
+        });
+
+
+    },
+
+<span id='Extnd-Session-method-onGetSessionSuccess'>    /**
+</span>     * @private
+     */
+    onGetSessionSuccess: function (response, request) {
+        var sessionData = Ext.decode(response.responseText),
+            options     = request.options;
+
+        // apply sessionData to this
+        Ext.apply(this, sessionData);
+
+        // now call the callback and pass the session (this) to it
+        Ext.callback(options.success, options.scope, [this, response, request]);
+    },
+
+<span id='Extnd-Session-method-onGetSessionFailure'>    /**
+</span>     * @private
+     */
+    onGetSessionFailure: function (response) {
+        console.log('failed');
+    },
+
+<span id='Extnd-Session-method-evaluate'>    /**
+</span>     * Evaluates a Domino formula.
+     */
+    evaluate: function (formula, doc) {
+        console.log('TODO implement evaluate code');
+    },
+
+<span id='Extnd-Session-method-getDatabase'>    /**
+</span>     * Creates an Extnd.Database object that represents the database located at the server and file name you specify,
+     * and opens the database, if possible.
+     */
+    getDatabase: function (server, dbFile, createOnFail) {
+        console.log('TODO implement getDatabase code');
+    },
+
+<span id='Extnd-Session-method-getDbDirectory'>    /**
+</span>     * Creates a New Extnd.DbDirectory object using the name of the server you wnat to access.
+     */
+    getDbDirectory: function (server) {
+        console.log('TODO implement getDbDirectory');
+    },
+
+<span id='Extnd-Session-method-getDirectory'>    /**
+</span>     * Creates a New Extnd.Directory object using the name of the server you wnat to access.
+     */
+    getDirectory: function (server) {
+        console.log('TODO implement getDirectory');
+    }
 
 });
 </pre>
