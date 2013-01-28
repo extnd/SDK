@@ -1,114 +1,116 @@
 /**
- * @class Extnd.Database
+ * Represents a Domino Database
  */
 Ext.define('Extnd.Database', {
     /**
-     * acl
-     * @type {Object}
+     * The access control list for a Extnd.Database
+     * @property {Object} acl
      */
-    "acl" : null,
+
     /**
-     * acl activity log
-     * @type {Array}
+     * The log from the access control list for a database
+     * @property {Array} aclActivityLog
      */
-    "aclActivityLog" : null,
+
     /**
      * current access level (see Extnd.ACCESS_LEVELS)
-     * @type {Integer}
+     * @property {Number} currentAccessLevel
      */
-    "currentAccessLevel" : null,
+
     /**
      * parent {@link Extnd.Session} object
-     * @type {Extnd.Session}
+     * @property {Extnd.Session} parent
      */
-    "parent" : null,
+
     /**
      * server name
-     * @type {String}
+     * @property {String} server
      */
-    "server" : null,
+
     /**
      * file name of the database
-     * @type {String}
+     * @property {String} fileName
      */
-    "fileName" : null,
+
     /**
      * file system path to the database
-     * @type {String}
+     * @property {String} filePath
      */
-    "filePath" : null,
+
     /**
      * analogous to @webdbname
-     * @type {String}
+     * @property {String} webFilePath
      */
-    "webFilePath" : "",
+
     /**
      * database title
-     * @type {String}
+     * @property {String} title
      */
-    "title" : null,
+
     /**
      * file format
-     * @type {Integer}
+     * @property {Number} fileFormat
      */
-    "fileFormat" : null,
+
     /**
      * database created on date
-     * @type {String}
+     * @property {Date} created
      */
-    "created" : null,
+
     /**
      * name of design template
-     * @type {String}
+     * @property {String} designTemplateName
      */
-    "designTemplateName" : null,
+
     /**
      * is DB2
-     * @type {Boolean}
+     * @property {Boolean} isDB2
      */
-    "isDB2" : null,
+
     /**
      * http url
-     * @type {String}
+     * @property {String} httpURL
      */
-    "httpURL" : null,
+
     /**
-     * database replica idea
-     * @type {String}
+     * database replica ID
+     * @property {String} replicaID
      */
-    "replicaID" : null,
+
     /**
      * is document locking enabled
-     * @type {Boolean}
+     * @property {Boolean} isDocumentLockingEnabled
      */
-    "isDocumentLockingEnabled" : null,
+
     /**
      * is design locking enabled
-     * @type {Boolean}
+     * @property {Boolean} isDesignLockingEnabled
      */
-    "isDesignLockingEnabled" : null,
+
     /**
      * database size
-     * @type {Integer}
+     * @property {Number} size
      */
-    "size" : null,
+
     /**
      * size quota
-     * @type {Integer}
+     * @property {Number} sizeQuota
      */
-    "sizeQuota" : null,
+
     /**
      * size warning
-     * @type {Integer}
+     * @property {Number} sizeWarning
      */
-    "sizeWarning" : null,
+
     /**
      * percentage used
-     * @type {Number}
+     * @property {Number} percentUsed
      */
-    "percentUsed" : null,
 
-
+    /**
+     * Creates a new Extnd.Database instance by making an Ajax call to the Extnd database to get the Database
+     * properties for the database referred to in the #dbPath config.
+     */
     constructor: function (config) {
         var me = this;
 
@@ -117,8 +119,8 @@ Ext.define('Extnd.Database', {
         Ext.Ajax.request({
             method          : 'GET',
             disableCaching  : true,
-            success         : me.handleSuccess,
-            failure         : me.handleFailure,
+            success         : me.onGetDatabaseSuccess,
+            failure         : me.onGetDatabaseFailure,
             scope           : me,
             options         : config,
             url             : Ext.nd.extndUrl + 'Database?OpenAgent&db=' + me.dbPath
@@ -126,18 +128,24 @@ Ext.define('Extnd.Database', {
 
     },
 
-    handleSuccess: function (response, request) {
+    /**
+     * @private
+     */
+    onGetDatabaseSuccess: function (response, request) {
         var dbData  = Ext.decode(response.responseText),
             options = request.options;
 
         // apply dbData to this
         Ext.apply(this, dbData);
 
-        // now call the callback and pass the session (this) to it
+        // now call the callback and pass the database (this) to it
         Ext.callback(options.success, options.scope, [this]);
     },
 
-    handleFailure: function (response) {
+    /**
+     * @private
+     */
+    onGetDatabaseFailure: function (response) {
         console.log('failed');
     }
 

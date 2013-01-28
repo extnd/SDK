@@ -11,6 +11,25 @@ Ext.define('Extnd', {
     ],
 
     /**
+     * The database path, relative to the Domino data directory, of the database you wish to extract info from and which
+     * will be stored in the session.currentDatbase property.  If no database is specified, then the Extnd database info
+     * will be returned.
+     * @cfg {String} [dbPath]
+     */
+
+    /**
+     * @property {String} [extndDbUrl]
+     */
+
+    /**
+     * @property {String} extndUrl
+     */
+
+    /**
+     * @property {String} extUrl
+     */
+
+    /**
      * The version of the Extnd framework
      * @type String
      */

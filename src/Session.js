@@ -1,5 +1,6 @@
 /**
- * @class Extnd.Session
+ * Represents the environment of the current script, providing access to environment variables, Address Books, information
+ * about the current user, and information about the current Domino Server platform and release number.
  */
 Ext.define('Extnd.Session', {
 
@@ -66,11 +67,14 @@ Ext.define('Extnd.Session', {
      */
 
     /**
+     * @property {String[]} userRoles
      * user roles
-     * @type {Array}
      */
 
-
+    /**
+     * Creates a new Extnd.Session instance by making an Ajax call to the Extnd database to get the Session
+     * properties for the current user and optionally the current database information referred to in the #dbPath config.
+     */
     constructor: function (config) {
         var me = this;
 
@@ -79,8 +83,8 @@ Ext.define('Extnd.Session', {
         Ext.Ajax.request({
             method          : 'GET',
             disableCaching  : true,
-            success         : me.handleSuccess,
-            failure         : me.handleFailure,
+            success         : me.onGetSessionSuccess,
+            failure         : me.onGetSessionFailure,
             scope           : me,
             options         : config,
             url             : me.extndUrl + 'Session.json?OpenAgent&db=' + me.dbPath || ''
@@ -89,7 +93,10 @@ Ext.define('Extnd.Session', {
 
     },
 
-    handleSuccess: function (response, request) {
+    /**
+     * @private
+     */
+    onGetSessionSuccess: function (response, request) {
         var sessionData = Ext.decode(response.responseText),
             options     = request.options;
 
@@ -97,10 +104,13 @@ Ext.define('Extnd.Session', {
         Ext.apply(this, sessionData);
 
         // now call the callback and pass the session (this) to it
-        Ext.callback(options.success, options.scope, [this]);
+        Ext.callback(options.success, options.scope, [this, response, request]);
     },
 
-    handleFailure: function (response) {
+    /**
+     * @private
+     */
+    onGetSessionFailure: function (response) {
         console.log('failed');
     },
 

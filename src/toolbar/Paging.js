@@ -11,7 +11,6 @@ Ext.define('Extnd.toolbar.Paging', {
 
     alternateClassName: [
         'Extnd.PagingToolbar',
-        'Ext.nd.toolbar.Paging',
         'Ext.nd.PagingToolbar'
     ],
 
