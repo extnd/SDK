@@ -164,8 +164,8 @@ Ext.ClassManager.addNameAliasMappings({
     "association.belongsto"
   ],
   "Ext.fx.target.Element": [],
-  "Ext.draw.Surface": [],
   "Ext.dd.DDProxy": [],
+  "Ext.draw.Surface": [],
   "Ext.data.AbstractStore": [],
   "Ext.form.action.StandardSubmit": [
     "formaction.standardsubmit"
@@ -191,6 +191,7 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.xnd-treepanel",
     "widget.xnd-tree"
   ],
+  "Extnd.util.DominoActionbar": [],
   "Ext.data.Batch": [],
   "Ext.resizer.Handle": [],
   "Ext.util.ElementContainer": [],
@@ -403,6 +404,9 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.form.field.Text": [
     "widget.textfield"
   ],
+  "Extnd.toolbar.Actionbar": [
+    "xnd-actionbar"
+  ],
   "Ext.data.reader.Xml": [
     "reader.xml"
   ],
@@ -608,6 +612,7 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.textareafield",
     "widget.textarea"
   ],
+  "Extnd.app.Application": [],
   "Ext.form.field.Radio": [
     "widget.radiofield",
     "widget.radio"
@@ -626,6 +631,9 @@ Ext.ClassManager.addNameAliasMappings({
     "direct.provider"
   ],
   "Ext.data.TreeModel": [],
+  "Extnd.form.Panel": [
+    "widget.xnd-uidocument"
+  ],
   "Ext.layout.Layout": [],
   "Ext.toolbar.TextItem": [
     "widget.tbtext"
@@ -833,11 +841,11 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.grid.plugin.HeaderResizer": [
     "plugin.gridheaderresizer"
   ],
-  "Ext.data.writer.Xml": [
-    "writer.xml"
-  ],
   "Ext.tree.Column": [
     "widget.treecolumn"
+  ],
+  "Ext.data.writer.Xml": [
+    "writer.xml"
   ],
   "Ext.slider.Multi": [
     "widget.multislider"
@@ -950,7 +958,6 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Extnd.toolbar.Paging": [
     "Extnd.PagingToolbar",
-    "Ext.nd.toolbar.Paging",
     "Ext.nd.PagingToolbar"
   ],
   "Ext.form.field.File": [
@@ -1031,8 +1038,8 @@ Ext.ClassManager.addNameAliasMappings({
     "Ext.data.BelongsToAssociation"
   ],
   "Ext.fx.target.Element": [],
-  "Ext.draw.Surface": [],
   "Ext.dd.DDProxy": [],
+  "Ext.draw.Surface": [],
   "Ext.data.AbstractStore": [],
   "Ext.form.action.StandardSubmit": [],
   "Ext.diag.layout.Context": [],
@@ -1060,6 +1067,9 @@ Ext.ClassManager.addNameAliasMappings({
     "Extnd.UIOutline",
     "Ext.nd.tree.Panel",
     "Ext.nd.TreePanel"
+  ],
+  "Extnd.util.DominoActionbar": [
+    "Ext.nd.util.DominoActionbar"
   ],
   "Ext.data.Batch": [],
   "Ext.resizer.Handle": [],
@@ -1232,6 +1242,10 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.form.field.Text": [
     "Ext.form.TextField",
     "Ext.form.Text"
+  ],
+  "Extnd.toolbar.Actionbar": [
+    "Extnd.Actionbar",
+    "Ext.nd.Actionbar"
   ],
   "Ext.data.reader.Xml": [
     "Ext.data.XmlReader"
@@ -1428,6 +1442,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.form.field.TextArea": [
     "Ext.form.TextArea"
   ],
+  "Extnd.app.Application": [],
   "Ext.form.field.Radio": [
     "Ext.form.Radio"
   ],
@@ -1440,6 +1455,12 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.tree.plugin.TreeViewDragDrop": [],
   "Ext.direct.Provider": [],
   "Ext.data.TreeModel": [],
+  "Extnd.form.Panel": [
+    "Extnd.UIDocument",
+    "Ext.nd.UIDocument",
+    "Ext.nd.Form",
+    "Ext.nd.Page"
+  ],
   "Ext.layout.Layout": [],
   "Ext.toolbar.TextItem": [
     "Ext.Toolbar.TextItem"
@@ -1598,10 +1619,10 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Ext.direct.PollingProvider": [],
   "Ext.grid.plugin.HeaderResizer": [],
+  "Ext.tree.Column": [],
   "Ext.data.writer.Xml": [
     "Ext.data.XmlWriter"
   ],
-  "Ext.tree.Column": [],
   "Ext.slider.Multi": [
     "Ext.slider.MultiSlider"
   ],
