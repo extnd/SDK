@@ -79,6 +79,11 @@ Ext.define('Extnd.toolbar.Actionbar', {
     extend  : 'Ext.toolbar.Toolbar',
     alias   : 'xnd-actionbar',
 
+    alternateClassName: [
+        'Extnd.Actionbar',
+        'Ext.nd.Actionbar'
+    ],
+
     // defaults
     noteType            : '',
     noteName            : '',
@@ -172,7 +177,7 @@ Ext.define('Extnd.toolbar.Actionbar', {
         if (me.noteType === '' || me.noteType === 'view') {
             me.dominoActionbar.actionbar = false;
         } else {
-            me.dominoActionbar = new Ext.nd.util.DominoActionbar();
+            me.dominoActionbar = new Extnd.util.DominoActionbar();
             me.dominoActionbar.hide();
         }
 
@@ -385,7 +390,8 @@ Ext.define('Extnd.toolbar.Actionbar', {
                             case 'OpenView':
                             case 'RunAgent':
                             default:
-                                show = false; // For now hide unsupported commands
+                                show = false;
+                                // For now hide unsupported commands
                                 // handler = this.unsupportedAtCommand, this,[formula]);
 
                             }
