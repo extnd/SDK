@@ -3,7 +3,7 @@
  *
  * Simple example:
  *
-        var uidoc = new Ext.nd.UIDocument();
+        var uidoc = new Extnd.UIDocument();
         uidoc.render('myDiv'); // to render to a specified location
  *
  * -- or --
@@ -11,7 +11,7 @@
  *
  * More complex example:
  *
-        var uidoc = new Ext.nd.UIDocument({
+        var uidoc = new Extnd.UIDocument({
             showActionbar : false,
             convertFields : false
         });
@@ -41,19 +41,39 @@ Ext.define('Extnd.form.Panel', {
     requires: [
         'Ext.container.Viewport',
         'Extnd.toolbar.Actionbar',
-        'Extnd.util.DominoActionbar'
+        'Extnd.util.DominoActionbar',
+        'Ext.form.field.*',
+        'Ext.data.reader.Xml'
     ],
 
     initComponent : function () {
+
+        Ext.override(Ext.Component, {
+            applyToMarkupzzz : function (el) {
+                this.allowDomMove = false;
+                this.el = Ext.get(el);
+                this.render(this.el.dom.parentNode);
+            },
+            applyToMarkup : function (el) {
+                el = Ext.get(el);
+                el.addCls("x-hidden");
+                this.allowDomMove = false;
+                this.render(el.dom.parentNode, null, true);
+            }
+        });
+
         var me = this,
-            sess = Ext.nd.Session,
+            sess = Extnd.Session,
             db = sess.currentDatabase,
-            //TODO: this needs to go away soon (the use of Ext.nd.currentUIDocument.*)
-            currentUIDocument = Ext.nd.currentUIDocument || {},
+            //TODO: this needs to go away soon (the use of Extnd.currentUIDocument.*)
+            currentUIDocument = Extnd.currentUIDocument || {},
             frms = document.forms,
             href, search,
             start,
             end;
+
+
+        me.items = {xtype: 'label', hidden: true};
 
         // now just apply currentUIDocument to 'this' so we get what the agent says
         // about this uidocument (such as UNID, form name, etc.)
@@ -64,6 +84,7 @@ Ext.define('Extnd.form.Panel', {
         me.uidoc = currentUIDocument;
 
         // defaults
+        me.contentEl = me.getDominoForm();
         me.dbPath = db.webFilePath;
         me.showActionbar = true;
         me.createActionsFrom = 'document';
@@ -78,7 +99,7 @@ Ext.define('Extnd.form.Panel', {
 
         // developer can specify where the toolbar should appear
         //me.toolbarRenderTo;
-        me.dateTimeFormats = Ext.nd.dateTimeFormats;
+        me.dateTimeFormats = Extnd.dateTimeFormats;
 
         // for a page we need this hack to get the page name (that we store in the formName variable)
         // we do this since the UIDocument.js agent couldn't get this info and
@@ -111,27 +132,27 @@ Ext.define('Extnd.form.Panel', {
         me.addEvents(
             /**
              * @event beforeclose Fires just before the current document is closed (equivalent to the NotesUIDocument QueryClose event).
-             * @param {Ext.nd.UIDocument} this
+             * @param {Extnd.UIDocument} this
              */
             'beforeclose',
             /**
              * @event beforemodechange Fires just before the current document changes modes (from Read to Edit mode, or from Edit to Read mode) (equivalent to the NotesUIDocument QueryModeChange event).
-             * @param {Ext.nd.UIDocument} this
+             * @param {Extnd.UIDocument} this
              */
             'beforemodechange',
             /**
              * @event beforeopen (TODO: Not yet implemented) Fires just before the current document is opened (equivalent to the NotesUIDocument QueryOpen event).
-             * @param {Ext.nd.UIDocument} this
+             * @param {Extnd.UIDocument} this
              */
             'beforeopen',
             /**
              * @event beforesave Fires just before the current document is saved (equivalent to NotesUIDocument QuerySave)
-             * @param {Ext.nd.UIDocument} this
+             * @param {Extnd.UIDocument} this
              */
             'beforesave',
             /**
              * @event open Fires just after the current document is opened (equivalent to NotesUIDocument PostOpen and OnLoad events.)
-             * @param {Ext.nd.UIDocument} this
+             * @param {Extnd.UIDocument} this
              */
             'open'
         );
@@ -270,7 +291,7 @@ Ext.define('Extnd.form.Panel', {
                 failure : this.doConvertFieldsCB,
                 args : arguments,
                 scope: this,
-                url: Ext.nd.extndUrl + 'DXLExporter?OpenAgent&db=' + this.dbPath + '&type=form&name=' + this.formName
+                url: Extnd.extndUrl + 'DXLExporter?OpenAgent&db=' + this.dbPath + '&type=form&name=' + this.formName
             });
 
             // need to go ahead and make sure we set the layout
@@ -300,9 +321,12 @@ Ext.define('Extnd.form.Panel', {
     },
 
     getDominoForm: function () {
-        if (!this.dominoForm) {
-            return this.dominoForm = Ext.get(document.forms[0]);
+        var me = this;
+
+        if (!me.dominoForm) {
+            me.dominoForm = Ext.get(document.forms[0]);
         }
+        return me.dominoForm;
     },
 
     edit : function (config) {
@@ -516,7 +540,7 @@ Ext.define('Extnd.form.Panel', {
 
             if (Ext.isArray(this.tbar)) {
                 // add the tbar|bbar|buttons array to our on Actionbar items config
-                this.tbar = new Ext.nd.Actionbar({
+                this.tbar = new Extnd.Actionbar({
                     id: tbId,
                     noteName: (this.showActionbar) ? this.formName : '',
                     uiView: this.getUIView(),
@@ -541,7 +565,7 @@ Ext.define('Extnd.form.Panel', {
         } else {
 
             if (this.showActionbar) {
-                this.tbar = new Ext.nd.Actionbar({
+                this.tbar = new Extnd.Actionbar({
                     id : tbId,
                     noteType: 'form',
                     noteName: this.formName,
@@ -856,8 +880,12 @@ Ext.define('Extnd.form.Panel', {
 
 
     convertToHiddenField : function (el) {
-        // not sure if we need to do anything more
-        this.convertToTextField(el);
+        var f = new Ext.form.field.Hidden({
+            id: (el.id || el.name)
+        });
+        f.applyToMarkup(el);
+        // now add to items
+        this.items.add(f);
     },
 
 
@@ -871,7 +899,7 @@ Ext.define('Extnd.form.Panel', {
         });
         f.applyToMarkup(el);
         // now add to items
-        this.form.items.add(f);
+        this.items.add(f);
 
     },
 
@@ -938,32 +966,32 @@ Ext.define('Extnd.form.Panel', {
         }
     },
 
-
+    // TODO
     convertToNamePicker : function (el, config) {
-
+        return;
         config = config || {};
 
-        var nm = new Ext.nd.form.PickListField(Ext.apply({
+        var nm = new Extnd.form.PickListField(Ext.apply({
             type: 'names',
             id: (el.id || el.name),
             width : this.getFieldWidth(el)
         }, config));
         nm.applyToMarkup(el);
         // now add to items
-        this.form.items.add(nm);
+        this.items.add(nm);
 
     },
 
-
+    // TODO
     convertToPickList : function (el, config) {
-
-        var pl = new Ext.nd.form.PickListField(Ext.apply({
+        return;
+        var pl = new Extnd.form.PickListField(Ext.apply({
             id: (el.id || el.name),
             width : this.getFieldWidth(el)
         }, config));
         pl.applyToMarkup(el);
         // now add to items
-        this.form.items.add(pl);
+        this.items.add(pl);
 
     },
 
@@ -976,7 +1004,7 @@ Ext.define('Extnd.form.Panel', {
         });
         ta.applyToMarkup(el);
         // now add to items
-        this.form.items.add(ta);
+        this.items.add(ta);
 
     },
 
@@ -1057,7 +1085,7 @@ Ext.define('Extnd.form.Panel', {
             Ext.removeNode(el);
 
             // now add to items
-            this.form.items.add(uploadField);
+            this.items.add(uploadField);
 
         } else {
             // Ext's fileuploadfield code isn't loaded
@@ -1142,7 +1170,7 @@ Ext.define('Extnd.form.Panel', {
         }
 
         // now add to items
-        this.form.items.add(ed);
+        this.items.add(ed);
 
     },
 
@@ -1154,7 +1182,7 @@ Ext.define('Extnd.form.Panel', {
         });
         nbr.applyToMarkup(el);
         // now add to items
-        this.form.items.add(nbr);
+        this.items.add(nbr);
 
     },
 
@@ -1187,18 +1215,18 @@ Ext.define('Extnd.form.Panel', {
 
         dt.applyToMarkup(el);
         // now add to items
-        this.form.items.add(dt);
+        this.items.add(dt);
     },
 
-
+    // TODO
     convertToTimeField : function (el) {
-
-        var tm = new Ext.nd.form.TimeField({
+        return;
+        var tm = new Extnd.form.TimeField({
             width : this.getFieldWidth(el)
         });
         tm.applyToMarkup(el);
         // now add to items
-        this.form.items.add(tm);
+        this.items.add(tm);
 
     },
 
@@ -1213,7 +1241,7 @@ Ext.define('Extnd.form.Panel', {
             });
 
         ckb.applyToMarkup(el);
-        this.form.items.add(ckb);
+        this.items.add(ckb);
 
     },
 
@@ -1236,7 +1264,7 @@ Ext.define('Extnd.form.Panel', {
             boxLabel : boxLabel
         });
         rd.applyToMarkup(el);
-        this.form.items.add(rd);
+        this.items.add(rd);
 
     },
 
@@ -1340,7 +1368,8 @@ Ext.define('Extnd.form.Panel', {
         // http://extjs.com/forum/showthread.php?t=63132
         store = new Ext.data.Store({
             data: textlist,
-            reader: new Ext.data.XmlReader({
+            fields: ['text', 'value'],
+            reader: new Ext.data.reader.Xml({
                 record: "text"
             },
                 [{
@@ -1366,7 +1395,7 @@ Ext.define('Extnd.form.Panel', {
         combo.applyToMarkup(el);
 
         // now add to items
-        this.form.items.add(combo);
+        this.items.add(combo);
 
     },
 
@@ -1381,7 +1410,7 @@ Ext.define('Extnd.form.Panel', {
     convertToSelectFromFormula : function (el, formula) {
 
         // use the Evaluate agent that evaluates @formulas
-        var url = Ext.nd.extndUrl + 'Evaluate?OpenAgent',
+        var url = Extnd.extndUrl + 'Evaluate?OpenAgent',
             store,
             cb;
 
@@ -1425,7 +1454,7 @@ Ext.define('Extnd.form.Panel', {
         });
 
         cb.applyToMarkup(el);
-        this.form.items.add(cb);
+        this.items.add(cb);
     },
 
 
@@ -1557,7 +1586,7 @@ Ext.define('Extnd.form.Panel', {
         } // end if (this.applyDominoKeywordRefresh)
 
         // now add to items
-        this.form.items.add(cb);
+        this.items.add(cb);
 
     }, // end convertSelectToComboBox
 
