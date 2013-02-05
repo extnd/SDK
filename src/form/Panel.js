@@ -47,10 +47,10 @@ Ext.define('Extnd.form.Panel', {
         'Ext.data.reader.Xml'
     ],
 
-    initComponent : function () {
+    initComponent: function () {
 
         Ext.override(Ext.Component, {
-            applyToMarkup : function (el) {
+            applyToMarkup: function (el) {
                 el = Ext.get(el);
                 el.addCls("x-hidden");
                 this.allowDomMove = false;
@@ -169,7 +169,7 @@ Ext.define('Extnd.form.Panel', {
     // will fix an IE issue with the layout not positioning correctly
     // when the page loads and 'jumps' to the <a href> reference in the hash
     // TODO: need to add code to instead "scroll" to the hash reference
-    _doClick : function (v, o, t, h) {
+    _doClick: function (v, o, t, h) {
         var form = this.getDominoForm(),
             retVal,
             target;
@@ -209,7 +209,7 @@ Ext.define('Extnd.form.Panel', {
     // private
     // overriding the FormPanels createForm method with our own
     // so we can reuse the domino generated form
-    createFormzzz : function () {
+    createFormzzz: function () {
         delete this.initialConfig.listeners;
         if (!this.items) {
             // this is just something to make FormPanel happy
@@ -229,7 +229,7 @@ Ext.define('Extnd.form.Panel', {
      * an Ext.Viewport like previous versions did when the render method
      * is called without any arguments
      */
-    render : function () {
+    render: function () {
         if (arguments.length === 0) {
           //this.render(document.body);
             new Ext.Viewport({
@@ -242,7 +242,7 @@ Ext.define('Extnd.form.Panel', {
 
     },
 
-    onRender : function (ct, position) {
+    onRender: function (ct, position) {
 
         /* make sure that body is already set to our domino
          * form's Element (this.form.el) we do this so that
@@ -270,7 +270,7 @@ Ext.define('Extnd.form.Panel', {
         this.setupButtons();
     },
 
-    afterRender : function () {
+    afterRender: function () {
 
 
         /* make an Ajax call to our DXLExport agent
@@ -325,14 +325,14 @@ Ext.define('Extnd.form.Panel', {
         return me.dominoForm;
     },
 
-    edit : function (config) {
+    edit: function (config) {
         var me = this;
         if (me.fireEvent("beforemodechange", me) !== false) {
             me.onEdit(config);
         }
     },
 
-    onEdit : function (config) {
+    onEdit: function (config) {
         var me = this,
             uiView = me.getUIView(),
             uiViewName = uiView ? uiView.viewName : '0',
@@ -341,14 +341,14 @@ Ext.define('Extnd.form.Panel', {
         location.href = me.dbPath + uiViewName + '/' + unid + '?EditDocument';
     },
 
-    save : function (config) {
+    save: function (config) {
         var me = this;
         if (me.fireEvent("beforesave", me) !== false) {
             me.onSave(config);
         }
     },
 
-    onSave : function (config) {
+    onSave: function (config) {
 
         var frm = this.getForm(),
             fieldModDate,
@@ -387,7 +387,7 @@ Ext.define('Extnd.form.Panel', {
         }, config));
     },
 
-    onSaveCallback : function (form, action) {
+    onSaveCallback: function (form, action) {
         var me = this,
             options = action.options,
             cb = options.cb,
@@ -411,13 +411,13 @@ Ext.define('Extnd.form.Panel', {
 
     },
 
-    close : function (unid) {
+    close: function (unid) {
         if (this.fireEvent("beforeclose", this) !== false) {
             this.onClose(unid);
         }
     },
 
-    onClose : function (unid) {
+    onClose: function (unid) {
         /*
          * return true means that we were able to call the component's remove/hide/close action
          * return false means that we couldn't find a component and thus couldn't do anything
@@ -482,7 +482,7 @@ Ext.define('Extnd.form.Panel', {
 
 
     // private
-    setPostUrl : function () {
+    setPostUrl: function () {
 
         return;
 
@@ -512,7 +512,7 @@ Ext.define('Extnd.form.Panel', {
     },
 
     // private
-    setUniversalID : function (unid) {
+    setUniversalID: function (unid) {
 
         var me = this,
             frm = me.getForm(),
@@ -526,7 +526,7 @@ Ext.define('Extnd.form.Panel', {
     },
 
     // private
-    setupToolbars : function () {
+    setupToolbars: function () {
 
         var tbId;
 
@@ -577,7 +577,7 @@ Ext.define('Extnd.form.Panel', {
 
     },
 
-    setupButtons : function () {
+    setupButtons: function () {
 
         // handle special case of 'buttons' and 'fbar'
         if (this.buttons) {
@@ -601,7 +601,7 @@ Ext.define('Extnd.form.Panel', {
      * of field info
      * @private
      */
-    doConvertFieldsCB : function (response, options) {
+    doConvertFieldsCB: function (response, options) {
 
         // load in our field defintions
         this.fieldDefinitions = new Ext.util.MixedCollection(false, this.getFieldDefinitionKey);
@@ -636,7 +636,7 @@ Ext.define('Extnd.form.Panel', {
 
     },
 
-    doConvertFields : function () {
+    doConvertFields: function () {
         var elem,
             key,
             elements = this.getDominoForm().dom.elements,
@@ -669,7 +669,7 @@ Ext.define('Extnd.form.Panel', {
     },
 
 
-    getFieldDefinition : function (el) {
+    getFieldDefinition: function (el) {
         var retVal = null;
 
         if (el.name) {
@@ -680,7 +680,7 @@ Ext.define('Extnd.form.Panel', {
     },
 
 
-    convertFromTagName : function (el) {
+    convertFromTagName: function (el) {
         var me = this,
             dfield,
             allowMultiValues,
@@ -758,7 +758,7 @@ Ext.define('Extnd.form.Panel', {
     },
 
 
-    convertFromDominoFieldType : function (el) {
+    convertFromDominoFieldType: function (el) {
         var me = this,
             dfield = me.getFieldDefinition(el),
             dtype;
@@ -790,12 +790,12 @@ Ext.define('Extnd.form.Panel', {
     },
 
 
-    getFieldDefinitionKey : function (theField) {
+    getFieldDefinitionKey: function (theField) {
         return Ext.DomQuery.selectValue('@name', theField);
     },
 
 
-    convertFromClassName : function (el, doConvert) {
+    convertFromClassName: function (el, doConvert) {
 
         var arClasses = el.className.split(' '),
             c,
@@ -875,9 +875,9 @@ Ext.define('Extnd.form.Panel', {
     },
 
 
-    convertToHiddenField : function (el) {
+    convertToHiddenField: function (el) {
         var f = new Ext.form.field.Hidden({
-            id: (el.id || el.name)
+            itemId: (el.id || el.name)
         });
         f.applyToMarkup(el);
         // now add to items
@@ -886,12 +886,13 @@ Ext.define('Extnd.form.Panel', {
 
 
 
-    convertToTextField : function (el) {
+    convertToTextField: function (el) {
 
         // for normal input fields
         var f = new Ext.form.TextField({
-            id: (el.id || el.name),
-            width : this.getFieldWidth(el)
+            name    : el.name,
+            itemId  : (el.id || el.name),
+            width   : this.getFieldWidth(el)
         });
         f.applyToMarkup(el);
         // now add to items
@@ -900,11 +901,11 @@ Ext.define('Extnd.form.Panel', {
     },
 
 
-    convertToFieldSet : function (el) {
+    convertToFieldSet: function (el) {
 
         //var title = Ext.DomQuery.selectValue('legend',el,'');
         var fs = new Ext.form.FieldSet({
-            id: (el.id || el.name),
+            itemId: (el.id || el.name),
             //title : title,
             autoHeight: true,
             autoWidth : true
@@ -914,7 +915,7 @@ Ext.define('Extnd.form.Panel', {
     },
 
 
-    convertNamesField : function (el) {
+    convertNamesField: function (el) {
 
         var dfield = this.getFieldDefinition(el),
             allowMultiValues,
@@ -963,12 +964,12 @@ Ext.define('Extnd.form.Panel', {
     },
 
     // TODO
-    convertToNamePicker : function (el, config) {
+    convertToNamePicker: function (el, config) {
         config = config || {};
 
         var nm = new Extnd.form.PickListField(Ext.apply({
             type: 'names',
-            id: (el.id || el.name),
+            itemId: (el.id || el.name),
             width : this.getFieldWidth(el)
         }, config));
         nm.applyToMarkup(el);
@@ -978,9 +979,9 @@ Ext.define('Extnd.form.Panel', {
     },
 
 
-    convertToPickList : function (el, config) {
+    convertToPickList: function (el, config) {
         var pl = new Extnd.form.PickListField(Ext.apply({
-            id: (el.id || el.name),
+            itemId: (el.id || el.name),
             width : this.getFieldWidth(el)
         }, config));
         pl.applyToMarkup(el);
@@ -990,10 +991,10 @@ Ext.define('Extnd.form.Panel', {
     },
 
 
-    convertToTextAreaField : function (el) {
+    convertToTextAreaField: function (el) {
 
         var ta = new Ext.form.TextArea({
-            id: (el.id || el.name),
+            itemId: (el.id || el.name),
             resizable: true
         });
         ta.applyToMarkup(el);
@@ -1003,7 +1004,7 @@ Ext.define('Extnd.form.Panel', {
     },
 
 
-    convertToFileUpload : function (el) {
+    convertToFileUpload: function (el) {
         var dh = Ext.DomHelper,
             attr = el.attributes,
             style = '',
@@ -1090,7 +1091,7 @@ Ext.define('Extnd.form.Panel', {
     },
 
 
-    convertToHtmlEditor : function (el) {
+    convertToHtmlEditor: function (el) {
 
         // Html Editor needs QuickTips inorder to work
         Ext.QuickTips.init();
@@ -1103,7 +1104,7 @@ Ext.define('Extnd.form.Panel', {
 
         if (tag === 'div') {
             ed = new Ext.form.HtmlEditor({
-                id: (el.id || el.name),
+                itemId: (el.id || el.name),
                 renderTo: el
             });
 
@@ -1169,7 +1170,7 @@ Ext.define('Extnd.form.Panel', {
     },
 
 
-    convertToNumberField : function (el) {
+    convertToNumberField: function (el) {
 
         var nbr = new Ext.form.NumberField({
             width : this.getFieldWidth(el)
@@ -1181,7 +1182,7 @@ Ext.define('Extnd.form.Panel', {
     },
 
 
-    convertToDateTimeField : function (el) {
+    convertToDateTimeField: function (el) {
         var dfield = this.getFieldDefinition(el),
             show;
 
@@ -1199,9 +1200,9 @@ Ext.define('Extnd.form.Panel', {
     },
 
 
-    convertToDateField : function (el) {
+    convertToDateField: function (el) {
         var dt = new Ext.form.DateField({
-            id: (el.id || el.name),
+            itemId: (el.id || el.name),
             selectOnFocus: true,
             format: this.dateTimeFormats.dateFormat,
             width : this.getFieldWidth(el)
@@ -1213,7 +1214,7 @@ Ext.define('Extnd.form.Panel', {
     },
 
     // TODO
-    convertToTimeField : function (el) {
+    convertToTimeField: function (el) {
         return;
         var tm = new Extnd.form.TimeField({
             width : this.getFieldWidth(el)
@@ -1225,7 +1226,7 @@ Ext.define('Extnd.form.Panel', {
     },
 
 
-    convertToCheckbox : function (el) {
+    convertToCheckbox: function (el) {
         var dfield = this.getFieldDefinition(el),
             boxLabel = this.getDominoGeneratedBoxLabel(el, true),
             // TODO: figure out how to use columns and checkbox group
@@ -1240,7 +1241,7 @@ Ext.define('Extnd.form.Panel', {
     },
 
 
-    convertToRadio : function (el) {
+    convertToRadio: function (el) {
         var dfield = this.getFieldDefinition(el),
             boxLabel = this.getDominoGeneratedBoxLabel(el, true),
             // TODO: figure out how to use columns and radio group
@@ -1254,7 +1255,7 @@ Ext.define('Extnd.form.Panel', {
         el.id = Ext.id();
 
         rd = new Ext.form.Radio({
-            id : el.id,
+            itemId: el.id,
             boxLabel : boxLabel
         });
         rd.applyToMarkup(el);
@@ -1263,7 +1264,7 @@ Ext.define('Extnd.form.Panel', {
     },
 
 
-    getDominoGeneratedBoxLabel : function (el, removeLabel) {
+    getDominoGeneratedBoxLabel: function (el, removeLabel) {
 
         var boxLabel = '',
             boxLabelNode = el.nextSibling,
@@ -1287,7 +1288,7 @@ Ext.define('Extnd.form.Panel', {
     },
 
 
-    convertKeywordField : function (el) {
+    convertKeywordField: function (el) {
 
         var dfield = this.getFieldDefinition(el),
             allowMultiValues,
@@ -1353,7 +1354,7 @@ Ext.define('Extnd.form.Panel', {
     },
 
 
-    convertToSelectFromTextlist : function (el, textlist) {
+    convertToSelectFromTextlist: function (el, textlist) {
         var store,
             combo;
 
@@ -1394,14 +1395,14 @@ Ext.define('Extnd.form.Panel', {
     },
 
 
-    convertToACLDialog : function (el) {
+    convertToACLDialog: function (el) {
 
         //TODO - create ACL dialog
 
     },
 
 
-    convertToSelectFromFormula : function (el, formula) {
+    convertToSelectFromFormula: function (el, formula) {
 
         // use the Evaluate agent that evaluates @formulas
         var url = Extnd.extndUrl + 'Evaluate?OpenAgent',
@@ -1435,7 +1436,7 @@ Ext.define('Extnd.form.Panel', {
 
 
         cb = new Ext.form.ComboBox({
-            id: (el.id || el.name),
+            itemId: (el.id || el.name),
             store : store,
             typeAhead: true,
             triggerAction: 'all',
@@ -1452,19 +1453,19 @@ Ext.define('Extnd.form.Panel', {
     },
 
 
-    convertToMultiSelect : function (el, forceSelection) {
+    convertToMultiSelect: function (el, forceSelection) {
         // TODO
     },
 
 
-    convertToAllowMultiValueSelect : function (el, forceSelection) {
+    convertToAllowMultiValueSelect: function (el, forceSelection) {
         // TODO
         //alert('allow multi value')
         //alert(el.name);
     },
 
 
-    convertSelectToComboBox : function (el, forceSelection) {
+    convertSelectToComboBox: function (el, forceSelection) {
         var cbContainer,
             s,
             d,
@@ -1530,7 +1531,7 @@ Ext.define('Extnd.form.Panel', {
         }
         cb = new Ext.form.ComboBox({
             transform: el,
-            id: (el.id || el.name),
+            itemId: (el.id || el.name),
             hiddenName: el.name,
             store : store,
             mode : 'local',
@@ -1585,7 +1586,7 @@ Ext.define('Extnd.form.Panel', {
     }, // end convertSelectToComboBox
 
 
-    getFieldWidth : function (el) {
+    getFieldWidth: function (el) {
         var theEl = Ext.get(el),
             w = theEl.getStyle('width'),
             computedWidth,
@@ -1607,13 +1608,13 @@ Ext.define('Extnd.form.Panel', {
     },
 
 
-    fieldGetText : function (fld) {
+    fieldGetText: function (fld) {
         var oField = this.getForm().findField(fld);
         return oField ? oField.getValue() : '';
     },
 
 
-    fieldSetText : function (fld, value) {
+    fieldSetText: function (fld, value) {
         var oField = this.getForm().findField(fld);
         if (oField) {
             try {
@@ -1623,7 +1624,7 @@ Ext.define('Extnd.form.Panel', {
     },
 
 
-    fieldAppendText : function (fld, value) {
+    fieldAppendText: function (fld, value) {
         var oField = this.getForm().findField(fld);
         if (oField) {
             try {
@@ -1633,7 +1634,7 @@ Ext.define('Extnd.form.Panel', {
     },
 
 
-    fieldClear : function (fld) {
+    fieldClear: function (fld) {
         var oField = this.getForm().findField(fld);
         if (oField) {
             try {
@@ -1643,7 +1644,7 @@ Ext.define('Extnd.form.Panel', {
     },
 
 
-    fieldContains : function (fld, searchString) {
+    fieldContains: function (fld, searchString) {
         var oField = this.getForm().findField(fld),
             bContains = false,
             test;
@@ -1658,7 +1659,7 @@ Ext.define('Extnd.form.Panel', {
     },
 
 
-    getTarget : function () {
+    getTarget: function () {
         var retVal;
 
         if (this.target) {
@@ -1683,7 +1684,7 @@ Ext.define('Extnd.form.Panel', {
     },
 
 
-    getIframeOwnerCt : function () {
+    getIframeOwnerCt: function () {
         var retVal;
 
         if (this.iframeOwnerCt) {
