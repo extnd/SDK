@@ -43,17 +43,13 @@ Ext.define('Extnd.form.Panel', {
         'Extnd.toolbar.Actionbar',
         'Extnd.util.DominoActionbar',
         'Ext.form.field.*',
+        'Extnd.form.PickListField',
         'Ext.data.reader.Xml'
     ],
 
     initComponent : function () {
 
         Ext.override(Ext.Component, {
-            applyToMarkupzzz : function (el) {
-                this.allowDomMove = false;
-                this.el = Ext.get(el);
-                this.render(this.el.dom.parentNode);
-            },
             applyToMarkup : function (el) {
                 el = Ext.get(el);
                 el.addCls("x-hidden");
@@ -968,7 +964,6 @@ Ext.define('Extnd.form.Panel', {
 
     // TODO
     convertToNamePicker : function (el, config) {
-        return;
         config = config || {};
 
         var nm = new Extnd.form.PickListField(Ext.apply({
@@ -982,9 +977,8 @@ Ext.define('Extnd.form.Panel', {
 
     },
 
-    // TODO
+
     convertToPickList : function (el, config) {
-        return;
         var pl = new Extnd.form.PickListField(Ext.apply({
             id: (el.id || el.name),
             width : this.getFieldWidth(el)
