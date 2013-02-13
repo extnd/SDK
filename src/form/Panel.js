@@ -20,11 +20,6 @@
             items: uidoc
         });
  *
- * @cfg {Boolean} [showActionbar=true] Whether or not to read in the form/page DXL behind the scences and build an Ext.Toolbar from domino actions
- * @cfg {String} [createActionsFrom='dxl'] Set to 'document' if you want to create the actionbar from the actions domino sends after it evaluates hide-when formulas.  Set to 'dxl' if you want to create the actionbar from what is defined in Designer.
- * @cfg {Boolean} [convertFields=true] Determines whether to convert form fields to Ext fields.
- * @cfg {Boolean} [applyDominoKeywordRefresh=true] Determines whether to apply the postback onchange event that Domino sends for Keyword fields set to "Refresh fields on keyword change".
- * @cfg {Number} defaultFieldWidth
  */
 Ext.define('Extnd.form.Panel', {
 
@@ -44,8 +39,76 @@ Ext.define('Extnd.form.Panel', {
         'Extnd.util.DominoActionbar',
         'Ext.form.field.*',
         'Extnd.form.PickListField',
-        'Ext.data.reader.Xml'
+        'Extnd.form.field.Time',
+        'Ext.data.reader.Xml',
+        'Ext.layout.container.Form'
     ],
+
+    /**
+     * @cfg {String}
+     * The layout to use for the fields that get included into this panel.
+     * This config is calculated based on the #convertFields config.
+     * If #convertFields is true then this config is calculated to 'form',
+     * otherwise it uses the default layout of an Ext.form.Panel which is 'anchor'.
+     */
+
+    /**
+     * @cfg {Boolean}
+     * Whether or not to show an Ext.Toolbar built from Domino actions.
+     * Uses the #createActionsFrom config to determine how these actions are built.
+     */
+    showActionbar: true,
+
+    /**
+     * @cfg {String}
+     * Set to 'document' if you want to create the actionbar from the actions domino sends after it evaluates hide-when formulas.
+     * Set to 'dxl' if you want to create the actionbar from what is defined in Designer.
+      */
+    createActionsFrom: 'document',
+
+    /**
+     * @cfg {Boolean}
+     * Whether to convert form fields to Ext fields.
+     */
+    convertFields: true,
+
+    /**
+     * @cfg {Boolean}
+     * Whether to apply the postback onchange event that Domino sends for Keyword fields set to "Refresh fields on keyword change".
+      */
+    applyDominoKeywordRefresh: true,
+
+    /**
+     * @cfg {Number}
+     * The default width to use for a field when the width cannot be calculated.
+     */
+    defaultFieldWidth: 120,
+
+    /**
+     * @cfg {String}
+     */
+    documentLoadingWindowTitle: "Opening",
+
+    /**
+     * @cfg {String}
+     */
+    documentUntitledWindowTitle: "Untitled",
+
+    /**
+     * @cfg {Boolean}
+     */
+    useDocumentWindowTitle: true,
+
+    /**
+     * @cfg {Number}
+     */
+    documentWindowTitleMaxLength: 16,
+
+    /**
+     * @cfg {String}
+     */
+    refreshMessage: 'Refreshing document...',
+
 
     initComponent: function () {
 
@@ -53,6 +116,7 @@ Ext.define('Extnd.form.Panel', {
             applyToMarkup: function (el) {
                 el = Ext.get(el);
                 el.addCls("x-hidden");
+                //Ext.get(el.dom.parentNode).addCls('x-resizable-wrap');
                 this.allowDomMove = false;
                 this.render(el.dom.parentNode, null, true);
             }
@@ -64,12 +128,11 @@ Ext.define('Extnd.form.Panel', {
             //TODO: this needs to go away soon (the use of Extnd.currentUIDocument.*)
             currentUIDocument = Extnd.currentUIDocument || {},
             frms = document.forms,
-            href, search,
+            href,
+            search,
             start,
             end;
 
-
-        me.items = {xtype: 'label', hidden: true};
 
         // now just apply currentUIDocument to 'this' so we get what the agent says
         // about this uidocument (such as UNID, form name, etc.)
@@ -79,31 +142,28 @@ Ext.define('Extnd.form.Panel', {
         // for backwards compat (not sure if any devs are using this)
         me.uidoc = currentUIDocument;
 
-        // defaults
-        me.contentEl = me.getDominoForm();
+        // set the dbPath
         me.dbPath = db.webFilePath;
-        me.showActionbar = true;
-        me.createActionsFrom = 'document';
-        me.convertFields = true;
-        me.applyDominoKeywordRefresh = true;
-        me.defaultFieldWidth = 120;
-        me.documentLoadingWindowTitle = "Opening";
-        me.documentUntitledWindowTitle = "Untitled";
-        me.useDocumentWindowTitle = true;
-        me.documentWindowTitleMaxLength = 16;
-        me.refreshMessage = 'Refreshing document...';
 
-        // developer can specify where the toolbar should appear
-        //me.toolbarRenderTo;
+
+
+        // if convertFields is true, switch to use the 'form' layout.  otherwise Ext will move fields around using the 'anchor' layout
+        // and we set the contentEl config to the Domino form so that it is included into the body of the form panel
+        if (me.convertFields) {
+            me.layout = 'form';
+            me.contentEl = me.getDominoForm();
+            // this is just something to make the form layout happy, otherwise we get an error in Ext.layout.container.Form#getRenderTree
+            me.items = { xtype: 'label', hidden: true };
+        }
+
         me.dateTimeFormats = Extnd.dateTimeFormats;
 
         // for a page we need this hack to get the page name (that we store in the formName variable)
         // we do this since the UIDocument.js agent couldn't get this info and
         // domino does not send the page name in the form tag like it does for forms
-        // ALSO - for special forms like $$ViewTemplate or $$SearchTemplae, '_DominoForm' is sent as the form name
+        // ALSO - for special forms like $$ViewTemplate or $$SearchTemplate, '_DominoForm' is sent as the form name
 
         if (me.formName === undefined) {
-
 
             if (frms.length === 0 || frms[0].name.substring(1) === '' || frms[0].name.substring(1) === 'DominoForm') {
 
@@ -154,7 +214,7 @@ Ext.define('Extnd.form.Panel', {
         );
 
         me.callParent(arguments);
-
+        //me.layout = null;
         // parent's initComponet create the form so let's now make sure the url is set
         me.setPostUrl();
 
@@ -163,6 +223,7 @@ Ext.define('Extnd.form.Panel', {
             _doClick = Ext.bind(me._doClick, me);
         }
     },
+
 
     // private
     // change the hash reference by prepending xnd-goto
@@ -242,7 +303,7 @@ Ext.define('Extnd.form.Panel', {
 
     },
 
-    onRender: function (ct, position) {
+    onRenderzz: function (ct, position) {
 
         /* make sure that body is already set to our domino
          * form's Element (this.form.el) we do this so that
@@ -250,7 +311,7 @@ Ext.define('Extnd.form.Panel', {
          * new body (which is a form element) but instead,
          * use the form element (our domino one) instead
          */
-        this.body = this.form.el;
+        //this.body = this.form.el;
 
         this.callParent(arguments);
 
@@ -259,9 +320,9 @@ Ext.define('Extnd.form.Panel', {
          * we forced this.body = this.form.el we need to now
          * apply the bodyStyle config ourselves
          */
-        if (this.bodyStyle) {
-            this.body.applyStyles(this.bodyStyle);
-        }
+        //if (this.bodyStyle) {
+        //    this.body.applyStyles(this.bodyStyle);
+        //}
 
         /* make sure any buttons know about uiView and uiDocument
          * we do this after the superclass.onRender since that
@@ -272,7 +333,6 @@ Ext.define('Extnd.form.Panel', {
 
     afterRender: function () {
 
-
         /* make an Ajax call to our DXLExport agent
          * to get field info however,
          * only need to do this if convertFields is true,
@@ -280,36 +340,21 @@ Ext.define('Extnd.form.Panel', {
          */
         if (this.convertFields) {
 
-            Ext.Ajax.request({
-                method: 'GET',
-                disableCaching: true,
-                success : this.doConvertFieldsCB,
-                failure : this.doConvertFieldsCB,
-                args : arguments,
-                scope: this,
-                url: Extnd.extndUrl + 'DXLExporter?OpenAgent&db=' + this.dbPath + '&type=form&name=' + this.formName
-            });
-
-            // need to go ahead and make sure we set the layout
-            // since we are making the above Ajax call
-//            if (Ext.isString(this.layout)) {
-//                this.layout = new Ext.Container.LAYOUTS[this.layout.toLowerCase()](this.layoutConfig);
-//            }
-//            this.setLayout(this.layout);
-            //Extnd.UIDocument.superclass.afterRender.apply(this, arguments);
             this.callParent(arguments);
+
+            Ext.Ajax.request({
+                method          : 'GET',
+                disableCaching  : true,
+                success         : this.doConvertFieldsCB,
+                failure         : this.doConvertFieldsCB,
+                args            : arguments,
+                scope           : this,
+                url             : Extnd.extndUrl + 'DXLExporter?OpenAgent&db=' + this.dbPath + '&type=form&name=' + this.formName
+            });
 
         } else {
 
-            //Extnd.UIDocument.superclass.afterRender.apply(this, arguments);
             this.callParent(arguments);
-
-            // seen some issues where this.layout is a string (this.layout = 'fit') and thus
-            // does not have a layout() method which doLayout() calls
-//            if (typeof this.layout === 'object') {
-//                this.doLayout();
-//            }
-
             this.fireEvent('open', this);
 
         }
@@ -483,9 +528,6 @@ Ext.define('Extnd.form.Panel', {
 
     // private
     setPostUrl: function () {
-
-        return;
-
         // make sure we have a url to post to
         // it can be blank when the developer is opening a doc in read mode but still
         // wants to call the uidoc's save method.  since domino sets the action attribute to blank
@@ -596,9 +638,8 @@ Ext.define('Extnd.form.Panel', {
         }
     },
 
-    /* called only when convertFields is set to true
-     * and processes the response from the dxl export
-     * of field info
+    /**
+     * Called only when convertFields is set to true and processes the response from the dxl export of field info.
      * @private
      */
     doConvertFieldsCB: function (response, options) {
@@ -879,9 +920,9 @@ Ext.define('Extnd.form.Panel', {
         var f = new Ext.form.field.Hidden({
             itemId: (el.id || el.name)
         });
+
         f.applyToMarkup(el);
-        // now add to items
-        this.items.add(f);
+        this.add(f);
     },
 
 
@@ -890,13 +931,13 @@ Ext.define('Extnd.form.Panel', {
 
         // for normal input fields
         var f = new Ext.form.TextField({
-            name    : el.name,
-            itemId  : (el.id || el.name),
-            width   : this.getFieldWidth(el)
+            name        : el.name,
+            itemId      : (el.id || el.name),
+            width       : this.getFieldWidth(el)
         });
+
         f.applyToMarkup(el);
-        // now add to items
-        this.items.add(f);
+        this.add(f);
 
     },
 
@@ -955,7 +996,7 @@ Ext.define('Extnd.form.Panel', {
                         allowNew : allowNew
                     });
                     break;
-                } // eo switch
+                }
 
             } else {
                 this.convertToTextField(el);
@@ -972,9 +1013,9 @@ Ext.define('Extnd.form.Panel', {
             itemId: (el.id || el.name),
             width : this.getFieldWidth(el)
         }, config));
+
         nm.applyToMarkup(el);
-        // now add to items
-        this.items.add(nm);
+        this.add(nm);
 
     },
 
@@ -984,22 +1025,21 @@ Ext.define('Extnd.form.Panel', {
             itemId: (el.id || el.name),
             width : this.getFieldWidth(el)
         }, config));
+
         pl.applyToMarkup(el);
-        // now add to items
-        this.items.add(pl);
+        this.add(pl);
 
     },
 
 
     convertToTextAreaField: function (el) {
-
         var ta = new Ext.form.TextArea({
             itemId: (el.id || el.name),
             resizable: true
         });
+
         ta.applyToMarkup(el);
-        // now add to items
-        this.items.add(ta);
+        this.add(ta);
 
     },
 
@@ -1079,8 +1119,8 @@ Ext.define('Extnd.form.Panel', {
             // now remove the domino generated fileupload field
             Ext.removeNode(el);
 
-            // now add to items
-            this.items.add(uploadField);
+            // now add to panel
+            this.add(uploadField);
 
         } else {
             // Ext's fileuploadfield code isn't loaded
@@ -1164,8 +1204,8 @@ Ext.define('Extnd.form.Panel', {
 
         }
 
-        // now add to items
-        this.items.add(ed);
+        // now add to the panel
+        this.add(ed);
 
     },
 
@@ -1175,9 +1215,9 @@ Ext.define('Extnd.form.Panel', {
         var nbr = new Ext.form.NumberField({
             width : this.getFieldWidth(el)
         });
+
         nbr.applyToMarkup(el);
-        // now add to items
-        this.items.add(nbr);
+        this.add(nbr);
 
     },
 
@@ -1209,19 +1249,17 @@ Ext.define('Extnd.form.Panel', {
         });
 
         dt.applyToMarkup(el);
-        // now add to items
-        this.items.add(dt);
+        this.add(dt);
     },
 
-    // TODO
+
     convertToTimeField: function (el) {
-        return;
-        var tm = new Extnd.form.TimeField({
+        var tm = new Extnd.form.field.Time({
             width : this.getFieldWidth(el)
         });
+
         tm.applyToMarkup(el);
-        // now add to items
-        this.items.add(tm);
+        this.add(tm);
 
     },
 
@@ -1236,7 +1274,7 @@ Ext.define('Extnd.form.Panel', {
             });
 
         ckb.applyToMarkup(el);
-        this.items.add(ckb);
+        this.add(ckb);
 
     },
 
@@ -1258,8 +1296,9 @@ Ext.define('Extnd.form.Panel', {
             itemId: el.id,
             boxLabel : boxLabel
         });
+
         rd.applyToMarkup(el);
-        this.items.add(rd);
+        this.add(rd);
 
     },
 
@@ -1376,7 +1415,6 @@ Ext.define('Extnd.form.Panel', {
         });
 
         combo = new Ext.form.ComboBox({
-            //renderTo: el,
             displayField : "value",
             store : store,
             typeAhead: true,
@@ -1386,11 +1424,8 @@ Ext.define('Extnd.form.Panel', {
             width : this.getFieldWidth(el)
         });
 
-        // renderTo config option didn't work
         combo.applyToMarkup(el);
-
-        // now add to items
-        this.items.add(combo);
+        this.add(combo);
 
     },
 
@@ -1442,14 +1477,13 @@ Ext.define('Extnd.form.Panel', {
             triggerAction: 'all',
             displayField: "value",
             valueField: "value",
-            //renderTo: el,
             forceSelection: true,
             resizable: true,
             width : this.getFieldWidth(el)
         });
 
         cb.applyToMarkup(el);
-        this.items.add(cb);
+        this.add(cb);
     },
 
 
@@ -1578,12 +1612,12 @@ Ext.define('Extnd.form.Panel', {
                     cb.on('select', extcallback, this);
                 }
             }
-        } // end if (this.applyDominoKeywordRefresh)
+        }
 
-        // now add to items
-        this.items.add(cb);
+        // now add to panel
+        this.add(cb);
 
-    }, // end convertSelectToComboBox
+    },
 
 
     getFieldWidth: function (el) {
