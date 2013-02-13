@@ -1,10 +1,5 @@
 /**
- * @class Ext.nd.form.PickListField
- * @extends Ext.form.TriggerField
  * Provides a PickList field which opens an {@link Ext.Window} with a view of documents to choose from.
- * @constructor
- * Create a new PickListField
- * @param {Object} config
  */
 Ext.define('Extnd.form.PickListField', {
 
@@ -18,57 +13,65 @@ Ext.define('Extnd.form.PickListField', {
     ],
 
     /**
-     * @cfg {String} type
+     * @cfg {String}
      * The picklist type (custom or names)
      */
     type : "custom",
+
     /**
-     * @cfg {String} viewName
+     * @cfg {String}
      * The name of the view to load the 'choice' list.
      */
     viewName : "",
+
     /**
-     * @cfg {Object} viewConfig
+     * @cfg {Object}
      * Any additional view configs that you want applied to the UIView.
      */
-    viewConfig : {},
+    viewConfig : null,
+
     /**
-     * @cfg {Boolean} multipleSelection
+     * @cfg {Boolean}
      * Whether or not to allow multiple documents to be selected.
      */
     multipleSelection : false,
+
     /**
-     * @cfg {Boolean} useCheckboxSelection
+     * @cfg {Boolean}
      * Whether or not to display checkboxes in the first column.
      */
     useCheckboxSelection : false,
+
     /**
-     * @cfg {Boolean} allowNew
+     * @cfg {Boolean}
      * Whether or not to allow new values to be entered.
      */
     allowNew : false,
+
     /**
-     * @cfg {String} triggerClass
-     * An additional CSS class used to style the trigger button.  The trigger will always get the
-     * class 'x-form-trigger' and triggerClass will be <b>appended</b> if specified (defaults to 'x-form-date-trigger'
-     * which displays a calendar icon).
+     * @cfg {String}
+     * @inheritdoc
      */
-    triggerClass : 'xnd-form-picklist-trigger',
+    triggerCls : 'xnd-form-picklist-trigger',
+
     /**
-     * @cfg {Number} width
+     * @cfg {Number}
      * The width of the input field (defaults to 100).
      */
     width : 100,
+
     /**
-     * @cfg {Number} pickListWidth
+     * @cfg {Number}
      * The width of the PickList dialog window (defaults to 300).
      */
     pickListWidth : 600,
+
     /**
-     * @cfg {Number} column
+     * @cfg {Number}
      * The column whose values you want returned from the selected choices (defaults to 0).
      */
     column : 0,
+
     /**
      * @cfg {String/Object} autoCreate
      * A DomHelper element spec, or true for a default element spec (defaults to
