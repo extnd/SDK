@@ -17,14 +17,14 @@ html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,p,bloc
  *----------------------------------------------------
  */
 
-td.xnd-view-category{
+td.xnd-view-category {
    font-weight : bold;
    overflow: visible;
 }
 td.xnd-view-category div.x-grid-cell-inner {
     overflow: visible;
 }
-td.xnd-view-totals{
+td.xnd-view-totals {
    font-weight : bold;
    text-align : right;
 }
@@ -64,7 +64,7 @@ td.xnd-view-response {
 /* fix button padding for domino's larger buttons
  * domino's icons are 21px + add 2px for padding
  */
-.x-btn-text-icon .x-btn-center .x-btn-text{
+.x-btn-text-icon .x-btn-center .x-btn-text {
   padding-left:23px;
 }
 
@@ -99,7 +99,9 @@ td.xnd-view-response {
 
 /* hide form toolbar when printing */
 @media print {
-  #xnd-form-toolbar {display: none;}
+  #xnd-form-toolbar {
+    display: none;
+  }
 }
 
 /* TODO - need to find out why we had this set */
@@ -115,29 +117,30 @@ td.xnd-view-response {
     top: 1px;
 }
 
-.x-form-field-wrap .xnd-form-trigger{
+.xnd-form-trigger {
     border: 1px solid #B5B8C8;
     height : 20px;
     cursor:pointer;
 }
 
 /* need -1px shift to the left for the viewlink.gif */
-.x-form-field-wrap .xnd-form-picklist-trigger{
+.xnd-form-picklist-trigger {
     background : #C5D8C8 url(/icons/viewlink.gif) no-repeat scroll -1px 3px;
 }
 
-.x-form-field-wrap .xnd-form-names-trigger{
+.xnd-form-names-trigger {
     background : #C5D8C8 url(/icons/vwicn003.gif) no-repeat scroll 1px 3px;
 }
 
-.x-form-field-wrap .xnd-form-acl-trigger{
+.xnd-form-acl-trigger {
     background : #C5D8C8 url(/icons/actn090.gif) no-repeat scroll 1px 3px;
 }
 
-.x-form-field-wrap .xnd-form-time-trigger{
+.x-form-trigger-wrap-focus .xnd-form-time-trigger,
+.xnd-form-time-trigger {
     background : #C5D8C8 url(/icons/vwicn064.gif) no-repeat scroll 1px 3px;
 }
 
-.x-form-field-wrap .x-form-trigger-over .xnd-form-time-trigger{
+.x-form-field-wrap .x-form-trigger-over .xnd-form-time-trigger {
     /*background-position: -17px 0;*/
 }
