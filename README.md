@@ -1,7 +1,7 @@
 Extnd
 =====
 
-Ext.nd - Ext for Notes/Domino
+Extnd - Ext for Notes/Domino
 
 This repo has two main branches.
 
