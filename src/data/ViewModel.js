@@ -1,6 +1,6 @@
 /**
  * Represents a view entry. A view entry represents a row in a view.
- * The #fields property is created dynamically from Ext.nd.data.ViewDesign.
+ * The #fields property is created dynamically from Extnd.data.ViewDesign.
  * The LotusScript and Java equivalents in Domino are NotesViewEntry and ViewEntry.
  */
 Ext.define('Extnd.data.ViewModel', {
@@ -78,9 +78,9 @@ Ext.define('Extnd.data.ViewModel', {
 
 
     /**
-     * Fields are created dynamically form the Ext.nd.data.ViewDesign class when it processes the ?ReadDesign and DXLExport for a view.
+     * Fields are created dynamically form the Extnd.data.ViewDesign class when it processes the ?ReadDesign and DXLExport for a view.
      */
-    fields: [],
+
 
 
     /**
@@ -99,5 +99,19 @@ Ext.define('Extnd.data.ViewModel', {
     hasChildren: function () {
         return !!this.childCount;
     }
+
+},
+function () {
+
+    // Add the new DOMINO data type
+    Ext.data.Types.DOMINO = {
+        convert: function (v, data) {
+            return v;
+        },
+        sortType: function (v) {
+            return v;
+        },
+        type: 'domino'
+    };
 
 });

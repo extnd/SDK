@@ -130,14 +130,12 @@ Ext.define('Extnd.data.ViewDesign', {
             viewtype,
             isView,
             root,
-            type,
             i;
 
         me.columns = new Ext.util.MixedCollection();
 
         for (i = 0; i < colLen; i++) {
 
-            type = 'string'; // default type
             col = arColumns[i];
 
             isCategory = !!q.selectValue('@categorized', col, false);
@@ -181,10 +179,6 @@ Ext.define('Extnd.data.ViewDesign', {
 
             title = q.selectValue('columnheader/@title', col, '&nbsp;');
 
-            // totals column (and if it is a totals column, set type to 'float')
-            totals = q.selectValue('@totals', col, 'none');
-            type = (totals !== 'none') ? 'float' : type;
-
             // resort properties
             resort = q.selectValue('@resort', col, false);
             isResortAscending = (resort === 'ascending' || resort === 'both') ? true : false;
@@ -204,7 +198,6 @@ Ext.define('Extnd.data.ViewDesign', {
             // date formatting
             tmpDateTimeFormat = q.select('datetimeformat', col)[0];
             if (tmpDateTimeFormat) {
-                type = 'date';
                 datetimeformat = {
                     show: q.selectValue('@show', tmpDateTimeFormat),
                     date: q.selectValue('@date', tmpDateTimeFormat),
@@ -216,11 +209,8 @@ Ext.define('Extnd.data.ViewDesign', {
             // number formatting
             tmpNumberFormat = q.select('numberformat', col)[0];
             if (tmpNumberFormat) {
-                type = 'float';
-
-                // this will be either fixed, scientific, or currency
                 numberformat = {
-                    format      : q.selectValue('@format', tmpNumberFormat),
+                    format      : q.selectValue('@format', tmpNumberFormat),  // this will be either fixed, scientific, or currency
                     digits      : q.selectNumber('@digits', tmpNumberFormat),
                     parens      : !!q.selectValue('@parens', tmpNumberFormat, false),
                     percent     : !!q.selectValue('@percent', tmpNumberFormat, false),
@@ -234,7 +224,7 @@ Ext.define('Extnd.data.ViewDesign', {
                 align               : q.selectValue('@align', col, 'left'),
                 dataIndex           : name,
                 width               : Math.max(q.selectNumber('@width', col) * 11.28, 22), // multiplying by 11.28 converts the inch width to pixels
-                totals              : totals,
+                totals              : q.selectValue('@totals', col, 'none'),
                 sortable            : isSortable,
                 isResortToView      : isResortToView,
                 resortToViewName    : isResortToView ? q.selectValue('@resorttoview', col, '') : '',
@@ -253,7 +243,7 @@ Ext.define('Extnd.data.ViewDesign', {
             fieldConfig = {
                 name    : name,
                 mapping : 'entrydata[columnnumber=' + columnnumber + ']',
-                type    : type
+                type    : 'domino'
             };
             fieldConfigs.push(fieldConfig);
 
