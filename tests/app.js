@@ -3,7 +3,7 @@ Ext.Loader.setConfig({
     disableCaching  : false,
     paths: {
         'Ext'   : '../extjs/src',
-        'Extnd' : '../src',
+        'Extnd' : '../src'
     }
 });
 
@@ -32,7 +32,7 @@ Ext.application({
     ],
 
 
-    launch: function() {
+    launch: function () {
         var me = this,
             db;
 
@@ -82,9 +82,9 @@ Ext.application({
             items: [
                 me.getUIOutline(),
                 me.getUIView1(),
-                me.getUIView2(),
+                me.getUIView2()
             ]
-        }
+        };
     },
 
 
@@ -94,7 +94,7 @@ Ext.application({
             title       : 'outline',
             dbPath      : '/extnd/demo.nsf/',
             outlineName : 'mainOL'
-        }
+        };
     },
 
 
@@ -114,12 +114,12 @@ Ext.application({
 
 
         // creating an inner function to use as a custom column renderer
-        function renderTotal (value, cell, record, rowIndex, colIndex, store) {
+        function renderTotal(value, cell, record, rowIndex, colIndex, store) {
             return value * 10;
         }
 
         model = Ext.define('Demo.model.MyCustomModel', {
-            extend: 'Ext.nd.data.ViewModel',
+            extend: 'Extnd.data.ViewModel',
             fields: [
                 { name: 'totals',   mapping: 'entrydata[columnnumber=0]',   type: 'float'   },
                 { name: 'subject',  mapping: 'entrydata[name=subject]',     type: 'string'  },
@@ -127,7 +127,7 @@ Ext.application({
             ]
         });
 
-        store = Ext.create('Ext.nd.data.ViewStore', {
+        store = Ext.create('Extnd.data.ViewStore', {
             model       : model,
             dbPath      : '/extnd/demo.nsf/',
             viewName    : 'f1'
