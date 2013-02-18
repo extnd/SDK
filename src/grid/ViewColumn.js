@@ -161,6 +161,7 @@ Ext.define('Extnd.grid.ViewColumn', {
 
         // has children and is a categorized column
         if (record.hasChildren() && me.isCategory) {
+
             indent = entryData.indent;
             extraIndent = (indent > 0) ? 'padding-left:' + indent * 20 + 'px;' : '';
             cell.attr = 'style="position: absolute; width: auto; white-space: nowrap; ' + extraIndent + '"';
@@ -179,88 +180,82 @@ Ext.define('Extnd.grid.ViewColumn', {
                 returnValue = sExpandImage + me.getValue(value, record);
             }
 
-        } else {
+        // is NOT a category but has children and IS NOT a response doc BUT IS a response COLUMN
+        } else if (!record.isCategory && record.hasChildren() && !record.isResponse && me.isResponse) {
 
-            // is NOT a category but has children and IS NOT a response doc BUT IS a response COLUMN
-            if (!record.isCategory && record.hasChildren() && !record.isResponse && me.isResponse) {
-
-                if (nextRecord) {
-                    nextRecordLevel = nextRecord.columnIndentLevel;
-                    if (nextRecordLevel > recordLevel) {
-                        cell.css = 'xnd-view-collapse xnd-view-response';
-                        returnValue = sCollapseImage;
-                    } else {
-                        cell.css = 'xnd-view-expand xnd-view-response';
-                        returnValue = sExpandImage;
-                    }
-                } else { // should be a categorized column on the last record
+            if (nextRecord) {
+                nextRecordLevel = nextRecord.columnIndentLevel;
+                if (nextRecordLevel > recordLevel) {
+                    cell.css = 'xnd-view-collapse xnd-view-response';
+                    returnValue = sCollapseImage;
+                } else {
                     cell.css = 'xnd-view-expand xnd-view-response';
                     returnValue = sExpandImage;
                 }
+            } else { // should be a categorized column on the last record
+                cell.css = 'xnd-view-expand xnd-view-response';
+                returnValue = sExpandImage;
+            }
 
-            } else {
+        // has children and IS a response doc
+        } else if (record.hasChildren() && record.isResponse && me.isResponse) {
 
-                // has children and IS a response doc
-                if (record.hasChildren() && record.isResponse && me.isResponse) {
-                    indent = entryData.indent;
-                    extraIndent = (indent > 0) ? 'padding-left:' + (20 + (indent * 20)) + 'px;' : '';
-                    cell.attr = 'style="position: absolute; width: auto; white-space: nowrap; ' + extraIndent + '"';
-                    if (nextRecord) {
-                        nextRecordLevel = nextRecord.columnIndentLevel;
-                        if (nextRecordLevel > recordLevel) {
-                            cell.css = 'xnd-view-collapse xnd-view-response';
-                            returnValue = sCollapseImage + me.getValue(value, record);
-                        } else {
-                            cell.css = 'xnd-view-expand xnd-view-response';
-                            returnValue = sExpandImage + me.getValue(value, record);
-                        }
-                    } else { // should be a categorized column on the last record
-                        cell.css = 'xnd-view-expand xnd-view-response';
-                        returnValue = sExpandImage + me.getValue(value, record);
-                    }
+            indent = entryData.indent;
+            extraIndent = (indent > 0) ? 'padding-left:' + (20 + (indent * 20)) + 'px;' : '';
+            cell.attr = 'style="position: absolute; width: auto; white-space: nowrap; ' + extraIndent + '"';
+            if (nextRecord) {
+                nextRecordLevel = nextRecord.columnIndentLevel;
+                if (nextRecordLevel > recordLevel) {
+                    cell.css = 'xnd-view-collapse xnd-view-response';
+                    returnValue = sCollapseImage + me.getValue(value, record);
                 } else {
+                    cell.css = 'xnd-view-expand xnd-view-response';
+                    returnValue = sExpandImage + me.getValue(value, record);
+                }
+            } else { // should be a categorized column on the last record
+                cell.css = 'xnd-view-expand xnd-view-response';
+                returnValue = sExpandImage + me.getValue(value, record);
+            }
 
-                    // does NOT have children and IS a response doc
-                    if (!record.hasChildren() && record.isResponse && me.isResponse) {
+        // does NOT have children and IS a response doc
+        } else if (!record.hasChildren() && record.isResponse && me.isResponse) {
 
-                        cell.css = 'xnd-view-response';
-                        indent = entryData.indent;
-                        extraIndent = (indent > 0) ? 'padding-left:' + (20 + (indent * 20)) + 'px;' : '';
-                        cell.attr = 'style="position: absolute; width: auto; white-space: nowrap; ' + extraIndent + '"';
-                        returnValue = me.getValue(value, record);
+            cell.css = 'xnd-view-response';
+            indent = entryData.indent;
+            extraIndent = (indent > 0) ? 'padding-left:' + (20 + (indent * 20)) + 'px;' : '';
+            cell.attr = 'style="position: absolute; width: auto; white-space: nowrap; ' + extraIndent + '"';
+            returnValue = me.getValue(value, record);
 
+        } else if (me.isIcon) {
+
+            for (i = 0; i < len; i++) {
+                tmpValue = value[i];
+
+                if (isNaN(parseInt(tmpValue, 10)) || tmpValue === '0') {
+                    returnValue = '';
+                } else {
+                    // I believe the domino only has view icon images from 1 to 186
+                    newValue = (tmpValue < 10) ? '00' + tmpValue : (tmpValue < 100) ? '0' + tmpValue : (tmpValue > 186) ? '186' : tmpValue;
+                    clearFloat = (me.listSeparator === 'newline') ? 'style="clear: left;"' : '';
+                    tmpReturnValue = '<div class="xnd-icon-vw xnd-icon-vwicn' + newValue + '" ' + clearFloat + '>&nbsp;</div>';
+                    if (i === 0) {
+                        returnValue = tmpReturnValue;
                     } else {
-
-                        if (me.isIcon) {
-                            for (i = 0; i < len; i++) {
-                                tmpValue = value[i];
-
-                                if (isNaN(parseInt(tmpValue, 10)) || tmpValue === '0') {
-                                    returnValue = '';
-                                } else {
-                                    // I believe the domino only has view icon images from 1 to 186
-                                    newValue = (tmpValue < 10) ? '00' + tmpValue : (tmpValue < 100) ? '0' + tmpValue : (tmpValue > 186) ? '186' : tmpValue;
-                                    clearFloat = (me.listSeparator === 'newline') ? 'style="clear: left;"' : '';
-                                    tmpReturnValue = '<div class="xnd-icon-vw xnd-icon-vwicn' + newValue + '" ' + clearFloat + '>&nbsp;</div>';
-                                    if (i === 0) {
-                                        returnValue = tmpReturnValue;
-                                    } else {
-                                        returnValue = returnValue + separator + tmpReturnValue;
-                                    }
-                                }
-                            }
-
-                        } else {
-                            // just normal data but check first to see if a 'totals' column
-                            if (me.totals !== 'none') {
-                                cell.css = ' xnd-view-totals xnd-view-' + me.totals;
-                            }
-                            returnValue = me.getValue(value, record);
-                        }
+                        returnValue = returnValue + separator + tmpReturnValue;
                     }
                 }
             }
+
+        // just normal data but check first to see if a 'totals' column
+        } else {
+
+            if (me.totals !== 'none') {
+                cell.css = ' xnd-view-totals xnd-view-' + me.totals;
+            }
+            returnValue = me.getValue(value, record);
+
         }
+
 
         // now return our domino formatted value
         return returnValue;
@@ -282,11 +277,11 @@ Ext.define('Extnd.grid.ViewColumn', {
             newValue    = '',
             i,
             len,
-            returnVal;
+            returnVal   = '';
 
-        // handle non-categorized columns
+        // handle categorized columns that do not have a value
         if (me.isCategory && value.length === 0) {
-            newValue = me.notCategorizedText;
+            tmpValue = me.notCategorizedText;
         }
 
         // need to make sure value is an array
@@ -300,16 +295,17 @@ Ext.define('Extnd.grid.ViewColumn', {
 
             // handle columns set to show an icon a little differently
             if (me.isIcon) {
-                if (isNaN(parseInt(tmpValue, 10)) || tmpValue === 0) {
-                    returnVal = '';
+                tmpValue = parseInt(tmpValue, 10);
+                if (isNaN(tmpValue) || tmpValue === 0) {
+                    tmpValue = '';
                 } else {
                     // I believe domino only has view icon images from 1 to 186
-                    newValue = (tmpValue < 10) ? '00' + tmpValue : (tmpValue < 100) ? '0' + tmpValue : (tmpValue > 186) ? '186' : tmpValue;
-                    returnVal = '<img src="/icons/vwicn' + newValue + '.gif"/>';
+                    tmpValue = (tmpValue < 10) ? '00' + tmpValue : (tmpValue < 100) ? '0' + tmpValue : (tmpValue > 186) ? '186' : tmpValue;
+                    tmpValue = '<img src="/icons/vwicn' + tmpValue + '.gif"/>';
                 }
 
             } else if (me.totals === 'percentoverall' || me.totals === 'percentparent') {
-                returnVal = Ext.util.Format.round(100 * parseFloat(tmpValue), nbf.digits) + '%';
+                tmpValue = Ext.util.Format.round(100 * parseFloat(tmpValue), nbf.digits || 0) + '%';
 
             } else {
 
@@ -371,9 +367,9 @@ Ext.define('Extnd.grid.ViewColumn', {
                     // do nothing to tmpValue if we do not have a dataType we are interested in
                 }
 
-                returnVal = newValue + tmpValue + sep;
-
             }
+
+            returnVal = returnVal + tmpValue + sep;
         }
 
         return returnVal;
