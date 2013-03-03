@@ -140,7 +140,7 @@ Ext.define('Extnd.grid.Panel', {
         // in the callback from fetching the design info, we'll create a new store and do a reconfigure
         if (!me.store) {
 
-            me.needsFields = true;
+            me.needsModel = true;
             me.dmyId = 'xnd-dummy-store-' + Ext.id();
 
             store = Ext.create('Ext.data.Store', {
@@ -159,7 +159,7 @@ Ext.define('Extnd.grid.Panel', {
 
         me.callParent(arguments);
 
-        if (me.needsColumns) {
+        if (me.needsColumns || me.needsModel) {
             me.getViewDesign();
 
         } else {
@@ -294,10 +294,12 @@ Ext.define('Extnd.grid.Panel', {
             me.view = me.getView();
         }
 
-        // need to reconfigure the grid to now use the store and colsFromDesign built
-        // from our Ajax call to the Domino server since we used a 'dummy'
-        // store and column to begin with
-        me.reconfigure(me.store, me.colsFromDesign);
+        // now we can reconfigure the grid to use our new store and optional the new columns
+        if (me.needsColumns) {
+            me.reconfigure(me.store, me.colsFromDesign);
+        } else {
+            me.reconfigure(me.store);
+        }
 
         /* There may be cases where a grid needs to be rendered the firs time
          * without any data. A good example is a view where you want to show
