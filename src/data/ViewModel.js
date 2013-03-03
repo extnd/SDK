@@ -26,7 +26,7 @@ Ext.define('Extnd.data.ViewModel', {
      */
 
     /**
-     * @property {String} universalId Tuniversal ID of a document, associated with a view entry. The ID is a 32-character combination of hexadecimal digits (0-9, A-F) that uniquely identifies a document across all replicas of a database.
+     * @property {String} universalId The universal ID of a document, associated with a view entry. The ID is a 32-character combination of hexadecimal digits (0-9, A-F) that uniquely identifies a document across all replicas of a database.
      */
 
     /**
