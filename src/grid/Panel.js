@@ -40,15 +40,8 @@ Ext.define('Extnd.grid.Panel', {
         'Extnd.toolbar.Actionbar'
     ],
 
-    viewType                : 'gridview',
-    renderers               : [],
-    quickSearchKeyStrokes   : [],
-    targetDefaults          : {},
-    tbarPlugins             : [],
-    bbarPlugins             : [],
-    colsFromDesign          : [],
-    extraParams             : {},
-
+    viewType                        : 'gridview',
+    layout                          : 'fit',
 
     showActionbar                   : true,
     showPagingToolbar               : true,
@@ -62,7 +55,6 @@ Ext.define('Extnd.grid.Panel', {
     multiExpandCount                : 40,
     notCategorizedText              : '(Not Categorized)',
     loadInitialData                 : true,
-    layout                          : 'fit',
 
     documentWindowTitle             : '',
     documentLoadingWindowTitle      : 'Opening...',
@@ -71,36 +63,14 @@ Ext.define('Extnd.grid.Panel', {
     useDocumentWindowTitle          : true,
 
     extendLastColumn                : undefined,
-    enableDragDrop                  : true,
-    ddGroup                         : 'TreeDD',
     loadMask                        : true,
 
-
     // private
-    noteType                        : 'view',
-
-    count: 40,
-    storeConfig: {
-        pageSize: 40
-    },
-
-    viewConfig: {},
-
+    noteType        : 'view',
+    count           : 40,
     isCategorized   : false,
     needsColumns    : true,
-    needsFields     : true,
-
-    // TODO ExtJS4 uses selModel that can be a config or a selection model instance
-    selModelConfig: {
-        singleSelect : false,
-        checkOnly : true
-    },
-
-    quickSearchConfig: {
-        width: 200
-    },
-
-
+    needsModel     : true,
 
     initComponent: function () {
         var me = this;
@@ -113,7 +83,28 @@ Ext.define('Extnd.grid.Panel', {
             dateTimeFormats     : Extnd.dateTimeFormats,
             formatCurrencyFnc   : Ext.util.Format.usMoney,
             columns             : me.getInitialColumns(),
-            bbar                : me.getBottomBarCfg()
+            bbar                : me.getBottomBarCfg(),
+
+            renderers               : [],
+            quickSearchKeyStrokes   : [],
+            targetDefaults          : {},
+            tbarPlugins             : [],
+            bbarPlugins             : [],
+            colsFromDesign          : [],
+            extraParams             : {},
+
+            selModelConfig: {
+                singleSelect : false,
+                checkOnly : true
+            },
+
+            quickSearchConfig: {
+                width: 200
+            },
+
+            storeConfig: {
+                pageSize: 40
+            }
         });
 
         me.setupToolbars();

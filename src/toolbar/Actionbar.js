@@ -88,8 +88,8 @@ Ext.define('Extnd.toolbar.Actionbar', {
     noteType            : '',
     noteName            : '',
     createActionsFrom   : 'dxl',
-    dominoActionbar     : {},
-    actions             : [],
+    dominoActionbar     : null,
+    actions             : null,
     useViewTitleFromDxl : false,
     convertFormulas     : true,
 
@@ -98,6 +98,9 @@ Ext.define('Extnd.toolbar.Actionbar', {
         var me = this;
 
         me.toolbar = toolbar;
+        me.dominoActionbar = {};
+        me.actions = [];
+
 
         /* if the parent toolbar is an Ext.nd.Actionbar
          * then we need to wait to add the actions
@@ -116,6 +119,10 @@ Ext.define('Extnd.toolbar.Actionbar', {
     initComponent : function () {
         var me = this,
             vni;
+
+        me.toolbar = toolbar;
+        me.dominoActionbar = {};
+        me.actions = [];
 
         // for backwards compat
         if (!Ext.isEmpty(me.useDxl) && me.useDxl === false) {
