@@ -36,6 +36,7 @@ Ext.define('Extnd.grid.Panel', {
 
     requires: [
         'Extnd.data.ViewDesign',
+        'Extnd.grid.header.Container',
         'Extnd.toolbar.Paging',
         'Extnd.toolbar.Actionbar'
     ],
@@ -78,12 +79,13 @@ Ext.define('Extnd.grid.Panel', {
         // applyIf so that these can all be overridden if passed into the config
         Ext.applyIf(me, {
             store               : me.createStore(),
+            headerCt            : me.createHeaderCt(),
+            bbar                : me.getBottomBarCfg(),
+
             collapseIcon        : Extnd.extndUrl + 'resources/images/minus.gif',
             expandIcon          : Extnd.extndUrl + 'resources/images/plus.gif',
             dateTimeFormats     : Extnd.dateTimeFormats,
             formatCurrencyFnc   : Ext.util.Format.usMoney,
-            columns             : me.getInitialColumns(),
-            bbar                : me.getBottomBarCfg(),
 
             renderers               : [],
             quickSearchKeyStrokes   : [],
@@ -111,15 +113,24 @@ Ext.define('Extnd.grid.Panel', {
         me.callParent(arguments);
     },
 
+    /**
+     * For a Domino view, we make sure we create our own header container using our Extnd version
+     * of the container so that the nuances of a Domino view header/columns are best supported.
+     */
+    createHeaderCt: function () {
+        this.headerCt = new Extnd.grid.header.Container({
+            items: this.getInitialColumns()
+        });
+    },
+
 
     getInitialColumns: function () {
-        var me = this,
-            returnVal;
+        var me = this;
 
         if (me.columns) {
             me.needsColumns = false;
         } else {
-            returnVal = [
+            me.columns = [
                 {
                     dataIndex   : 'dummy',
                     header      : '&nbsp;',
@@ -128,7 +139,7 @@ Ext.define('Extnd.grid.Panel', {
             ];
         }
 
-        return returnVal;
+        return me.columns;
 
     },
 
@@ -167,12 +178,10 @@ Ext.define('Extnd.grid.Panel', {
                 me.updatePagingToolbar();
             }
 
-            me.store.load({
-                params: {
-                    count: me.count,
-                    start: 1
-                }
-            });
+            // TODO: is this really needed? Stores already have an autoLoad property that we can use
+            if (me.loadInitialData ) {
+                me.store.loadPage(1);
+            }
 
             me.fireEvent('open', me);
         }
@@ -308,13 +317,8 @@ Ext.define('Extnd.grid.Panel', {
          * choice.
          */
         // TODO: is this really needed? Stores already have an autoLoad property that we can use
-        if (me.loadInitialData) {
-            me.store.load({
-                params: {
-                    count: me.count,
-                    start: 1
-                }
-            });
+        if (me.loadInitialData ) {
+            me.store.loadPage(1);
         }
 
         if (me.showPagingToolbar) {

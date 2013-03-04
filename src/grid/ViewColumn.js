@@ -110,7 +110,18 @@ Ext.define('Extnd.grid.ViewColumn', {
         // ExtJS uses 'text' so copy over the viewentry.title config
         me.text = me.title || me.text;
 
+        // callParent now before setting up our sort states below
         me.callParent(arguments);
+
+        // Set our possible sort states for the column
+        // NOTE: we do this AFTER all call to callParent since the base class
+        // forces the possibleSortStates array to just just 2 elements if triStateSort is not true
+        // and we can't just simply set triStartSort to true since it does other things
+        me.possibleSortStates = [];
+        me.possibleSortStates.push(me.isResortAscending ? 'ASC' : 'RESTORE');
+        me.possibleSortStates.push(me.isResortDescending ? 'DESC' : 'RESTORE');
+        me.possibleSortStates.push('RESTORE');
+
     },
 
     /**
@@ -406,6 +417,68 @@ Ext.define('Extnd.grid.ViewColumn', {
         }
 
         return separator;
+    },
+
+
+    /**
+     * @override
+     * Custom version for Domino to handle a 'RESTORE' sort state.
+     */
+    setSortState: function(state, skipClear, initial) {
+        var me = this,
+            ascCls = me.ascSortCls,
+            descCls = me.descSortCls,
+            nullCls = me.nullSortCls,
+            ownerHeaderCt = me.getOwnerHeaderCt(),
+            oldSortState = me.sortState;
+
+         state = state || null;
+
+        if (!me.sorting && oldSortState !== state && me.getSortParam()) {
+            me.addCls(Ext.baseCSSPrefix + 'column-header-sort-' + state);
+            // don't trigger a sort on the first time, we just want to update the UI
+            if (state && !initial) {
+                // when sorting, it will call setSortState on the header again once
+                // refresh is called
+                me.sorting = true;
+                me.doSort(state);
+                me.sorting = false;
+            }
+            switch (state) {
+                case 'DESC':
+                    me.removeCls([ascCls, nullCls]);
+                    break;
+                case 'ASC':
+                    me.removeCls([descCls, nullCls]);
+                    break;
+                // BEGIN OVERRIDE
+                case 'RESTORE':
+                    me.removeCls([ascCls, descCls, nullCls]);
+                    break;
+                // END OVERRIDE
+                case null:
+                    me.removeCls([ascCls, descCls]);
+                    break;
+            }
+            if (ownerHeaderCt && !me.triStateSort && !skipClear) {
+                ownerHeaderCt.clearOtherSortStates(me);
+            }
+            me.sortState = state;
+            // we only want to fire the event if we have a null state when using triStateSort
+            if (me.triStateSort || state != null) {
+                ownerHeaderCt.fireEvent('sortchange', ownerHeaderCt, me, state);
+            }
+        }
+    },
+
+    /**
+     * Similar to #getSortParam that returns the dataIndex.
+     * However, since Domino's resortascending and resortdescending params expect the column number, this method
+     * can be used to return the column number which is the position minus 1.
+     * @return {Number}
+     */
+    getSortColumn: function() {
+        return this.position - 1;
     }
 
 });
