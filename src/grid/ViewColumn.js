@@ -87,6 +87,9 @@ Ext.define('Extnd.grid.ViewColumn', {
     /**
      * @property {Object} numberformat The format for numeric values in a column.
      */
+    /**
+     * @property {Number} position The position of a column in its view. Columns are numbered from left to right, starting with 1.
+     */
 
 
     initComponent: function () {

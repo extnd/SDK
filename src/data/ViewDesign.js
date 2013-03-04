@@ -237,13 +237,15 @@ Ext.define('Extnd.data.ViewDesign', {
                 isShowTwistie       : !!q.selectValue('@twisties', col, false),
                 isIcon              : q.selectValue('@showasicons', col, false),
                 datetimeformat      : datetimeformat,
-                numberformat        : numberformat
+                numberformat        : numberformat,
+                position            : columnnumber + 1
             };
 
             fieldConfig = {
-                name    : name,
-                mapping : 'entrydata[columnnumber=' + columnnumber + ']',
-                type    : 'domino'
+                name        : name,
+                mapping     : 'entrydata[columnnumber=' + columnnumber + ']',
+                column      : columnnumber,
+                type        : 'domino'
             };
             fieldConfigs.push(fieldConfig);
 
