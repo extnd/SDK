@@ -1,0 +1,307 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Domino Form Testing with ExtJS 4x</title>
+
+    <link rel="stylesheet" type="text/css" href="../extjs/resources/css/ext-all.css" />
+    <link rel="stylesheet" type="text/css" href="../resources/css/domino.css" />
+
+    <!-- Ext -->
+    <script type="text/javascript" src="../extjs/ext-dev.js"></script>
+
+    <!-- Extnd -->
+    <script type="text/javascript" src="../src/Extnd.js"></script>
+    <script type="text/javascript" src="../src/bootstrap.js"></script>
+
+
+    <!-- app code -->
+    <script type='text/javascript' src='/extnd/extnd_b4.nsf/extnd/3x/Session.js?OpenAgent&db=extnd/demo.nsf'></script>
+    <script type='text/javascript' src='/extnd/extnd_b4.nsf/extnd/3x/UIDocument.js?OpenAgent&db=extnd/demo.nsf&unid=844F0283AAAF2C32862575130054E329&editmode=true'></script>
+
+    <script language="JavaScript" type="text/javascript">
+
+        if (typeof Ext !== 'undefined') {
+
+        Ext.Loader.setConfig({
+        enabled         : true,
+        disableCaching  : false,
+        paths: {
+        'Ext'   : '../extjs/src',
+        'Extnd' : '../src',
+        }
+        });
+
+        Ext.Loader.require([
+        'Extnd.form.Panel'
+        ]);
+
+        // hardcode for now since the Session.js file hasn't been updated yet
+        Extnd.dbPath = 'extnd/demo.nsf';
+
+        Ext.onReady(function() {
+
+        var uidoc = new Ext.nd.UIDocument({
+        autoScroll : true,
+        createActionsFrom : 'document',
+        standardSubmit : true // default is false
+        });
+        uidoc.render();
+
+        /*
+        * If you want to access and do things with the form fields you must write your code
+        * after the 'open' event has fired.  The 'open' event is equivalent to the
+        * NotesUIDocument PostOpen/OnLoad events
+        *
+        */
+        uidoc.on('open', function(uidoc) {
+        if (uidoc.editMode) {
+        Ext.Msg.alert("Open Event Handler", "UIDocument open in edit mode.  When you change the 'category 2' field, you will see an alert.");
+        var cat2 = uidoc.getForm().findField("cat2");
+        if (cat2) {
+        cat2.on("select", function(combo, record, index) {
+        alert(record.data.text)
+        }, this);
+        }
+        } else {
+        Ext.Msg.alert("Open Event Handler", "UIDocument open in read mode.");
+        }
+
+        }, this);
+        });
+
+        } else {
+        alert("Ext is not loaded on this page/form");
+        }
+
+    </script>
+
+    <script language="JavaScript" type="text/javascript">
+        <!--
+       document._domino_target = "_self";
+       function _doClick(v, o, t, h) {
+         var form = document._CategoryTest1;
+         if (form.onsubmit) {
+            var retVal = form.onsubmit();
+            if (typeof retVal == "boolean" && retVal == false)
+              return false;
+         }
+         var target = document._domino_target;
+         if (o.href != null) {
+           if (o.target != null)
+              target = o.target;
+         } else {
+           if (t != null)
+             target = t;
+         }
+         form.target = target;
+         form.__Click.value = v;
+         if (h != null)
+           form.action += h;
+         form.submit();
+         return false;
+       }
+       // -->
+    </script>
+</head>
+<body text="#000000" bgcolor="#FFFFFF">
+
+<form method="post" action="/extnd/demo.nsf/sc1/844f0283aaaf2c32862575130054e329?EditDocument&amp;Seq=1" name="_CategoryTest1">
+    <input type="hidden" name="__Click" value="0">
+    <input type="hidden" name="%%ModDate" value="852576210015213A">
+    <table border="1" cellspacing="2" cellpadding="2">
+        <tr valign="middle" bgcolor="#C0C0C0"><td><a onclick="this.getUIDocument().save();
+return false;" href="">Save\this.getUIDocument().save();</a></td><td><a href="" onclick="return _doClick('852572C00067FA3A.4cb999b0760de13385257331000b21b5/$V5ACTIONS/0.304', this, null)" target="_self">Save\@Command([FileSave])</a></td><td><a onclick="var target = window.target;
+var activeTab = target.getActiveTab();
+target.remove(activeTab);
+return false;" href="">Close\window.target.remove</a></td><td><a onclick="this.getUIDocument().close();
+return false;" href="">Close\this.getUIDocument().close();</a></td><td><a href="" onclick="return _doClick('852572C00067FA3A.4cb999b0760de13385257331000b21b5/$V5ACTIONS/0.4BE', this, null)" target="_self">Close\@Command([FileCloseWindow])</a></td><td><a onclick="alert(&quot;I am a shared action&quot;);
+return false;" href="">Alert (shared js action)</a></td><td><a onclick="alert('you clicked on sub action 1')
+return false;" href="">Test\sub action 1</a></td><td><a onclick="alert('you clicked on sub action 2')
+return false;" href="">Test\sub action 2</a></td><td><a onclick="alert('you clicked on sub action 3.1')
+return false;" href="">Test\sub action 3.1</a></td><td><a onclick="alert('you clicked on sub action 3.2')
+return false;" href="">Test\sub action 3.2</a></td></tr>
+    </table>
+    <hr>
+    <table style="margin: 10px;" cellspacing="10" border="0" cellspacing="0" cellpadding="0">
+        <tr valign="top"><td width="128"><div align="right"><b>subject :</b><br>
+            type = text</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178">
+            <input name="subject" value=""></td><td width="107"><div align="right"><b>multi-text field:</b><br>
+            type = text<br>
+            allow multi = true<br>
+            enter sep = cm, sm, nl  <br>
+            display sep = nl</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148">
+            <textarea name="multi" rows="2" cols="20"></textarea>
+        </td></tr>
+
+        <tr valign="top"><td style="margin:10px;" width="128"><div align="right"><b>category 1:</b><br>
+            type = dialog list<br>
+            allow multi = false<br>
+            allow new = false<br>
+            choices = entered<br>
+            refresh fields</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178"><a name="_RefreshKW_cat1"></a>
+            <input name="%%Surrogate_cat1" type="hidden" value="1">
+            <select name="cat1" style="width:70" onchange="_doClick('$Refresh', this, '_self', '#_RefreshKW_cat1')">
+                <option>Church
+                <option selected>School
+                <option>Sports
+                <option>Taxes
+                <option>Work</select>
+        </td><td width="107"><div align="right"><b>check box:</b><br>
+            nbr cols = 1</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148">
+            <input name="%%Surrogate_checkbox" type="hidden" value="1"><label>
+            <input type="checkbox" name="checkbox" value="option1">option1</label><label>
+            <input type="checkbox" name="checkbox" value="option2">option2</label><label>
+            <input type="checkbox" name="checkbox" value="option3">option3</label></td></tr>
+
+        <tr valign="top"><td width="128"><div align="right"><b>category 2:</b><br>
+            type = dialog list<br>
+            allow = multi true<br>
+            allow new = false<br>
+            choices = formula</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178">
+            <input name="%%Surrogate_cat2" type="hidden" value="1">
+            <select name="cat2" multiple>
+                <option selected>Home Work
+                <option>Supplies
+                <option></select>
+        </td><td width="107"><div align="right"><b>radio box:</b><br>
+            nbr cols = 1</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148">
+            <input name="%%Surrogate_radio" type="hidden" value="1"><label>
+            <input type="radio" name="radio" value="option1">option1</label><br>
+            <label>
+                <input type="radio" name="radio" value="option2">option2</label><br>
+            <label>
+                <input type="radio" name="radio" value="option3">option3</label></td></tr>
+
+        <tr valign="top"><td width="128"><div align="right"><b>category 3:</b><br>
+            type = dialog list<br>
+            allow multi = false<br>
+            allow new = true<br>
+            choices = entered</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178">
+            <input name="%%Surrogate_cat3" type="hidden" value="1">
+            <input name="cat3"></td><td width="107"></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td></tr>
+
+        <tr valign="top"><td width="128"><div align="right"><b>category 4:</b><br>
+            type = dialog list<br>
+            allow multi = false<br>
+            allow new = true<br>
+            choices = formula</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178">
+            <input name="%%Surrogate_cat4" type="hidden" value="1">
+            <input name="cat4"></td><td width="107"><div align="right"><b>Suggest:</b><br>
+            <i>(type-ahead)</i></div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148">
+            <input name="typeahead" value="" id="xnd-suggest" class="xnd-ignore"></td></tr>
+
+        <tr valign="top"><td width="128"><div align="right"><b>category 5:</b><br>
+            type = dialog list<br>
+            allow multi = true<br>
+            allow new = true<br>
+            choices = addressbook</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178">
+            <input name="%%Surrogate_cat5" type="hidden" value="1">
+            <input name="cat5"></td><td width="107"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td></tr>
+
+        <tr valign="top"><td width="128"><div align="right"><b>a date field:</b></div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178">
+            <input name="somedate" value="08/12/2027"></td><td width="107"><div align="right"><b>Listbox:</b><br>
+            type = listbox<br>
+            allow multi = false<br>
+            choices = entered</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148">
+            <input name="%%Surrogate_listbox" type="hidden" value="1">
+            <select name="listbox">
+                <option selected>choice a
+                <option>choice b
+                <option>choice c</select>
+        </td></tr>
+
+        <tr valign="top"><td width="128"><div align="right"><b>a time field:</b></div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178">
+            <input name="sometime" value=""></td><td width="107"><div align="right">type = listbox<br>
+            allow multi = true<br>
+            choices = formula</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148">
+            <input name="%%Surrogate_listbox_1" type="hidden" value="1">
+            <select name="listbox_1" multiple>
+                <option>Home Work
+                <option>Supplies
+                <option selected></select>
+        </td></tr>
+
+        <tr valign="top"><td width="128"><div align="right"><b>a number field:</b></div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178">
+            <input name="somenumber" value=""></td><td width="107"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td></tr>
+
+        <tr valign="top"><td width="128"><div align="right"><b>Reader(s):</b></div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178">
+            <input name="%%Surrogate_readerChoices" type="hidden" value="1">
+            <select name="readerChoices" multiple>
+                <option>[Read1]
+                <option>[Read2]
+                <option>[Read3]</select>
+        </td><td width="107"><div align="right"><b>Combobox:</b><br>
+            type = combobox<br>
+            allow multi = false<br>
+            choices = entered</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td style="margin:10px;" width="148">
+            <input name="%%Surrogate_Combobox" type="hidden" value="1">
+            <select name="Combobox">
+                <option selected>choices a
+                <option>choices b
+                <option>choices c</select>
+        </td></tr>
+
+        <tr valign="top"><td width="128"><div align="right"><b>Address Dialogs</b><br>
+            (use address dialog)</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178">
+            <input name="Names" value=""></td><td width="107"><div align="right">type = combobox<br>
+            allow multi = true<br>
+            choices = formula</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148">
+            <input name="%%Surrogate_Combobox_1" type="hidden" value="1">
+            <input name="Combobox_1"></td></tr>
+
+        <tr valign="top"><td width="128"><div align="right">(use address dialog + allow multi-value)</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178">
+            <input name="Names_1" value=""></td><td width="107"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td></tr>
+
+        <tr valign="top"><td width="128"><div align="right">(use address dialog + allow values not in list)</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178">
+            <input name="Names_2" value=""></td><td width="107"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td></tr>
+
+        <tr valign="top"><td width="128"><div align="right">(use address dialog + allow multi-value + allow values not in list)</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178">
+            <input name="Names_3" value=""></td><td width="107"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td></tr>
+
+        <tr valign="top"><td width="128"><div align="right"><b>Names Field</b><br>
+            choices = none</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178">
+            <input name="Names_4" value=""></td><td width="107"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td></tr>
+
+        <tr valign="top"><td width="128"><div align="right">choices = ACL</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178">
+            <input name="Names_5" value=""></td><td width="107"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td></tr>
+
+        <tr valign="top"><td width="128"><div align="right">choices = view</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178">
+            <input name="Names_6" value=""></td><td width="107"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td></tr>
+
+        <tr valign="top"><td width="128"><div align="right"><b>ACL Dialogs</b><br>
+            (use ACL dialog)</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178">
+            <input name="%%Surrogate_ACL" type="hidden" value="1">
+            <select name="ACL"></select>
+        </td><td width="107"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td></tr>
+
+        <tr valign="top"><td width="128"><div align="right">(use ACL dialog + allow multi-value)</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178">
+            <input name="%%Surrogate_ACL_1" type="hidden" value="1">
+            <select name="ACL_1" multiple></select>
+        </td><td width="107"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td></tr>
+
+        <tr valign="top"><td width="128"><div align="right">(use ACL dialog + allow values not in list)</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178">
+            <input name="%%Surrogate_ACL_2" type="hidden" value="1">
+            <input name="ACL_2"></td><td width="107"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td></tr>
+
+        <tr valign="top"><td width="128"><div align="right">(use ACL dialog + allow multi-value + allow values not in list)</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178">
+            <input name="%%Surrogate_ACL_3" type="hidden" value="1">
+            <input name="ACL_3"></td><td width="107"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td></tr>
+
+        <tr valign="top"><td width="128"><div align="right"><b>View Dialogs</b><br>
+            (use view dialog)</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178">
+            <input name="%%Surrogate_ViewList" type="hidden" value="1">
+            <select name="ViewList"></select>
+        </td><td width="107"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td></tr>
+
+        <tr valign="top"><td width="128"><div align="right">(use view dialog + allow multi values)</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178">
+            <input name="%%Surrogate_ViewList_1" type="hidden" value="1">
+            <select name="ViewList_1" multiple></select>
+        </td><td width="107"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td></tr>
+    </table>
+    Html Editor<br>
+
+    <textarea name="content" id="content" class="xnd-htmleditor" style="height: 200px" rows="7" cols="50"></textarea>
+</form>
+</body>
+</html>

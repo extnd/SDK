@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<viewentries toplevelentries="5">
+<viewentry position="1" noteid="80000004" children="3" descendants="11" siblings="5">
+<entrydata columnnumber="0" name="cat1" category="true">
+<text>Church</text></entrydata>
+</viewentry>
+<viewentry position="2" noteid="80000014" children="3" descendants="22" siblings="5">
+<entrydata columnnumber="0" name="cat1" category="true">
+<text>School</text></entrydata>
+</viewentry>
+<viewentry position="3" noteid="80000024" children="2" descendants="15" siblings="5">
+<entrydata columnnumber="0" name="cat1" category="true">
+<text>Sports</text></entrydata>
+</viewentry>
+<viewentry position="3.1" noteid="80000028" children="6" descendants="6" siblings="2">
+<entrydata columnnumber="1" name="cat2" category="true">
+<text>Baseball</text></entrydata>
+</viewentry>
+<viewentry position="3.1.1" unid="17716141CB5961A986257441004B82E0" noteid="A56" siblings="6">
+<entrydata columnnumber="2" name="subject">
+<text/></entrydata>
+<entrydata columnnumber="3" name="$1">
+<datetime dst="true">20080506T084447,04-05</datetime></entrydata>
+<entrydata columnnumber="4" name="$2">
+<text>Anonymous</text></entrydata>
+</viewentry>
+<viewentry position="3.1.2" unid="14D7B3D1C4FC93B9862574CF0047D308" noteid="A62" siblings="6">
+<entrydata columnnumber="2" name="subject">
+<text/></entrydata>
+<entrydata columnnumber="3" name="$1">
+<datetime dst="true">20080925T080430,80-05</datetime></entrydata>
+<entrydata columnnumber="4" name="$2">
+<text>Anonymous</text></entrydata>
+</viewentry>
+<viewentry position="3.1.3" unid="EBE1C4C9157CDB768625744A002D2F25" noteid="A72" siblings="6">
+<entrydata columnnumber="2" name="subject">
+<text>aaaaaaaaaaaaaaaaa</text></entrydata>
+<entrydata columnnumber="3" name="$1">
+<datetime dst="true">20080515T031331,89-05</datetime></entrydata>
+<entrydata columnnumber="4" name="$2">
+<text>Anonymous</text></entrydata>
+</viewentry>
+<viewentry position="3.1.4" unid="899A169E7ADCCE1A8825728B00646EC4" noteid="AB2" siblings="6">
+<entrydata columnnumber="2" name="subject">
+<text>baseball stuff</text></entrydata>
+<entrydata columnnumber="3" name="$1">
+<datetime>20070223T101659,56-08</datetime></entrydata>
+<entrydata columnnumber="4" name="$2">
+<text>JackAdmin Ratcliff</text></entrydata>
+</viewentry>
+<viewentry position="3.1.5" unid="0161D0C109F865F68525728B00651E4B" noteid="AFE" siblings="6">
+<entrydata columnnumber="2" name="subject">
+<text>1999 Tax stuff</text></entrydata>
+<entrydata columnnumber="3" name="$1">
+<datetime>20070223T132428,91-05</datetime></entrydata>
+<entrydata columnnumber="4" name="$2">
+<text>JackAdmin Ratcliff</text></entrydata>
+</viewentry>
+<viewentry position="3.1.6" unid="007FB9F80B3333AC8525728B00650C81" noteid="B22" siblings="6">
+<entrydata columnnumber="2" name="subject">
+<text>testing from Dublin</text></entrydata>
+<entrydata columnnumber="3" name="$1">
+<datetime>20070223T132343,37-05</datetime></entrydata>
+<entrydata columnnumber="4" name="$2">
+<text>JackAdmin Ratcliff</text></entrydata>
+</viewentry>
+<viewentry position="3.2" noteid="8000002C" children="9" descendants="9" siblings="2">
+<entrydata columnnumber="1" name="cat2" category="true">
+<text>Basketball</text></entrydata>
+</viewentry>
+<viewentry position="4" noteid="80000030" children="2" descendants="15" siblings="5">
+<entrydata columnnumber="0" name="cat1" category="true">
+<text>Taxes</text></entrydata>
+</viewentry>
+<viewentry position="5" noteid="8000003C" children="2" descendants="5" siblings="5">
+<entrydata columnnumber="0" name="cat1" category="true">
+<text>Work</text></entrydata>
+</viewentry>
+</viewentries>

@@ -1,0 +1,1803 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<viewentries toplevelentries="68">
+<viewentry position="1" unid="387F748D7E6C6F628525728B0064EB0D" noteid="9C2" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>3</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>3</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Work</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Testing</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>1999 Tax stuff</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20070223</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20070223T132217,73-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text>[Read2]</text></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="2" unid="EEEF76A5AA7FF163862573F30053998A" noteid="9D2" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>1</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>6</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Work</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Testing</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>test combos</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20080218</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20080218T091307,94-06</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text/></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="3" unid="1E4A3F0299467EC4862574D500338B75" noteid="A66" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>10</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>4</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Work</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Testing</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>Check it out</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20081001</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime dst="true">20081001T042300,37-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text/></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="4" unid="020F9632DE09A6E08525728B00650CAF" noteid="B4A" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>5</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>5</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Work</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Testing</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text/></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20070223</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20070223T132343,83-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text/></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="5" unid="0166F68C01A821F68525728B0064FFD5" noteid="B52" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>5</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>5</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Work</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text/></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>testing home work alone</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20070223</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20070223T132310,93-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text>[Read1]</text></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="6" unid="3A6EC3628C57C6FF8525728B0064CF8C" noteid="9FA" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>7</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>2</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Taxes</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>1999</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>1999 Tax stuff</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20070223</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20070223T132107,32-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text>[Read1]</text></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="7" unid="375C102FD5A8C5818525728B0064EA13" noteid="AA6" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>5</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>0</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Taxes</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>1999</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>1999 Tax stuff233</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20070223</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20070223T132215,23-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text/></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="8" unid="018B6115EE8323E28525728B00650C0D" noteid="AE2" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>2</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>3</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Taxes</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>1999</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>aaaaaaa</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20070223</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20070223T132342,21-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text>[Read1]</text></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="9" unid="01CC1673BC06A11A8525728B00650B76" noteid="AFA" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>3</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>4</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Taxes</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>1999</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>testing home work.</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20070223</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20070223T132340,70-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text>[Read1]</text></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="10" unid="3807F1465FAC9AAA8525728B00651C5B" noteid="B42" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>9</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>5</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Taxes</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>1999</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>1999 Tax stuff</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20070223</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20070223T132423,95-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text>[Read1]</text></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="11" unid="326A0DFCE3F642BE852573E6001568BA" noteid="B4E" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>1</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>4</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Taxes</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>1999</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>baseball stuff jkldsf;lkasd asd;klj</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20080204</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20080204T225350,66-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text>[Read2]</text></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="12" unid="00081B576109B9C68525728B0065116A" noteid="B56" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>5</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>1</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Taxes</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>1999</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>1999 Tax stuff</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20070223</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20070223T132355,94-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text>[Read3]</text></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="13" unid="2CD70ADCF52C8837862574200042C528" noteid="A2A" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>6</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>9</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Taxes</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>2000</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text/></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20080403</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime dst="true">20080403T070918,48-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text/></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="14" unid="35B773C29D016B808525728B0064CA97" noteid="A42" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>4</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>5</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Taxes</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>2000</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>2000 Tax stuff</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20070223</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20070223T132054,63-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text/></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="15" unid="37669989805994C38525728B0064CE46" noteid="A6A" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>5</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>6</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Taxes</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>2000</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>2000 Tax stuff</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20070223</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20070223T132104,06-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text>[Read1]</text></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="16" unid="0023685C1A747A3B8525728B0064CC53" noteid="ABE" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>9</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>5</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Taxes</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>2000</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>testi</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20070223</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20070223T132059,07-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text>[Read2]</text></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="17" unid="3665D312B78F2A7B8525728B00651391" noteid="ADA" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>8</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>2</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Taxes</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>2000</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>2000 Tax stuff</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20070223</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20070223T132401,45-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text/></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="18" unid="35FBC80E6E39BE428525728B0064CE45" noteid="B0E" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>8</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>10</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Taxes</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>2000</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>1999 Tax stuff</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20070223</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20070223T132104,05-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text>[Read1]</text></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="19" unid="00373EA4F54229148525728B006515CC" noteid="B2A" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>0</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>2</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Taxes</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>2000</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>1999 Tax stuff2</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20070223</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20070223T132407,16-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text/></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="20" unid="3478C4AA518350DE8525728B00651432" noteid="B3E" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>2</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>6</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Taxes</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>2000</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>1999 Tax stuff</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20070223</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20070223T132403,06-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text/></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="21" unid="17716141CB5961A986257441004B82E0" noteid="A56" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>9</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>6</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Sports</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Baseball</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text/></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20080506</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime dst="true">20080506T084447,04-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text/></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="22" unid="14D7B3D1C4FC93B9862574CF0047D308" noteid="A62" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>6</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>1</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Sports</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Baseball</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text/></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20080925</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime dst="true">20080925T080430,80-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text/></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="23" unid="EBE1C4C9157CDB768625744A002D2F25" noteid="A72" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>1</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>6</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Sports</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Baseball</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>aaaaaaaaaaaaaaaaa</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20080515</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime dst="true">20080515T031331,89-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text/></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="24" unid="899A169E7ADCCE1A8825728B00646EC4" noteid="AB2" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>3</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>3</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Sports</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Baseball</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>baseball stuff</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20070223</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20070223T101659,56-08</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text>[Read1]</text></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="25" unid="0161D0C109F865F68525728B00651E4B" noteid="AFE" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>9</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>2</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Sports</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Baseball</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>1999 Tax stuff</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20070223</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20070223T132428,91-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text>[Read2]</text></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="26" unid="007FB9F80B3333AC8525728B00650C81" noteid="B22" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>1</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>7</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Sports</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Baseball</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>testing from Dublin</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20070223</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20070223T132343,37-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text>[Read1]</text></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="27" unid="ECD69F714036DDE4862574F20019A8D2" noteid="A22" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>4</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>7</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Sports</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Basketball</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>Testing 123</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20081030</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime dst="true">20081029T234016,18-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text/></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="28" unid="6BBCC5FEC3689AD98625748E00671E65" noteid="A26" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>4</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>6</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Sports</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Basketball</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>Test1111</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20080722</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime dst="true">20080722T134619,89-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text/></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="29" unid="B6CC5D2BA7D12CB1852573E600156BA3" noteid="A8A" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>0</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>8</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Sports</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Basketball</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>baseball stuff</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20080204</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20080204T225358,11-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text>[Read1]</text></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="30" unid="C04C235804F8FDB2852573E6001569B0" noteid="A92" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>5</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>0</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Sports</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Basketball</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>baseball stuff</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20080204</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20080204T225353,12-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text>[Read1]</text></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="31" unid="0021E63A0CA915538525728B00650712" noteid="A9A" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>2</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>0</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Sports</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Basketball</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>baseball stuff</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20070223</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20070223T132329,46-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text>[Read1]</text></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="32" unid="001BF57B02B41BD58525728B006518B0" noteid="A9E" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>5</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>3</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Sports</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Basketball</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>baseball stuff</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20070223</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20070223T132414,56-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text>[Read1]</text></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="33" unid="B8C860E4C4A0811D862574CE00381613" noteid="AA2" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>5</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>5</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Sports</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Basketball</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>subject dem</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20080924</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime dst="true">20080924T051236,67-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text>[Read1]</text></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="34" unid="293A5CC83B907FF0852573E600156E06" noteid="ACA" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>2</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>6</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Sports</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Basketball</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>Team</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20080204</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20080204T225404,22-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text>[Read1]</text></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="35" unid="DB916DA22018FFB7852573E600156CD2" noteid="ACE" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>2</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>7</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Sports</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Basketball</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>baseball stuff</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20080204</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20080204T225401,14-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text>[Read1]</text></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="36" unid="4973B2D4CCE35B9B8625746B004ADEB6" noteid="A52" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>6</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>2</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>School</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Home Work</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>ttert</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20080617</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime dst="true">20080617T083746,78-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text>[Read1]</text></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="37" unid="A0BD8089AD48893C8625744A0010D579" noteid="A5A" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>9</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>1</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>School</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Home Work</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text/></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20080514</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime dst="true">20080514T220352,25-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text/></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="38" unid="AFA1AAC806704FAA862574200042F8D7" noteid="A6E" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>2</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>0</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>School</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Home Work</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>Science project</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20080403</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime dst="true">20080403T071130,79-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text>[Read1]</text></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="39" unid="FCCDD2AB8CCA2B588625741A0001D553" noteid="A7A" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>2</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>7</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>School</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Home Work</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>olaaaaaaaaa</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20080327</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime dst="true">20080327T192001,47-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text/></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="40" unid="011F169D49AEFA938525728B0064E986" noteid="AF2" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>4</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>3</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>School</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Home Work</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>1999 Tax stuff</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20070223</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20070223T132213,82-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text>[Read2]</text></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="41" unid="381F8050A65A3FD48525728B00650B30" noteid="AF6" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>2</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>8</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>School</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Home Work</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>2000 Tax stuff</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20070223</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20070223T132340,00-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text>[Read2]</text></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="42" unid="844F0283AAAF2C32862575130054E329" noteid="B16" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>10</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>7</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>School</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Home Work</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text/></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20081202</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20081202T092711,77-06</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text/></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="43" unid="00D74F9EF8DB9FF08525728B0065149A" noteid="B36" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>1</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>7</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>School</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Home Work</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>This is a really long subject and should wrap to the next line in the new Ext 1.0 grid.  Just need to figure out how to apply a limit to how many lines a row can grow, like the line height setting in Designer for a view</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20070223</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20070223T132404,10-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text/></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="44" unid="00994C9B7A434FA68525728B0064EAA9" noteid="B3A" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>6</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>8</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>School</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Home Work</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>testing home work...</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20070223</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20070223T132216,73-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text/></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="45" unid="0035EF08F21EFB058525728B00651CF8" noteid="9DA" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>1</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>5</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>School</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Supplies</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>pruebas</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20070223</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20070223T132425,52-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text>[Read2]</text></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="46" unid="470903AE812E3F5C862574CE00646F42" noteid="A82" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>3</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>8</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>School</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Supplies</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>Hellow OWrld</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20080924</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime dst="true">20080924T131700,82-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text>[Read2]</text></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="47" unid="001728A7AE99EA138525728B006500A2" noteid="A8E" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>1</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>1</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>School</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Supplies</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>testing 1</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20070223</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20070223T132312,98-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text/></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="48" unid="3770C802B06C199C8525728B0064CF8F" noteid="AAE" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>6</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>6</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>School</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Supplies</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>1999 Tax stuff</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20070223</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20070223T132107,35-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text>[Read1]</text></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="49" unid="47420D9F7DDDFE128625744E0072CEEA" noteid="AB6" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>3</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>9</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>School</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Supplies</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text/></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20080519</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime dst="true">20080519T155400,74-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text/></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="50" unid="8D99F973DB18A7BD862573FA003B8D7E" noteid="ADE" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>1</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>4</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>School</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Supplies</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>MARCO</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20080225</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20080225T045028,46-06</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text>[Read2]</text></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="51" unid="002A6CD8A8C3527E8525728B00651B74" noteid="B02" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>1</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>8</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>School</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Supplies</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>This is a long subject and should wrap to the next line in the new Ext 1.0 grid</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20070223</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20070223T132421,64-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text>[Read3]</text></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="52" unid="000D0F3975A5CD058525728B00650BB9" noteid="B06" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>9</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>10</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>School</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Supplies</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>This is a long subject and should wrap to the next line in the new Ext 1.0 grid</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20070223</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20070223T132341,37-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text>[Read1]</text></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="53" unid="0030CFDF934F6D3F862573E90071E5B2" noteid="B0A" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>2</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>10</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>School</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Supplies</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>aaaaaaa</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20080208</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20080208T144403,70-06</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text>[Read2]</text></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="54" unid="000D26300E0A789C8525728B006504BF" noteid="B12" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>3</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>4</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>School</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Supplies</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>1999 Tax stuff</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20070223</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20070223T132323,51-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text>[Read2]</text></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="55" unid="00E4528F22A3828B8525728B00650978" noteid="B46" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>6</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>8</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>School</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Supplies</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>1999 Tax stuff</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20070223</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20070223T132335,60-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text>[Read2]</text></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="56" unid="006AB1F1C59B2B9885256C390075EF06" noteid="B5A" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>4</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>10</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>School</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Supplies</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>This is another long subject and should wrap to the next line in the new Ext 1.0 grid</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20020919</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime dst="true">20020919T172809,02-04</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text>[Read2]</text></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="57" unid="3A6E2E87A4DC44B8852575FB0052096B" noteid="AEA" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>2</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>2</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>School</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text/></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text/></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20090722</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime dst="true">20090722T105603,63-04</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text/></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="58" unid="5F682C60A811BE2D862573FE004F24BF" noteid="9AE" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>3</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>10</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Church</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Sunday School</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>aaaabb</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20080229</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20080229T082427,51-06</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text/></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="59" unid="FDCE41ED3F992FC38525728C0081EEE0" noteid="B32" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>1</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>6</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Church</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Sunday School</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>testing team kid</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20070224</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20070224T183912,96-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text/></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+<viewentry position="60" unid="FB0D9CD0DCADEE838525728B00650B8B" noteid="A06" siblings="68">
+<entrydata columnnumber="0" name="NbrInView">
+<number>7</number></entrydata>
+<entrydata columnnumber="1" name="PercentOfAll">
+<number>10</number></entrydata>
+<entrydata columnnumber="2" name="Icons">
+<textlist><text>plus.gif</text></textlist></entrydata>
+<entrydata columnnumber="3" name="cat1">
+<text>Church</text></entrydata>
+<entrydata columnnumber="4" name="cat2">
+<text>Team Kid</text></entrydata>
+<entrydata columnnumber="5" name="subject">
+<text>testing team kid</text></entrydata>
+<entrydata columnnumber="6" name="$1">
+<datetime>20070223</datetime></entrydata>
+<entrydata columnnumber="7" name="$13">
+<numberlist><number>1.23</number></numberlist></entrydata>
+<entrydata columnnumber="8" name="$7">
+<datetime>20070223T132340,91-05</datetime></entrydata>
+<entrydata columnnumber="9" name="_readers">
+<text/></entrydata>
+<entrydata columnnumber="10" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="11" name="cnl">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="12" name="">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+<entrydata columnnumber="13" name="$11">
+<textlist><text>test1</text><text>test2</text><text>test3</text></textlist></entrydata>
+</viewentry>
+</viewentries>

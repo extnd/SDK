@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<viewdesign direction="0" spacing="0" columns="5" totalscolor="#808080" altrowcolor="#EFEFEF" categories="1" extendlastcolumn="false" hidemarginborder="true">
+    <column columnnumber="0" width="69" name="$4" title="percentage" resize="true" format="2" totals="true" listseparator="none">
+        <cfont style="r" size="10" color="#000000" face="Helvetica" />
+        <hfont style="b" size="9" color="#000000" face="Helvetica" />
+        <numberformat digits="2" format="currency" punctuated="true" parens="true" />
+        <datetimeformat show="datetime" date="yearmonthday" time="hourminutesecond" zone="never" />
+    </column>
+    <column columnnumber="1" width="8" name="category" title="" sort="true" sortcategorize="true" resize="true" format="2" twistie="true" listseparator="none">
+        <cfont style="r" size="10" color="#000000" face="Helvetica" />
+        <hfont style="b" size="9" color="#000000" face="Helvetica" />
+        <numberformat digits="0" format="general" />
+        <datetimeformat show="datetime" date="yearmonthday" time="hourminutesecond" zone="never" />
+    </column>
+    <column columnnumber="2" width="144" name="_date_created" title="date_created" resortascending="true" resize="true" format="2" listseparator="none">
+        <cfont style="r" size="10" color="#000000" face="Helvetica" />
+        <hfont style="b" size="9" color="#000000" face="Helvetica" />
+        <numberformat digits="0" format="general" />
+        <datetimeformat show="datetime" date="yearmonthday" time="hourminutesecond" zone="never" />
+    </column>
+    <column columnnumber="3" width="138" name="createdBy" title="created by" resortascending="true" resize="true" format="2" listseparator="none">
+        <cfont style="r" size="10" color="#000000" face="Helvetica" />
+        <hfont style="b" size="9" color="#000000" face="Helvetica" />
+        <numberformat digits="0" format="general" />
+        <datetimeformat show="datetime" date="yearmonthday" time="hourminutesecond" zone="never" />
+    </column>
+    <column columnnumber="4" width="120" name="categoryValue" title="category value" sort="true" resize="true" format="2" listseparator="none">
+        <cfont style="r" size="10" color="#000000" face="Helvetica" />
+        <hfont style="b" size="9" color="#000000" face="Helvetica" />
+        <numberformat digits="0" format="general" />
+        <datetimeformat show="datetime" date="yearmonthday" time="hourminutesecond" zone="never" />
+    </column>
+</viewdesign>

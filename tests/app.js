@@ -2,8 +2,9 @@ Ext.Loader.setConfig({
     enabled         : true,
     disableCaching  : false,
     paths: {
-        'Ext'   : '../extjs/src',
-        'Extnd' : '../src'
+        'Ext'       : '../extjs/src',
+        'Ext.ux'    : '../extjs/examples/ux',
+        'Extnd'     : '../src'
     }
 });
 
@@ -25,6 +26,7 @@ Ext.application({
     requires: [
         'Ext.container.Viewport',
         'Ext.TabPanel',
+        'Ext.ux.grid.FiltersFeature',
         'Extnd.Session',
         'Extnd.Database',
         'Extnd.UIView',
@@ -82,7 +84,9 @@ Ext.application({
             items: [
                 me.getUIOutline(),
                 me.getUIView1(),
-                me.getUIView2()
+                me.getUIView1b(),
+                me.getUIView2(),
+                me.getUIView3()
             ]
         };
     },
@@ -101,12 +105,20 @@ Ext.application({
     getUIView1: function () {
         return {
             xtype       : 'xnd-uiview',
-            title       : 'sc1',
+            title       : 'sc1 all done by Extnd',
             dbPath      : '/extnd/demo.nsf/',
             viewName    : 'sc1'
         };
     },
 
+    getUIView1b: function () {
+        return {
+            xtype       : 'xnd-uiview',
+            title       : 'f1 all done by Extnd',
+            dbPath      : '/extnd/demo.nsf/',
+            viewName    : 'f1'
+        };
+    },
 
     getUIView2: function () {
         var model,
@@ -130,12 +142,13 @@ Ext.application({
         store = Ext.create('Extnd.data.ViewStore', {
             model       : model,
             dbPath      : '/extnd/demo.nsf/',
-            viewName    : 'f1'
+            viewName    : 'f1',
+            autoLoad    : true
         });
 
         return {
             xtype       : 'xnd-grid',
-            title       : 'f1',
+            title       : 'f1 with custom model, store and columns',
             store       : store,
             columns: [
                 {
@@ -146,12 +159,55 @@ Ext.application({
                 {
                     xtype       : 'xnd-viewcolumn',
                     text        : 'Subject',
+                    flex        : 1,
                     dataIndex   : 'subject'
                 },
                 {
                     xtype       : 'xnd-viewcolumn',
                     text        : 'Date',
                     dataIndex   : 'date'
+                }
+            ]
+        };
+    },
+
+
+    getUIView3: function () {
+        var model,
+            store;
+
+        // creating an inner function to use as a custom column renderer
+        function renderTotal(value, cell, record, rowIndex, colIndex, store) {
+            return value * 10;
+        }
+
+        return {
+            xtype       : 'xnd-grid',
+            features    : [
+                {
+                    ftype: 'filters'
+                }
+            ],
+            title       : 'f1 with custom columns',
+            dbPath      : '/extnd/demo.nsf/',
+            viewName    : 'f1',
+            columns: [
+                {
+                    xtype       : 'xnd-viewcolumn',
+                    text        : 'Subject',
+                    flex        : 1,
+                    dataIndex   : 'subject',
+                    filter: {
+                        type: 'string'
+                    }
+                },
+                {
+                    //xtype       : 'xnd-viewcolumn',
+                    text        : 'Date',
+                    dataIndex   : '_7',
+                    filter: {
+                        type: 'date'
+                    }
                 }
             ]
         };

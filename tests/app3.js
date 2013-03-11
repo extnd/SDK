@@ -2,19 +2,21 @@ Ext.Loader.setConfig({
     enabled         : true,
     disableCaching  : false,
     paths: {
-        'Ext'   : '../extjs/src',
+        'Ext'   : '../extjs-4.2.0.489/src',
         'Extnd' : '../src'
     }
 });
 
 Ext.require([
-    'Extnd.UIView'
+    'Extnd.UIView',
+    'Ext.grid.plugin.BufferedRenderer'
 ]);
 
 
 Ext.onReady(function () {
     var model,
-        store;
+        store,
+        infiniteScroll = true;
 
     Extnd.extndUrl = '/extnd/extnd_b4.nsf/extnd/3x/';
 
@@ -26,40 +28,57 @@ Ext.onReady(function () {
     model = Ext.define('Demo.model.MyCustomModel', {
         extend: 'Extnd.data.ViewModel',
         fields: [
-            { name: 'totals',   mapping: 'entrydata[columnnumber=0]',   type: 'float'   },
-            { name: 'subject',  mapping: 'entrydata[name=subject]',     type: 'string'  },
-            { name: 'date',     mapping: 'entrydata[columnnumber=6]',   type: 'string'  }
+            { name: 'docnumber',   mapping: 'entrydata[columnnumber=0]',   type: 'string'   },
+            { name: 'date',     mapping: 'entrydata[columnnumber=1]',   type: 'date'  }
         ]
     });
 
+//    store = Ext.create('Ext.data.Store', {
+//        proxy: {
+//            type    : 'ajax',
+//            url     : '/extnd/demo.nsf/f1?ReadViewEntries',
+//            reader: {
+//                type            : 'xnd-viewxml',
+//                //type            : 'xml',
+//                root            : 'viewentries',
+//                record          : 'viewentry',
+//                totalProperty   : '@toplevelentries'
+//            }
+//        },
     store = Ext.create('Extnd.data.ViewStore', {
         model       : model,
+        pageSize    : 30,
+        autoLoad    : true,
+        buffered    : infiniteScroll, // TODO not working with ExtJS 4.1x and Extnd
         dbPath      : '/extnd/demo.nsf/',
-        viewName    : 'f1'
+        viewName    : '($All)'
     });
 
     Ext.create('Extnd.UIView', {
-        title           : 'The f1 view',
+        title               : 'The f1 view',
+        showPagingToolbar : !infiniteScroll,
+        count               : 10,
+//        plugins         : {
+//            ptype: 'bufferedrenderer',
+//            trailingBufferZone: 5,
+//            leadingBufferZone: 5
+//        },
         renderTo        : Ext.getBody(),
         showActionbar   : false,
         width           : 800,
-        height          : 400,
+        height          : 200,
         store           : store,
         columns: [
             {
-                text        : 'Totals',
-                dataIndex   : 'totals',
-                renderer    : renderTotal
+                text        : 'Doc #',
+                xtype       : 'xnd-viewcolumn',
+                dataIndex   : 'docnumber',
+                flex        : 1
             },
             {
                 xtype       : 'xnd-viewcolumn',
-                text        : 'Subject',
+                text        : 'Created',
                 flex        : 1,
-                dataIndex   : 'subject'
-            },
-            {
-                xtype       : 'xnd-viewcolumn',
-                text        : 'Date',
                 dataIndex   : 'date'
             }
         ]

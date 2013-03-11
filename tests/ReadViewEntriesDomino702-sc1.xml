@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<viewentries toplevelentries="5">
+<viewentry position="1" noteid="80000004" children="11" descendants="11" siblings="5">
+<entrydata columnnumber="0" name="$4">
+<number>0.161764705882353</number></entrydata>
+<entrydata columnnumber="1" name="category" category="true">
+<text>Church</text></entrydata>
+</viewentry>
+<viewentry position="2" noteid="80000008" children="22" descendants="22" siblings="5">
+<entrydata columnnumber="0" name="$4">
+<number>0.323529411764706</number></entrydata>
+<entrydata columnnumber="1" name="category" category="true">
+<text>School</text></entrydata>
+</viewentry>
+<viewentry position="3" noteid="8000000C" children="15" descendants="15" siblings="5">
+<entrydata columnnumber="0" name="$4">
+<number>0.220588235294118</number></entrydata>
+<entrydata columnnumber="1" name="category" category="true">
+<text>Sports</text></entrydata>
+</viewentry>
+<viewentry position="4" noteid="80000010" children="15" descendants="15" siblings="5">
+<entrydata columnnumber="0" name="$4">
+<number>0.220588235294118</number></entrydata>
+<entrydata columnnumber="1" name="category" category="true">
+<text>Taxes</text></entrydata>
+</viewentry>
+<viewentry position="5" noteid="80000014" children="5" descendants="5" siblings="5">
+<entrydata columnnumber="0" name="$4">
+<number>0.073529411764706</number></entrydata>
+<entrydata columnnumber="1" name="category" category="true">
+<text>Work</text></entrydata>
+</viewentry>
+<viewentry position="6" noteid="C0000000" siblings="5" categorytotal="true">
+<entrydata columnnumber="0" name="$4">
+<number>1</number></entrydata>
+<entrydata columnnumber="2" name="_date_created">
+<text></text></entrydata>
+<entrydata columnnumber="3" name="createdBy">
+<text></text></entrydata>
+<entrydata columnnumber="4" name="categoryValue">
+<text></text></entrydata>
+</viewentry>
+</viewentries>
