@@ -96,6 +96,18 @@ Ext.define('Extnd.data.OutlineModel', {
                 return returnVal;
 
             }
+        },
+        {
+            name    : 'url',
+            mapping : '@url'
+        },
+        {
+            name    : 'hrefTarget',
+            mapping : '@framesetname'
+        },
+        {
+            name    : 'type',
+            mapping : '@type'
         }
     ]
 });
