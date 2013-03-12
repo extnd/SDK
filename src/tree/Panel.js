@@ -20,7 +20,8 @@ Ext.define('Extnd.tree.Panel', {
     ],
 
     requires: [
-        'Extnd.data.OutlineStore'
+        'Extnd.data.OutlineStore',
+        'Extnd.util.Iframe'
     ],
 
     rootVisible : false,
@@ -269,13 +270,13 @@ Ext.define('Extnd.tree.Panel', {
                     } else {
 
                         if (target.getXType && target.add) {
-                            Ext.nd.util.addIFrame({
-                                target: target,
-                                url: url,
-                                id: panelId,
-                                title: title,
-                                useDocumentWindowTitle : false,
-                                closable : true,
+                            Extnd.util.Iframe.add({
+                                target      : target,
+                                url         : url,
+                                id          : panelId,
+                                title       : title,
+                                closable    : true,
+                                useDocumentWindowTitle: false,
                                 targetDefaults: targetDefaults
                             });
                         }
