@@ -71,7 +71,39 @@ Ext.define('Extnd.grid.Panel', {
     count           : 40,
     isCategorized   : false,
     needsColumns    : true,
-    needsModel     : true,
+    needsModel      : true,
+
+
+    constructor: function (config) {
+        config = this.cleanUpConfig(config);
+        this.callParent([config]);
+    },
+
+
+    // private
+    cleanUpConfig: function (config) {
+
+        // viewUrl is either passed in or built from dbPath and viewName
+        if (typeof config.viewName === 'string') {
+            if (!config.dbPath && Extnd.Session) {
+                config.dbPath = Extnd.Session.currentDatabase.webFilePath;
+            }
+            if (!config.filePath && Extnd.Session) {
+                config.filePath = Extnd.Session.currentDatabase.filePath;
+            }
+            config.viewUrl = config.dbPath + config.viewName;
+
+        // ok, no viewName but do we have the viewUrl?
+        } else if (config.viewUrl) {
+            var vni = config.viewUrl.lastIndexOf('/') + 1;
+            config.dbPath = config.viewUrl.substring(0, vni);
+            config.viewName = config.viewUrl.substring(vni);
+        }
+
+        return config;
+
+    },
+
 
     initComponent: function () {
         var me = this;
@@ -112,6 +144,7 @@ Ext.define('Extnd.grid.Panel', {
         me.setupToolbars();
         me.callParent(arguments);
     },
+
 
     /**
      * For a Domino view, we make sure we create our own header container using our Extnd version
@@ -179,7 +212,7 @@ Ext.define('Extnd.grid.Panel', {
             }
 
             // TODO: is this really needed? Stores already have an autoLoad property that we can use
-            if (me.loadInitialData ) {
+            if (me.loadInitialData) {
                 me.store.loadPage(1);
             }
 
@@ -317,7 +350,7 @@ Ext.define('Extnd.grid.Panel', {
          * choice.
          */
         // TODO: is this really needed? Stores already have an autoLoad property that we can use
-        if (me.loadInitialData ) {
+        if (me.loadInitialData) {
             me.store.loadPage(1);
         }
 
@@ -426,7 +459,7 @@ Ext.define('Extnd.grid.Panel', {
         }
     },
 
-    getPlugins : function(){
+    getPlugins : function () {
 
         // category combo plugin
         if (this.showCategoryComboBox) {
@@ -436,10 +469,10 @@ Ext.define('Extnd.grid.Panel', {
                 count: this.categoryComboBoxCount || -1
             });
             // make sure category has some value
-            if (typeof this.category == 'undefined') {
+            if (this.category === undefined) {
                 this.category = '';
             }
-            if (this.showCategoryComboBoxPosition == 'top') {
+            if (this.showCategoryComboBoxPosition === 'top') {
                 this.tbarPlugins.push(cp);
             } else {
                 this.bbarPlugins.push(cp);
@@ -461,7 +494,7 @@ Ext.define('Extnd.grid.Panel', {
     },
 
     // private
-    setupToolbars : function() {
+    setupToolbars : function () {
 
         // the actionbar/toolbar plugins
         this.getPlugins();
@@ -479,8 +512,7 @@ Ext.define('Extnd.grid.Panel', {
                     items: this.tbar,
                     plugins: this.tbarPlugins
                 });
-            }
-            else {
+            } else {
                 if (this.tbar.add) {
                     this.tbar.add(this.tbarPlugins);
                 }
@@ -520,24 +552,28 @@ Ext.define('Extnd.grid.Panel', {
 
     // private
     // TODO should we support this or should developers add their own listeners to handle opening of documents
-    getTarget : function() {
-        if (this.target) {
-            return this.target;
+    getTarget : function () {
+        var me = this,
+            retVal = null;
+
+        if (me.target) {
+            retVal = me.target;
         } else {
             // if a target property is available then set it
             if (window && window.target) {
-                this.target = window.target;
-                return this.target;
+                me.target = window.target;
+                retVal = me.target;
             } else {
                 // for an uiview or uidoc you need to go a level
-                if (this.ownerCt && this.ownerCt.getXType && this.ownerCt.getXType() == 'tabpanel') {
-                    this.target = this.ownerCt.id;
-                    return this.target;
-                } else {
-                    return null;
+                if (me.ownerCt && me.ownerCt.getXType && me.ownerCt.getXType() === 'tabpanel') {
+                    me.target = me.ownerCt.id;
+                    retVal = me.target;
                 }
             }
         }
+
+        return retVal;
+
     },
 
     getBottomBarCfg: function () {
