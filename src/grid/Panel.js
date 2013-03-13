@@ -38,7 +38,8 @@ Ext.define('Extnd.grid.Panel', {
         'Extnd.data.ViewDesign',
         'Extnd.grid.header.Container',
         'Extnd.toolbar.Paging',
-        'Extnd.toolbar.Actionbar'
+        'Extnd.toolbar.Actionbar',
+        'Extnd.util.Iframe'
     ],
 
     viewType                        : 'gridview',
@@ -142,6 +143,7 @@ Ext.define('Extnd.grid.Panel', {
         });
 
         me.setupToolbars();
+        me.addEventListeners();
         me.callParent(arguments);
     },
 
@@ -221,6 +223,127 @@ Ext.define('Extnd.grid.Panel', {
 
     },
 
+
+    addEventListeners : function() {
+
+        // for such things as opening a doc from the view
+        this.on('itemdblclick', this.gridHandleRowDblClick, this);
+
+        // headerclick, to handle switching to another view
+        //this.on('headerclick', this.gridHandleHeaderClick, this, true);
+
+        // keydown, for things like 'Quick Search', <delete> to delete, <enter> to open a doc
+        //this.on('keypress', this.gridHandleKeyDown, this, true);
+
+        // rightclick, to give a context menu for things like 'document properties, copy, paste, delete, etc'
+        //this.on('rowcontextmenu', this.gridHandleRowContextMenu, this, true);
+
+    },
+
+    gridHandleRowDblClick: function(view, record, item, index, e, eOpts){
+
+        // if we have an unid then the user is doubleclicking on a doc and not a category
+        // so fire the beforeopendocument event to see if the developer wants us to continue
+        // beforeopendocument corresponds to the NotesUIView QueryOpenDocument event
+        if (record && record.unid) {
+            if (this.fireEvent('beforeopendocument', this, record, e) !== false) {
+                this.openDocument(this, record, e);
+            }
+        }
+    },
+
+    /**
+     * Returns the selected records.  This mimics the NotesUIView.Documents
+     * property that returns the selected documents from a view as a
+     * NotesDocumentCollection.
+     * @return {Array} Array of selected records
+     */
+    getDocuments: function(){
+        return this.getSelectionModel().getSelections();
+    },
+
+    /**
+     * Returns the first selected record.
+     * @return {Record}
+     */
+    getSelectedDocument: function(rowIndex){
+
+        var doc;
+
+        if (rowIndex) {
+            doc = this.getStore().getAt(rowIndex);
+        } else {
+
+            var sm = this.getSelectionModel();
+            var selections = sm.selections;
+
+            // use itemAt(selections.length-1) to get the last row/doc selected
+            doc = sm.selections.itemAt(selections.length-1);
+        }
+
+        if (doc && doc.unid) {
+            return doc;
+        } else {
+            return undefined;
+        }
+    },
+
+
+    editDocument : function(){
+        // just calling openDocument and passing
+        // in true for editMode
+        this.openDocument(this, null, null, true);
+    },
+
+    openDocument: function(grid, record, e, bEditMode){
+
+
+        // if length == 1 then we came from an @Command converted action button
+        // if length == 0 then openDocument was called directly
+        if (arguments.length <= 1) {
+            bEditMode = (arguments.length == 1) ? arguments[0] : false;
+            grid = this;
+            rowIndex = null;
+            e = null; // not sure how to get the event so we'll just set it to null;
+        }
+
+        var mode = (bEditMode) ? '?EditDocument' : '?OpenDocument';
+
+        if (record == undefined) {
+            return; // can't open a doc if a record is not selected so bail
+        }
+
+        // we have a record so continue
+        // if a unid does not exist this record is a category so bail
+        if (!record.unid) {
+            return;
+        }
+
+        if (this.fireEvent('beforeopendocument', grid, record, e, bEditMode) !== false) {
+            var panelId = 'pnl-' + record.unid;
+            var link = this.viewUrl + '/' + record.unid + mode;
+            var target = this.getTarget();
+
+            // if no target then just open in a new window
+            if (!target) {
+                window.open(link);
+            }
+            else {
+
+                // open doc in an iframe
+                // we set the 'uiView' property to 'this' so that from a doc,
+                // we can easily get a handle to the view so we can do such
+                // things as refresh, etc.
+                Extnd.util.Iframe.add({
+                    target: target || this.ownerCt,
+                    uiView: this,
+                    url: link,
+                    id: record.unid
+                });
+
+            } // eo if (!target)
+        }  // if fire beforeopendocument event
+    },
 
     getViewDesign: function () {
         var me = this;
