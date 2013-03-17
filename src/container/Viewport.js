@@ -26,7 +26,7 @@ Ext.define('Extnd.container.Viewport', {
         'Extnd.grid.Panel',
         'Extnd.tree.Panel',
         'Ext.tab.Panel',
-        'Ext.layout.container.Border',
+        'Ext.layout.container.Border'
 
     ],
 

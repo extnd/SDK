@@ -10,6 +10,7 @@ Ext.define('Extnd.data.OutlineXmlReader', {
     alias   : 'reader.xnd-outlinexml',
 
     requires: [
+        'Extnd.data.OutlineModel',
         'Extnd.data.overrides.XmlReader'
     ],
 
