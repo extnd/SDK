@@ -26,6 +26,39 @@ Ext.define('Extnd.tree.Panel', {
 
     rootVisible : false,
 
+
+    constructor: function (config) {
+        config = this.cleanUpConfig(config);
+        this.callParent([config]);
+    },
+
+
+    /**
+     * For everything to work right we need to know the dbPath and outlineName and this method cleans up the config
+     * so that we have both.
+     * If only the outlineName is passed, then we calculate the dbPath from the url and then we can calculate the outlineUrl.
+     * If both the dbPath and outlineName are passed, we calculate the outlineUrl
+     * If only the outlineUrl is passed, we will calculate the dbPath and outlineName
+     */
+    cleanUpConfig: function (config) {
+
+        // outlineUrl is either passed in or built from dbPath and outlineName
+        if (config.outlineName && config.dbPath) {
+            config.outlineUrl = config.dbPath + config.outlineName;
+        } else if (config.outlineUrl && !config.dbPath) {
+            // only the outlineName was sent so we'll determine the dbPath from the url
+            config.dbPath = location.pathname.split(/\.nsf/i)[0] + '.nsf';
+        } else if (config.outlineUrl) {
+            // ok, no outlineName but do we have the outlineUrl?
+            var vni = config.outlineUrl.lastIndexOf('/') + 1;
+            config.dbPath = config.outlineUrl.substring(0, vni);
+            config.outlineName = config.outlineUrl.substring(vni);
+        }
+
+        return config;
+
+    },
+
     initComponent: function () {
         var me = this,
             store = me.store;

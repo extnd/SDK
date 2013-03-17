@@ -81,21 +81,23 @@ Ext.define('Extnd.grid.Panel', {
     },
 
 
-    // private
+    /**
+     * For everything to work right we need to know the dbPath and viewName and this method cleans up the config
+     * so that we have both.
+     * If only the viewName is passed, then we calculate the dbPath from the url and then we can calculate the viewUrl.
+     * If both the dbPath and viewName are passed, we calculate the viewUrl
+     * If only the viewUrl is passed, we will calculate the dbPath and viewName
+     */
     cleanUpConfig: function (config) {
 
         // viewUrl is either passed in or built from dbPath and viewName
-        if (typeof config.viewName === 'string') {
-            if (!config.dbPath && Extnd.Session) {
-                config.dbPath = Extnd.Session.currentDatabase.webFilePath;
-            }
-            if (!config.filePath && Extnd.Session) {
-                config.filePath = Extnd.Session.currentDatabase.filePath;
-            }
+        if (config.viewName && config.dbPath) {
             config.viewUrl = config.dbPath + config.viewName;
-
-        // ok, no viewName but do we have the viewUrl?
+        } else if (config.viewUrl && !config.dbPath) {
+            // only the viewName was sent so we'll determine the dbPath from the url
+            config.dbPath = location.pathname.split(/\.nsf/i)[0] + '.nsf';
         } else if (config.viewUrl) {
+            // ok, no viewName but do we have the viewUrl?
             var vni = config.viewUrl.lastIndexOf('/') + 1;
             config.dbPath = config.viewUrl.substring(0, vni);
             config.viewName = config.viewUrl.substring(vni);
