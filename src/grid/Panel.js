@@ -226,7 +226,7 @@ Ext.define('Extnd.grid.Panel', {
     },
 
 
-    addEventListeners : function() {
+    addEventListeners : function () {
 
         // for such things as opening a doc from the view
         this.on('itemdblclick', this.gridHandleRowDblClick, this);
@@ -242,7 +242,7 @@ Ext.define('Extnd.grid.Panel', {
 
     },
 
-    gridHandleRowDblClick: function(view, record, item, index, e, eOpts){
+    gridHandleRowDblClick: function (view, record, item, index, e, eOpts) {
 
         // if we have an unid then the user is doubleclicking on a doc and not a category
         // so fire the beforeopendocument event to see if the developer wants us to continue
@@ -260,7 +260,7 @@ Ext.define('Extnd.grid.Panel', {
      * NotesDocumentCollection.
      * @return {Array} Array of selected records
      */
-    getDocuments: function(){
+    getDocuments: function () {
         return this.getSelectionModel().getSelections();
     },
 
@@ -268,50 +268,57 @@ Ext.define('Extnd.grid.Panel', {
      * Returns the first selected record.
      * @return {Record}
      */
-    getSelectedDocument: function(rowIndex){
+    getSelectedDocument: function (rowIndex) {
+        var doc,
+            sm,
+            selections,
+            retVal;
 
-        var doc;
 
         if (rowIndex) {
             doc = this.getStore().getAt(rowIndex);
         } else {
 
-            var sm = this.getSelectionModel();
-            var selections = sm.selections;
+            sm = this.getSelectionModel();
+            selections = sm.selections;
 
             // use itemAt(selections.length-1) to get the last row/doc selected
-            doc = sm.selections.itemAt(selections.length-1);
+            doc = sm.selections.itemAt(selections.length - 1);
         }
 
         if (doc && doc.unid) {
-            return doc;
+            retVal = doc;
         } else {
-            return undefined;
+            retVal = undefined;
         }
+
+        return retVal;
     },
 
 
-    editDocument : function(){
+    editDocument : function () {
         // just calling openDocument and passing
         // in true for editMode
         this.openDocument(this, null, null, true);
     },
 
-    openDocument: function(grid, record, e, bEditMode){
-
+    openDocument: function (grid, record, e, bEditMode) {
+        var mode,
+            panelId,
+            link,
+            target;
 
         // if length == 1 then we came from an @Command converted action button
         // if length == 0 then openDocument was called directly
         if (arguments.length <= 1) {
-            bEditMode = (arguments.length == 1) ? arguments[0] : false;
+            bEditMode = (arguments.length === 1) ? arguments[0] : false;
             grid = this;
-            rowIndex = null;
             e = null; // not sure how to get the event so we'll just set it to null;
         }
 
-        var mode = (bEditMode) ? '?EditDocument' : '?OpenDocument';
+        mode = bEditMode ? '?EditDocument' : '?OpenDocument';
 
-        if (record == undefined) {
+        if (record === undefined) {
             return; // can't open a doc if a record is not selected so bail
         }
 
@@ -322,15 +329,14 @@ Ext.define('Extnd.grid.Panel', {
         }
 
         if (this.fireEvent('beforeopendocument', grid, record, e, bEditMode) !== false) {
-            var panelId = 'pnl-' + record.unid;
-            var link = this.viewUrl + '/' + record.unid + mode;
-            var target = this.getTarget();
+            panelId = 'pnl-' + record.unid;
+            link = this.viewUrl + '/' + record.unid + mode;
+            target = this.getTarget();
 
             // if no target then just open in a new window
             if (!target) {
                 window.open(link);
-            }
-            else {
+            } else {
 
                 // open doc in an iframe
                 // we set the 'uiView' property to 'this' so that from a doc,
@@ -343,8 +349,8 @@ Ext.define('Extnd.grid.Panel', {
                     id: record.unid
                 });
 
-            } // eo if (!target)
-        }  // if fire beforeopendocument event
+            }
+        }
     },
 
     getViewDesign: function () {
@@ -398,7 +404,7 @@ Ext.define('Extnd.grid.Panel', {
 
             // now destroy the old selModel
             // TODO do we need this since it appears that destroy is just an emptyFn call
-//                if (me.selModel && me.selModel.destroy){
+//                if (me.selModel && me.selModel.destroy) {
 //                    me.selModel.destroy();
 //                }
 
@@ -417,7 +423,7 @@ Ext.define('Extnd.grid.Panel', {
              * defined to capture clicking on the checkboxes
              */
              // TODO do we need this?  if so, need to fix the errors it throws
-//                me.on('getdesignsuccess', function(){
+//                me.on('getdesignsuccess', function () {
 //                    var view = me.grid.getView();
 //                    view.mainBody.on('mousedown', me.onMouseDown, me);
 //                    Ext.fly(view.innerHd).on('mousedown', me.onHdMouseDown, me);
@@ -485,10 +491,10 @@ Ext.define('Extnd.grid.Panel', {
 
         // update me.documents property when a row is selected/deselected
         // TODO
-//        me.selModel.on('rowselect', function(sm, rowIndex, rec){
+//        me.selModel.on('rowselect', function (sm, rowIndex, rec) {
 //            me.documents = me.getDocuments();
 //        }, me);
-//        me.selModel.on('rowdeselect', function(){
+//        me.selModel.on('rowdeselect', function () {
 //            me.documents = me.getDocuments();
 //        }, me);
 
