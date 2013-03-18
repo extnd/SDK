@@ -1,6 +1,6 @@
 /**
- *  Here's an example showing the creation of a typical DominoUI:
-          new Extnd.DominoUI({
+ *  Here's an example showing the creation of a typical Extnd.Viewport:
+          Ext.create('Extnd.Viewport', {
               uiOutline: {
                   outlineName: &quot;mainOL&quot;
               },
@@ -11,8 +11,8 @@
           });
 
  *
- * @cfg {Object} uiOutline A {@link Ext.nd.UIOutline} config object
- * @cfg {Object} uiView A {@link Ext.nd.UIView} config object
+ * @cfg {Object} uiOutline A {@link Extnd.UIOutline} config object
+ * @cfg {Object} uiView A {@link Extnd.UIView} config object
  * @constructor Create an integrated domino interface, with a view and an outline
  * @param {Object} config Configuration options
  *
@@ -20,7 +20,16 @@
 Ext.define('Extnd.container.Viewport', {
 
     extend  : 'Ext.container.Viewport',
-    alias   : 'widget.xnd-viewport',
+
+    alias: [
+        'widget.xnd-viewport',
+        'widget.xnd-dominoui'
+    ],
+
+    alternateClassName: [
+        'Extnd.Viewport',
+        'Ext.nd.DominoUI'
+    ],
 
     requires: [
         'Extnd.grid.Panel',
@@ -44,14 +53,6 @@ Ext.define('Extnd.container.Viewport', {
 
     },
 
-    uiView: {
-        viewName: '',
-        viewUrl: ''
-    },
-    uiOutline: {
-        outlineName: '',
-        outlineUrl: ''
-    },
 
     viewOpeningTitle: 'Opening...',
 
