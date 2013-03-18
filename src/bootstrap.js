@@ -33,8 +33,8 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.datecolumn"
   ],
   "Ext.form.field.Trigger": [
-    "widget.triggerfield",
-    "widget.trigger"
+    "widget.trigger",
+    "widget.triggerfield"
   ],
   "Ext.grid.plugin.RowEditing": [
     "plugin.rowediting"
@@ -46,8 +46,8 @@ Ext.ClassManager.addNameAliasMappings({
     "formaction.load"
   ],
   "Ext.form.field.ComboBox": [
-    "widget.combobox",
-    "widget.combo"
+    "widget.combo",
+    "widget.combobox"
   ],
   "Extnd.data.ViewModel": [],
   "Ext.layout.container.Border": [
@@ -68,8 +68,8 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.dd.StatusProxy": [],
   "Extnd.data.overrides.XmlReader": [],
   "Ext.form.field.Checkbox": [
-    "widget.checkboxfield",
-    "widget.checkbox"
+    "widget.checkbox",
+    "widget.checkboxfield"
   ],
   "Ext.XTemplateCompiler": [],
   "Ext.direct.Transaction": [
@@ -80,8 +80,8 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.view.DragZone": [],
   "Ext.util.KeyNav": [],
   "Extnd.toolbar.Paging": [
-    "widget.xnd-pagingtoolbar",
-    "widget.xnd-paging"
+    "widget.xnd-paging",
+    "widget.xnd-pagingtoolbar"
   ],
   "Ext.form.field.File": [
     "widget.filefield",
@@ -92,9 +92,9 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.sliderfield"
   ],
   "Ext.panel.Proxy": [],
+  "Ext.fx.target.Target": [],
   "Ext.ComponentManager": [],
   "Ext.dom.AbstractElement_traversal": [],
-  "Ext.fx.target.Target": [],
   "Ext.grid.feature.GroupingSummary": [
     "feature.groupingsummary"
   ],
@@ -138,8 +138,8 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.datefield"
   ],
   "Ext.Component": [
-    "widget.component",
-    "widget.box"
+    "widget.box",
+    "widget.component"
   ],
   "Ext.chart.axis.Axis": [],
   "Ext.fx.target.CompositeSprite": [],
@@ -150,6 +150,10 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.pickerfield"
   ],
   "Ext.fx.Animator": [],
+  "Extnd.container.Viewport": [
+    "widget.xnd-dominoui",
+    "widget.xnd-viewport"
+  ],
   "Ext.Ajax": [],
   "Ext.layout.component.Dock": [
     "layout.dock"
@@ -164,8 +168,8 @@ Ext.ClassManager.addNameAliasMappings({
     "association.belongsto"
   ],
   "Ext.fx.target.Element": [],
-  "Ext.dd.DDProxy": [],
   "Ext.draw.Surface": [],
+  "Ext.dd.DDProxy": [],
   "Ext.data.AbstractStore": [],
   "Ext.form.action.StandardSubmit": [
     "formaction.standardsubmit"
@@ -181,15 +185,15 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Ext.menu.Manager": [],
   "Ext.util.KeyMap": [],
-  "Extnd.grid.Panel": [
-    "widget.xnd-uiview",
-    "widget.xnd-gridpanel",
-    "widget.xnd-grid"
-  ],
   "Extnd.tree.Panel": [
-    "widget.xnd-uioutline",
+    "widget.xnd-tree",
     "widget.xnd-treepanel",
-    "widget.xnd-tree"
+    "widget.xnd-uioutline"
+  ],
+  "Extnd.grid.Panel": [
+    "widget.xnd-grid",
+    "widget.xnd-gridpanel",
+    "widget.xnd-uiview"
   ],
   "Extnd.util.DominoActionbar": [],
   "Ext.data.Batch": [],
@@ -223,22 +227,22 @@ Ext.ClassManager.addNameAliasMappings({
     "series.gauge"
   ],
   "Ext.data.StoreManager": [],
-  "Ext.data.IdGenerator": [],
   "Ext.tip.QuickTipManager": [],
+  "Ext.data.IdGenerator": [],
   "Ext.grid.plugin.Editing": [
     "editing.editing"
-  ],
-  "Ext.grid.RowEditor": [
-    "widget.roweditor"
   ],
   "Ext.state.LocalStorageProvider": [
     "state.localstorage"
   ],
+  "Ext.grid.RowEditor": [
+    "widget.roweditor"
+  ],
   "Ext.form.action.Action": [],
+  "Ext.fx.Easing": [],
   "Ext.ProgressBar": [
     "widget.progressbar"
   ],
-  "Ext.fx.Easing": [],
   "Ext.tree.ViewDragZone": [],
   "Ext.data.reader.Array": [
     "reader.array"
@@ -270,8 +274,8 @@ Ext.ClassManager.addNameAliasMappings({
     "layout.button"
   ],
   "Ext.form.field.Hidden": [
-    "widget.hiddenfield",
-    "widget.hidden"
+    "widget.hidden",
+    "widget.hiddenfield"
   ],
   "Ext.form.FieldContainer": [
     "widget.fieldcontainer"
@@ -300,10 +304,10 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.form.Label": [
     "widget.label"
   ],
-  "Ext.view.BoundListKeyNav": [],
   "Ext.data.writer.Writer": [
     "writer.base"
   ],
+  "Ext.view.BoundListKeyNav": [],
   "Ext.form.FieldSet": [
     "widget.fieldset"
   ],
@@ -317,6 +321,9 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.draw.engine.Vml": [],
   "Ext.layout.container.CheckboxGroup": [
     "layout.checkboxgroup"
+  ],
+  "Extnd.grid.header.Container": [
+    "widget.xnd-headercontainer"
   ],
   "Ext.panel.Header": [
     "widget.header"
@@ -358,10 +365,10 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Ext.data.validations": [],
   "Ext.data.Connection": [],
+  "Ext.dd.DropZone": [],
   "Ext.direct.ExceptionEvent": [
     "direct.exception"
   ],
-  "Ext.dd.DropZone": [],
   "Ext.resizer.Splitter": [
     "widget.splitter"
   ],
@@ -375,8 +382,8 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.window.MessageBox": [
     "widget.messagebox"
   ],
-  "Ext.diag.layout.ContextItem": [],
   "Ext.fx.target.CompositeElementCSS": [],
+  "Ext.diag.layout.ContextItem": [],
   "Ext.chart.series.Line": [
     "series.line"
   ],
@@ -423,11 +430,11 @@ Ext.ClassManager.addNameAliasMappings({
     "reader.json"
   ],
   "Ext.util.TextMetrics": [],
-  "Ext.view.BoundList": [
-    "widget.boundlist"
-  ],
   "Ext.data.TreeStore": [
     "store.tree"
+  ],
+  "Ext.view.BoundList": [
+    "widget.boundlist"
   ],
   "Ext.form.field.HtmlEditor": [
     "widget.htmleditor"
@@ -439,8 +446,8 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.util.Observable": [],
   "Ext.resizer.BorderSplitterTracker": [],
   "Ext.util.LruCache": [],
-  "Ext.dom.CompositeElement": [],
   "Ext.tip.Tip": [],
+  "Ext.dom.CompositeElement": [],
   "Ext.grid.feature.RowWrap": [
     "feature.rowwrap"
   ],
@@ -471,8 +478,8 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.state.Manager": [],
   "Ext.util.Inflector": [],
   "Ext.grid.Panel": [
-    "widget.gridpanel",
-    "widget.grid"
+    "widget.grid",
+    "widget.gridpanel"
   ],
   "Ext.XTemplate": [],
   "Ext.data.NodeStore": [
@@ -490,27 +497,27 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.data.Request": [],
   "Ext.dd.DD": [],
   "Ext.dom.CompositeElementLite": [],
-  "Ext.grid.RowNumberer": [
-    "widget.rownumberer"
-  ],
   "Ext.toolbar.Fill": [
     "widget.tbfill"
+  ],
+  "Ext.grid.RowNumberer": [
+    "widget.rownumberer"
   ],
   "Ext.data.proxy.WebStorage": [],
   "Ext.util.Floating": [],
   "Ext.form.action.DirectSubmit": [
     "formaction.directsubmit"
   ],
-  "Ext.util.Cookies": [],
   "Extnd.grid.ViewColumn": [
     "widget.xnd-viewcolumn"
   ],
+  "Ext.util.Cookies": [],
   "Ext.data.UuidGenerator": [
     "idgen.uuid"
   ],
   "Ext.util.Point": [],
-  "Ext.form.CheckboxManager": [],
   "Ext.fx.target.Component": [],
+  "Ext.form.CheckboxManager": [],
   "Ext.form.field.Field": [],
   "Ext.form.field.Display": [
     "widget.displayfield"
@@ -531,11 +538,11 @@ Ext.ClassManager.addNameAliasMappings({
     "layout.gridcolumn"
   ],
   "Ext.dom.AbstractElement_style": [],
-  "Ext.Template": [],
-  "Ext.AbstractComponent": [],
   "Ext.chart.series.Column": [
     "series.column"
   ],
+  "Ext.AbstractComponent": [],
+  "Ext.Template": [],
   "Ext.flash.Component": [
     "widget.flash"
   ],
@@ -573,11 +580,11 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.window.Window": [
     "widget.window"
   ],
-  "Ext.grid.feature.Feature": [
-    "feature.feature"
-  ],
   "Ext.picker.Color": [
     "widget.colorpicker"
+  ],
+  "Ext.grid.feature.Feature": [
+    "feature.feature"
   ],
   "Ext.chart.theme.Theme": [],
   "Ext.util.ClickRepeater": [],
@@ -609,13 +616,13 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Ext.chart.theme.Base": [],
   "Ext.form.field.TextArea": [
-    "widget.textareafield",
-    "widget.textarea"
+    "widget.textarea",
+    "widget.textareafield"
   ],
   "Extnd.app.Application": [],
   "Ext.form.field.Radio": [
-    "widget.radiofield",
-    "widget.radio"
+    "widget.radio",
+    "widget.radiofield"
   ],
   "Ext.layout.component.ProgressBar": [
     "layout.progressbar"
@@ -623,16 +630,16 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.chart.series.Pie": [
     "series.pie"
   ],
+  "Extnd.form.Panel": [
+    "widget.xnd-uidocument"
+  ],
   "Ext.view.TableChunker": [],
   "Ext.tree.plugin.TreeViewDragDrop": [
     "plugin.treeviewdragdrop"
   ],
+  "Ext.data.TreeModel": [],
   "Ext.direct.Provider": [
     "direct.provider"
-  ],
-  "Ext.data.TreeModel": [],
-  "Extnd.form.Panel": [
-    "widget.xnd-uidocument"
   ],
   "Ext.layout.Layout": [],
   "Ext.toolbar.TextItem": [
@@ -646,34 +653,35 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.button.Split": [
     "widget.splitbutton"
   ],
+  "Ext.dd.DropTarget": [],
   "Ext.direct.RemotingEvent": [
     "direct.rpc"
   ],
-  "Ext.dd.DropTarget": [],
   "Ext.draw.Sprite": [],
+  "Ext.fx.target.Sprite": [],
   "Ext.data.proxy.LocalStorage": [
     "proxy.localstorage"
   ],
-  "Ext.fx.target.Sprite": [],
-  "Ext.AbstractPlugin": [],
   "Ext.layout.component.Draw": [
     "layout.draw"
   ],
+  "Ext.AbstractPlugin": [],
   "Ext.Editor": [
     "widget.editor"
   ],
-  "Ext.chart.Tip": [],
   "Ext.chart.axis.Radial": [
     "axis.radial"
   ],
+  "Ext.chart.Tip": [],
   "Ext.layout.container.Table": [
     "layout.table"
   ],
+  "Ext.chart.axis.Abstract": [],
   "Ext.data.proxy.Rest": [
     "proxy.rest"
   ],
-  "Ext.chart.axis.Abstract": [],
   "Ext.util.Queue": [],
+  "Extnd.util.Iframe": [],
   "Ext.state.CookieProvider": [],
   "Ext.Img": [
     "widget.image",
@@ -693,12 +701,12 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.chart.series.Bar": [
     "series.bar"
   ],
-  "Ext.util.ComponentDragger": [],
   "Ext.PluginManager": [],
-  "Ext.chart.Callout": [],
+  "Ext.util.ComponentDragger": [],
   "Ext.chart.series.Scatter": [
     "series.scatter"
   ],
+  "Ext.chart.Callout": [],
   "Ext.data.Store": [
     "store.store"
   ],
@@ -722,11 +730,11 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.draw.Component": [
     "widget.draw"
   ],
-  "Ext.form.RadioGroup": [
-    "widget.radiogroup"
-  ],
   "Ext.toolbar.Item": [
     "widget.tbitem"
+  ],
+  "Ext.form.RadioGroup": [
+    "widget.radiogroup"
   ],
   "Ext.slider.Thumb": [],
   "Ext.grid.header.DragZone": [],
@@ -739,6 +747,10 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.resizer.BorderSplitter": [
     "widget.bordersplitter"
   ],
+  "Extnd.data.proxy.Ajax": [
+    "proxy.xnd-ajax"
+  ],
+  "Extnd.UIWorkspace": [],
   "Ext.ZIndexManager": [],
   "Ext.menu.ColorPicker": [
     "widget.colormenu"
@@ -750,10 +762,10 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.toolbar.Spacer": [
     "widget.tbspacer"
   ],
-  "Ext.util.Memento": [],
   "Ext.panel.Panel": [
     "widget.panel"
   ],
+  "Ext.util.Memento": [],
   "Ext.data.proxy.Memory": [
     "proxy.memory"
   ],
@@ -766,8 +778,8 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.layout.component.Tab": [
     "layout.tab"
   ],
-  "Ext.dom.Element_style": [],
   "Ext.ComponentQuery": [],
+  "Ext.dom.Element_style": [],
   "Ext.draw.engine.SvgExporter": [],
   "Ext.grid.feature.Chunking": [
     "feature.chunking"
@@ -794,10 +806,10 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.menuseparator"
   ],
   "Ext.util.History": [],
-  "Ext.direct.RemotingMethod": [],
   "Ext.direct.Event": [
     "direct.event"
   ],
+  "Ext.direct.RemotingMethod": [],
   "Ext.dd.ScrollManager": [],
   "Ext.chart.Mask": [],
   "Ext.selection.CellModel": [
@@ -807,6 +819,9 @@ Ext.ClassManager.addNameAliasMappings({
     "layout.tableview"
   ],
   "Ext.state.Provider": [],
+  "Extnd.form.field.Time": [
+    "widget.xnd-timefield"
+  ],
   "Extnd.data.OutlineStore": [],
   "Ext.layout.container.Editor": [
     "layout.editor"
@@ -816,6 +831,9 @@ Ext.ClassManager.addNameAliasMappings({
   "Extnd.Database": [],
   "Ext.selection.TreeModel": [
     "selection.treemodel"
+  ],
+  "Extnd.form.PickListFieldTypeAhead": [
+    "widget.xnd-picklist-typeahead"
   ],
   "Ext.form.Labelable": [],
   "Ext.grid.column.Number": [
@@ -859,17 +877,21 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Ext.layout.container.boxOverflow.Scroller": [],
   "Ext.data.Operation": [],
+  "Ext.resizer.Resizer": [],
   "Ext.layout.container.HBox": [
     "layout.hbox"
   ],
-  "Ext.resizer.Resizer": [],
+  "Extnd.form.PickListField": [
+    "widget.xnd-picklist"
+  ],
   "Ext.selection.RowModel": [
     "selection.rowmodel"
   ],
   "Ext.layout.ContextItem": [],
-  "Ext.util.MixedCollection": [],
-  "Ext.perf.Monitor": []
-});Ext.ClassManager.addNameAlternateMappings({
+  "Ext.perf.Monitor": [],
+  "Ext.util.MixedCollection": []
+});
+Ext.ClassManager.addNameAlternateMappings({
   "Ext.dom.AbstractElement_static": [],
   "Ext.draw.engine.ImageExporter": [],
   "Ext.layout.component.Auto": [],
@@ -974,11 +996,11 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.panel.Proxy": [
     "Ext.dd.PanelProxy"
   ],
+  "Ext.fx.target.Target": [],
   "Ext.ComponentManager": [
     "Ext.ComponentMgr"
   ],
   "Ext.dom.AbstractElement_traversal": [],
-  "Ext.fx.target.Target": [],
   "Ext.grid.feature.GroupingSummary": [],
   "Ext.grid.property.HeaderContainer": [
     "Ext.grid.PropertyColumnModel"
@@ -1024,6 +1046,10 @@ Ext.ClassManager.addNameAliasMappings({
     "Ext.form.Picker"
   ],
   "Ext.fx.Animator": [],
+  "Extnd.container.Viewport": [
+    "Extnd.Viewport",
+    "Ext.nd.DominoUI"
+  ],
   "Ext.Ajax": [],
   "Ext.layout.component.Dock": [
     "Ext.layout.component.AbstractDock"
@@ -1038,8 +1064,8 @@ Ext.ClassManager.addNameAliasMappings({
     "Ext.data.BelongsToAssociation"
   ],
   "Ext.fx.target.Element": [],
-  "Ext.dd.DDProxy": [],
   "Ext.draw.Surface": [],
+  "Ext.dd.DDProxy": [],
   "Ext.data.AbstractStore": [],
   "Ext.form.action.StandardSubmit": [],
   "Ext.diag.layout.Context": [],
@@ -1057,16 +1083,16 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.util.KeyMap": [
     "Ext.KeyMap"
   ],
-  "Extnd.grid.Panel": [
-    "Extnd.UIView",
-    "Ext.nd.UIView",
-    "Ext.nd.GridPanel"
-  ],
   "Extnd.tree.Panel": [
     "Ext.nd.UIOutline",
     "Extnd.UIOutline",
     "Ext.nd.tree.Panel",
     "Ext.nd.TreePanel"
+  ],
+  "Extnd.grid.Panel": [
+    "Extnd.UIView",
+    "Ext.nd.UIView",
+    "Ext.nd.GridPanel"
   ],
   "Extnd.util.DominoActionbar": [
     "Ext.nd.util.DominoActionbar"
@@ -1092,18 +1118,18 @@ Ext.ClassManager.addNameAliasMappings({
     "Ext.data.StoreMgr",
     "Ext.StoreManager"
   ],
-  "Ext.data.IdGenerator": [],
   "Ext.tip.QuickTipManager": [
     "Ext.QuickTips"
   ],
+  "Ext.data.IdGenerator": [],
   "Ext.grid.plugin.Editing": [],
-  "Ext.grid.RowEditor": [],
   "Ext.state.LocalStorageProvider": [],
+  "Ext.grid.RowEditor": [],
   "Ext.form.action.Action": [
     "Ext.form.Action"
   ],
-  "Ext.ProgressBar": [],
   "Ext.fx.Easing": [],
+  "Ext.ProgressBar": [],
   "Ext.tree.ViewDragZone": [],
   "Ext.data.reader.Array": [
     "Ext.data.ArrayReader"
@@ -1157,11 +1183,11 @@ Ext.ClassManager.addNameAliasMappings({
     "Ext.data.AjaxProxy"
   ],
   "Ext.form.Label": [],
-  "Ext.view.BoundListKeyNav": [],
   "Ext.data.writer.Writer": [
     "Ext.data.DataWriter",
     "Ext.data.Writer"
   ],
+  "Ext.view.BoundListKeyNav": [],
   "Ext.form.FieldSet": [],
   "Ext.XTemplateParser": [],
   "Ext.form.field.VTypes": [
@@ -1172,6 +1198,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.data.JsonP": [],
   "Ext.draw.engine.Vml": [],
   "Ext.layout.container.CheckboxGroup": [],
+  "Extnd.grid.header.Container": [],
   "Ext.panel.Header": [],
   "Ext.app.Controller": [],
   "Ext.grid.plugin.CellEditing": [],
@@ -1207,8 +1234,8 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.chart.axis.Gauge": [],
   "Ext.data.validations": [],
   "Ext.data.Connection": [],
-  "Ext.direct.ExceptionEvent": [],
   "Ext.dd.DropZone": [],
+  "Ext.direct.ExceptionEvent": [],
   "Ext.resizer.Splitter": [],
   "Ext.form.RadioManager": [],
   "Ext.data.association.HasOne": [
@@ -1216,8 +1243,8 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Ext.draw.Text": [],
   "Ext.window.MessageBox": [],
-  "Ext.diag.layout.ContextItem": [],
   "Ext.fx.target.CompositeElementCSS": [],
+  "Ext.diag.layout.ContextItem": [],
   "Ext.chart.series.Line": [
     "Ext.chart.LineSeries",
     "Ext.chart.LineChart"
@@ -1261,10 +1288,10 @@ Ext.ClassManager.addNameAliasMappings({
     "Ext.data.JsonReader"
   ],
   "Ext.util.TextMetrics": [],
+  "Ext.data.TreeStore": [],
   "Ext.view.BoundList": [
     "Ext.BoundList"
   ],
-  "Ext.data.TreeStore": [],
   "Ext.form.field.HtmlEditor": [
     "Ext.form.HtmlEditor"
   ],
@@ -1275,11 +1302,11 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.util.Observable": [],
   "Ext.resizer.BorderSplitterTracker": [],
   "Ext.util.LruCache": [],
-  "Ext.dom.CompositeElement": [
-    "Ext.CompositeElement"
-  ],
   "Ext.tip.Tip": [
     "Ext.Tip"
+  ],
+  "Ext.dom.CompositeElement": [
+    "Ext.CompositeElement"
   ],
   "Ext.grid.feature.RowWrap": [],
   "Ext.data.proxy.Client": [
@@ -1336,10 +1363,10 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.dom.CompositeElementLite": [
     "Ext.CompositeElementLite"
   ],
-  "Ext.grid.RowNumberer": [],
   "Ext.toolbar.Fill": [
     "Ext.Toolbar.Fill"
   ],
+  "Ext.grid.RowNumberer": [],
   "Ext.data.proxy.WebStorage": [
     "Ext.data.WebStorageProxy"
   ],
@@ -1347,14 +1374,14 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.form.action.DirectSubmit": [
     "Ext.form.Action.DirectSubmit"
   ],
-  "Ext.util.Cookies": [],
   "Extnd.grid.ViewColumn": [
     "Ext.nd.data.ViewColumn"
   ],
+  "Ext.util.Cookies": [],
   "Ext.data.UuidGenerator": [],
   "Ext.util.Point": [],
-  "Ext.form.CheckboxManager": [],
   "Ext.fx.target.Component": [],
+  "Ext.form.CheckboxManager": [],
   "Ext.form.field.Field": [],
   "Ext.form.field.Display": [
     "Ext.form.DisplayField",
@@ -1368,13 +1395,13 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.data.BufferStore": [],
   "Ext.grid.ColumnLayout": [],
   "Ext.dom.AbstractElement_style": [],
-  "Ext.Template": [],
-  "Ext.AbstractComponent": [],
   "Ext.chart.series.Column": [
     "Ext.chart.ColumnSeries",
     "Ext.chart.ColumnChart",
     "Ext.chart.StackedColumnChart"
   ],
+  "Ext.AbstractComponent": [],
+  "Ext.Template": [],
   "Ext.flash.Component": [
     "Ext.FlashComponent"
   ],
@@ -1406,10 +1433,10 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.window.Window": [
     "Ext.Window"
   ],
-  "Ext.grid.feature.Feature": [],
   "Ext.picker.Color": [
     "Ext.ColorPalette"
   ],
+  "Ext.grid.feature.Feature": [],
   "Ext.chart.theme.Theme": [],
   "Ext.util.ClickRepeater": [],
   "Ext.form.field.Spinner": [
@@ -1451,16 +1478,16 @@ Ext.ClassManager.addNameAliasMappings({
     "Ext.chart.PieSeries",
     "Ext.chart.PieChart"
   ],
-  "Ext.view.TableChunker": [],
-  "Ext.tree.plugin.TreeViewDragDrop": [],
-  "Ext.direct.Provider": [],
-  "Ext.data.TreeModel": [],
   "Extnd.form.Panel": [
     "Extnd.UIDocument",
     "Ext.nd.UIDocument",
     "Ext.nd.Form",
     "Ext.nd.Page"
   ],
+  "Ext.view.TableChunker": [],
+  "Ext.tree.plugin.TreeViewDragDrop": [],
+  "Ext.data.TreeModel": [],
+  "Ext.direct.Provider": [],
   "Ext.layout.Layout": [],
   "Ext.toolbar.TextItem": [
     "Ext.Toolbar.TextItem"
@@ -1471,26 +1498,29 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.button.Split": [
     "Ext.SplitButton"
   ],
-  "Ext.direct.RemotingEvent": [],
   "Ext.dd.DropTarget": [],
+  "Ext.direct.RemotingEvent": [],
   "Ext.draw.Sprite": [],
+  "Ext.fx.target.Sprite": [],
   "Ext.data.proxy.LocalStorage": [
     "Ext.data.LocalStorageProxy"
   ],
-  "Ext.fx.target.Sprite": [],
-  "Ext.AbstractPlugin": [],
   "Ext.layout.component.Draw": [],
+  "Ext.AbstractPlugin": [],
   "Ext.Editor": [],
-  "Ext.chart.Tip": [],
   "Ext.chart.axis.Radial": [],
+  "Ext.chart.Tip": [],
   "Ext.layout.container.Table": [
     "Ext.layout.TableLayout"
   ],
+  "Ext.chart.axis.Abstract": [],
   "Ext.data.proxy.Rest": [
     "Ext.data.RestProxy"
   ],
-  "Ext.chart.axis.Abstract": [],
   "Ext.util.Queue": [],
+  "Extnd.util.Iframe": [
+    "Ext.nd.util.Iframe"
+  ],
   "Ext.state.CookieProvider": [],
   "Ext.Img": [],
   "Ext.dd.DragSource": [],
@@ -1507,12 +1537,12 @@ Ext.ClassManager.addNameAliasMappings({
     "Ext.chart.BarChart",
     "Ext.chart.StackedBarChart"
   ],
-  "Ext.util.ComponentDragger": [],
   "Ext.PluginManager": [
     "Ext.PluginMgr"
   ],
-  "Ext.chart.Callout": [],
+  "Ext.util.ComponentDragger": [],
   "Ext.chart.series.Scatter": [],
+  "Ext.chart.Callout": [],
   "Ext.data.Store": [],
   "Ext.grid.feature.Summary": [],
   "Ext.util.ProtoElement": [],
@@ -1529,10 +1559,10 @@ Ext.ClassManager.addNameAliasMappings({
     "Ext.layout.CardLayout"
   ],
   "Ext.draw.Component": [],
-  "Ext.form.RadioGroup": [],
   "Ext.toolbar.Item": [
     "Ext.Toolbar.Item"
   ],
+  "Ext.form.RadioGroup": [],
   "Ext.slider.Thumb": [],
   "Ext.grid.header.DragZone": [],
   "Ext.form.action.DirectLoad": [
@@ -1540,6 +1570,10 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Ext.picker.Time": [],
   "Ext.resizer.BorderSplitter": [],
+  "Extnd.data.proxy.Ajax": [
+    "Extnd.data.AjaxProxy"
+  ],
+  "Extnd.UIWorkspace": [],
   "Ext.ZIndexManager": [
     "Ext.WindowGroup"
   ],
@@ -1549,10 +1583,10 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.toolbar.Spacer": [
     "Ext.Toolbar.Spacer"
   ],
-  "Ext.util.Memento": [],
   "Ext.panel.Panel": [
     "Ext.Panel"
   ],
+  "Ext.util.Memento": [],
   "Ext.data.proxy.Memory": [
     "Ext.data.MemoryProxy"
   ],
@@ -1561,8 +1595,8 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Ext.grid.plugin.DragDrop": [],
   "Ext.layout.component.Tab": [],
-  "Ext.dom.Element_style": [],
   "Ext.ComponentQuery": [],
+  "Ext.dom.Element_style": [],
   "Ext.draw.engine.SvgExporter": [],
   "Ext.grid.feature.Chunking": [],
   "Ext.layout.container.Auto": [],
@@ -1582,13 +1616,17 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.util.History": [
     "Ext.History"
   ],
-  "Ext.direct.RemotingMethod": [],
   "Ext.direct.Event": [],
+  "Ext.direct.RemotingMethod": [],
   "Ext.dd.ScrollManager": [],
   "Ext.chart.Mask": [],
   "Ext.selection.CellModel": [],
   "Ext.view.TableLayout": [],
   "Ext.state.Provider": [],
+  "Extnd.form.field.Time": [
+    "Extnd.form.TimeField",
+    "Ext.nd.form.TimeField"
+  ],
   "Extnd.data.OutlineStore": [
     "Ext.nd.data.OutlineStore"
   ],
@@ -1597,6 +1635,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.dom.AbstractQuery": [],
   "Extnd.Database": [],
   "Ext.selection.TreeModel": [],
+  "Extnd.form.PickListFieldTypeAhead": [],
   "Ext.form.Labelable": [],
   "Ext.grid.column.Number": [
     "Ext.grid.NumberColumn"
@@ -1635,16 +1674,19 @@ Ext.ClassManager.addNameAliasMappings({
     "Ext.layout.boxOverflow.Scroller"
   ],
   "Ext.data.Operation": [],
-  "Ext.layout.container.HBox": [
-    "Ext.layout.HBoxLayout"
-  ],
   "Ext.resizer.Resizer": [
     "Ext.Resizable"
   ],
+  "Ext.layout.container.HBox": [
+    "Ext.layout.HBoxLayout"
+  ],
+  "Extnd.form.PickListField": [
+    "Ext.nd.form.PickListField"
+  ],
   "Ext.selection.RowModel": [],
   "Ext.layout.ContextItem": [],
-  "Ext.util.MixedCollection": [],
   "Ext.perf.Monitor": [
     "Ext.Perf"
-  ]
+  ],
+  "Ext.util.MixedCollection": []
 });
