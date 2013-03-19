@@ -127,7 +127,7 @@ Ext.define('Extnd.grid.ViewColumn', {
     /**
      * Default renderer method to handle column data in Domino Views
      */
-    defaultRenderer: function (value, cell, record, rowIndex, colIndex, store) {
+    defaultRenderer: function (value, meta, record, rowIndex, colIndex, store) {
         var me                  = this,
             grid                = me.up('grid'),
             entryData           = record.entryData[me.dataIndex] || {},
@@ -178,19 +178,19 @@ Ext.define('Extnd.grid.ViewColumn', {
 
             indent = entryData.indent;
             extraIndent = (indent > 0) ? 'padding-left:' + indent * 20 + 'px;' : '';
-            cell.attr = 'style="position: absolute; width: auto; white-space: nowrap; ' + extraIndent + '"';
+            meta.style = 'position: absolute; width: auto; white-space: nowrap; ' + extraIndent;
 
             if (nextRecord) {
                 nextRecordLevel = nextRecord.columnIndentLevel;
                 if (nextRecordLevel > recordLevel) {
-                    cell.css = ' xnd-view-collapse xnd-view-category';
+                    meta.tdCls = ' xnd-view-collapse xnd-view-category';
                     returnValue = sCollapseImage + me.getValue(value, record);
                 } else {
-                    cell.css = ' xnd-view-expand xnd-view-category';
+                    meta.tdCls = ' xnd-view-expand xnd-view-category';
                     returnValue = sExpandImage + me.getValue(value, record);
                 }
             } else { // should be a categorized column on the last record
-                cell.css = ' xnd-view-expand xnd-view-category';
+                meta.tdCls = ' xnd-view-expand xnd-view-category';
                 returnValue = sExpandImage + me.getValue(value, record);
             }
 
@@ -200,14 +200,14 @@ Ext.define('Extnd.grid.ViewColumn', {
             if (nextRecord) {
                 nextRecordLevel = nextRecord.columnIndentLevel;
                 if (nextRecordLevel > recordLevel) {
-                    cell.css = 'xnd-view-collapse xnd-view-response';
+                    meta.tdCls = 'xnd-view-collapse xnd-view-response';
                     returnValue = sCollapseImage;
                 } else {
-                    cell.css = 'xnd-view-expand xnd-view-response';
+                    meta.tdCls = 'xnd-view-expand xnd-view-response';
                     returnValue = sExpandImage;
                 }
             } else { // should be a categorized column on the last record
-                cell.css = 'xnd-view-expand xnd-view-response';
+                meta.tdCls = 'xnd-view-expand xnd-view-response';
                 returnValue = sExpandImage;
             }
 
@@ -216,28 +216,28 @@ Ext.define('Extnd.grid.ViewColumn', {
 
             indent = entryData.indent;
             extraIndent = (indent > 0) ? 'padding-left:' + (20 + (indent * 20)) + 'px;' : '';
-            cell.attr = 'style="position: absolute; width: auto; white-space: nowrap; ' + extraIndent + '"';
+            meta.style = 'position: absolute; width: auto; white-space: nowrap; ' + extraIndent;
             if (nextRecord) {
                 nextRecordLevel = nextRecord.columnIndentLevel;
                 if (nextRecordLevel > recordLevel) {
-                    cell.css = 'xnd-view-collapse xnd-view-response';
+                    meta.tdCls = 'xnd-view-collapse xnd-view-response';
                     returnValue = sCollapseImage + me.getValue(value, record);
                 } else {
-                    cell.css = 'xnd-view-expand xnd-view-response';
+                    meta.tdCls = 'xnd-view-expand xnd-view-response';
                     returnValue = sExpandImage + me.getValue(value, record);
                 }
             } else { // should be a categorized column on the last record
-                cell.css = 'xnd-view-expand xnd-view-response';
+                meta.tdCls = 'xnd-view-expand xnd-view-response';
                 returnValue = sExpandImage + me.getValue(value, record);
             }
 
         // does NOT have children and IS a response doc
         } else if (!record.hasChildren() && record.isResponse && me.isResponse) {
 
-            cell.css = 'xnd-view-response';
+            meta.tdCls = 'xnd-view-response';
             indent = entryData.indent;
             extraIndent = (indent > 0) ? 'padding-left:' + (20 + (indent * 20)) + 'px;' : '';
-            cell.attr = 'style="position: absolute; width: auto; white-space: nowrap; ' + extraIndent + '"';
+            meta.style = 'position: absolute; width: auto; white-space: nowrap; ' + extraIndent;
             returnValue = me.getValue(value, record);
 
         } else if (me.isIcon) {
@@ -264,7 +264,7 @@ Ext.define('Extnd.grid.ViewColumn', {
         } else {
 
             if (me.totals !== 'none') {
-                cell.css = ' xnd-view-totals xnd-view-' + me.totals;
+                meta.tdCls = ' xnd-view-totals xnd-view-' + me.totals;
             }
             returnValue = me.getValue(value, record);
 
@@ -424,7 +424,7 @@ Ext.define('Extnd.grid.ViewColumn', {
      * @override
      * Custom version for Domino to handle a 'RESTORE' sort state.
      */
-    setSortState: function(state, skipClear, initial) {
+    setSortState: function (state, skipClear, initial) {
         var me = this,
             ascCls = me.ascSortCls,
             descCls = me.descSortCls,
@@ -432,7 +432,7 @@ Ext.define('Extnd.grid.ViewColumn', {
             ownerHeaderCt = me.getOwnerHeaderCt(),
             oldSortState = me.sortState;
 
-         state = state || null;
+        state = state || null;
 
         if (!me.sorting && oldSortState !== state && me.getSortParam()) {
             me.addCls(Ext.baseCSSPrefix + 'column-header-sort-' + state);
@@ -445,27 +445,27 @@ Ext.define('Extnd.grid.ViewColumn', {
                 me.sorting = false;
             }
             switch (state) {
-                case 'DESC':
-                    me.removeCls([ascCls, nullCls]);
-                    break;
-                case 'ASC':
-                    me.removeCls([descCls, nullCls]);
-                    break;
-                // BEGIN OVERRIDE
-                case 'RESTORE':
-                    me.removeCls([ascCls, descCls, nullCls]);
-                    break;
-                // END OVERRIDE
-                case null:
-                    me.removeCls([ascCls, descCls]);
-                    break;
+            case 'DESC':
+                me.removeCls([ascCls, nullCls]);
+                break;
+            case 'ASC':
+                me.removeCls([descCls, nullCls]);
+                break;
+            // BEGIN OVERRIDE
+            case 'RESTORE':
+                me.removeCls([ascCls, descCls, nullCls]);
+                break;
+            // END OVERRIDE
+            case null:
+                me.removeCls([ascCls, descCls]);
+                break;
             }
             if (ownerHeaderCt && !me.triStateSort && !skipClear) {
                 ownerHeaderCt.clearOtherSortStates(me);
             }
             me.sortState = state;
             // we only want to fire the event if we have a null state when using triStateSort
-            if (me.triStateSort || state != null) {
+            if (me.triStateSort || state !== null) {
                 ownerHeaderCt.fireEvent('sortchange', ownerHeaderCt, me, state);
             }
         }
@@ -477,7 +477,7 @@ Ext.define('Extnd.grid.ViewColumn', {
      * can be used to return the column number which is the position minus 1.
      * @return {Number}
      */
-    getSortColumn: function() {
+    getSortColumn: function () {
         return this.position - 1;
     }
 
