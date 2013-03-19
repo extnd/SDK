@@ -39,6 +39,7 @@ Ext.define('Extnd.grid.Panel', {
         'Extnd.grid.header.Container',
         'Extnd.toolbar.Paging',
         'Extnd.toolbar.Actionbar',
+        'Extnd.toolbar.plugin.SingleCategoryCombo',
         'Extnd.util.Iframe'
     ],
 
@@ -93,9 +94,10 @@ Ext.define('Extnd.grid.Panel', {
         // viewUrl is either passed in or built from dbPath and viewName
         if (config.viewName && config.dbPath) {
             config.viewUrl = config.dbPath + config.viewName;
-        } else if (config.viewUrl && !config.dbPath) {
+        } else if (config.viewName && !config.dbPath) {
             // only the viewName was sent so we'll determine the dbPath from the url
-            config.dbPath = location.pathname.split(/\.nsf/i)[0] + '.nsf';
+            config.dbPath = location.pathname.split(/\.nsf/i)[0] + '.nsf/';
+            config.viewUrl = config.dbPath + config.viewName;
         } else if (config.viewUrl) {
             // ok, no viewName but do we have the viewUrl?
             var vni = config.viewUrl.lastIndexOf('/') + 1;
@@ -143,6 +145,11 @@ Ext.define('Extnd.grid.Panel', {
                 pageSize: 40
             }
         });
+
+        // set single category if required
+        if (typeof me.category === 'string') {
+            me.extraParams.RestrictToCategory = me.category;
+        }
 
         me.setupToolbars();
         me.addEventListeners();
@@ -261,7 +268,7 @@ Ext.define('Extnd.grid.Panel', {
      * @return {Array} Array of selected records
      */
     getDocuments: function () {
-        return this.getSelectionModel().getSelections();
+        return this.getSelectionModel().getSelection();
     },
 
     /**
@@ -356,7 +363,7 @@ Ext.define('Extnd.grid.Panel', {
     getViewDesign: function () {
         var me = this;
 
-        me.viewDesign = Ext.create('Ext.nd.data.ViewDesign', {
+        me.viewDesign = Ext.create('Extnd.data.ViewDesign', {
             dbPath              : me.dbPath,
             viewName            : me.viewName,
             category            : me.category,
@@ -594,10 +601,10 @@ Ext.define('Extnd.grid.Panel', {
 
         // category combo plugin
         if (this.showCategoryComboBox) {
-            var cp = new Ext.nd.SingleCategoryCombo({
-                viewUrl: this.viewUrl,
-                value: this.category,
-                count: this.categoryComboBoxCount || -1
+            var cp = new Extnd.toolbar.plugin.SingleCategoryCombo({
+                viewUrl : this.viewUrl,
+                value   : this.category,
+                count   : this.categoryComboBoxCount || -1
             });
             // make sure category has some value
             if (this.category === undefined) {
@@ -635,7 +642,7 @@ Ext.define('Extnd.grid.Panel', {
         // if a tbar was passed in, just use that and add the plugins to it
         if (this.tbar) {
             if (Ext.isArray(this.tbar)) {
-                this.tbar = new Ext.nd.Actionbar({
+                this.tbar = new Extnd.Actionbar({
                     id: tbId,
                     noteName: '',
                     uiView: this,
@@ -665,11 +672,11 @@ Ext.define('Extnd.grid.Panel', {
                     plugins: this.tbarPlugins
                 });
             } else {
-                // if plugins are wanted but not the actionbar then create an Ext.nd.Actionbar
+                // if plugins are wanted but not the actionbar then create an Extnd.Actionbar
                 // anyway but don't pass in a noteName so that the actions will not be created
                 // and then add the plugins to it
                 if (this.tbarPlugins.length > 0) {
-                    this.tbar = new Ext.nd.Actionbar({
+                    this.tbar = new Extnd.Actionbar({
                         id: tbId,
                         noteName: '', //intentional
                         uiView: this,

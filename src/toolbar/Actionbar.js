@@ -77,7 +77,7 @@
 Ext.define('Extnd.toolbar.Actionbar', {
 
     extend  : 'Ext.toolbar.Toolbar',
-    alias   : 'xnd-actionbar',
+    alias   : 'widget.xnd-actionbar',
 
     alternateClassName: [
         'Extnd.Actionbar',
@@ -339,13 +339,13 @@ Ext.define('Extnd.toolbar.Actionbar', {
 
                 // the JavaScript onClick takes precendence
                 if (tmpOnClick) {
-                    /* note that we now use createDelegate so we can change the scope
+                    /* note that we use Ext.bind() so we can change the scope
                      * to 'this' so that view actions can get a handle to the
                      * grid by simply refering to 'this.getUIView()' and thus, such things as
                      * getting a handle to the currently selected documents in the view
                      * where this action was triggered is much easier
                      * for a form/document you can also get a handle to the uiDocument
-                     * from this.uiDocument
+                     * from this.getUIDocument()
                      */
                     handler = Ext.bind((function () {
                         var bleh = tmpOnClick;

@@ -100,6 +100,9 @@ Ext.define('Extnd.data.ViewStore', {
             // make sure options has a params property
             options.params = options.params || {start: 1, count: me.pageSize };
 
+            // make sure we have a start
+            options.params.start = options.params.start || 1;
+
             // do some extraParams cleanup
             if (options.params.expand || options.params.expandview) {
                 if (me.extraParams.collapse) {

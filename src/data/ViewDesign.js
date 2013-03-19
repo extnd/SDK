@@ -80,9 +80,6 @@ Ext.define('Extnd.data.ViewDesign', {
             var colName = Ext.DomQuery.selectValue('@name', item);
             // we can only check columns that have a name defined
             if (colName !== undefined) {
-                // Ext doesn't like '$' at the beginning like domino automatically will add
-                //colName = colName.replace(/^$/, '_');
-                colName = colName.replace('$', '_');
                 me.visibleCols.add({id: colName, name: colName});
             }
         }, this);
@@ -95,7 +92,6 @@ Ext.define('Extnd.data.ViewDesign', {
             success         : me.getViewDesignSuccess,
             failure         : me.getViewDesignFailure,
             scope           : me,
-            //url: me.viewUrl + '?ReadDesign'
             url             : Extnd.extndUrl + 'DXLExporter?OpenAgent&db=' + me.dbPath + '&type=' + me.noteType + '&name=' + me.viewName
         });
     },
@@ -151,9 +147,6 @@ Ext.define('Extnd.data.ViewDesign', {
             columnnumber = colCount;
             // if name is blank, give it a new unique name
             name = q.selectValue('@itemname', col, 'columnnumber_' + columnnumber);
-            // Ext doesn't like '$'
-            //name = name.replace(/^$/, '_');
-            name = name.replace('$', '_');
 
             // must check for hidden columns since we now use DXLExporter
             // instead of ReadDesign
@@ -243,7 +236,11 @@ Ext.define('Extnd.data.ViewDesign', {
 
             fieldConfig = {
                 name        : name,
-                mapping     : 'entrydata[columnnumber=' + columnnumber + ']',
+                // we can NOT use columnnumber for our mapping because Domino has a bug when doing a ?RestrictToCategory
+                // in that it does not return the correct columnnumber but instead returns a number one less than the
+                // actual number for each column after the category
+                //mapping     : 'entrydata[columnnumber=' + columnnumber + ']',
+                mapping     : 'entrydata[name=' + name + ']',
                 column      : columnnumber,
                 type        : 'domino'
             };
