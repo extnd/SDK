@@ -156,7 +156,7 @@ Ext.define('Extnd.util.Iframe', {
                     var dom = Ext.DomQuery.selectNode('iframe',panel.body.dom);
                     //var dom = Ext.get(ifId).dom;
                     var event = Ext.isIE ? 'onreadystatechange' : 'onload';
-                    dom[event] = (function() {
+                    dom[event] = (Ext.bind(function() {
 
                         try {
                             cd = this.contentWindow || window.frames[this.name];
@@ -203,7 +203,7 @@ Ext.define('Extnd.util.Iframe', {
                             }
                         } // eo if (useDocumentWindowTitle)
 
-                    }).createDelegate(dom);
+                    }),dom);
 
                 });
 
