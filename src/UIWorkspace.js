@@ -434,11 +434,11 @@ Ext.define('Extnd.UIWorkspace', {
             opt = {};
 
         // options can be a single object or an argument list of strings
-        if (typeof options[0] === "string") {
-            opt.type = options[0];
-            opt.title = options[1];
-            opt.prompt = options[2];
-            opt.callback = options[3] || false;
+        if (typeof arguments[0] === "string") {
+            opt.type = arguments[0];
+            opt.title = arguments[1];
+            opt.prompt = arguments[2];
+            opt.callback = arguments[3] || false;
         } else {
             opt = options;
         }
