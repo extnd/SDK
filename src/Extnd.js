@@ -26,7 +26,7 @@ Ext.define('Extnd', {
      */
 
     /**
-     * @property {String} extUrl
+     * @property {String} extjsUrl
      */
 
     /**

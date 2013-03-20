@@ -47,8 +47,8 @@ Ext.define('Extnd.app.Application', {
      */
 
     /**
-     * @cfg {String} extUrl
-     * @inheritdoc Extnd#extUrl
+     * @cfg {String} extjsUrl
+     * @inheritdoc Extnd#extjsUrl
      */
 
     /**
@@ -71,7 +71,7 @@ Ext.define('Extnd.app.Application', {
         // copy some properties to our Extnd singleton
         Extnd.extndDbUrl = me.extndDbUrl = me.extndDbUrl || me.extndUrl;
         Extnd.extndUrl = me.extndUrl || me.extndDbUrl;
-        Extnd.extUrl = me.extUrl || me.extndUrl.replace('extnd', 'ext');
+        Extnd.extjsUrl = me.extjsUrl || me.extndUrl.replace('extnd', 'extjs');
 
         // get the Domino Session info
         me.getSession({
