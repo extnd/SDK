@@ -13,7 +13,7 @@ Ext.define('Extnd.UIWorkspace', {
     ],
 
     constructor: function (config) {
-        this.sess = Extnd.Session;
+        this.sess = Extnd.session;
         this.db = this.sess.currentDatabase;
         this.dbPath = this.db.webFilePath;
 

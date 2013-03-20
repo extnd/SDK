@@ -45,9 +45,14 @@ Ext.define('Extnd.tree.Panel', {
         // outlineUrl is either passed in or built from dbPath and outlineName
         if (config.outlineName && config.dbPath) {
             config.outlineUrl = config.dbPath + config.outlineName;
-        } else if (config.outlineUrl && !config.dbPath) {
-            // only the outlineName was sent so we'll determine the dbPath from the url
-            config.dbPath = location.pathname.split(/\.nsf/i)[0] + '.nsf';
+        } else if (config.outlineName && !config.dbPath) {
+            // only the outlineName was sent so we'll determine the dbPath from the Session or the url
+            config.dbPath = Extnd.session.currentDatabase ? Extnd.session.currentDatabase.webFilePath : null;
+            if (!config.dbPath) {
+                config.dbPath = location.pathname.split(/\.nsf/i)[0];
+                config.dbPath = config.dbPath || config.dbPath + '.nsf/';
+            }
+            config.outlineUrl = config.dbPath + config.outlineName;
         } else if (config.outlineUrl) {
             // ok, no outlineName but do we have the outlineUrl?
             var vni = config.outlineUrl.lastIndexOf('/') + 1;
@@ -130,7 +135,7 @@ Ext.define('Extnd.tree.Panel', {
         var me          = this,
             url         = outlineEntry.get('url'),
             type        = outlineEntry.get('type'),
-            position    = outlineEntry.get('position'),
+            position    = outlineEntry.get('id'),
             panelId     = me.id + '-' + position,
             title       = (me.useEntryTitleAsTargetTitle) ? outlineEntry.text : null,
             panel,

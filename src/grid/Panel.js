@@ -95,8 +95,12 @@ Ext.define('Extnd.grid.Panel', {
         if (config.viewName && config.dbPath) {
             config.viewUrl = config.dbPath + config.viewName;
         } else if (config.viewName && !config.dbPath) {
-            // only the viewName was sent so we'll determine the dbPath from the url
-            config.dbPath = location.pathname.split(/\.nsf/i)[0] + '.nsf/';
+            // only the viewName was sent so we'll determine the dbPath from the Session or the url
+            config.dbPath = Extnd.session.currentDatabase ? Extnd.session.currentDatabase.webFilePath : null;
+            if (!config.dbPath) {
+                config.dbPath = location.pathname.split(/\.nsf/i)[0];
+                config.dbPath = config.dbPath || config.dbPath + '.nsf/';
+            }
             config.viewUrl = config.dbPath + config.viewName;
         } else if (config.viewUrl) {
             // ok, no viewName but do we have the viewUrl?
