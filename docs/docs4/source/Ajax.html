@@ -15,104 +15,139 @@
   </script>
 </head>
 <body onload="prettyPrint(); highlight();">
-  <pre class="prettyprint lang-js"><span id='Ext-Ajax'>/**
-</span> * @class Ext.Ajax
- * @singleton
- * @markdown
-
-A singleton instance of an {@link Ext.data.Connection}. This class
-is used to communicate with your server side code. It can be used as follows:
-
-    Ext.Ajax.request({
-        url: 'page.php',
-        params: {
-            id: 1
-        },
-        success: function(response){
-            var text = response.responseText;
-            // process server response here
-        }
-    });
-
-Default options for all requests can be set by changing a property on the Ext.Ajax class:
-
-    Ext.Ajax.timeout = 60000; // 60 seconds
-
-Any options specified in the request method for the Ajax request will override any
-defaults set on the Ext.Ajax class. In the code sample below, the timeout for the
-request will be 60 seconds.
-
-    Ext.Ajax.timeout = 120000; // 120 seconds
-    Ext.Ajax.request({
-        url: 'page.aspx',
-        timeout: 60000
-    });
-
-In general, this class will be used for all Ajax requests in your application.
-The main reason for creating a separate {@link Ext.data.Connection} is for a
-series of requests that share common settings that are different to all other
-requests in the application.
-
+  <pre class="prettyprint lang-js"><span id='Extnd-data-proxy-Ajax'>/**
+</span> * Custom version of the Ext.data.proxy.Ajax to work better with Domino views
  */
-Ext.define('Ext.Ajax', {
-    extend: 'Ext.data.Connection',
-    singleton: true,
+Ext.define('Extnd.data.proxy.Ajax', {
 
-<span id='Ext-Ajax-cfg-extraParams'>    /**
-</span>     * @cfg {Object} extraParams @hide
-     */
-<span id='Ext-Ajax-cfg-defaultHeaders'>    /**
-</span>     * @cfg {Object} defaultHeaders @hide
-     */
-<span id='Ext-Ajax-cfg-method'>    /**
-</span>     * @cfg {String} method @hide
-     */
-<span id='Ext-Ajax-cfg-timeout'>    /**
-</span>     * @cfg {Number} timeout @hide
-     */
-<span id='Ext-Ajax-cfg-autoAbort'>    /**
-</span>     * @cfg {Boolean} autoAbort @hide
-     */
-<span id='Ext-Ajax-cfg-disableCaching'>    /**
-</span>     * @cfg {Boolean} disableCaching @hide
-     */
+    extend  : 'Ext.data.proxy.Ajax',
+    alias   : 'proxy.xnd-ajax',
 
-<span id='Ext-Ajax-property-disableCaching'>    /**
-</span>     * @property {Boolean} disableCaching
-     * True to add a unique cache-buster param to GET requests. Defaults to true.
-     */
-<span id='Ext-Ajax-property-url'>    /**
-</span>     * @property {String} url
-     * The default URL to be used for requests to the server.
-     * If the server receives all requests through one URL, setting this once is easier than
-     * entering it on every request.
-     */
-<span id='Ext-Ajax-property-extraParams'>    /**
-</span>     * @property {Object} extraParams
-     * An object containing properties which are used as extra parameters to each request made
-     * by this object. Session information and other data that you need
-     * to pass with each request are commonly put here.
-     */
-<span id='Ext-Ajax-property-defaultHeaders'>    /**
-</span>     * @property {Object} defaultHeaders
-     * An object containing request headers which are added to each request made by this object.
-     */
-<span id='Ext-Ajax-property-method'>    /**
-</span>     * @property {String} method
-     * The default HTTP method to be used for requests. Note that this is case-sensitive and
-     * should be all caps (if not set but params are present will use
-     * &lt;tt&gt;&quot;POST&quot;&lt;/tt&gt;, otherwise will use &lt;tt&gt;&quot;GET&quot;&lt;/tt&gt;.)
-     */
-<span id='Ext-Ajax-property-timeout'>    /**
-</span>     * @property {Number} timeout
-     * The timeout in milliseconds to be used for requests. Defaults to 30000.
-     */
+    alternateClassName: 'Extnd.data.AjaxProxy',
 
-<span id='Ext-Ajax-property-autoAbort'>    /**
-</span>     * @property {Boolean} autoAbort
-     * Whether a new request should abort any pending requests.
+    requires: [
+        'Extnd.data.ViewXmlReader'
+    ],
+
+<span id='Extnd-data-proxy-Ajax-cfg-startParam'>    // remap paramNames to work with Domino views
+</span>    startParam  : 'start',
+<span id='Extnd-data-proxy-Ajax-cfg-sortParam'><span id='Extnd-data-proxy-Ajax-cfg-limitParam'>    limitParam  : 'count',  // domino uses count
+</span></span>    sortParam   : '',       // the getParams override adds the domino specific sort params
+
+<span id='Extnd-data-proxy-Ajax-property-sortAscParam'>    // the Domino specific sort params
+</span>    sortAscParam    : 'resortascending',
+<span id='Extnd-data-proxy-Ajax-property-sortDescParam'>    sortDescParam   : 'resortdescending',
+</span>
+<span id='Extnd-data-proxy-Ajax-method-constructor'>    constructor: function (config) {
+</span>        var me = this;
+
+        Ext.apply(me, {
+            reader: {
+                type            : 'xnd-viewxml',
+                root            : 'viewentries',
+                record          : 'viewentry',
+                totalProperty   : '@toplevelentries'
+            }
+        });
+
+        me.callParent(arguments);
+    },
+
+<span id='Extnd-data-proxy-Ajax-method-getParams'>    /**
+</span>     * @override
+     * Custom version for Domino that sets up the remote sorting param correctly
      */
-    autoAbort : false
+    getParams: function (operation) {
+        var me = this,
+            params = {},
+            sorters = operation.sorters,
+            field,
+            sortColumn;
+
+        // get the params the way ExtJS would do them
+        params = me.callParent(arguments);
+
+        // Now we can modify the sort param the way Domino expects it
+        // Domino does not have separate params for sort and dir
+        // instead, domino combines them into one of two choices
+        // resortascending=colNbr
+        // resortdescending=colNbr
+
+        if (sorters &amp;&amp; sorters.length &gt; 0) {
+
+            field = me.getReader().model.prototype.fields.get(sorters[0].property);
+            sortColumn = field.column;
+
+            switch (sorters[0].direction) {
+            case &quot;ASC&quot;:
+                me.setDominoSortParam(params, me.sortAscParam, sortColumn);
+                break;
+            case &quot;DESC&quot;:
+                me.setDominoSortParam(params, me.sortDescParam, sortColumn);
+                break;
+            case &quot;RESTORE&quot;:
+                delete params.start;
+                delete params.startkey;
+                delete params[me.sortAscParam];
+                delete params[me.sortDescParam];
+                break;
+            }
+        }
+
+        return params;
+    },
+
+<span id='Extnd-data-proxy-Ajax-method-setDominoSortParam'>    /**
+</span>     * Given a domino specific sort param (ie 'resortascending' or 'resortdescending' then this method makes
+     * sure that all other dependent params are set up correctly
+     * @param {String} sortParam The domino sort param to set
+     * @param {Number} sortColumn The column to sort on
+     * @return {Object} The update params object
+     */
+    setDominoSortParam: function (params, sortParam, sortColumn) {
+        var me = this;
+
+        if (params[sortParam] !== undefined) {
+
+            if (params[sortParam] !== sortColumn) {
+                // changing to a new sort column, so reset the column
+                params[sortParam] = sortColumn;
+
+                if (params.start) {
+                    // if there was a start param before we delete both the start and startkey params
+                    // however, NOTE: that we don't check for a startkey since it is valid for a user
+                    // to have a startkey and then do a sort
+                    delete params.start;
+                    delete params.startkey;
+                }
+
+            } else {
+                if (params.start) {
+                    delete params.startkey; // delete startkey once we have a start param
+                }
+            }
+
+        } else {
+
+            params[sortParam] = sortColumn;
+            // since this is the first time sorting in this direction for this column
+            // we need to delete these params so that we do things the way Domino expects it
+            delete params.start;
+            delete params.startkey;
+        }
+
+        // always make sure we delete the opposite sort param since Domino doesn't like seeing both
+        if (sortParam === me.sortAscParam) {
+            delete params[me.sortDescParam];
+        } else {
+            delete params[me.sortAscParam];
+        }
+
+
+        return params;
+
+    }
+
 });
 </pre>
 </body>

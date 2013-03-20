@@ -15,377 +15,342 @@
   </script>
 </head>
 <body onload="prettyPrint(); highlight();">
-  <pre class="prettyprint lang-js"><span id='Ext-form-Panel'>/**
-</span> * @docauthor Jason Johnston &lt;jason@sencha.com&gt;
- * 
- * FormPanel provides a standard container for forms. It is essentially a standard {@link Ext.panel.Panel} which
- * automatically creates a {@link Ext.form.Basic BasicForm} for managing any {@link Ext.form.field.Field}
- * objects that are added as descendants of the panel. It also includes conveniences for configuring and
- * working with the BasicForm and the collection of Fields.
- * 
- * # Layout
- * 
- * By default, FormPanel is configured with `{@link Ext.layout.container.Anchor layout:'anchor'}` for
- * the layout of its immediate child items. This can be changed to any of the supported container layouts.
- * The layout of sub-containers is configured in {@link Ext.container.Container#layout the standard way}.
- * 
- * # BasicForm
- * 
- * Although **not listed** as configuration options of FormPanel, the FormPanel class accepts all
- * of the config options supported by the {@link Ext.form.Basic} class, and will pass them along to
- * the internal BasicForm when it is created.
- * 
- * The following events fired by the BasicForm will be re-fired by the FormPanel and can therefore be
- * listened for on the FormPanel itself:
- * 
- * - {@link Ext.form.Basic#beforeaction beforeaction}
- * - {@link Ext.form.Basic#actionfailed actionfailed}
- * - {@link Ext.form.Basic#actioncomplete actioncomplete}
- * - {@link Ext.form.Basic#validitychange validitychange}
- * - {@link Ext.form.Basic#dirtychange dirtychange}
- * 
- * # Field Defaults
- * 
- * The {@link #fieldDefaults} config option conveniently allows centralized configuration of default values
- * for all fields added as descendants of the FormPanel. Any config option recognized by implementations
- * of {@link Ext.form.Labelable} may be included in this object. See the {@link #fieldDefaults} documentation
- * for details of how the defaults are applied.
- * 
- * # Form Validation
- * 
- * With the default configuration, form fields are validated on-the-fly while the user edits their values.
- * This can be controlled on a per-field basis (or via the {@link #fieldDefaults} config) with the field
- * config properties {@link Ext.form.field.Field#validateOnChange} and {@link Ext.form.field.Base#checkChangeEvents},
- * and the FormPanel's config properties {@link #pollForChanges} and {@link #pollInterval}.
- * 
- * Any component within the FormPanel can be configured with `formBind: true`. This will cause that
- * component to be automatically disabled when the form is invalid, and enabled when it is valid. This is most
- * commonly used for Button components to prevent submitting the form in an invalid state, but can be used on
- * any component type.
- * 
- * For more information on form validation see the following:
- * 
- * - {@link Ext.form.field.Field#validateOnChange}
- * - {@link #pollForChanges} and {@link #pollInterval}
- * - {@link Ext.form.field.VTypes}
- * - {@link Ext.form.Basic#doAction BasicForm.doAction clientValidation notes}
- * 
- * # Form Submission
- * 
- * By default, Ext Forms are submitted through Ajax, using {@link Ext.form.action.Action}. See the documentation for
- * {@link Ext.form.Basic} for details.
- *
- * # Example usage
- * 
- *     @example
- *     Ext.create('Ext.form.Panel', {
- *         title: 'Simple Form',
- *         bodyPadding: 5,
- *         width: 350,
- * 
- *         // The form will submit an AJAX request to this URL when submitted
- *         url: 'save-form.php',
- * 
- *         // Fields will be arranged vertically, stretched to full width
- *         layout: 'anchor',
- *         defaults: {
- *             anchor: '100%'
- *         },
- * 
- *         // The fields
- *         defaultType: 'textfield',
- *         items: [{
- *             fieldLabel: 'First Name',
- *             name: 'first',
- *             allowBlank: false
- *         },{
- *             fieldLabel: 'Last Name',
- *             name: 'last',
- *             allowBlank: false
- *         }],
- * 
- *         // Reset and Submit buttons
- *         buttons: [{
- *             text: 'Reset',
- *             handler: function() {
- *                 this.up('form').getForm().reset();
- *             }
- *         }, {
- *             text: 'Submit',
- *             formBind: true, //only enabled once the form is valid
- *             disabled: true,
- *             handler: function() {
- *                 var form = this.up('form').getForm();
- *                 if (form.isValid()) {
- *                     form.submit({
- *                         success: function(form, action) {
- *                            Ext.Msg.alert('Success', action.result.msg);
- *                         },
- *                         failure: function(form, action) {
- *                             Ext.Msg.alert('Failed', action.result.msg);
- *                         }
- *                     });
- *                 }
- *             }
- *         }],
- *         renderTo: Ext.getBody()
- *     });
- *
+  <pre class="prettyprint lang-js"><span id='Extnd-tree-Panel'>/**
+</span> * Customized tree to work with Domino Outlines.
+ * The minimum config needed is the outlineUrl or the dbPath and outlineName.
  */
-Ext.define('Ext.form.Panel', {
-    extend:'Ext.panel.Panel',
-    mixins: {
-        fieldAncestor: 'Ext.form.FieldAncestor'
-    },
-    alias: 'widget.form',
-    alternateClassName: ['Ext.FormPanel', 'Ext.form.FormPanel'],
-    requires: ['Ext.form.Basic', 'Ext.util.TaskRunner'],
+Ext.define('Extnd.tree.Panel', {
 
-<span id='Ext-form-Panel-cfg-pollForChanges'>    /**
-</span>     * @cfg {Boolean} pollForChanges
-     * If set to `true`, sets up an interval task (using the {@link #pollInterval}) in which the
-     * panel's fields are repeatedly checked for changes in their values. This is in addition to the normal detection
-     * each field does on its own input element, and is not needed in most cases. It does, however, provide a
-     * means to absolutely guarantee detection of all changes including some edge cases in some browsers which
-     * do not fire native events. Defaults to `false`.
-     */
+    extend: 'Ext.tree.Panel',
 
-<span id='Ext-form-Panel-cfg-pollInterval'>    /**
-</span>     * @cfg {Number} pollInterval
-     * Interval in milliseconds at which the form's fields are checked for value changes. Only used if
-     * the {@link #pollForChanges} option is set to `true`. Defaults to 500 milliseconds.
-     */
-
-<span id='Ext-form-Panel-cfg-layout'>    /**
-</span>     * @cfg {Ext.enums.Layout/Object} layout
-     * The {@link Ext.container.Container#layout} for the form panel's immediate child items.
-     */
-    layout: 'anchor',
-
-<span id='Ext-form-Panel-property-ariaRole'>    ariaRole: 'form',
-</span>    
-<span id='Ext-form-Panel-property-basicFormConfigs'>    basicFormConfigs: [
-</span>        'api', 
-        'baseParams', 
-        'errorReader', 
-        'method', 
-        'paramOrder',
-        'paramsAsHash',
-        'reader',
-        'standardSubmit',
-        'timeout',
-        'trackResetOnLoad',
-        'url',
-        'waitMsgTarget',
-        'waitTitle'
+    alias: [
+        'widget.xnd-uioutline',
+        'widget.xnd-treepanel',
+        'widget.xnd-tree'
     ],
 
-<span id='Ext-form-Panel-method-initComponent'>    initComponent: function() {
-</span>        var me = this;
+    alternateClassName: [
+        'Ext.nd.UIOutline',
+        'Extnd.UIOutline',
+        'Ext.nd.tree.Panel',
+        'Ext.nd.TreePanel'
+    ],
 
-        if (me.frame) {
-            me.border = false;
+    requires: [
+        'Extnd.data.OutlineStore',
+        'Extnd.util.Iframe'
+    ],
+
+<span id='Extnd-tree-Panel-cfg-rootVisible'>    rootVisible : false,
+</span>
+
+<span id='Extnd-tree-Panel-method-constructor'>    constructor: function (config) {
+</span>        config = this.cleanUpConfig(config);
+        this.callParent([config]);
+    },
+
+
+<span id='Extnd-tree-Panel-method-cleanUpConfig'>    /**
+</span>     * For everything to work right we need to know the dbPath and outlineName and this method cleans up the config
+     * so that we have both.
+     * If only the outlineName is passed, then we calculate the dbPath from the url and then we can calculate the outlineUrl.
+     * If both the dbPath and outlineName are passed, we calculate the outlineUrl
+     * If only the outlineUrl is passed, we will calculate the dbPath and outlineName
+     */
+    cleanUpConfig: function (config) {
+
+        // outlineUrl is either passed in or built from dbPath and outlineName
+        if (config.outlineName &amp;&amp; config.dbPath) {
+            config.outlineUrl = config.dbPath + config.outlineName;
+        } else if (config.outlineName &amp;&amp; !config.dbPath) {
+            // only the outlineName was sent so we'll determine the dbPath from the Session or the url
+            config.dbPath = Extnd.session.currentDatabase ? Extnd.session.currentDatabase.webFilePath : null;
+            if (!config.dbPath) {
+                config.dbPath = location.pathname.split(/\.nsf/i)[0];
+                config.dbPath = config.dbPath || config.dbPath + '.nsf/';
+            }
+            config.outlineUrl = config.dbPath + config.outlineName;
+        } else if (config.outlineUrl) {
+            // ok, no outlineName but do we have the outlineUrl?
+            var vni = config.outlineUrl.lastIndexOf('/') + 1;
+            config.dbPath = config.outlineUrl.substring(0, vni);
+            config.outlineName = config.outlineUrl.substring(vni);
         }
 
-        me.initFieldAncestor();
-        me.callParent();
+        return config;
 
-        me.relayEvents(me.form, [
-<span id='Ext-form-Panel-event-beforeaction'>            /**
-</span>             * @event beforeaction
-             * @inheritdoc Ext.form.Basic#beforeaction
-             */
-            'beforeaction',
-<span id='Ext-form-Panel-event-actionfailed'>            /**
-</span>             * @event actionfailed
-             * @inheritdoc Ext.form.Basic#actionfailed
-             */
-            'actionfailed',
-<span id='Ext-form-Panel-event-actioncomplete'>            /**
-</span>             * @event actioncomplete
-             * @inheritdoc Ext.form.Basic#actioncomplete
-             */
-            'actioncomplete',
-<span id='Ext-form-Panel-event-validitychange'>            /**
-</span>             * @event validitychange
-             * @inheritdoc Ext.form.Basic#validitychange
-             */
-            'validitychange',
-<span id='Ext-form-Panel-event-dirtychange'>            /**
-</span>             * @event dirtychange
-             * @inheritdoc Ext.form.Basic#dirtychange
-             */
-            'dirtychange'
-        ]);
+    },
 
-        // Start polling if configured
-        if (me.pollForChanges) {
-            me.startPolling(me.pollInterval || 500);
+<span id='Extnd-tree-Panel-method-initComponent'>    initComponent: function () {
+</span>        var me = this,
+            store = me.store;
+
+
+        if (Ext.isString(store)) {
+
+            store = me.store = Ext.StoreMgr.lookup(store);
+
+        } else if (!store || (Ext.isObject(store) &amp;&amp; !store.isStore)) {
+
+            store = me.store = Ext.create('Extnd.data.OutlineStore', Ext.apply({
+                outlineUrl  : me.outlineUrl,
+                dbPath      : me.dbPath,
+                outlineName : me.outlineName,
+                root        : me.root,
+                folderSort  : me.folderSort
+            }, store));
         }
+
+        me.callParent(arguments);
+
+        me.addEvents(
+<span id='Extnd-tree-Panel-event-readentries'>            /**
+</span>             * @event readentries Fires when the Ajax request to ?ReadEntries returns
+             * @param {Ext.nd.UIOutline} this
+             * @param {XMLNode} responseXml
+             */
+            'readentries',
+
+<span id='Extnd-tree-Panel-event-beforeopenentry'>            /**
+</span>             * @event beforeopenentry Fires before the openEntry function is executed, return false to stop the opening
+             * @param {Extnd.tree.Panel} outline
+             * @param {Extnd.data.OutlineModel} outlineEntry
+             */
+            'beforeopenentry',
+
+<span id='Extnd-tree-Panel-event-openentry'>            /**
+</span>             * @event openentry Fires after openEntry
+             * @param {Extnd.tree.Panel} outline
+             * @param {Extnd.tree.Panel} outlineEntry
+             * @param {Integer} type An indicator of what type of outlineEntry was opened. 0 = Nothing opened 1 = View opened 2 = Link opened
+             * @param {Ext.nd.UIView|Ext.Component} obj The view or component that was created
+             */
+            'openentry',
+
+<span id='Extnd-tree-Panel-event-beforeaddtofolder'>            /**
+</span>             * @event beforeaddtofolder Fires before adding documents from a {@link Ext.nd.UIView} into a folder
+             */
+            'beforeaddtofolder',
+
+<span id='Extnd-tree-Panel-event-addfoldersuccess'>            /**
+</span>             * @event addfoldersuccess Fires when the Ajax call to the add to folder agent returns sucessfully
+             */
+            'addfoldersuccess',
+
+<span id='Extnd-tree-Panel-event-addfolderfailure'>            /**
+</span>             * @event addfolderfailure Fires when the Ajax call to the add to folder agent fails
+             */
+            'addfolderfailure'
+        );
+
+        me.on('itemclick', me.openEntry, me);
+
     },
 
-<span id='Ext-form-Panel-method-initItems'>    initItems: function() {
-</span>        // Create the BasicForm
-        var me = this;
+<span id='Extnd-tree-Panel-method-openEntry'>    // private
+</span>    openEntry: function (outline, outlineEntry, el, index, e) {
+        var me          = this,
+            url         = outlineEntry.get('url'),
+            type        = outlineEntry.get('type'),
+            position    = outlineEntry.get('id'),
+            panelId     = me.id + '-' + position,
+            title       = (me.useEntryTitleAsTargetTitle) ? outlineEntry.text : null,
+            panel,
+            target,
+            targetDefaults,
+            ownerCt,
+            entry,
+            xtype,
+            viewUrl,
+            uiview,
+            idx,
+            state;
 
-        me.form = me.createForm();
-        me.callParent();
-    },
 
-<span id='Ext-form-Panel-method-afterFirstLayout'>    // Initialize the BasicForm after all layouts have been completed.
-</span>    afterFirstLayout: function() {
-        this.callParent();
-        this.form.initialize();
-    },
+        if (this.fireEvent('beforeopenentry', this, outlineEntry) !== false) {
 
-<span id='Ext-form-Panel-method-createForm'>    /**
-</span>     * @private
-     */
-    createForm: function() {
-        var cfg = {},
-            props = this.basicFormConfigs,
-            len = props.length,
-            i = 0,
-            prop;
-            
-        for (; i &lt; len; ++i) {
-            prop = props[i];
-            cfg[prop] = this[prop];
+
+            // TODO: need to check to see if duplicate views are
+            // allowed or not. if not, then make sure to check
+            // to see if view is already opened
+            // Also, need to check to see if only one view is
+            // allowed open at once and if so,
+            // we need to first remove the old view and add
+            // the new view
+
+            // get the correct target
+            if (type === &quot;2&quot; || type === &quot;20&quot;) {
+                target = this.viewTarget || this.target;
+                targetDefaults = this.viewTargetDefaults || this.targetDefaults;
+            } else {
+                target = this.target;
+                targetDefaults = this.targetDefaults;
+            }
+
+            // if we have a target then check to see if it is a component and set to that
+            // then if still not a component then check to see if an id of an existing element
+            if (target) {
+                target = (target.getXType) ? target : Ext.getCmp(target);
+                target = (target &amp;&amp; target.getXType) ? target : Ext.get(target);
+            }
+
+            // first, check to see if this panel exists
+            panel = Ext.getCmp(panelId);
+
+            // TODO: again, need to decide if duplicate views are ok to have or not
+            // currently we are assuming NO and thus why we check to see if a
+            // panel has already been opened and just reshow it if so
+
+            // if the panel didn't exist, create it,
+            // otherwise just show this panel
+            if (!panel) {
+
+                // 2 = view and 20 = folder
+                if (type === &quot;2&quot; || type === &quot;20&quot;) {
+                    type = 1;
+                    // got a view so get the viewUrl which shouldn't have a '?'
+                    // or '!' but we check for it just in case
+                    viewUrl = (url.indexOf('?') &gt; 0) ? url.split('?')[0] : url.split('!')[0];
+
+                    // if no target then just open in a new window
+                    if (!target) {
+                        window.open(viewUrl + '?OpenView');
+                    } else {
+
+                        //setup the uiview property of this new view
+                        // apply whatever viewDefaults were define for the uioutline
+                        // and then apply the targetDefaults
+                        uiview = Ext.apply(
+                            Ext.apply({
+                                xtype: 'xnd-uiview',
+                                id : panelId,
+                                layout: 'fit',
+                                title: title,
+                                viewUrl: viewUrl
+                            }, this.viewDefaults),
+                            targetDefaults
+                        );
+
+
+                        if (target.getXType &amp;&amp; target.add) {
+
+                            xtype = target.getXType();
+
+                            switch (xtype) {
+
+                            // if adding to an existing grid/xnd-uiview
+                            // then we need to first remove the current
+                            // view and then re-add it the new one
+
+                            case 'grid':
+                            case 'xnd-uiview':
+
+                                // TODO - we have to remove any old state info for this target.id
+                                // because the view is reusing the id and state is stored by
+                                // looking up the state using the component's id as the key
+                                // so if a user changes view then the saved state will be for
+                                // the last view and not the new view and this causes problems
+                                // however, this means that currently users can sort a view
+                                // or move columns around and that these changes will be
+                                // remembered.  Therefore we need to revisit this but also
+                                // keep in mind when we do that there is another issue in that
+                                // UIView builds a dummy view with a dummy column and this dummy
+                                // info is what initStates() sees instead of the real view and
+                                // therefore the saved state info can't be restored since there
+                                // will not be a match to the columns, sort, etc.
+
+                                state = Ext.state.Manager.get(target.id);
+                                if (state) {
+                                    Ext.state.Manager.clear(target.id);
+                                }
+
+                                // add the id back if we are just reusing the
+                                // old uiview for the new uiview
+                                // we do this so that the target can be found again
+                                // also, make sure closable is false since this view
+                                // is supposed to exist as the target for all views
+                                // in the outline
+
+                                Ext.apply(uiview, { id: target.id, closable: false });
+
+                                // first see if there is an ownerCt
+                                // and if so try and remove it and
+                                // then add the new uiview back at
+                                // the same index of the one just removed
+                                if (target.ownerCt) {
+                                    ownerCt = target.ownerCt;
+                                    idx = ownerCt.items.indexOf(target);
+                                    ownerCt.remove(target, true);
+                                    entry = ownerCt.insert(idx, uiview);
+                                } else {
+                                    // if we can't remove still do
+                                    // the add anyway and hopefully
+                                    // this component can handle
+                                    // the add in a way so that
+                                    // the new view is visible
+                                    entry = target.add(uiview);
+                                }
+                                //Ext.nd.util.doLayoutAndShow(entry);
+                                break;
+
+                            // for everything else just call the add method
+                            default:
+                                entry = target.add(uiview);
+                                //Ext.nd.util.doLayoutAndShow(entry);
+                                break;
+                            }
+
+                        } else {
+
+                            // add the panelId as the id
+                            Ext.apply(uiview, { id: panelId });
+
+                            // not dealing with a component so the target is
+                            // probably the id to an existing div element
+                            // so we'll use renderTo to render this uiview
+                            entry = new Ext.nd.UIView(Ext.apply(uiview, { renderTo: target }));
+                            //Ext.nd.util.doLayoutAndShow(entry);
+
+                        }
+                    }
+
+
+                // not (type == &quot;2&quot; || type == &quot;20&quot;) so just
+                // open in an iframe since it must be a page,doc,form,or url
+                } else if (url !== &quot;&quot;) {
+                    type = 2;
+                    // if no target then just open in a new window
+                    if (!target) {
+                        window.open(url);
+                    } else {
+
+                        if (target.getXType &amp;&amp; target.add) {
+                            Extnd.util.Iframe.add({
+                                target      : target,
+                                url         : url,
+                                id          : panelId,
+                                title       : title,
+                                closable    : true,
+                                useDocumentWindowTitle: false,
+                                targetDefaults: targetDefaults
+                            });
+                        }
+                    }
+                }
+
+            } else {
+                if (panel.show) {
+                    panel.show();
+                }
+            }
+
+            // now fire the openentry event
+            this.fireEvent('openentry', this, outlineEntry, type, entry);
+
         }
-        return new Ext.form.Basic(this, cfg);
-    },
 
-<span id='Ext-form-Panel-method-getForm'>    /**
-</span>     * Provides access to the {@link Ext.form.Basic Form} which this Panel contains.
-     * @return {Ext.form.Basic} The {@link Ext.form.Basic Form} which this Panel contains.
-     */
-    getForm: function() {
-        return this.form;
-    },
-
-<span id='Ext-form-Panel-method-loadRecord'>    /**
-</span>     * Loads an {@link Ext.data.Model} into this form (internally just calls {@link Ext.form.Basic#loadRecord})
-     * See also {@link Ext.form.Basic#trackResetOnLoad trackResetOnLoad}.
-     * @param {Ext.data.Model} record The record to load
-     * @return {Ext.form.Basic} The Ext.form.Basic attached to this FormPanel
-     */
-    loadRecord: function(record) {
-        return this.getForm().loadRecord(record);
-    },
-
-<span id='Ext-form-Panel-method-getRecord'>    /**
-</span>     * Returns the currently loaded Ext.data.Model instance if one was loaded via {@link #loadRecord}.
-     * @return {Ext.data.Model} The loaded instance
-     */
-    getRecord: function() {
-        return this.getForm().getRecord();
-    },
-
-<span id='Ext-form-Panel-method-getValues'>    /**
-</span>     * Convenience function for fetching the current value of each field in the form. This is the same as calling
-     * {@link Ext.form.Basic#getValues this.getForm().getValues()}.
-     *
-     * @inheritdoc Ext.form.Basic#getValues
-     */
-    getValues: function(asString, dirtyOnly, includeEmptyText, useDataValues) {
-        return this.getForm().getValues(asString, dirtyOnly, includeEmptyText, useDataValues);
-    },
-    
-<span id='Ext-form-Panel-method-isDirty'>    /**
-</span>     * Convenience function to check if the form has any dirty fields. This is the same as calling
-     * {@link Ext.form.Basic#isDirty this.getForm().isDirty()}.
-     *
-     * @inheritdoc Ext.form.Basic#isDirty
-     */
-    isDirty: function () {
-        return this.form.isDirty();
-    },
-    
-<span id='Ext-form-Panel-method-isValid'>    /**
-</span>     * Convenience function to check if the form has all valid fields. This is the same as calling
-     * {@link Ext.form.Basic#isValid this.getForm().isValid()}.
-     *
-     * @inheritdoc Ext.form.Basic#isValid
-     */
-    isValid: function () {
-       return this.form.isValid();
-    },
-    
-<span id='Ext-form-Panel-method-hasInvalidField'>    /**
-</span>     * Convenience function to check if the form has any invalid fields. This is the same as calling
-     * {@link Ext.form.Basic#hasInvalidField this.getForm().hasInvalidField()}.
-     *
-     * @inheritdoc Ext.form.Basic#hasInvalidField
-     */
-    hasInvalidField: function () {
-        return this.form.hasInvalidField();
-    },
-
-<span id='Ext-form-Panel-method-beforeDestroy'>    beforeDestroy: function() {
-</span>        this.stopPolling();
-        this.form.destroy();
-        this.callParent();
-    },
-
-<span id='Ext-form-Panel-method-load'>    /**
-</span>     * This is a proxy for the underlying BasicForm's {@link Ext.form.Basic#load} call.
-     * @param {Object} options The options to pass to the action (see {@link Ext.form.Basic#load} and
-     * {@link Ext.form.Basic#doAction} for details)
-     */
-    load: function(options) {
-        this.form.load(options);
-    },
-
-<span id='Ext-form-Panel-method-submit'>    /**
-</span>     * This is a proxy for the underlying BasicForm's {@link Ext.form.Basic#submit} call.
-     * @param {Object} options The options to pass to the action (see {@link Ext.form.Basic#submit} and
-     * {@link Ext.form.Basic#doAction} for details)
-     */
-    submit: function(options) {
-        this.form.submit(options);
-    },
-
-<span id='Ext-form-Panel-method-startPolling'>    /**
-</span>     * Start an interval task to continuously poll all the fields in the form for changes in their
-     * values. This is normally started automatically by setting the {@link #pollForChanges} config.
-     * @param {Number} interval The interval in milliseconds at which the check should run.
-     */
-    startPolling: function(interval) {
-        this.stopPolling();
-        var task = new Ext.util.TaskRunner(interval);
-        task.start({
-            interval: 0,
-            run: this.checkChange,
-            scope: this
-        });
-        this.pollTask = task;
-    },
-
-<span id='Ext-form-Panel-method-stopPolling'>    /**
-</span>     * Stop a running interval task that was started by {@link #startPolling}.
-     */
-    stopPolling: function() {
-        var task = this.pollTask;
-        if (task) {
-            task.stopAll();
-            delete this.pollTask;
-        }
-    },
-
-<span id='Ext-form-Panel-method-checkChange'>    /**
-</span>     * Forces each field within the form panel to
-     * {@link Ext.form.field.Field#checkChange check if its value has changed}.
-     */
-    checkChange: function() {
-        var fields = this.form.getFields().items,
-            f,
-            fLen   = fields.length,
-            field;
-
-        for (f = 0; f &lt; fLen; f++) {
-            fields[f].checkChange();
-        }
     }
+
 });
 </pre>
 </body>

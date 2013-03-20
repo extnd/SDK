@@ -15,174 +15,153 @@
   </script>
 </head>
 <body onload="prettyPrint(); highlight();">
-  <pre class="prettyprint lang-js"><span id='Ext-container-Viewport'>/**
-</span> * A specialized container representing the viewable application area (the browser viewport).
+  <pre class="prettyprint lang-js"><span id='Extnd-container-Viewport-method-constructor'><span id='Extnd-container-Viewport-cfg-uiView'><span id='Extnd-container-Viewport-cfg-uiOutline'><span id='Extnd-container-Viewport'>/**
+</span></span></span></span> *  Here's an example showing the creation of a typical Extnd.Viewport:
+          Ext.create('Extnd.Viewport', {
+              uiOutline: {
+                  outlineName: &amp;quot;mainOL&amp;quot;
+              },
+              uiView: {
+                  viewName: &amp;quot;Requests&amp;quot;,
+                  viewTitle: &amp;quot;Requests&amp;quot;
+              }
+          });
+
  *
- * The Viewport renders itself to the document body, and automatically sizes itself to the size of
- * the browser viewport and manages window resizing. There may only be one Viewport created
- * in a page.
+ * @cfg {Object} uiOutline A {@link Extnd.UIOutline} config object
+ * @cfg {Object} uiView A {@link Extnd.UIView} config object
+ * @constructor Create an integrated domino interface, with a view and an outline
+ * @param {Object} config Configuration options
  *
- * Like any {@link Ext.container.Container Container}, a Viewport will only perform sizing and positioning
- * on its child Components if you configure it with a {@link #layout}.
- *
- * A Common layout used with Viewports is {@link Ext.layout.container.Border border layout}, but if the
- * required layout is simpler, a different layout should be chosen.
- *
- * For example, to simply make a single child item occupy all available space, use
- * {@link Ext.layout.container.Fit fit layout}.
- *
- * To display one &quot;active&quot; item at full size from a choice of several child items, use
- * {@link Ext.layout.container.Card card layout}.
- *
- * Inner layouts are available because all {@link Ext.panel.Panel Panel}s
- * added to the Viewport, either through its {@link #cfg-items}, or the {@link #method-add}
- * method of any of its child Panels may themselves have a layout.
- *
- * The Viewport does not provide scrolling, so child Panels within the Viewport should provide
- * for scrolling if needed using the {@link #autoScroll} config.
- *
- * An example showing a classic application border layout:
- *
- *     @example
- *     Ext.create('Ext.container.Viewport', {
- *         layout: 'border',
- *         items: [{
- *             region: 'north',
- *             html: '&lt;h1 class=&quot;x-panel-header&quot;&gt;Page Title&lt;/h1&gt;',
- *             border: false,
- *             margins: '0 0 5 0'
- *         }, {
- *             region: 'west',
- *             collapsible: true,
- *             title: 'Navigation',
- *             width: 150
- *             // could use a TreePanel or AccordionLayout for navigational items
- *         }, {
- *             region: 'south',
- *             title: 'South Panel',
- *             collapsible: true,
- *             html: 'Information goes here',
- *             split: true,
- *             height: 100,
- *             minHeight: 100
- *         }, {
- *             region: 'east',
- *             title: 'East Panel',
- *             collapsible: true,
- *             split: true,
- *             width: 150
- *         }, {
- *             region: 'center',
- *             xtype: 'tabpanel', // TabPanel itself has no title
- *             activeTab: 0,      // First tab active by default
- *             items: {
- *                 title: 'Default Tab',
- *                 html: 'The first tab\'s content. Others may be added dynamically'
- *             }
- *         }]
- *     });
  */
-Ext.define('Ext.container.Viewport', {
-    extend: 'Ext.container.Container',
-    alias: 'widget.viewport',
-    requires: ['Ext.EventManager'],
-    alternateClassName: 'Ext.Viewport',
+Ext.define('Extnd.container.Viewport', {
 
-    // Privatize config options which, if used, would interfere with the
-    // correct operation of the Viewport as the sole manager of the
-    // layout of the document body.
+    extend  : 'Ext.container.Viewport',
 
-<span id='Ext-container-Viewport-cfg-applyTo'>    /**
-</span>     * @cfg {String/HTMLElement/Ext.Element} applyTo
-     * @private
-     */
+    alias: [
+        'widget.xnd-viewport',
+        'widget.xnd-dominoui'
+    ],
 
-<span id='Ext-container-Viewport-cfg-allowDomMove'>    /**
-</span>     * @cfg {Boolean} allowDomMove
-     * @private
-     */
+    alternateClassName: [
+        'Extnd.Viewport',
+        'Ext.nd.DominoUI'
+    ],
 
-<span id='Ext-container-Viewport-cfg-renderTo'>    /**
-</span>     * @cfg {String/HTMLElement/Ext.Element} renderTo
-     * Always renders to document body.
-     * @private
-     */
+    requires: [
+        'Extnd.grid.Panel',
+        'Extnd.tree.Panel',
+        'Ext.tab.Panel',
+        'Ext.layout.container.Border'
 
-<span id='Ext-container-Viewport-cfg-height'>    /**
-</span>     * @cfg {Number} height
-     * Sets itself to viewport width.
-     * @private
-     */
+    ],
 
-<span id='Ext-container-Viewport-cfg-width'>    /**
-</span>     * @cfg {Number} width
-     * Sets itself to viewport height.
-     * @private
-     */
 
-<span id='Ext-container-Viewport-property-isViewport'>    /**
-</span>     * @property {Boolean} isViewport
-     * `true` in this class to identify an object as an instantiated Viewport, or subclass thereof.
-     */
-    isViewport: true,
-
-<span id='Ext-container-Viewport-property-ariaRole'>    ariaRole: 'application',
-</span>    
-<span id='Ext-container-Viewport-property-preserveElOnDestroy'>    preserveElOnDestroy: true,
+<span id='Extnd-container-Viewport-cfg-layout'>    layout: 'border',
 </span>
-<span id='Ext-container-Viewport-method-initComponent'>    initComponent : function() {
-</span>        var me = this,
-            html = document.body.parentNode,
-            el;
-
-        // Get the DOM disruption over with beforfe the Viewport renders and begins a layout
-        Ext.getScrollbarSize();
-        
-        // Clear any dimensions, we will size later on
-        me.width = me.height = undefined;
-
-        me.callParent(arguments);
-        Ext.fly(html).addCls(Ext.baseCSSPrefix + 'viewport');
-        if (me.autoScroll) {
-            delete me.autoScroll;
-            Ext.fly(html).setStyle('overflow', 'auto');
-        }
-        me.el = el = Ext.getBody();
-        el.setHeight = Ext.emptyFn;
-        el.setWidth = Ext.emptyFn;
-        el.setSize = Ext.emptyFn;
-        el.dom.scroll = 'no';
-        me.allowDomMove = false;
-        me.renderTo = me.el;
-    },
-    
-<span id='Ext-container-Viewport-method-onRender'>    onRender: function() {
+<span id='Extnd-container-Viewport-method-initComponent'>    initComponent: function () {
 </span>        var me = this;
 
-        me.callParent(arguments);
-
-        // Important to start life as the proper size (to avoid extra layouts)
-        // But after render so that the size is not stamped into the body
-        me.width = Ext.Element.getViewportWidth();
-        me.height = Ext.Element.getViewportHeight();
-    },
-
-<span id='Ext-container-Viewport-method-afterFirstLayout'>    afterFirstLayout: function() {
-</span>        var me = this;
+        Ext.apply(me, {
+            items: me.getItemsCfg()
+        });
 
         me.callParent(arguments);
-        setTimeout(function() {
-            Ext.EventManager.onWindowResize(me.fireResize, me);
-        }, 1);
+
     },
 
-<span id='Ext-container-Viewport-method-fireResize'>    fireResize : function(width, height){
-</span>        // In IE we can get resize events that have our current size, so we ignore them
-        // to avoid the useless layout...
-        if (width != this.width || height != this.height) {
-            this.setSize(width, height);
+
+<span id='Extnd-container-Viewport-property-viewOpeningTitle'>    viewOpeningTitle: 'Opening...',
+</span>
+<span id='Extnd-container-Viewport-method-getItemsCfg'>    // private
+</span>    getItemsCfg: function () {
+        var west,
+            center;
+
+        // west/outline - be sure to include the defaults property
+        // so that for each view opened, the target property defaults
+        // will be applied
+
+        west = Ext.apply({
+            id          : 'xnd-outline-panel',
+            xtype       : 'xnd-uioutline',
+            region      : 'west',
+            //title       : Ext.nd.Session.currentDatabase.title,
+            title       : 'current Db Title',
+            collapsible : true,
+            split       : true,
+            width       : 200,
+            minSize     : 150,
+            maxSize     : 400,
+            target      : 'xnd-center-panel',
+            viewTarget  : 'xnd-grid-panel'
+        }, this.uiOutline);
+
+
+        // center/view area
+        center = {
+            region      : 'center',
+            id          : 'xnd-center-panel',
+            xtype       : 'tabpanel',
+            target      : 'xnd-center-panel',
+            defaults : {
+                target : 'xnd-center-panel',
+                border : true
+            },
+            enableTabScroll : true,
+            activeTab       : 0,
+            items: [Ext.apply({
+                id      : 'xnd-grid-panel',
+                layout  : 'fit',
+                xtype   : 'xnd-uiview',
+                target  : 'xnd-center-panel',
+                closable: false
+            }, this.uiView)]
+        };
+
+        // include these since the alpha and beta 1x code
+        // included these and some developers have custom
+        // code that depends on these being defined
+
+//        this.outlinePanel = Ext.getCmp('xnd-outline-panel');
+//        this.view = Ext.getCmp('xnd-grid-panel');
+//        this.tabPanel = Ext.getCmp('xnd-center-panel');
+
+        return [west, center];
+
+    },
+
+<span id='Extnd-container-Viewport-method-loadLink'>    // leave for backwards capability since this was included in beta 1x code
+</span>    loadLink: function () {
+        var href = window.location.href,
+            qs,
+            ps,
+            link,
+            title,
+            unid;
+
+        if (href.indexOf('?') &gt; 0 || href.indexOf('!') &gt; 0) {
+            qs = (href.indexOf('?') &gt; 0) ? href.split('?')[1] : href.split('!')[1];
+            ps = Ext.urlDecode(qs);
+            link = ps.link;
+            title = link;
+
+            if (link) {
+                unid = (link.indexOf('?') &gt; 0) ? href.split('?')[0] : link;
+
+                Extnd.util.addIFrame({
+                    target  : this.tabPanel,
+                    uiView  : this.view,
+                    url     : link,
+                    id      : unid,
+                    title   : 'Opening...',
+                    useIFrameTitle: true
+                });
+
+            }
         }
     }
+
 });
 </pre>
 </body>

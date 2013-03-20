@@ -94,14 +94,19 @@
 Ext.define('Extnd.toolbar.Actionbar', {
 
     extend  : 'Ext.toolbar.Toolbar',
-    alias   : 'xnd-actionbar',
+    alias   : 'widget.xnd-actionbar',
+
+    alternateClassName: [
+        'Extnd.Actionbar',
+        'Ext.nd.Actionbar'
+    ],
 
 <span id='Extnd-toolbar-Actionbar-property-noteType'>    // defaults
 </span>    noteType            : '',
 <span id='Extnd-toolbar-Actionbar-property-noteName'>    noteName            : '',
 </span><span id='Extnd-toolbar-Actionbar-property-createActionsFrom'>    createActionsFrom   : 'dxl',
-</span><span id='Extnd-toolbar-Actionbar-property-dominoActionbar'>    dominoActionbar     : {},
-</span><span id='Extnd-toolbar-Actionbar-property-actions'>    actions             : [],
+</span><span id='Extnd-toolbar-Actionbar-property-dominoActionbar'>    dominoActionbar     : null,
+</span><span id='Extnd-toolbar-Actionbar-property-actions'>    actions             : null,
 </span><span id='Extnd-toolbar-Actionbar-property-useViewTitleFromDxl'>    useViewTitleFromDxl : false,
 </span><span id='Extnd-toolbar-Actionbar-property-convertFormulas'>    convertFormulas     : true,
 </span>
@@ -110,6 +115,9 @@ Ext.define('Extnd.toolbar.Actionbar', {
         var me = this;
 
         me.toolbar = toolbar;
+        me.dominoActionbar = {};
+        me.actions = [];
+
 
         /* if the parent toolbar is an Ext.nd.Actionbar
          * then we need to wait to add the actions
@@ -128,6 +136,10 @@ Ext.define('Extnd.toolbar.Actionbar', {
 </span>    initComponent : function () {
         var me = this,
             vni;
+
+        me.toolbar = toolbar;
+        me.dominoActionbar = {};
+        me.actions = [];
 
         // for backwards compat
         if (!Ext.isEmpty(me.useDxl) &amp;&amp; me.useDxl === false) {
@@ -189,7 +201,7 @@ Ext.define('Extnd.toolbar.Actionbar', {
         if (me.noteType === '' || me.noteType === 'view') {
             me.dominoActionbar.actionbar = false;
         } else {
-            me.dominoActionbar = new Ext.nd.util.DominoActionbar();
+            me.dominoActionbar = new Extnd.util.DominoActionbar();
             me.dominoActionbar.hide();
         }
 
@@ -344,13 +356,13 @@ Ext.define('Extnd.toolbar.Actionbar', {
 
                 // the JavaScript onClick takes precendence
                 if (tmpOnClick) {
-                    /* note that we now use createDelegate so we can change the scope
+                    /* note that we use Ext.bind() so we can change the scope
                      * to 'this' so that view actions can get a handle to the
                      * grid by simply refering to 'this.getUIView()' and thus, such things as
                      * getting a handle to the currently selected documents in the view
                      * where this action was triggered is much easier
                      * for a form/document you can also get a handle to the uiDocument
-                     * from this.uiDocument
+                     * from this.getUIDocument()
                      */
                     handler = Ext.bind((function () {
                         var bleh = tmpOnClick;
@@ -402,7 +414,8 @@ Ext.define('Extnd.toolbar.Actionbar', {
                             case 'OpenView':
                             case 'RunAgent':
                             default:
-                                show = false; // For now hide unsupported commands
+                                show = false;
+                                // For now hide unsupported commands
                                 // handler = this.unsupportedAtCommand, this,[formula]);
 
                             }

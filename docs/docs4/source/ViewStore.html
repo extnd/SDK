@@ -25,6 +25,7 @@ Ext.define('Extnd.data.ViewStore', {
     extend: 'Ext.data.Store',
 
     requires: [
+        'Extnd.data.proxy.Ajax',
         'Extnd.data.ViewXmlReader'
     ],
 
@@ -59,21 +60,9 @@ Ext.define('Extnd.data.ViewStore', {
         config = Ext.apply({
 
             proxy: {
-                type        : 'ajax',
-                url         : config.viewUrl,
+                type        : 'xnd-ajax',
+                url         : config.viewUrl
 
-                // remap paramNames to work with Domino views
-                startParam  : 'start',
-                limitParam  : 'count', // domino uses count
-                sortParam   : 'sort',
-                dirParam    : 'dir',
-
-                reader: {
-                    type            : 'xnd-viewxml',
-                    root            : 'viewentries',
-                    record          : 'viewentry',
-                    totalProperty   : '@toplevelentries'
-                }
             }
 
         }, config);
@@ -126,7 +115,10 @@ Ext.define('Extnd.data.ViewStore', {
         if (me.fireEvent(&quot;beforeload&quot;, me, options) !== false) {
 
             // make sure options has a params property
-            options.params = options.params || {};
+            options.params = options.params || {start: 1, count: me.pageSize };
+
+            // make sure we have a start
+            options.params.start = options.params.start || 1;
 
             // do some extraParams cleanup
             if (options.params.expand || options.params.expandview) {
@@ -149,73 +141,9 @@ Ext.define('Extnd.data.ViewStore', {
             // now merge the extraParams and passed in params
             p = Ext.apply(me.extraParams, options.params || {});
 
-
-            if (me.sortInfo &amp;&amp; me.remoteSort) {
-                pn = me.paramNames;
-
-                // domino does not have separate params for sort and dir
-                // instead, domino combines them into one of two choices
-                // resortascending=colNbr
-                // resortdescending=colNbr
-
-                f = me.fields.get(me.sortInfo.field);
-                sortColumn = f.mapping; // to support older domino versions we will use colnumber (however, this will probably cause DND column reordering to break when sorting)
-                // get the config info for this column
-                colConfig = me.reader.meta.columnConfig.items[sortColumn];
-                if (colConfig.resortToViewName !== &quot;&quot;) {
-                    return; // the grid should have handled the request to change view
-                }
-
-                // TODO: need to refactor this section into it's own method
-                if (me.sortInfo.direction === &quot;ASC&quot;) {
-                    if (p.resortascending !== undefined) {
-                        if (p.resortascending !== sortColumn) { // changing to a new sort column, so reset
-                            p.resortascending = sortColumn;
-                            if (p.start) {
-                                delete p.start;
-                                delete p.startkey;
-                            }
-                            delete p.resortdescending;
-                        } else {
-                            if (p.start) {
-                                delete p.startkey; // delete startkey once we have a start param
-                            }
-                        }
-                        // else part of - p.resortascending
-                    } else {
-                        p.resortascending = sortColumn;
-                        delete p.start;
-                        delete p.startkey;
-                        delete p.resortdescending;
-                    }
-
-                    // else part of - sortDir == &quot;ASC&quot;
-                } else {
-                    if (p.resortdescending !== undefined) {
-                        if (p.resortdescending !== sortColumn) { // changing to a new sort column so reset
-                            p.resortdescending = sortColumn;
-                            if (p.start) {
-                                delete p.start;
-                                delete p.startkey;
-                            }
-                            delete p.resortdescending;
-                        } else {
-                            if (p.start) {
-                                delete p.startkey; // delete startkey once we have a start param
-                            }
-                        }
-                        // else part of p.resortdescending
-                    } else {
-                        p.resortdescending = sortColumn;
-                        delete p.start;
-                        delete p.startkey;
-                        delete p.resortascending;
-                    }
-                }
-            }
         }
 
-        // now callParenet with our custom 'p' object that is Domino friendly
+        // now callParent with our custom 'p' object that is Domino friendly
         me.callParent([{ params: p }]);
     },
 

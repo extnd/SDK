@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">Ext.define('Extnd.form.PickListFieldTypeAhead', {
+
+    extend  : 'Ext.form.TextField',
+    alias   : 'widget.xnd-picklist-typeahead',
+
+    view        : null,
+    queryParam  : 'startKey',
+
+    initComponent: function () {
+        var me = this;
+
+        me.enableKeyEvents = true;
+        me.callParent(arguments);
+        me.on('keyup', me.onKeyUp, me, {buffer: 300});
+    },
+
+    onKeyUp: function (e) {
+        var me = this,
+            p = {params: {}};
+
+        p.params[me.queryParam] = me.getValue();
+        me.view.getStore().load(p);
+    }
+
+});
+</pre>
+</body>
+</html>

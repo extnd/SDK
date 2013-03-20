@@ -17,7 +17,7 @@
 <body onload="prettyPrint(); highlight();">
   <pre class="prettyprint lang-js"><span id='Extnd-data-ViewModel'>/**
 </span> * Represents a view entry. A view entry represents a row in a view.
- * The #fields property is created dynamically from Ext.nd.data.ViewDesign.
+ * The #fields property is created dynamically from Extnd.data.ViewDesign.
  * The LotusScript and Java equivalents in Domino are NotesViewEntry and ViewEntry.
  */
 Ext.define('Extnd.data.ViewModel', {
@@ -43,7 +43,7 @@ Ext.define('Extnd.data.ViewModel', {
      */
 
 <span id='Extnd-data-ViewModel-property-universalId'>    /**
-</span>     * @property {String} universalId Tuniversal ID of a document, associated with a view entry. The ID is a 32-character combination of hexadecimal digits (0-9, A-F) that uniquely identifies a document across all replicas of a database.
+</span>     * @property {String} universalId The universal ID of a document, associated with a view entry. The ID is a 32-character combination of hexadecimal digits (0-9, A-F) that uniquely identifies a document across all replicas of a database.
      */
 
 <span id='Extnd-data-ViewModel-property-unid'>    /**
@@ -94,10 +94,10 @@ Ext.define('Extnd.data.ViewModel', {
      */
 
 
-<span id='Extnd-data-ViewModel-property-fields'>    /**
-</span>     * Fields are created dynamically form the Ext.nd.data.ViewDesign class when it processes the ?ReadDesign and DXLExport for a view.
+<span id='Extnd-data-ViewModel-property-'>    /**
+</span>     * Fields are created dynamically form the Extnd.data.ViewDesign class when it processes the ?ReadDesign and DXLExport for a view.
      */
-    fields: [],
+
 
 
 <span id='Extnd-data-ViewModel-method-getPosition'>    /**
@@ -116,6 +116,20 @@ Ext.define('Extnd.data.ViewModel', {
     hasChildren: function () {
         return !!this.childCount;
     }
+
+},
+function () {
+
+    // Add the new DOMINO data type
+    Ext.data.Types.DOMINO = {
+        convert: function (v, data) {
+            return v;
+        },
+        sortType: function (v) {
+            return v;
+        },
+        type: 'domino'
+    };
 
 });
 </pre>

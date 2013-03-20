@@ -134,7 +134,7 @@ Ext.define('Ext.container.AbstractContainer', {
      *     // specifying a single item
      *     items: {...},
      *     layout: 'fit',    // The single items is sized to fit
-     *      
+     *
      *     // specifying multiple items
      *     items: [{...}, {...}],
      *     layout: 'hbox', // The items are arranged horizontally
@@ -224,7 +224,7 @@ Ext.define('Ext.container.AbstractContainer', {
       * @since Ext 2
       */
     defaultType: 'panel',
-    
+
 <span id='Ext-container-AbstractContainer-cfg-detachOnRemove'>    /**
 </span>     * @cfg {Boolean} [detachOnRemove=true]
      * True to move any component to the {@link Ext#getDetachedBody detachedBody} when the component is
@@ -293,7 +293,7 @@ Ext.define('Ext.container.AbstractContainer', {
 <span id='Ext-container-AbstractContainer-event-add'>            /**
 </span>             * @event add
              * Fires after any {@link Ext.Component} is added or inserted into the container.
-             * 
+             *
              * **This event bubbles:** 'add' will also be fired when Component is added to any of
              * the child containers or their childern or ...
              * @param {Ext.container.Container} this
@@ -375,7 +375,7 @@ Ext.define('Ext.container.AbstractContainer', {
             layout.initLayout();
         }
     },
-    
+
 <span id='Ext-container-AbstractContainer-method-setupRenderTpl'>    setupRenderTpl: function (renderTpl) {
 </span>        var layout = this.getLayout();
 
@@ -523,13 +523,13 @@ Ext.define('Ext.container.AbstractContainer', {
      *
      * **If** the Container was configured with a size-managing {@link #layout} manager,
      * the Container will recalculate its internal layout at this time too.
-     *  
+     *
      * Note that the default layout manager simply renders child Components sequentially
      * into the content area and thereafter performs no sizing.
-     *  
+     *
      * If adding multiple new child Components, pass them as an array to the `add` method,
      * so that only one layout recalculation is performed.
-     *  
+     *
      *     tb = new {@link Ext.toolbar.Toolbar}({
      *         renderTo: document.body
      *     });  // toolbar is rendered
@@ -571,7 +571,7 @@ Ext.define('Ext.container.AbstractContainer', {
         length = items.length;
 
         if (me.rendered) {
-            Ext.suspendLayouts(); // suspend layouts while adding items...
+            //Ext.suspendLayouts(); // suspend layouts while adding items...
         }
 
         if (!addingArray &amp;&amp; length == 1) { // an array of 1 should still return an array...
@@ -612,7 +612,7 @@ Ext.define('Ext.container.AbstractContainer', {
         // We need to update our layout after adding all passed items
         me.updateLayout();
         if (me.rendered) {
-            Ext.resumeLayouts(true);
+            //Ext.resumeLayouts(true);
         }
 
         return ret;
@@ -793,7 +793,7 @@ Ext.define('Ext.container.AbstractContainer', {
         // Only have the layout perform remove postprocessing if the Component is not being destroyed
         else {
             if (hasLayout &amp;&amp; !floating) {
-                layout.afterRemove(component);       
+                layout.afterRemove(component);
             }
             if (me.detachOnRemove &amp;&amp; component.rendered) {
                 Ext.getDetachedBody().appendChild(component.getEl());
@@ -818,7 +818,7 @@ Ext.define('Ext.container.AbstractContainer', {
             item;
 
         // Suspend Layouts while we remove multiple items from the container
-        me.suspendLayouts();
+        //me.suspendLayouts();
         for (; i &lt; len; i++) {
             item = removeItems[i];
             me.remove(item, autoDestroy);
@@ -829,7 +829,7 @@ Ext.define('Ext.container.AbstractContainer', {
         }
 
         // Resume Layouts now that all items have been removed and do a single layout (if we removed anything!)
-        me.resumeLayouts(!!len);
+        //me.resumeLayouts(!!len);
         return items;
     },
 
@@ -937,9 +937,9 @@ Ext.define('Ext.container.AbstractContainer', {
         if (Ext.isObject(comp)) {
             comp = comp.getItemId();
         }
-        
+
         var c = this.items.get(comp);
-             
+
         // Only allow finding by index on the main items container
         if (!c &amp;&amp; typeof comp != 'number') {
             c = this.floatingItems.get(comp);
@@ -959,7 +959,7 @@ Ext.define('Ext.container.AbstractContainer', {
         selector = selector || '*';
         return Ext.ComponentQuery.query(selector, this);
     },
-    
+
 <span id='Ext-container-AbstractContainer-method-queryBy'>    /**
 </span>     * Retrieves all descendant components which match the passed function.
      * The function should return false for components that are to be
@@ -976,7 +976,7 @@ Ext.define('Ext.container.AbstractContainer', {
             i = 0,
             len = items.length,
             item;
-            
+
         for (; i &lt; len; ++i) {
             item = items[i];
             if (fn.call(scope || item, item) !== false) {
@@ -985,7 +985,7 @@ Ext.define('Ext.container.AbstractContainer', {
         }
         return out;
     },
-    
+
 <span id='Ext-container-AbstractContainer-method-queryById'>    /**
 </span>     * Finds a component at any level under this container matching the id/itemId.
      * This is a shorthand for calling ct.down('#' + id);
@@ -1089,7 +1089,7 @@ Ext.define('Ext.container.AbstractContainer', {
 
         return this;
     },
-    
+
 <span id='Ext-container-AbstractContainer-method-getChildItemsToDisable'>    /**
 </span>     * Gets a list of child components to enable/disable when the container is
      * enabled/disabled
@@ -1124,7 +1124,7 @@ Ext.define('Ext.container.AbstractContainer', {
                 me.doRemove(c, true);
             }
         }
-        
+
         if (floatingItems) {
             while ((c = floatingItems.first())) {
                 me.doRemove(c, true);

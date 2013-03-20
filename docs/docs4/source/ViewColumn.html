@@ -104,6 +104,9 @@ Ext.define('Extnd.grid.ViewColumn', {
 <span id='Extnd-grid-ViewColumn-property-numberformat'>    /**
 </span>     * @property {Object} numberformat The format for numeric values in a column.
      */
+<span id='Extnd-grid-ViewColumn-property-position'>    /**
+</span>     * @property {Number} position The position of a column in its view. Columns are numbered from left to right, starting with 1.
+     */
 
 
     initComponent: function () {
@@ -124,13 +127,24 @@ Ext.define('Extnd.grid.ViewColumn', {
         // ExtJS uses 'text' so copy over the viewentry.title config
         me.text = me.title || me.text;
 
+        // callParent now before setting up our sort states below
         me.callParent(arguments);
+
+        // Set our possible sort states for the column
+        // NOTE: we do this AFTER all call to callParent since the base class
+        // forces the possibleSortStates array to just just 2 elements if triStateSort is not true
+        // and we can't just simply set triStartSort to true since it does other things
+        me.possibleSortStates = [];
+        me.possibleSortStates.push(me.isResortAscending ? 'ASC' : 'RESTORE');
+        me.possibleSortStates.push(me.isResortDescending ? 'DESC' : 'RESTORE');
+        me.possibleSortStates.push('RESTORE');
+
     },
 
 <span id='Extnd-grid-ViewColumn-method-defaultRenderer'>    /**
 </span>     * Default renderer method to handle column data in Domino Views
      */
-    defaultRenderer: function (value, cell, record, rowIndex, colIndex, store) {
+    defaultRenderer: function (value, meta, record, rowIndex, colIndex, store) {
         var me                  = this,
             grid                = me.up('grid'),
             entryData           = record.entryData[me.dataIndex] || {},
@@ -178,106 +192,101 @@ Ext.define('Extnd.grid.ViewColumn', {
 
         // has children and is a categorized column
         if (record.hasChildren() &amp;&amp; me.isCategory) {
+
             indent = entryData.indent;
             extraIndent = (indent &gt; 0) ? 'padding-left:' + indent * 20 + 'px;' : '';
-            cell.attr = 'style=&quot;position: absolute; width: auto; white-space: nowrap; ' + extraIndent + '&quot;';
+            meta.style = 'position: absolute; width: auto; white-space: nowrap; ' + extraIndent;
 
             if (nextRecord) {
                 nextRecordLevel = nextRecord.columnIndentLevel;
                 if (nextRecordLevel &gt; recordLevel) {
-                    cell.css = ' xnd-view-collapse xnd-view-category';
+                    meta.tdCls = ' xnd-view-collapse xnd-view-category';
                     returnValue = sCollapseImage + me.getValue(value, record);
                 } else {
-                    cell.css = ' xnd-view-expand xnd-view-category';
+                    meta.tdCls = ' xnd-view-expand xnd-view-category';
                     returnValue = sExpandImage + me.getValue(value, record);
                 }
             } else { // should be a categorized column on the last record
-                cell.css = ' xnd-view-expand xnd-view-category';
+                meta.tdCls = ' xnd-view-expand xnd-view-category';
                 returnValue = sExpandImage + me.getValue(value, record);
             }
 
-        } else {
+        // is NOT a category but has children and IS NOT a response doc BUT IS a response COLUMN
+        } else if (!record.isCategory &amp;&amp; record.hasChildren() &amp;&amp; !record.isResponse &amp;&amp; me.isResponse) {
 
-            // is NOT a category but has children and IS NOT a response doc BUT IS a response COLUMN
-            if (!record.isCategory &amp;&amp; record.hasChildren() &amp;&amp; !record.isResponse &amp;&amp; me.isResponse) {
-
-                if (nextRecord) {
-                    nextRecordLevel = nextRecord.columnIndentLevel;
-                    if (nextRecordLevel &gt; recordLevel) {
-                        cell.css = 'xnd-view-collapse xnd-view-response';
-                        returnValue = sCollapseImage;
-                    } else {
-                        cell.css = 'xnd-view-expand xnd-view-response';
-                        returnValue = sExpandImage;
-                    }
-                } else { // should be a categorized column on the last record
-                    cell.css = 'xnd-view-expand xnd-view-response';
+            if (nextRecord) {
+                nextRecordLevel = nextRecord.columnIndentLevel;
+                if (nextRecordLevel &gt; recordLevel) {
+                    meta.tdCls = 'xnd-view-collapse xnd-view-response';
+                    returnValue = sCollapseImage;
+                } else {
+                    meta.tdCls = 'xnd-view-expand xnd-view-response';
                     returnValue = sExpandImage;
                 }
+            } else { // should be a categorized column on the last record
+                meta.tdCls = 'xnd-view-expand xnd-view-response';
+                returnValue = sExpandImage;
+            }
 
-            } else {
+        // has children and IS a response doc
+        } else if (record.hasChildren() &amp;&amp; record.isResponse &amp;&amp; me.isResponse) {
 
-                // has children and IS a response doc
-                if (record.hasChildren() &amp;&amp; record.isResponse &amp;&amp; me.isResponse) {
-                    indent = entryData.indent;
-                    extraIndent = (indent &gt; 0) ? 'padding-left:' + (20 + (indent * 20)) + 'px;' : '';
-                    cell.attr = 'style=&quot;position: absolute; width: auto; white-space: nowrap; ' + extraIndent + '&quot;';
-                    if (nextRecord) {
-                        nextRecordLevel = nextRecord.columnIndentLevel;
-                        if (nextRecordLevel &gt; recordLevel) {
-                            cell.css = 'xnd-view-collapse xnd-view-response';
-                            returnValue = sCollapseImage + me.getValue(value, record);
-                        } else {
-                            cell.css = 'xnd-view-expand xnd-view-response';
-                            returnValue = sExpandImage + me.getValue(value, record);
-                        }
-                    } else { // should be a categorized column on the last record
-                        cell.css = 'xnd-view-expand xnd-view-response';
-                        returnValue = sExpandImage + me.getValue(value, record);
-                    }
+            indent = entryData.indent;
+            extraIndent = (indent &gt; 0) ? 'padding-left:' + (20 + (indent * 20)) + 'px;' : '';
+            meta.style = 'position: absolute; width: auto; white-space: nowrap; ' + extraIndent;
+            if (nextRecord) {
+                nextRecordLevel = nextRecord.columnIndentLevel;
+                if (nextRecordLevel &gt; recordLevel) {
+                    meta.tdCls = 'xnd-view-collapse xnd-view-response';
+                    returnValue = sCollapseImage + me.getValue(value, record);
                 } else {
+                    meta.tdCls = 'xnd-view-expand xnd-view-response';
+                    returnValue = sExpandImage + me.getValue(value, record);
+                }
+            } else { // should be a categorized column on the last record
+                meta.tdCls = 'xnd-view-expand xnd-view-response';
+                returnValue = sExpandImage + me.getValue(value, record);
+            }
 
-                    // does NOT have children and IS a response doc
-                    if (!record.hasChildren() &amp;&amp; record.isResponse &amp;&amp; me.isResponse) {
+        // does NOT have children and IS a response doc
+        } else if (!record.hasChildren() &amp;&amp; record.isResponse &amp;&amp; me.isResponse) {
 
-                        cell.css = 'xnd-view-response';
-                        indent = entryData.indent;
-                        extraIndent = (indent &gt; 0) ? 'padding-left:' + (20 + (indent * 20)) + 'px;' : '';
-                        cell.attr = 'style=&quot;position: absolute; width: auto; white-space: nowrap; ' + extraIndent + '&quot;';
-                        returnValue = me.getValue(value, record);
+            meta.tdCls = 'xnd-view-response';
+            indent = entryData.indent;
+            extraIndent = (indent &gt; 0) ? 'padding-left:' + (20 + (indent * 20)) + 'px;' : '';
+            meta.style = 'position: absolute; width: auto; white-space: nowrap; ' + extraIndent;
+            returnValue = me.getValue(value, record);
 
+        } else if (me.isIcon) {
+
+            for (i = 0; i &lt; len; i++) {
+                tmpValue = value[i];
+
+                if (isNaN(parseInt(tmpValue, 10)) || tmpValue === '0') {
+                    returnValue = '';
+                } else {
+                    // I believe the domino only has view icon images from 1 to 186
+                    newValue = (tmpValue &lt; 10) ? '00' + tmpValue : (tmpValue &lt; 100) ? '0' + tmpValue : (tmpValue &gt; 186) ? '186' : tmpValue;
+                    clearFloat = (me.listSeparator === 'newline') ? 'style=&quot;clear: left;&quot;' : '';
+                    tmpReturnValue = '&lt;div class=&quot;xnd-icon-vw xnd-icon-vwicn' + newValue + '&quot; ' + clearFloat + '&gt;&amp;nbsp;&lt;/div&gt;';
+                    if (i === 0) {
+                        returnValue = tmpReturnValue;
                     } else {
-
-                        if (me.isIcon) {
-                            for (i = 0; i &lt; len; i++) {
-                                tmpValue = value[i];
-
-                                if (isNaN(parseInt(tmpValue, 10)) || tmpValue === '0') {
-                                    returnValue = '';
-                                } else {
-                                    // I believe the domino only has view icon images from 1 to 186
-                                    newValue = (tmpValue &lt; 10) ? '00' + tmpValue : (tmpValue &lt; 100) ? '0' + tmpValue : (tmpValue &gt; 186) ? '186' : tmpValue;
-                                    clearFloat = (me.listSeparator === 'newline') ? 'style=&quot;clear: left;&quot;' : '';
-                                    tmpReturnValue = '&lt;div class=&quot;xnd-icon-vw xnd-icon-vwicn' + newValue + '&quot; ' + clearFloat + '&gt;&amp;nbsp;&lt;/div&gt;';
-                                    if (i === 0) {
-                                        returnValue = tmpReturnValue;
-                                    } else {
-                                        returnValue = returnValue + separator + tmpReturnValue;
-                                    }
-                                }
-                            }
-
-                        } else {
-                            // just normal data but check first to see if a 'totals' column
-                            if (me.totals !== 'none') {
-                                cell.css = ' xnd-view-totals xnd-view-' + me.totals;
-                            }
-                            returnValue = me.getValue(value, record);
-                        }
+                        returnValue = returnValue + separator + tmpReturnValue;
                     }
                 }
             }
+
+        // just normal data but check first to see if a 'totals' column
+        } else {
+
+            if (me.totals !== 'none') {
+                meta.tdCls = ' xnd-view-totals xnd-view-' + me.totals;
+            }
+            returnValue = me.getValue(value, record);
+
         }
+
 
         // now return our domino formatted value
         return returnValue;
@@ -299,11 +308,11 @@ Ext.define('Extnd.grid.ViewColumn', {
             newValue    = '',
             i,
             len,
-            returnVal;
+            returnVal   = '';
 
-        // handle non-categorized columns
+        // handle categorized columns that do not have a value
         if (me.isCategory &amp;&amp; value.length === 0) {
-            newValue = me.notCategorizedText;
+            tmpValue = me.notCategorizedText;
         }
 
         // need to make sure value is an array
@@ -317,16 +326,17 @@ Ext.define('Extnd.grid.ViewColumn', {
 
             // handle columns set to show an icon a little differently
             if (me.isIcon) {
-                if (isNaN(parseInt(tmpValue, 10)) || tmpValue === 0) {
-                    returnVal = '';
+                tmpValue = parseInt(tmpValue, 10);
+                if (isNaN(tmpValue) || tmpValue === 0) {
+                    tmpValue = '';
                 } else {
                     // I believe domino only has view icon images from 1 to 186
-                    newValue = (tmpValue &lt; 10) ? '00' + tmpValue : (tmpValue &lt; 100) ? '0' + tmpValue : (tmpValue &gt; 186) ? '186' : tmpValue;
-                    returnVal = '&lt;img src=&quot;/icons/vwicn' + newValue + '.gif&quot;/&gt;';
+                    tmpValue = (tmpValue &lt; 10) ? '00' + tmpValue : (tmpValue &lt; 100) ? '0' + tmpValue : (tmpValue &gt; 186) ? '186' : tmpValue;
+                    tmpValue = '&lt;img src=&quot;/icons/vwicn' + tmpValue + '.gif&quot;/&gt;';
                 }
 
             } else if (me.totals === 'percentoverall' || me.totals === 'percentparent') {
-                returnVal = Ext.util.Format.round(100 * parseFloat(tmpValue), nbf.digits) + '%';
+                tmpValue = Ext.util.Format.round(100 * parseFloat(tmpValue), nbf.digits || 0) + '%';
 
             } else {
 
@@ -388,9 +398,9 @@ Ext.define('Extnd.grid.ViewColumn', {
                     // do nothing to tmpValue if we do not have a dataType we are interested in
                 }
 
-                returnVal = newValue + tmpValue + sep;
-
             }
+
+            returnVal = returnVal + tmpValue + sep;
         }
 
         return returnVal;
@@ -424,6 +434,68 @@ Ext.define('Extnd.grid.ViewColumn', {
         }
 
         return separator;
+    },
+
+
+<span id='Extnd-grid-ViewColumn-method-setSortState'>    /**
+</span>     * @override
+     * Custom version for Domino to handle a 'RESTORE' sort state.
+     */
+    setSortState: function (state, skipClear, initial) {
+        var me = this,
+            ascCls = me.ascSortCls,
+            descCls = me.descSortCls,
+            nullCls = me.nullSortCls,
+            ownerHeaderCt = me.getOwnerHeaderCt(),
+            oldSortState = me.sortState;
+
+        state = state || null;
+
+        if (!me.sorting &amp;&amp; oldSortState !== state &amp;&amp; me.getSortParam()) {
+            me.addCls(Ext.baseCSSPrefix + 'column-header-sort-' + state);
+            // don't trigger a sort on the first time, we just want to update the UI
+            if (state &amp;&amp; !initial) {
+                // when sorting, it will call setSortState on the header again once
+                // refresh is called
+                me.sorting = true;
+                me.doSort(state);
+                me.sorting = false;
+            }
+            switch (state) {
+            case 'DESC':
+                me.removeCls([ascCls, nullCls]);
+                break;
+            case 'ASC':
+                me.removeCls([descCls, nullCls]);
+                break;
+            // BEGIN OVERRIDE
+            case 'RESTORE':
+                me.removeCls([ascCls, descCls, nullCls]);
+                break;
+            // END OVERRIDE
+            case null:
+                me.removeCls([ascCls, descCls]);
+                break;
+            }
+            if (ownerHeaderCt &amp;&amp; !me.triStateSort &amp;&amp; !skipClear) {
+                ownerHeaderCt.clearOtherSortStates(me);
+            }
+            me.sortState = state;
+            // we only want to fire the event if we have a null state when using triStateSort
+            if (me.triStateSort || state !== null) {
+                ownerHeaderCt.fireEvent('sortchange', ownerHeaderCt, me, state);
+            }
+        }
+    },
+
+<span id='Extnd-grid-ViewColumn-method-getSortColumn'>    /**
+</span>     * Similar to #getSortParam that returns the dataIndex.
+     * However, since Domino's resortascending and resortdescending params expect the column number, this method
+     * can be used to return the column number which is the position minus 1.
+     * @return {Number}
+     */
+    getSortColumn: function () {
+        return this.position - 1;
     }
 
 });
