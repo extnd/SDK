@@ -120,11 +120,14 @@ Ext.define('Extnd.form.Panel', {
             // Maybe we need a custom xnd radio/checkbox field with a custom version of applyToMarkup that will
             // do all of this checking and cleanup....
             applyToMarkup: function (el) {
-                el = Ext.get(el);
-                el.addCls("x-hidden");
-                //Ext.get(el.dom.parentNode).addCls('x-resizable-wrap');
+                var oldEl = Ext.get(el);
+
                 this.allowDomMove = false;
-                this.render(el.dom.parentNode, null, true);
+                this.setValue(oldEl.dom.value);
+                this.render(oldEl.dom.parentNode, null, true);
+
+                // now we can remove the old dom node
+                Ext.removeNode(oldEl);
             }
         });
 
@@ -299,7 +302,7 @@ Ext.define('Extnd.form.Panel', {
     render: function () {
         if (arguments.length === 0) {
           //this.render(document.body);
-            new Ext.Viewport({
+            Ext.create('Ext.Viewport', {
                 layout: 'fit',
                 items: this
             });
@@ -790,6 +793,9 @@ Ext.define('Extnd.form.Panel', {
             case 'file':
                 this.convertToFileUpload(el);
                 break;
+            case 'button':
+                // do nothing for now on buttons
+                break;
             default:
                 this.convertFromDominoFieldType(el);
 
@@ -924,7 +930,8 @@ Ext.define('Extnd.form.Panel', {
 
     convertToHiddenField: function (el) {
         var f = new Ext.form.field.Hidden({
-            itemId: (el.id || el.name)
+            itemId  : (el.id || el.name),
+            name    : (el.name || el.id)
         });
 
         f.applyToMarkup(el);
@@ -937,7 +944,7 @@ Ext.define('Extnd.form.Panel', {
 
         // for normal input fields
         var f = new Ext.form.TextField({
-            name        : el.name,
+            name        : (el.name || el.id),
             itemId      : (el.id || el.name),
             width       : this.getFieldWidth(el)
         });
@@ -952,10 +959,11 @@ Ext.define('Extnd.form.Panel', {
 
         //var title = Ext.DomQuery.selectValue('legend',el,'');
         var fs = new Ext.form.FieldSet({
-            itemId: (el.id || el.name),
+            itemId      : (el.id || el.name),
+            name        : (el.name || el.id),
             //title : title,
-            autoHeight: true,
-            autoWidth : true
+            autoHeight  : true,
+            autoWidth   : true
         });
         fs.applyToMarkup(el);
 
@@ -980,26 +988,26 @@ Ext.define('Extnd.form.Panel', {
 
                 case 'addressbook':
                     this.convertToNamePicker(el, {
-                        multipleSelection : allowMultiValues,
-                        allowNew : allowNew
+                        multipleSelection   : allowMultiValues,
+                        allowNew            : allowNew
                     });
                     break;
 
                 case 'acl':
                     this.convertToACLDialog(el, {
-                        multipleSelection : allowMultiValues,
-                        allowNew : allowNew
+                        multipleSelection   : allowMultiValues,
+                        allowNew            : allowNew
                     });
                     break;
 
                 case 'view':
                     this.convertToPickList(el, {
-                        type : 'custom',
-                        viewName : Ext.DomQuery.selectValue('@view', dfield),
-                        column : Ext.DomQuery.selectNumber('@viewcolumn', dfield),
-                        multipleSelection : allowMultiValues,
-                        useCheckboxSelection : true,
-                        allowNew : allowNew
+                        type                    : 'custom',
+                        viewName                : Ext.DomQuery.selectValue('@view', dfield),
+                        column                  : Ext.DomQuery.selectNumber('@viewcolumn', dfield),
+                        multipleSelection       : allowMultiValues,
+                        useCheckboxSelection    : true,
+                        allowNew                : allowNew
                     });
                     break;
                 }
@@ -1015,9 +1023,10 @@ Ext.define('Extnd.form.Panel', {
         config = config || {};
 
         var nm = new Extnd.form.PickListField(Ext.apply({
-            type: 'names',
-            itemId: (el.id || el.name),
-            width : this.getFieldWidth(el)
+            type    : 'names',
+            itemId  : (el.id || el.name),
+            name    : (el.name || el.id),
+            width   : this.getFieldWidth(el)
         }, config));
 
         nm.applyToMarkup(el);
@@ -1028,8 +1037,9 @@ Ext.define('Extnd.form.Panel', {
 
     convertToPickList: function (el, config) {
         var pl = new Extnd.form.PickListField(Ext.apply({
-            itemId: (el.id || el.name),
-            width : this.getFieldWidth(el)
+            itemId  : (el.id || el.name),
+            name    : (el.name || el.id),
+            width   : this.getFieldWidth(el)
         }, config));
 
         pl.applyToMarkup(el);
@@ -1040,8 +1050,9 @@ Ext.define('Extnd.form.Panel', {
 
     convertToTextAreaField: function (el) {
         var ta = new Ext.form.TextArea({
-            itemId: (el.id || el.name),
-            resizable: true
+            itemId      : (el.id || el.name),
+            name        : (el.name || el.id),
+            resizable   : true
         });
 
         ta.applyToMarkup(el);
@@ -1150,8 +1161,8 @@ Ext.define('Extnd.form.Panel', {
 
         if (tag === 'div') {
             ed = new Ext.form.HtmlEditor({
-                itemId: (el.id || el.name),
-                renderTo: el
+                itemId      : (el.id || el.name),
+                renderTo    : el
             });
 
         } else {
@@ -1219,7 +1230,9 @@ Ext.define('Extnd.form.Panel', {
     convertToNumberField: function (el) {
 
         var nbr = new Ext.form.NumberField({
-            width : this.getFieldWidth(el)
+            width   : this.getFieldWidth(el),
+            name    : (el.name || el.id),
+            itemId  : (el.id || el.name)
         });
 
         nbr.applyToMarkup(el);
@@ -1248,10 +1261,11 @@ Ext.define('Extnd.form.Panel', {
 
     convertToDateField: function (el) {
         var dt = new Ext.form.DateField({
-            itemId: (el.id || el.name),
-            selectOnFocus: true,
-            format: this.dateTimeFormats.dateFormat,
-            width : this.getFieldWidth(el)
+            itemId          : (el.id || el.name),
+            name            : (el.name || el.id),
+            selectOnFocus   : true,
+            format          : this.dateTimeFormats.dateFormat,
+            width           : this.getFieldWidth(el)
         });
 
         dt.applyToMarkup(el);
@@ -1261,7 +1275,9 @@ Ext.define('Extnd.form.Panel', {
 
     convertToTimeField: function (el) {
         var tm = new Extnd.form.field.Time({
-            width : this.getFieldWidth(el)
+            width   : this.getFieldWidth(el),
+            itemId  : (el.id || el.name),
+            name    : (el.name || el.id)
         });
 
         tm.applyToMarkup(el);
@@ -1276,7 +1292,9 @@ Ext.define('Extnd.form.Panel', {
             // TODO: figure out how to use columns and checkbox group
             columns = Ext.DomQuery.selectValue('keywords/@columns'),
             ckb = new Ext.form.Checkbox({
-                boxLabel : boxLabel
+                boxLabel    : boxLabel,
+                itemId      : (el.id || el.name),
+                name        : (el.name || el.id)
             });
 
         ckb.applyToMarkup(el);
@@ -1292,15 +1310,10 @@ Ext.define('Extnd.form.Panel', {
             columns = Ext.DomQuery.selectValue('keywords/@columns'),
             rd;
 
-        // Ext.form.Radio needs a unique id for each radio button
-        // and this unique id needs to be on the corresponding
-        // component
-
-        el.id = Ext.id();
-
         rd = new Ext.form.Radio({
-            itemId: el.id,
-            boxLabel : boxLabel
+            itemId      : (el.id || el.name),
+            name        : (el.name || el.id),
+            boxLabel    : boxLabel
         });
 
         rd.applyToMarkup(el);
@@ -1406,11 +1419,11 @@ Ext.define('Extnd.form.Panel', {
 
             if (choicesdialog === 'view') {
                 this.convertToPickList(el, {
-                    type : 'custom',
-                    viewName : Ext.DomQuery.selectValue('@view', dfield),
-                    column : Ext.DomQuery.selectNumber('@viewcolumn', dfield),
-                    multipleSelection : allowMultiValues,
-                    allowNew : allowNew
+                    type                : 'custom',
+                    viewName            : Ext.DomQuery.selectValue('@view', dfield),
+                    column              : Ext.DomQuery.selectNumber('@viewcolumn', dfield),
+                    multipleSelection   : allowMultiValues,
+                    allowNew            : allowNew
                 });
                 return;
             }
@@ -1446,9 +1459,9 @@ Ext.define('Extnd.form.Panel', {
         // this bug is fixed in Ext 3.0 and in Ext 2.2.?
         // http://extjs.com/forum/showthread.php?t=63132
         store = new Ext.data.Store({
-            data: textlist,
-            fields: ['text', 'value'],
-            reader: new Ext.data.reader.Xml({
+            data    : textlist,
+            fields  : ['text', 'value'],
+            reader  : new Ext.data.reader.Xml({
                 record: "text"
             },
                 [{
@@ -1460,13 +1473,15 @@ Ext.define('Extnd.form.Panel', {
         });
 
         combo = new Ext.form.ComboBox({
-            displayField : "value",
-            store : store,
-            typeAhead: true,
-            mode: 'local',
-            triggerAction: 'all',
-            selectOnFocus: true,
-            width : this.getFieldWidth(el)
+            itemId          : (el.id || el.name),
+            name            : (el.name || el.id),
+            displayField    : "value",
+            store           : store,
+            typeAhead       : true,
+            mode            : 'local',
+            triggerAction   : 'all',
+            selectOnFocus   : true,
+            width           : this.getFieldWidth(el)
         });
 
         combo.applyToMarkup(el);
@@ -1498,11 +1513,11 @@ Ext.define('Extnd.form.Panel', {
             }),
             reader: new Ext.data.ArrayReader({}, [{name: 'value'}]),
             baseParams: {
-                formula : formula,
-                db : this.dbPath,
-                unid : (this.document && this.document.universalID) ? this.document.universalID : "",
-                form : this.formName,
-                outputformat : 'json',
+                formula         : formula,
+                db              : this.dbPath,
+                unid            : (this.document && this.document.universalID) ? this.document.universalID : "",
+                form            : this.formName,
+                outputformat    : 'json',
                 convertresulttoarray : true
             }
         });
@@ -1516,15 +1531,16 @@ Ext.define('Extnd.form.Panel', {
 
 
         cb = new Ext.form.ComboBox({
-            itemId: (el.id || el.name),
-            store : store,
-            typeAhead: true,
-            triggerAction: 'all',
-            displayField: "value",
-            valueField: "value",
-            forceSelection: true,
-            resizable: true,
-            width : this.getFieldWidth(el)
+            itemId          : (el.id || el.name),
+            name            : (el.name || el.id),
+            store           : store,
+            typeAhead       : true,
+            triggerAction   : 'all',
+            displayField    : "value",
+            valueField      : "value",
+            forceSelection  : true,
+            resizable       : true,
+            width           : this.getFieldWidth(el)
         });
 
         cb.applyToMarkup(el);
@@ -1584,7 +1600,7 @@ Ext.define('Extnd.form.Panel', {
             o = opts[i];
             value = (o.hasAttribute ? o.hasAttribute('value') : o.getAttribute('value') !== null) ? o.value : o.text;
 
-            // correct the issue scene with IE when the option has an empty value tag
+            // correct the issue with IE where the option has an empty value tag
             value = (value === '' && o.text !== '') ? o.text : value;
             if (o.selected) {
                 selectedValue = value;
@@ -1593,10 +1609,10 @@ Ext.define('Extnd.form.Panel', {
         }
 
         store = new Ext.data.ArrayStore({
-            'id': 0,
-            fields: ['value', 'text'],
-            data : d,
-            autoDestroy: true
+            'id'        : 0,
+            fields      : ['value', 'text'],
+            data        : d,
+            autoDestroy : true
         });
 
         attr = el.attributes;
@@ -1610,21 +1626,22 @@ Ext.define('Extnd.form.Panel', {
         }
         cb = new Ext.form.ComboBox({
             transform: el,
-            itemId: (el.id || el.name),
-            hiddenName: el.name,
-            store : store,
-            mode : 'local',
-            value : selectedValue,
-            valueField : 'value',
-            displayField : 'text',
-            typeAhead: true,
-            triggerAction: 'all',
-            lazyRender: false, // docs say must be true since we are in an FormPanel but we need it set to false
-            forceSelection: forceSelection,
-            resizable: true,
-            style : style,
-            cls : cls,
-            width : this.getFieldWidth(el)
+            itemId          : (el.id || el.name),
+            name            : (el.name || el.id),
+            hiddenName      : el.name,
+            store           : store,
+            mode            : 'local',
+            value           : selectedValue,
+            valueField      : 'value',
+            displayField    : 'text',
+            typeAhead       : true,
+            triggerAction   : 'all',
+            lazyRender      : false, // docs say must be true since we are in an FormPanel but we need it set to false
+            forceSelection  : forceSelection,
+            resizable       : true,
+            style           : style,
+            cls             : cls,
+            width           : this.getFieldWidth(el)
         });
 
         // only setup domino's onchange event for keyword refreshes if the user
