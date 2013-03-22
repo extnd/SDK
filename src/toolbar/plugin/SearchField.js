@@ -12,6 +12,10 @@ Ext.define('Extnd.toolbar.plugin.SearchField', {
         'Ext.nd.SearchPlugin'
     ],
 
+    requires: [
+        'Ext.form.field.Trigger'
+    ],
+
     mixins: {
         observable: 'Ext.util.Observable'
     },
@@ -21,7 +25,7 @@ Ext.define('Extnd.toolbar.plugin.SearchField', {
     searchText          : 'Search',
     labelWidth          : 50,
     searchCount         : 40,
-    blankText           : 'Search view...',
+    emptyText           : 'Search view...',
     searchTipText       : 'Type a text to search and press Enter',
     minCharsTipText     : 'Type at least {0} characters',
     width               : 220,
@@ -75,19 +79,28 @@ Ext.define('Extnd.toolbar.plugin.SearchField', {
             }
         }
 
-        this.field = new Ext.form.TwinTriggerField({
-            fieldLabel      : this.searchText,
-            labelAlign      : 'right',
-            labelWidth      : this.labelWidth,
-            width           : this.width,
-            minLength       : this.minLength,
-            hideTrigger1    : true,
-            selectOnFocus   : undefined === this.selectOnFocus ? true : this.selectOnFocus,
-            trigger1Class   : 'x-form-clear-trigger',
-            trigger2Class   : this.minChars ? 'x-hidden' : 'x-form-search-trigger',
+        this.field = new Ext.form.field.Trigger({
+            fieldLabel          : this.searchText,
+            labelAlign          : 'right',
+            labelWidth          : this.labelWidth,
+            preventMark         : true,
+            allowBlank          : false,
+            allowOnlyWhitespace : false,
+            emptyText           : this.emptyText,
+            width               : this.width,
+            minLength           : this.minLength,
+            selectOnFocus       : undefined === this.selectOnFocus ? true : this.selectOnFocus,
+
+            //hideTrigger1    : true, // TODO check with Sencha core devs to see when TriggerField will be fixed
+
+            trigger1Cls     : 'x-form-clear-trigger',
+            //trigger2Cls     : this.minChars ? 'x-hidden' : 'x-form-search-trigger',
+            trigger2Cls     : 'x-form-search-trigger',
+
             scope           : this,
-            onTrigger1Click : this.minChars ? Ext.emptyFn : this.onTriggerClear,
-            onTrigger2Click : this.onTriggerSearch
+            //onTrigger1Click : this.minChars ? Ext.emptyFn : Ext.bind(this.onTriggerClear, this),
+            onTrigger1Click : Ext.bind(this.onTriggerClear, this),
+            onTrigger2Click : Ext.bind(this.onTriggerSearch, this)
         });
 
         // install event handlers on input field
