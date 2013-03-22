@@ -127,7 +127,7 @@ Ext.define('Extnd.form.Panel', {
                 this.render(oldEl.dom.parentNode, null, true);
 
                 // now we can remove the old dom node
-                Ext.removeNode(oldEl);
+                Ext.removeNode(oldEl.dom);
             }
         });
 

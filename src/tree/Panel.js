@@ -24,8 +24,13 @@ Ext.define('Extnd.tree.Panel', {
         'Extnd.util.Iframe'
     ],
 
-    rootVisible : false,
+    rootVisible: false,
 
+    /**
+     * @cfg
+     * Whether to use the title returned from the entry
+     */
+    useEntryTitleAsTargetTitle: true,
 
     constructor: function (config) {
         config = this.cleanUpConfig(config);
@@ -137,7 +142,7 @@ Ext.define('Extnd.tree.Panel', {
             type        = outlineEntry.get('type'),
             position    = outlineEntry.get('id'),
             panelId     = me.id + '-' + position,
-            title       = (me.useEntryTitleAsTargetTitle) ? outlineEntry.text : null,
+            title       = (me.useEntryTitleAsTargetTitle) ? outlineEntry.get('text') : null,
             panel,
             target,
             targetDefaults,
