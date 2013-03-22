@@ -40,6 +40,7 @@ Ext.define('Extnd.grid.Panel', {
         'Extnd.toolbar.Paging',
         'Extnd.toolbar.Actionbar',
         'Extnd.toolbar.plugin.SingleCategoryCombo',
+        'Extnd.toolbar.plugin.SearchField',
         'Extnd.util.Iframe'
     ],
 
@@ -117,6 +118,11 @@ Ext.define('Extnd.grid.Panel', {
     initComponent: function () {
         var me = this;
 
+        me.tbarPlugins = [];
+        me.bbarPlugins = [];
+        me.setupToolbars();
+
+
         // applyIf so that these can all be overridden if passed into the config
         Ext.applyIf(me, {
             store               : me.createStore(),
@@ -131,8 +137,6 @@ Ext.define('Extnd.grid.Panel', {
             renderers               : [],
             quickSearchKeyStrokes   : [],
             targetDefaults          : {},
-            tbarPlugins             : [],
-            bbarPlugins             : [],
             colsFromDesign          : [],
             extraParams             : {},
 
@@ -155,7 +159,6 @@ Ext.define('Extnd.grid.Panel', {
             me.extraParams.RestrictToCategory = me.category;
         }
 
-        me.setupToolbars();
         me.addEventListeners();
         me.callParent(arguments);
     },
@@ -602,35 +605,37 @@ Ext.define('Extnd.grid.Panel', {
     },
 
     getPlugins : function () {
+        var me = this,
+            cp,
+            sp;
 
         // category combo plugin
-        if (this.showCategoryComboBox) {
-            var cp = new Extnd.toolbar.plugin.SingleCategoryCombo({
-                viewUrl : this.viewUrl,
-                value   : this.category,
-                count   : this.categoryComboBoxCount || -1
+        if (me.showCategoryComboBox) {
+            cp = new Extnd.toolbar.plugin.SingleCategoryCombo({
+                viewUrl : me.viewUrl,
+                value   : me.category,
+                count   : me.categoryComboBoxCount || -1
             });
             // make sure category has some value
-            if (this.category === undefined) {
-                this.category = '';
+            if (me.category === undefined) {
+                me.category = '';
             }
-            if (this.showCategoryComboBoxPosition === 'top') {
-                this.tbarPlugins.push(cp);
+            if (me.showCategoryComboBoxPosition === 'top') {
+                me.tbarPlugins.push(cp);
             } else {
-                this.bbarPlugins.push(cp);
+                me.bbarPlugins.push(cp);
             }
         } // eo showCategoryComboBox plugin
 
 
         // search plugin
-        if (this.showSearch) {
-            console.log('TODO add back search plugin support');
-//            var sp = new Ext.nd.SearchPlugin(this)
-//            if (this.showSearchPosition == 'top') {
-//                this.tbarPlugins.push(sp)
-//            } else {
-//                this.bbarPlugins.push(sp)
-//            }
+        if (me.showSearch) {
+            sp = Ext.create('Extnd.SearchPlugin', {});
+            if (me.showSearchPosition === 'top') {
+                me.tbarPlugins.push(sp);
+            } else {
+                me.bbarPlugins.push(sp);
+            }
         }
 
     },
@@ -647,12 +652,12 @@ Ext.define('Extnd.grid.Panel', {
         if (this.tbar) {
             if (Ext.isArray(this.tbar)) {
                 this.tbar = new Extnd.Actionbar({
-                    id: tbId,
-                    noteName: '',
-                    uiView: this,
-                    target: this.getTarget() || null,
-                    items: this.tbar,
-                    plugins: this.tbarPlugins
+                    id          : tbId,
+                    noteName    : '',
+                    uiView      : this,
+                    target      : this.getTarget() || null,
+                    items       : this.tbar,
+                    plugins     : this.tbarPlugins
                 });
             } else {
                 if (this.tbar.add) {
@@ -664,16 +669,16 @@ Ext.define('Extnd.grid.Panel', {
         } else {
             if (this.showActionbar) {
                 this.tbar = new Extnd.toolbar.Actionbar({
-                    id: tbId,
-                    noteType: this.noteType,
-                    dbPath: this.dbPath,
-                    noteName: this.viewName,
-                    uiView: this,
-                    useDxl: this.buildActionBarFromDXL,
-                    useViewTitleFromDxl: this.useViewTitleFromDxl,
+                    id          : tbId,
+                    noteType    : this.noteType,
+                    dbPath      : this.dbPath,
+                    noteName    : this.viewName,
+                    uiView      : this,
+                    useDxl      : this.buildActionBarFromDXL,
+                    useViewTitleFromDxl : this.useViewTitleFromDxl,
                     removeEmptyActionbar: this.removeEmptyActionbar,
-                    target: this.getTarget() || null,
-                    plugins: this.tbarPlugins
+                    target      : this.getTarget() || null,
+                    plugins     : this.tbarPlugins
                 });
             } else {
                 // if plugins are wanted but not the actionbar then create an Extnd.Actionbar
@@ -681,11 +686,11 @@ Ext.define('Extnd.grid.Panel', {
                 // and then add the plugins to it
                 if (this.tbarPlugins.length > 0) {
                     this.tbar = new Extnd.Actionbar({
-                        id: tbId,
-                        noteName: '', //intentional
-                        uiView: this,
-                        target: this.getTarget() || null,
-                        plugins: this.tbarPlugins
+                        id          : tbId,
+                        noteName    : '', //intentional
+                        uiView      : this,
+                        target      : this.getTarget() || null,
+                        plugins     : this.tbarPlugins
                     });
                 }
             }
@@ -725,7 +730,8 @@ Ext.define('Extnd.grid.Panel', {
             return {
                 xtype       : 'xnd-pagingtoolbar',
                 displayInfo : true,
-                store       : me.store
+                store       : me.store,
+                plugins     : me.bbarPlugins
             };
         }
     }
