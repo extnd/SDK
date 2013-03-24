@@ -31,7 +31,7 @@ Ext.define('Extnd.data.ViewStore', {
         var me = this;
 
         // just to make sure that viewName, viewUrl, and dbPath get set
-        //config = Ext.nd.util.cleanUpConfig(config);
+        config = me.cleanUpConfig(config);
 
         // make sure we have a viewUrl
         if (!config.viewUrl) {
@@ -80,6 +80,37 @@ Ext.define('Extnd.data.ViewStore', {
 
     },
 
+
+    /**
+     * For everything to work right we need to know the dbPath and viewName and this method cleans up the config
+     * so that we have both.
+     * If only the viewName is passed, then we calculate the dbPath from the url and then we can calculate the viewUrl.
+     * If both the dbPath and viewName are passed, we calculate the viewUrl
+     * If only the viewUrl is passed, we will calculate the dbPath and viewName
+     */
+    cleanUpConfig: function (config) {
+
+        // viewUrl is either passed in or built from dbPath and viewName
+        if (config.viewName && config.dbPath) {
+            config.viewUrl = config.dbPath + config.viewName;
+        } else if (config.viewName && !config.dbPath) {
+            // only the viewName was sent so we'll determine the dbPath from the Session or the url
+            config.dbPath = Extnd.session.currentDatabase ? Extnd.session.currentDatabase.webFilePath : null;
+            if (!config.dbPath) {
+                config.dbPath = location.pathname.split(/\.nsf/i)[0];
+                config.dbPath = config.dbPath || config.dbPath + '.nsf/';
+            }
+            config.viewUrl = config.dbPath + config.viewName;
+        } else if (config.viewUrl) {
+            // ok, no viewName but do we have the viewUrl?
+            var vni = config.viewUrl.lastIndexOf('/') + 1;
+            config.dbPath = config.viewUrl.substring(0, vni);
+            config.viewName = config.viewUrl.substring(vni);
+        }
+
+        return config;
+
+    },
 
     /**
      * Custom override that makes sure the params that Domino knows about are set correctly
