@@ -207,11 +207,6 @@ Ext.define('Extnd.util.Iframe', {
 
                 });
 
-                // call doLayout so we can now see this
-                if (targetPanel.doLayout) {
-                    targetPanel.doLayout();
-                }
-
 
             } else {
                 // target is not a panel so must be dealing with a div element
@@ -225,7 +220,7 @@ Ext.define('Extnd.util.Iframe', {
         }  // eo if(!panel)
 
 
-        // now show the panel (not sure if this is needed)
+        // now show the panel
         if (panel.show) {
             panel.show();
         }

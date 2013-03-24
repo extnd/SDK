@@ -152,7 +152,8 @@ Ext.define('Extnd.tree.Panel', {
             viewUrl,
             uiview,
             idx,
-            state;
+            state,
+            layout;
 
 
         if (this.fireEvent('beforeopenentry', this, outlineEntry) !== false) {
@@ -206,15 +207,16 @@ Ext.define('Extnd.tree.Panel', {
                     } else {
 
                         //setup the uiview property of this new view
-                        // apply whatever viewDefaults were define for the uioutline
+                        // apply whatever viewDefaults were defined for the uioutline
                         // and then apply the targetDefaults
                         uiview = Ext.apply(
                             Ext.apply({
-                                xtype: 'xnd-uiview',
-                                id : panelId,
-                                layout: 'fit',
-                                title: title,
-                                viewUrl: viewUrl
+                                xtype       : 'xnd-uiview',
+                                id          : panelId,
+                                layout      : 'fit',
+                                title       : title,
+                                viewUrl     : viewUrl,
+                                closable    : true
                             }, this.viewDefaults),
                             targetDefaults
                         );
@@ -278,13 +280,20 @@ Ext.define('Extnd.tree.Panel', {
                                     // the new view is visible
                                     entry = target.add(uiview);
                                 }
-                                //Ext.nd.util.doLayoutAndShow(entry);
+                                break;
+
+                            case 'tabpanel':
+                                entry = target.add(uiview);
+                                target.setActiveTab(entry);
                                 break;
 
                             // for everything else just call the add method
                             default:
                                 entry = target.add(uiview);
-                                //Ext.nd.util.doLayoutAndShow(entry);
+                                layout = target.getLayout();
+                                if (layout.setActiveItem) {
+                                    layout.setActiveItem(entry);
+                                }
                                 break;
                             }
 
