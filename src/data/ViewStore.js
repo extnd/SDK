@@ -9,6 +9,7 @@ Ext.define('Extnd.data.ViewStore', {
 
     requires: [
         'Extnd.data.proxy.Ajax',
+        'Extnd.data.ViewModel',
         'Extnd.data.ViewXmlReader'
     ],
 
@@ -41,16 +42,22 @@ Ext.define('Extnd.data.ViewStore', {
         }
 
         config = Ext.apply({
-
             proxy: {
                 type        : 'xnd-ajax',
                 url         : config.viewUrl
-
             }
-
         }, config);
 
 
+        // Supports the 3.x style of simply passing an array of fields to the store, implicitly creating a model
+        // And since this is a custom model for Domino Views we make sure our implicit model extends from Extnd.data.ViewModel
+        if (!config.model && config.fields) {
+            config.model = Ext.define('Extnd.data.ViewModel-' + (config.storeId || Ext.id()), {
+                extend: 'Extnd.data.ViewModel',
+                fields: config.fields
+            });
+            me.implicitModel = true;
+        }
 
        /**
         * @cfg {Boolean} removeCategoryTotal
