@@ -18,38 +18,47 @@ Ext.define('Extnd.util.Iframe', {
      * @singleton
      */
     add: function (config) {
+        var target,
+            targetPane  = false, // if the target is an Ext container
+            targetDiv   = false, // if the target is simply a div
+            panel       = false, // the panel that will contain the iframe
+            iframe      = false, // the iframe
+            targetPanel,
+            documentLoadingWindowTitle,
+            documentUntitledWindowTitle,
+            useDocumentWindowTitle,
+            documentWindowTitleMaxLength,
+            targetDefaults,
+            ifId,
+            panelConfig,
+            iFrame;
 
-        var target;
-        var targetPanel = false; // if the target is an Ext container
-        var targetDiv = false; // if the target is simply a div
-        var panel = false; // the panel that will contain the iframe
-        var iframe = false; // the iframe
 
-        var documentLoadingWindowTitle = config.documentLoadingWindowTitle
+        documentLoadingWindowTitle = config.documentLoadingWindowTitle
                 || (config.uiDocument
                         ? config.uiDocument.documentLoadingWindowTitle
                         : (config.uiView
                                 ? config.uiView.documentLoadingWindowTitle
                                 : "Opening"));
-        var documentUntitledWindowTitle = config.documentUntitledWindowTitle
+        documentUntitledWindowTitle = config.documentUntitledWindowTitle
                 || (config.uiDocument
                         ? config.uiDocument.documentUntitledWindowTitle
                         : (config.uiView
                                 ? config.uiView.documentUntitledWindowTitle
                                 : "(Untitled)"));
-        var useDocumentWindowTitle = config.useDocumentWindowTitle
+        useDocumentWindowTitle = config.useDocumentWindowTitle
                 || (config.uiDocument
                         ? config.uiDocument.useDocumentWindowTitle
                         : (config.uiView
                                 ? config.uiView.useDocumentWindowTitle
                                 : true));
-        var documentWindowTitleMaxLength = config.documentWindowTitleMaxLength
+        documentWindowTitleMaxLength = config.documentWindowTitleMaxLength
                 || (config.uiDocument
                         ? config.uiDocument.documentWindowTitleMaxLength
                         : (config.uiView
                                 ? config.uiView.documentWindowTitleMaxLength
                                 : 16));
-        var targetDefaults = config.targetDefaults
+        targetDefaults = config.targetDefaults
                 || (config.uiDocument
                         ? config.uiDocument.targetDefaults
                         : (config.uiView ? config.uiView.targetDefaults : {}));
@@ -93,23 +102,22 @@ Ext.define('Extnd.util.Iframe', {
         if (!panel) {
 
             // the id of the iframe
-            var ifId = 'if-' + config.id;
+            ifId = 'if-' + config.id;
 
             // our config options for the panel
-            var panelConfig = Ext.apply({
-                        html : "<iframe id='" + ifId + "' src='" + config.url
-                                + "' frameBorder='0' width='100%' height='100%'/>",
-                        title : config.title || documentLoadingWindowTitle,
-                        layout : 'fit',
-                        id : config.id,
-                        closable : true
-                    }, config.targetDefaults);
+            panelConfig = Ext.apply({
+                html        : "<iframe id='" + ifId + "' src='" + config.url + "' frameBorder='0' width='100%' height='100%'/>",
+                title       : config.title || documentLoadingWindowTitle,
+                layout      : 'fit',
+                id          : config.id,
+                closable    : true
+            }, config.targetDefaults);
 
             // if target is a panel, add the iframe to the panel
             if (targetPanel) {
 
                 // for Ext windows, removeALL will make sure we don't open more than one doc in the window
-                if (targetPanel.getXType() == 'window') {
+                if (targetPanel.getXType() === 'window') {
                     targetPanel.removeAll();
                 }
 
@@ -127,8 +135,8 @@ Ext.define('Extnd.util.Iframe', {
                 // of component exception and something about no data found.  So now I'm trying for
                 // a check to see if the window is the same as the window.top and only execute if
                 // that is the case
-                if (window == window.top) {
-                    panel.on('beforedestroy', function(panel) {
+                if (window === window.top) {
+                    panel.on('beforedestroy', function (panel) {
                         // check to make sure Ext object is still there (if this panel was created from an
                         // action within another iframe then there is a chance that the iframe where the
                         // action originated could be gone and thus the Ext reference would be gone too
@@ -137,7 +145,7 @@ Ext.define('Extnd.util.Iframe', {
                         // that it will always be available; this try/catch only ignores the error and
                         // doesn't fix it but Rich thinks he knows how to fix this.
                         if (Ext !== undefined) {
-                            var iFrame = Ext.DomQuery.selectNode('iframe', panel.body.dom);
+                            iFrame = Ext.DomQuery.selectNode('iframe', panel.body.dom);
                             if (iFrame) {
                                 if (iFrame.src) {
                                     iFrame.src = "javascript:false";
@@ -150,13 +158,14 @@ Ext.define('Extnd.util.Iframe', {
 
                 // this takes care setting the title of the panel and adding
                 // refernces to uiView and target to the iframe
-                panel.on('afterrender', function(panel){
-                    var cd;
-                    var title;
-                    var dom = Ext.DomQuery.selectNode('iframe',panel.body.dom);
-                    //var dom = Ext.get(ifId).dom;
-                    var event = Ext.isIE ? 'onreadystatechange' : 'onload';
-                    dom[event] = (Ext.bind(function() {
+                panel.on('afterrender', function (panel) {
+                    var cd,
+                        title,
+                        dom = Ext.DomQuery.selectNode('iframe', panel.body.dom),
+                        //dom = Ext.get(ifId).dom,
+                        event = Ext.isIE ? 'onreadystatechange' : 'onload';
+
+                    dom[event] = Ext.bind(function () {
 
                         try {
                             cd = this.contentWindow || window.frames[this.name];
@@ -172,14 +181,13 @@ Ext.define('Extnd.util.Iframe', {
                             // an error usually means a x-domain security violation
                         }
 
-                        // replace the panel's title with the the window title from the
-                        // iframe
+                        // replace the panel's title with the the window title from the iframe
                         // if the useDocumentWindowTitle is set to true
                         if (useDocumentWindowTitle) {
                             try {
                                 title = cd.document.title;
-                                if (title != "") {
-                                    if (documentWindowTitleMaxLength != -1) {
+                                if (title !== "") {
+                                    if (documentWindowTitleMaxLength !== -1) {
                                         panel.setTitle(Ext.util.Format.ellipsis(title,
                                                 documentWindowTitleMaxLength));
                                     } else {
@@ -188,22 +196,22 @@ Ext.define('Extnd.util.Iframe', {
 
                                 } else {
                                     // there wasn't a title
-                                    if (panel.title != config.title
-                                            && config.title != documentLoadingWindowTitle) {
+                                    if (panel.title !== config.title
+                                            && config.title !== documentLoadingWindowTitle) {
                                         panel.setTitle(documentUntitledWindowTitle);
                                     }
                                 }
 
-                            } catch (e) {
+                            } catch (errDocTitle) {
                                 // there was an error getting the iframe's title maybe
-                                if (panel.title != config.title
-                                        && panel.title != documentLoadingWindowTitle) {
+                                if (panel.title !== config.title
+                                        && panel.title !== documentLoadingWindowTitle) {
                                     panel.setTitle(documentUntitledWindowTitle);
                                 }
                             }
                         } // eo if (useDocumentWindowTitle)
 
-                    }),dom);
+                    }, dom);
 
                 });
 
