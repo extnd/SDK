@@ -84,6 +84,10 @@ Ext.define('Extnd.toolbar.Actionbar', {
         'Ext.nd.Actionbar'
     ],
 
+    requires: [
+        'Extnd.util.Iframe'
+    ],
+
     // defaults
     noteType            : '',
     noteName            : '',
@@ -120,7 +124,6 @@ Ext.define('Extnd.toolbar.Actionbar', {
         var me = this,
             vni;
 
-        me.toolbar = toolbar;
         me.dominoActionbar = {};
         me.actions = [];
 
@@ -737,7 +740,7 @@ Ext.define('Extnd.toolbar.Actionbar', {
         if (!target) {
             window.open(link);
         } else {
-            Ext.nd.util.addIFrame({
+            Extnd.util.Iframe.add({
                 target      : target,
                 uiView      : me.getUIView(),
                 uiDocument  : me.getUIDocument(),
@@ -798,7 +801,7 @@ Ext.define('Extnd.toolbar.Actionbar', {
             if (!target) {
                 location.href = link;
             } else {
-                Ext.nd.util.addIFrame({
+                Extnd.util.Iframe.add({
                     target      : target,
                     uiView      : me.getUIView(),
                     uiDocument  : me.getUIDocument(),
