@@ -45,7 +45,7 @@ Ext.define('Extnd.form.Panel', {
     ],
 
     /**
-     * @cfg {String}
+     * @cfg {String} layout
      * The layout to use for the fields that get included into this panel.
      * This config is calculated based on the #convertFields config.
      * If #convertFields is true then this config is calculated to 'form',
@@ -233,18 +233,23 @@ Ext.define('Extnd.form.Panel', {
         }
     },
 
-
-    // private
-    // change the hash reference by prepending xnd-goto
-    // will fix an IE issue with the layout not positioning correctly
-    // when the page loads and 'jumps' to the <a href> reference in the hash
-    // TODO: need to add code to instead "scroll" to the hash reference
+    /**
+     * @private
+     * change the hash reference by prepending xnd-goto
+     * will fix an IE issue with the layout not positioning correctly
+     * when the page loads and 'jumps' to the <a href> reference in the hash
+     * TODO: need to add code to instead "scroll" to the hash reference
+     * @param {String} v The value
+     * @param {Object} o The object where the click came from.  Usually the toolbar or the UIDocument
+     * @param {String} t The target
+     * @param {String} h The hash that gets added to the url.  Domino does this automatically for keyword fields set to refresh after change.
+     */
     _doClick: function (v, o, t, h) {
         var form = this.getDominoForm(),
             retVal,
             target;
 
-        if (form.onsubmit) {
+        if (form.dom.onsubmit) {
             retVal = form.onsubmit();
             if (typeof retVal === "boolean" && retVal === false) {
                 return false;
@@ -252,17 +257,17 @@ Ext.define('Extnd.form.Panel', {
         }
 
         target = document._domino_target;
-        if (o.href !== null) {
-            if (o.target !== null) {
+        if (o.href != null) {
+            if (o.target != null) {
                 target = o.target;
             }
         } else {
-            if (t !== null) {
+            if (t != null) {
                 target = t;
             }
         }
         form.dom.target = target;
-        form.findField("__Click").setValue(v);
+        form.dom.__Click.value = v;
 
         // modify hash to prepend 'xnd-goto'
         if (h !== null) {
@@ -294,7 +299,8 @@ Ext.define('Extnd.form.Panel', {
         return new Ext.form.BasicForm(document.forms[0], this.initialConfig);
     },
 
-    /* to support users coming from older versions of Ext.nd where you did
+    /**
+     * to support users coming from older versions of Ext.nd where you did
      * not have to specify 'where' to render to so we will render to
      * an Ext.Viewport like previous versions did when the render method
      * is called without any arguments
