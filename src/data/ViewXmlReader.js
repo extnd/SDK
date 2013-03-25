@@ -120,7 +120,7 @@ Ext.define('Extnd.data.ViewXmlReader', {
     /**
      * Used to parse the 'entrydata' nodes of Domino's ReadViewEntries format.
      * Besides returning a value for the 'entrydata' node, a custom entryData property is added to the record
-     * to be used by the Ext.nd.grid.ViewColumn#defaultRenderer method
+     * to be used by the Extnd.grid.ViewColumn#defaultRenderer method
      * @param {Object} entryDataNode The 'entrydata' node to get a value from.
      * @param {String} fieldName The field name being processed.
      * @param {Ext.nd.data.ViewModel} record The record being processed.
@@ -252,10 +252,13 @@ Ext.define('Extnd.data.ViewXmlReader', {
     /**
      * @private
      * Custom version for Domino that passes the 'field' and 'record' to the #getNodeValue method
-     * so that the entryData can be added
+     * so that the entryData can be added.
+     * The selector var is also custom done so that if the developer wants to pass in their own mapping config they can,
+     * otherwise the domino specific 'entrydata[name=viewColName]' string is built
      */
     createFieldAccessExpression: function (field, fieldVarName, dataName) {
-        return 'me.getNodeValue(Ext.DomQuery.selectNode("' + field.mapping + '", ' + dataName + '), "' + field.name + '", record)';
+        var selector = field.mapping || 'entrydata[name=' + field.name + ']';
+        return 'me.getNodeValue(Ext.DomQuery.selectNode("' + selector + '", ' + dataName + '), "' + field.name + '", record)';
     }
 
 });

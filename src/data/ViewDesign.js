@@ -240,7 +240,10 @@ Ext.define('Extnd.data.ViewDesign', {
                 // in that it does not return the correct columnnumber but instead returns a number one less than the
                 // actual number for each column after the category
                 //mapping     : 'entrydata[columnnumber=' + columnnumber + ']',
-                mapping     : 'entrydata[name=' + name + ']',
+
+                // now we no longer use any mapping since this is all setup and handled in the ViewXmlReader
+                //mapping     : 'entrydata[name=' + name + ']',
+
                 column      : columnnumber,
                 type        : 'domino'
             };
