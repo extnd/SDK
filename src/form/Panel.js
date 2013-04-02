@@ -241,8 +241,10 @@ Ext.define('Extnd.form.Panel', {
 
     /**
      * @private
-     * change the hash reference by prepending xnd-goto
-     * will fix an IE issue with the layout not positioning correctly
+     * Domino automatically generates a global _doClick function for Forms and Pages.
+     * Hotlinks, converted @Commands, and 'refresh on keyword change' fields end up calling this _doClick function.
+     * Extnd replaces that function  with this one so we can handle certain things differently.
+     * change the hash reference by prepending xnd-goto will fix an IE issue with the layout not positioning correctly
      * when the page loads and 'jumps' to the <a href> reference in the hash
      * TODO: need to add code to instead "scroll" to the hash reference
      * @param {String} v The value
@@ -273,17 +275,21 @@ Ext.define('Extnd.form.Panel', {
             }
         }
         form.dom.target = target;
-        form.dom.__Click.value = v;
 
-        // modify hash to prepend 'xnd-goto'
-        if (h !== null) {
+        // Domino pages do not generate the __Click field so we check for it
+        if (form.dom.__Click) {
+            form.dom.__Click.value = v;
+        }
+
+        // modify hash to prepend 'xnd-goto' to fix a layout issue in IE
+        if (h) {
             form.dom.action += h.replace('#', '#xnd-goto');
         }
 
         // call submit from the dom and not the Ext form since it will do an Ajax submit
         // but the dom submit will do a standard submit which is what domino is needing to do
         // if calling _doClick (usually a refresh fields on keyword change type of submit)
-        form.dom.submit({standardSubmit : true});
+        form.dom.submit();
         return false;
     },
 
