@@ -24,12 +24,18 @@
 Ext.define('Extnd.form.Panel', {
 
     extend  : 'Ext.form.Panel',
-    alias   : 'widget.xnd-uidocument',
+    alias   : [
+        'widget.xnd-uidocument',
+        'widget.xnd-form',
+        'widget.xnd-page'
+    ],
 
     alternateClassName: [
         'Extnd.UIDocument',
         'Ext.nd.UIDocument',
+        'Extnd.Form',
         'Ext.nd.Form',
+        'Extnd.Page',
         'Ext.nd.Page'
     ],
 
