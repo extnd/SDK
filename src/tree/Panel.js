@@ -141,6 +141,7 @@ Ext.define('Extnd.tree.Panel', {
             url         = outlineEntry.get('url'),
             type        = outlineEntry.get('type'),
             position    = outlineEntry.get('id'),
+            hrefTarget  = outlineEntry.get('hrefTarget'),
             panelId     = me.id + '-' + position,
             title       = (me.useEntryTitleAsTargetTitle) ? outlineEntry.get('text') : null,
             panel,
@@ -216,7 +217,8 @@ Ext.define('Extnd.tree.Panel', {
                                 layout      : 'fit',
                                 title       : title,
                                 viewUrl     : viewUrl,
-                                closable    : true
+                                closable    : true,
+                                target      : target //set the view target to the same as the outline but this can be overridden with viewDefaults or targetDefaults
                             }, this.viewDefaults),
                             targetDefaults
                         );
@@ -316,8 +318,8 @@ Ext.define('Extnd.tree.Panel', {
                 // open in an iframe since it must be a page,doc,form,or url
                 } else if (url !== "") {
                     type = 2;
-                    // if no target then just open in a new window
-                    if (!target) {
+                    // if no target OR _top is set as the target in Designer, then just open in a new window
+                    if (!target || hrefTarget === '_top') {
                         window.open(url);
                     } else {
 
