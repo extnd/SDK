@@ -92,8 +92,15 @@ Ext.define('Extnd.grid.Panel', {
      */
     cleanUpConfig: function (config) {
 
-        // viewUrl is either passed in or built from dbPath and viewName
+        // if a store is passed then grab viewName, dbPath and viewUrl from it if we don't already have these
+        if (config.store) {
+            config.viewName = config.viewName || config.store.viewName;
+            config.dbPath = config.dbPath || config.store.dbPath;
+            config.viewUrl = config.viewUrl ||config.store.viewUrl;
+        }
+
         if (config.viewName && config.dbPath) {
+            // viewUrl is either passed in or built from dbPath and viewName
             config.viewUrl = config.dbPath + config.viewName;
         } else if (config.viewName && !config.dbPath) {
             // only the viewName was sent so we'll determine the dbPath from the Session or the url
