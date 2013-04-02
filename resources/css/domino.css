@@ -1,18 +1,6 @@
 @import url('xnd-view-icons-nd7.css');
 
 /*----------------------------------------------------
- * Domino Common CSS Rules
- *----------------------------------------------------
- */
-
-html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,p,blockquote,th,td {
-  font-family: tahoma,verdana,helvetica;
-  font-size: 11px;
-}
-
-
-
-/*----------------------------------------------------
  * view styles
  *----------------------------------------------------
  */
@@ -30,6 +18,7 @@ td.xnd-view-totals {
 }
 td.xnd-view-response {
    z-index:2;
+   overflow: visible;
 }
 /* to allow for rows to grow in height */
 .x-grid-row td, .x-grid3-row td, .x-grid3-cell-inner {
@@ -69,7 +58,7 @@ td.xnd-view-response {
 }
 
 /* fix to allow outline icons to not have their
- * widht and height skewed
+ * width and height skewed
  */
 .xnd-icon {
   width: auto!important;
