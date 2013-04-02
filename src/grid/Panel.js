@@ -734,6 +734,33 @@ Ext.define('Extnd.grid.Panel', {
                 plugins     : me.bbarPlugins
             };
         }
+    },
+
+    /**
+     * Expands all levels of categories, subcategories, documents,
+     * and responses within the view or folder. This mimics the
+     * ViewExpandAll @Command
+     */
+    expandAll: function () {
+        this.ecAll('expandview');
+    },
+
+    /**
+     * Collapses all levels of categories, subcategories, documents,
+     * and responses within the view or folder. This mimics the
+     * ViewCollapseAll @Command
+     */
+    collapseAll: function () {
+        this.ecAll('collapseview');
+    },
+
+    // private
+    ecAll: function (param) {
+        var store = this.getStore(),
+            config = {};
+
+        config[param] = 'true';
+        store.load({params: config});
     }
 
 });
