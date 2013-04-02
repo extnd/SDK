@@ -123,49 +123,41 @@ Ext.define('Extnd.data.ViewStore', {
      * Custom override that makes sure the params that Domino knows about are set correctly
      */
     load: function (options) {
-        var me = this,
-            p,
-            pn,
-            f,
-            sortColumn,
-            colConfig;
+        var me = this;
 
         options = options || {};
         me.extraParams = me.extraParams || {};
 
-        if (me.fireEvent("beforeload", me, options) !== false) {
+        // make sure options has a params property
+        options.params = options.params || {};
 
-            // make sure options has a params property
-            options.params = options.params || {start: 1, count: me.pageSize };
+        // make sure we have a start
+        options.start = options.start || 1;
 
-            // make sure we have a start
-            options.params.start = options.params.start || 1;
-
-            // do some extraParams cleanup
-            if (options.params.expand || options.params.expandview) {
-                if (me.extraParams.collapse) {
-                    delete me.extraParams.collapse;
-                }
-                if (me.extraParams.collapseview) {
-                    delete me.extraParams.collapseview;
-                }
+        // do some extraParams cleanup
+        if (options.params.expand || options.params.expandview) {
+            if (me.extraParams.collapse) {
+                delete me.extraParams.collapse;
             }
-            if (options.params.collapse || options.params.collapseview) {
-                if (me.extraParams.expand) {
-                    delete me.extraParams.expand;
-                }
-                if (me.extraParams.expandview) {
-                    delete me.extraParams.expandview;
-                }
+            if (me.extraParams.collapseview) {
+                delete me.extraParams.collapseview;
             }
-
-            // now merge the extraParams and passed in params
-            p = Ext.apply(me.extraParams, options.params || {});
-
+        }
+        if (options.params.collapse || options.params.collapseview) {
+            if (me.extraParams.expand) {
+                delete me.extraParams.expand;
+            }
+            if (me.extraParams.expandview) {
+                delete me.extraParams.expandview;
+            }
         }
 
+        // now merge the extraParams and passed in params
+        Ext.apply(options.params, me.extraParams);
+
         // now callParent with our custom 'p' object that is Domino friendly
-        me.callParent([{ params: p }]);
+        me.callParent([options]);
+
     },
 
     /**
@@ -230,23 +222,50 @@ Ext.define('Extnd.data.ViewStore', {
         var me = this;
 
         // for Domino, we have to make sure that 'start' is a string
+        // since you can have values like 3.2.4 that shows the doc level
         start = start.toString();
         me.currentStart = start;
 
         // Copy options into a new object so as not to mutate passed in objects
         options = Ext.apply({
-            params: {
-                start: start,
-                count: me.pageSize
-            },
+            start   : start,
+            limit   : me.pageSize,
             addRecords: !me.clearOnPageLoad
         }, options);
 
         if (me.buffered) {
+            // convert start back to a number
+            options.start = parseInt(options.start.split('.')[0], 10);
             return me.loadToPrefetch(options);
         }
-        me.load(options);
+        me.read(options);
     },
+
+
+    /**
+     * @override
+     * Override to change 'start' so Domino is happy
+     */
+    prefetchPage: function(page, options) {
+        var me = this,
+            pageSize = me.pageSize || me.defaultPageSize,
+            //start = (page - 1) * me.pageSize,
+            start = ((page - 1) * me.pageSize) + 1, // Domino starts with 1, not 0
+            total = me.totalCount;
+
+        // No more data to prefetch.
+        if (total !== undefined && me.getCount() === total) {
+            return;
+        }
+
+        // Copy options into a new object so as not to mutate passed in objects
+        me.prefetch(Ext.applyIf({
+            page     : page,
+            start    : start,
+            limit    : pageSize
+        }, options));
+    },
+
 
     /**
      * Custom version for Domino views

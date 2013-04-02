@@ -17,83 +17,108 @@ Ext.define('Extnd.grid.ViewColumn', {
     ],
 
     /**
-     *
-     @property {String} align The alignment (justification) of data in a column.
+     * @property {String} align
+     * The alignment (justification) of data in a column.
      */
+
     /**
-     * @property {Number} alignment Not used, see #align instead.
+     * @property {Number} alignment
+     * Not used, see #align instead.
      */
+
     /**
-     * @property {String} dataIndex Defaults to the 'Programmatic Use Name' set for the column in Domino Designer.
+     * @property {String} dataIndex
+     * Defaults to the 'Programmatic Use Name' set for the column in Domino Designer.
      */
+
     /**
-     * @property {Number} width The width of a column.
+     * @property {Number} width
+     * The width of a column.
      */
+
     /**
      * @property {String} title
      * @inheritdoc #text
      */
+
     /**
      * @property {String} totals
      */
-    totals: 'none',
+
     /**
-     * @property {Boolean} isResortAscending Indicates whether a column is a user-sorted column that can be sorted in ascending order.
+     * @property {Boolean} isResortAscending
+     * Indicates whether a column is a user-sorted column that can be sorted in ascending order.
      */
-    isResortAscending: false,
+
     /**
-     * @property {Boolean} isResortDescending Indicates whether a column is a user-sorted column that can be sorted in descending order.
+     * @property {Boolean} isResortDescending
+     * Indicates whether a column is a user-sorted column that can be sorted in descending order.
      */
-    isResortDescending: false,
+
     /**
-     * @property {Boolean} isResortToView Indicates whether a column is a user-sorted column that allows the user to change to another view.
+     * @property {Boolean} isResortToView
+     * Indicates whether a column is a user-sorted column that allows the user to change to another view.
      */
-    isResortToView: false,
+
     /**
-     * @property {String} resortToViewName The name of the target view for a user-sorted column that allows the user to change to another view.
+     * @property {String} resortToViewName
+     * The name of the target view for a user-sorted column that allows the user to change to another view.
      */
-    resortToViewName: '',
+
     /**
-     * @property {Boolean} isCategory Indicates whether a column is categorized.
+     * @property {Boolean} isCategory
+     * Indicates whether a column is categorized.
      */
-    isCategory: false,
+
     /**
      * @property {Boolean} isResize
      * @inheritdoc #resizable
      */
-    isResize: false,
+
     /**
-     * @property {String} listSeparator List (multi-value) separator for values in a column.
+     * @property {String} listSeparator
+     * List (multi-value) separator for values in a column.
      */
-    listSeparator: ',',
+
     /**
-     * @property {Number} listSep Not used, see #listSeparator instead
+     * @property {Number} listSep
+     * Not used, see #listSeparator instead
      */
+
     /**
-     * @property {Boolean} isResponse  Indicates whether a column contains only response documents.
+     * @property {Boolean} isResponse
+     * Indicates whether a column contains only response documents.
      */
-    isResponse: false,
+
     /**
-     * @property {Boolean} isShowTwistie Indicates whether an expandable column displays a twistie.
+     * @property {Boolean} isShowTwistie
+     * Indicates whether an expandable column displays a twistie.
      */
-    isShowTwistie: false,
+
     /**
-     * @property {Boolean} isIcon  Indicates whether column values are displayed as icons.
+     * @property {Boolean} isIcon
+     * Indicates whether column values are displayed as icons.
      */
-    isIcon: false,
+
     /**
-     * @property {Object} datetimeformat The format for time-date data in a column.
+     * @property {Object} datetimeformat
+     * The format for time-date data in a column.
      */
+
     /**
-     * @property {Object} numberformat The format for numeric values in a column.
+     * @property {Object} numberformat
+     * The format for numeric values in a column.
      */
+
     /**
-     * @property {Number} position The position of a column in its view. Columns are numbered from left to right, starting with 1.
+     * @property {Number} position
+     * The position of a column in its view. Columns are numbered from left to right, starting with 1.
      */
 
 
     initComponent: function () {
-        var me = this;
+        var me = this,
+            hdrCt = me.isContained;
 
         me.datetimeformat = me.datetimeformat || {};
         me.numberformat = me.numberformat || {};
@@ -113,14 +138,18 @@ Ext.define('Extnd.grid.ViewColumn', {
         // callParent now before setting up our sort states below
         me.callParent(arguments);
 
-        // Set our possible sort states for the column
-        // NOTE: we do this AFTER all call to callParent since the base class
-        // forces the possibleSortStates array to just just 2 elements if triStateSort is not true
-        // and we can't just simply set triStartSort to true since it does other things
-        me.possibleSortStates = [];
-        me.possibleSortStates.push(me.isResortAscending ? 'ASC' : 'RESTORE');
-        me.possibleSortStates.push(me.isResortDescending ? 'DESC' : 'RESTORE');
-        me.possibleSortStates.push('RESTORE');
+        // if we are not using a bufferedRenderer we need to change our possibleSortStates for each
+        // column to match what their isResortAscending and isResortDescending properties are set to
+        if (!hdrCt.usingBufferedRenderer && me.isResortAscending !== undefined) {
+            // Set our possible sort states for the column
+            // NOTE: we do this AFTER our call to callParent since the base class
+            // forces the possibleSortStates array to just just 2 elements if triStateSort is not true
+            // and we can't just simply set triStartSort to true since it does other things
+            me.possibleSortStates = [];
+            me.possibleSortStates.push(me.isResortAscending ? 'ASC' : 'RESTORE');
+            me.possibleSortStates.push(me.isResortDescending ? 'DESC' : 'RESTORE');
+            me.possibleSortStates.push('RESTORE');
+        }
 
     },
 
@@ -178,7 +207,7 @@ Ext.define('Extnd.grid.ViewColumn', {
 
             indent = entryData.indent;
             extraIndent = (indent > 0) ? 'padding-left:' + indent * 20 + 'px;' : '';
-            meta.style = 'position: absolute; width: auto; white-space: nowrap; ' + extraIndent;
+            meta.style = 'width: auto; white-space: nowrap; ' + extraIndent;
 
             if (nextRecord) {
                 nextRecordLevel = nextRecord.columnIndentLevel;
@@ -211,12 +240,13 @@ Ext.define('Extnd.grid.ViewColumn', {
                 returnValue = sExpandImage;
             }
 
-        // has children and IS a response doc
+        // has children and IS a response doc and IS a response column
         } else if (record.hasChildren() && record.isResponse && me.isResponse) {
 
             indent = entryData.indent;
             extraIndent = (indent > 0) ? 'padding-left:' + (20 + (indent * 20)) + 'px;' : '';
-            meta.style = 'position: absolute; width: auto; white-space: nowrap; ' + extraIndent;
+            meta.style = 'float: left; width: auto; white-space: nowrap; ' + extraIndent;
+
             if (nextRecord) {
                 nextRecordLevel = nextRecord.columnIndentLevel;
                 if (nextRecordLevel > recordLevel) {
@@ -231,13 +261,13 @@ Ext.define('Extnd.grid.ViewColumn', {
                 returnValue = sExpandImage + me.getValue(value, record);
             }
 
-        // does NOT have children and IS a response doc
+        // does NOT have children and IS a response doc and IS a response column
         } else if (!record.hasChildren() && record.isResponse && me.isResponse) {
 
             meta.tdCls = 'xnd-view-response';
             indent = entryData.indent;
             extraIndent = (indent > 0) ? 'padding-left:' + (20 + (indent * 20)) + 'px;' : '';
-            meta.style = 'position: absolute; width: auto; white-space: nowrap; ' + extraIndent;
+            meta.style = 'float: left; width: auto; white-space: nowrap; ' + extraIndent;
             returnValue = me.getValue(value, record);
 
         } else if (me.isIcon) {
@@ -318,8 +348,11 @@ Ext.define('Extnd.grid.ViewColumn', {
                     tmpValue = '<img src="/icons/vwicn' + tmpValue + '.gif"/>';
                 }
 
-            } else if (me.totals === 'percentoverall' || me.totals === 'percentparent') {
-                tmpValue = Ext.util.Format.round(100 * parseFloat(tmpValue), nbf.digits || 0) + '%';
+            } else if (record.hasChildren() && (me.totals === 'percentoverall' || me.totals === 'percentparent')) {
+                // TODO need to modify this so that me.totals is only done on category rows
+                // and then redone again on detail rows since you can define a 'totals' column that displays a percent on the category
+                // but does different format (like currency) on the detail rows
+                tmpValue = Ext.Number.toFixed(100 * parseFloat(tmpValue), nbf.digits || 0) + '%';
 
             } else {
 
@@ -365,10 +398,11 @@ Ext.define('Extnd.grid.ViewColumn', {
 
                     case 'fixed':
                     case 'scientific':
-                        if (nbf.percent) {
-                            tmpValue = Ext.util.Format.round(100 * tmpValue, nbf.digits) + '%';
+                        // for the 'category total' line we need to format differently if a 'percent total'
+                        if (record.isCategoryTotal && nbf.percent) {
+                            tmpValue = Ext.Number.toFixed(100 * tmpValue, nbf.digits) + '%';
                         } else {
-                            tmpValue = Ext.util.Format.round(tmpValue, nbf.digits);
+                            tmpValue = Ext.Number.toFixed(tmpValue, nbf.digits);
                         }
                         break;
 

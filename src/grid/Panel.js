@@ -73,8 +73,8 @@ Ext.define('Extnd.grid.Panel', {
     noteType        : 'view',
     count           : 40,
     isCategorized   : false,
-    needsColumns    : true,
-    needsModel      : true,
+    needsColumns    : false,
+    needsModel      : false,
 
 
     constructor: function (config) {
@@ -126,7 +126,6 @@ Ext.define('Extnd.grid.Panel', {
         // applyIf so that these can all be overridden if passed into the config
         Ext.applyIf(me, {
             store               : me.createStore(),
-            headerCt            : me.createHeaderCt(),
             bbar                : me.getBottomBarCfg(),
 
             collapseIcon        : Extnd.extndUrl + 'resources/images/minus.gif',
@@ -154,6 +153,9 @@ Ext.define('Extnd.grid.Panel', {
             }
         });
 
+        // create the columns header
+        me.createColumnHeader();
+
         // set single category if required
         if (typeof me.category === 'string') {
             me.extraParams.RestrictToCategory = me.category;
@@ -165,34 +167,33 @@ Ext.define('Extnd.grid.Panel', {
 
 
     /**
-     * For a Domino view, we make sure we create our own header container using our Extnd version
+     * For a Domino view, we make sure we create our own header container using our {@link Extnd.grid.header.Container version}
      * of the container so that the nuances of a Domino view header/columns are best supported.
      */
-    createHeaderCt: function () {
-        this.headerCt = new Extnd.grid.header.Container({
-            items: this.getInitialColumns()
-        });
-    },
+    createColumnHeader: function () {
+        var me                  = this,
+            cols                = me.columns,
+            usingBufferedRenderer = me.findPlugin('bufferedrenderer') ? true : false;
 
-
-    getInitialColumns: function () {
-        var me = this;
-
-        if (me.columns) {
+        if (cols) {
             me.needsColumns = false;
+            me.columns = new Extnd.grid.header.Container({
+                usingBufferedRenderer: usingBufferedRenderer,
+                items: cols
+            });
         } else {
-            me.columns = [
-                {
+            me.needsColumns = true;
+            me.columns = new Extnd.grid.header.Container({
+                usingBufferedRenderer: usingBufferedRenderer,
+                items: [{
                     dataIndex   : 'dummy',
                     header      : '&nbsp;',
                     flex        : 1
-                }
-            ];
+                }]
+            });
         }
-
-        return me.columns;
-
     },
+
 
     createStore: function () {
         var me = this,
@@ -201,14 +202,14 @@ Ext.define('Extnd.grid.Panel', {
         // only create a dummy store if one was not provided
         // in the callback from fetching the design info, we'll create a new store and do a reconfigure
         if (!me.store) {
-
             me.needsModel = true;
             me.dmyId = 'xnd-dummy-store-' + Ext.id();
-
             store = Ext.create('Ext.data.Store', {
                 id: me.dmyId,
                 fields: ['dummy']
             });
+        } else {
+            me.needsModel = false;
         }
 
         return store;
@@ -392,8 +393,7 @@ Ext.define('Extnd.grid.Panel', {
             len,
             i;
 
-        // get the properties we need
-        me.store = me.viewDesign.store;
+        // transfer over the properties we need
         me.isCategorized = me.viewDesign.dominoView.meta.isCategorized;
         me.isCalendar = me.viewDesign.dominoView.meta.isCalendar;
         me.allowDocSelection = me.viewDesign.allowDocSelection;

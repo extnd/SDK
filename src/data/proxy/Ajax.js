@@ -100,7 +100,7 @@ Ext.define('Extnd.data.proxy.Ajax', {
                     // if there was a start param before we delete both the start and startkey params
                     // however, NOTE: that we don't check for a startkey since it is valid for a user
                     // to have a startkey and then do a sort
-                    delete params.start;
+                    //delete params.start;
                     delete params.startkey;
                 }
 
@@ -115,7 +115,7 @@ Ext.define('Extnd.data.proxy.Ajax', {
             params[sortParam] = sortColumn;
             // since this is the first time sorting in this direction for this column
             // we need to delete these params so that we do things the way Domino expects it
-            delete params.start;
+            //delete params.start;
             delete params.startkey;
         }
 
