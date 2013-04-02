@@ -88,7 +88,7 @@ Ext.define('Extnd.toolbar.Paging', {
             total = me.store.getTotalCount(),
             extra = total % me.store.pageSize;
 
-        start = me.isCategorized ? total : extra ? (total - extra) : total - me.store.pageSize;
+        start = me.isCategorized ? total : extra ? (total - extra) : total - me.store.pageSize + 1;
         if (me.fireEvent('beforechange', me) !== false) {
             me.store.loadPage(start);
         }
