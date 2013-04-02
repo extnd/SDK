@@ -1,6 +1,32 @@
 /**
  * @class Extnd
  * @singleton
+ *
+ * The Extnd namespace (global object).
+ *
+ * Extnd is built on top of Sencha's Ext JS framework and thus will not work without the appropriate classes from that
+ * framework loaded first.
+ *
+ * Many applications are initiated with {@link Ext#onReady Ext.onReady} which is
+ * called once the DOM is ready. This ensures all scripts have been loaded,
+ * preventing dependency issues. For example:
+ *
+        Ext.onReady(function(){
+            new Extnd.Viewport({
+                uiOutline: {
+                    outlineName : 'mainOL',
+                    title       : 'Navigation',
+                    useArrows   : true,
+                    width       : 200
+                },
+                uiView: {
+                    viewName    : 'myView',
+                    showSearch  : true
+                }
+            });
+        });
+ *
+ *
  */
 Ext.define('Extnd', {
 

@@ -1,3 +1,7 @@
+/**
+ * Plugin that adds a combo to a toolbar on an Extnd.UIView.  The UIView view must be a categorized view which is
+ * able to have the viewable data restricted to just the contents of a single category.
+ */
 Ext.define('Extnd.toolbar.plugin.SingleCategoryCombo', {
 
     extend  : 'Ext.AbstractPlugin',
