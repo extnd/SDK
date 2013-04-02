@@ -24,7 +24,7 @@ Ext.define('Extnd.toolbar.plugin.SearchField', {
     iconCls             : 'icon-magnifier',
     searchText          : 'Search',
     labelWidth          : 50,
-    searchCount         : 40,
+    pageSize            : undefined,
     emptyText           : 'Search view...',
     searchTipText       : 'Type a text to search and press Enter',
     minCharsTipText     : 'Type at least {0} characters',
@@ -208,7 +208,6 @@ Ext.define('Extnd.toolbar.plugin.SearchField', {
         var me      = this,
             val     = me.field.getValue(),
             uiView  = me.uiView,
-            store   = uiView.getStore(),
             extraParams,
             searchStore,
             paging;
@@ -259,7 +258,7 @@ Ext.define('Extnd.toolbar.plugin.SearchField', {
         uiView.getStore().load({
             params: {
                 query: val,
-                count: me.searchCount,
+                count: me.searchCount || me.oldDataStore.pageSize,
                 start: 1
             }
         });
