@@ -140,16 +140,18 @@ Ext.define('Extnd.grid.Panel', {
             dateTimeFormats     : Extnd.dateTimeFormats,
             formatCurrencyFnc   : Ext.util.Format.usMoney,
 
-            renderers               : [],
+            //renderers               : [],
             quickSearchKeyStrokes   : [],
             targetDefaults          : {},
             colsFromDesign          : [],
             extraParams             : {},
 
-            selModelConfig: {
-                singleSelect : false,
-                checkOnly : true
+            selModel: {
+                mode            : 'MULTI',
+                allowDeselect   : true
             },
+
+            selType: 'rowmodel', // or could be 'checkboxmodel'
 
             quickSearchConfig: {
                 width: 200
@@ -408,53 +410,8 @@ Ext.define('Extnd.grid.Panel', {
         me.isView = me.viewDesign.isView;
         me.isFolder = me.viewDesign.isFolder;
 
-
-        /* if the view is set to allow for docs to be selected with checkbox AND
-         * the developer has not explicitly set me.selModelConfig.type
-         * to something OTHER than 'checkbox' then change the selModel to the
-         * CheckboxSelectionModel and push that onto the colsFromDesign array
-         */
-
-        // don't do this if type was explicitly set to something else
-        if (me.allowDocSelection && me.selModelConfig.type !== 'checkbox') {
-
-            // remove the grid's current rowclick event if it is using
-            // our custom handleDDRowClick override
-            // TODO
-            //me.un('rowclick', me.selModel.handleDDRowClick, me.selModel);
-
-            // now destroy the old selModel
-            // TODO do we need this since it appears that destroy is just an emptyFn call
-//                if (me.selModel && me.selModel.destroy) {
-//                    me.selModel.destroy();
-//                }
-
-            // add in the new selection model
-            //me.selModel = new Ext.selection.CheckboxModel(me.selModelConfig);
-
-            // call the init manually (you are not supposed to do this since the grid
-            // does this automatically, but since we are changing the selModel on the
-            // fly, we need to do this now)
-            // TODO don't think we need this now since calling me.reconfigure later on handles selModel
-            //me.selModel.init(me);
-
-            /*
-             * this function is a copy/paste from the CheckboxSelectionModel
-             * and what it does it make sure that we have mousedown events
-             * defined to capture clicking on the checkboxes
-             */
-             // TODO do we need this?  if so, need to fix the errors it throws
-//                me.on('getdesignsuccess', function () {
-//                    var view = me.grid.getView();
-//                    view.mainBody.on('mousedown', me.onMouseDown, me);
-//                    Ext.fly(view.innerHd).on('mousedown', me.onHdMouseDown, me);
-//                }, me.selModel);
-
-
-            me.colsFromDesign.length = 0; // make sure nothing is in our colsFromDesign array
-            // TODO looks like we don't need this since ExtJS 4 takes care of adding a checkbox column if needed
-            //me.colsFromDesign.push(me.selModel);
-        }
+        // make sure nothing is in our colsFromDesign array
+        me.colsFromDesign.length = 0;
 
 
         // add our columns from the viewDesign call and dominoRenderer or any custom renderers if defined
@@ -490,10 +447,12 @@ Ext.define('Extnd.grid.Panel', {
 
         // now we can reconfigure the grid to use our new store and optional the new columns
         if (me.needsColumns) {
-            me.reconfigure(me.store, me.colsFromDesign);
+            me.reconfigure(me.viewDesign.store, me.colsFromDesign);
         } else {
-            me.reconfigure(me.store);
+            me.reconfigure(me.viewDesign.store);
         }
+        // and now make sure we delete the viewDesign store reference
+        delete me.viewDesign.store;
 
         /* There may be cases where a grid needs to be rendered the firs time
          * without any data. A good example is a view where you want to show
