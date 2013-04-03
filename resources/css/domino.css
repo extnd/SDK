@@ -5,6 +5,10 @@
  *----------------------------------------------------
  */
 
+.xnd-resorttoview span {
+    background  : url("/icons/viewsort.gif") no-repeat scroll right bottom transparent;
+    padding     : 0 20 0 0;
+}
 td.xnd-view-category {
    font-weight : bold;
    overflow: visible;

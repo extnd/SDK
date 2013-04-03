@@ -213,7 +213,8 @@ Ext.define('Extnd.data.ViewDesign', {
 
             columnConfig = {
                 xtype               : 'xnd-viewcolumn',
-                title               : isResortToView ? title + '<img src="/icons/viewsort.gif" />' : title,
+                title               : title,
+                componentCls        : isResortToView ? 'xnd-resorttoview' : '',
                 align               : q.selectValue('@align', col, 'left'),
                 dataIndex           : name,
                 width               : Math.max(q.selectNumber('@width', col) * 11.28, 22), // multiplying by 11.28 converts the inch width to pixels

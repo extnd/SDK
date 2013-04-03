@@ -96,7 +96,7 @@ Ext.define('Extnd.grid.Panel', {
         if (config.store) {
             config.viewName = config.viewName || config.store.viewName;
             config.dbPath = config.dbPath || config.store.dbPath;
-            config.viewUrl = config.viewUrl ||config.store.viewUrl;
+            config.viewUrl = config.viewUrl || config.store.viewUrl;
         }
 
         if (config.viewName && config.dbPath) {
@@ -256,7 +256,7 @@ Ext.define('Extnd.grid.Panel', {
         this.on('itemdblclick', this.gridHandleRowDblClick, this);
 
         // headerclick, to handle switching to another view
-        //this.on('headerclick', this.gridHandleHeaderClick, this, true);
+        this.on('headerclick', this.gridHandleHeaderClick, this, true);
 
         // keydown, for things like 'Quick Search', <delete> to delete, <enter> to open a doc
         //this.on('keypress', this.gridHandleKeyDown, this, true);
@@ -276,6 +276,123 @@ Ext.define('Extnd.grid.Panel', {
                 this.openDocument(this, record, e);
             }
         }
+    },
+
+    // private
+    gridHandleHeaderClick: function (hdrCt, column, e) {
+        var config,
+            newView,
+            dbUrl,
+            idx,
+            o,
+            renderTo,
+            grid = hdrCt.up('grid');
+
+        /* check to see if the grid is directly part of a region in a border
+         * layout, if so, we can NOT dynamically remove and add the region
+         * instead, the developer needs to nest the Ext.nd.UIView in a panel by
+         * adding it to the items array of the panel in the region
+         */
+        if (!grid.region) {
+            if (column.isResortToView && column.resortToViewName !== '') {
+                // first, let's stop the propagation of this event so that the
+                // sort events don't try and run as well
+                e.stopPropagation();
+
+                // get the url to the db this view is in
+                dbUrl = this.viewUrl;
+                dbUrl = dbUrl.substring(0, dbUrl.lastIndexOf('/') + 1);
+
+                /* make sure to delete the old viewName property
+                 * and the initialConfig property
+                 * otherwise, viewUrl won't be used
+                 * and the initialConfig will reset certain things
+                 * to the previous view
+                 * also, not sure why, but you have to delete the
+                 * property from the 'this' object, instead of
+                 * the passed in grid object
+                 */
+                delete this.viewName;
+                delete grid.viewName;
+                delete this.initialConfig.viewName;
+                delete grid.initialConfig.viewName;
+
+                // delete the current grid
+                if (grid.ownerCt && grid.ownerCt.remove) {
+
+                    // make a new config for the new view
+                    config = {
+                        viewUrl: dbUrl + column.resortToViewName
+                    };
+
+                    Ext.applyIf(config, grid.initialConfig);
+
+                    // next, get the index of the old view
+                    // and then remove it
+                    o = grid.ownerCt;
+                    idx = o.items.indexOf(grid);
+                    o.remove(grid, true);
+
+                    // now create this new view at the same index
+                    newView = o.insert(idx, new Extnd.UIView(config));
+
+                    // and now show it by calling the show method
+                    // if one exists for this component
+                    // definitely necessary in cases where new panels
+                    // could be hidden like in tabas and accordions
+                    if (newView.show) {
+                        newView.show();
+                    }
+                    o.doLayout();
+
+                } else {
+
+                    // this is for cases where the user has added the grid
+                    // to a div using renderTo : 'myDiv'
+
+                    // get a reference to the container that the view
+                    // currently is rendered
+                    renderTo = grid.container;
+
+                    // make a new config for the new view
+                    config = Ext.applyIf({
+                        viewUrl: dbUrl + column.resortToViewName,
+                        renderTo: renderTo
+                    }, grid.initialConfig);
+
+                    // destory the old UIView
+                    grid.destroy();
+
+                    // now add this new UIView
+                    newView = new Extnd.UIView(config);
+                    newView.on('render', function () {
+                        newView.doLayout();
+                    }, this);
+
+                }
+                // to make sure not to call Ext's onHeaderClick which does the
+                // sorting
+                return false;
+
+            } else {
+                // ok, this column is not set to 'change view' OR this column
+                // could be for the checkbox selection model column czso go ahead and
+                // call Ext's onHeaderClick
+                return true;
+            } // eo column.resortToViewName
+
+        } else {
+            // ok, grid is directly in a boder layout's region so we can't
+            // 'change
+            // view' so just return true so Ext's normal onHeaderClick is called
+
+            // TODO: need a way to handle when a grid is in a region
+            // within a border layout. however, for now, we can just
+            // tell users to add the UIView to the items array of the region
+            // instead of directly in the region
+            return true;
+
+        } // eo if (!grid.region)
     },
 
     /**
