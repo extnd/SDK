@@ -1,0 +1,273 @@
+﻿Sub Initialize
+%REM
+This agent can be called from the web to search any view and return results in the same format as the ?ReadViewEntries command.
+This original of this code was created for use with the NotesView2 class v1.3 and above by Jason A. Thomas
+http://openntf.org/Projects/codebin/codebin.nsf/CodeByDate/B588214FD8B22C63862572D8006A24C9
+%END REM
+
+	On Error Goto ErrorHandler
+	Dim session As New NotesSession
+	Dim dbSearch As NotesDatabase
+	Dim colEntries As NotesViewEntryCollection
+	Dim vwSearch As NotesView
+	Dim entryResult As NotesViewEntry
+	Dim docCurrent As NotesDocument
+	Dim docResult As NotesDocument
+	Dim strQuery As String
+	Dim strDb As String
+	Dim strView As String
+
+ 	' variables for single category search
+	Dim strRTC As String
+	Dim intRTCAdjustment As Integer
+	Dim strRTCFormula As String
+
+	Dim intMax As Integer
+	Dim indentLevel As Integer
+	Dim indentLevelString As String
+	Dim responseString As String
+	Dim displayValue As String
+
+	Dim lngCount As Long, i As Long
+	Dim lngStart As Long, lngEnd As Long
+	Dim strParameters As String
+	Dim lngResults As Long
+	Dim tmpString As String
+	Dim x As Integer
+	Dim intExcludedColCount
+
+ 	'start the xml document
+	Print "Content-Type:text/xml;"
+	Print "<?xml version=""1.0"" encoding=""utf-8""?>"
+
+ 	'first we get the search parameters out of the querystring
+	'db, vw, query, searchmax, count, and start
+	Set docCurrent = session.DocumentContext
+
+	Dim request As New HttpRequest()
+	strDb = request.parameter("db")
+	strDb = Replace(Strright(strDb,"/"),"/","\")
+	strView = request.parameter("vw")
+
+	strQuery = request.parameter("query")
+
+	intMax = 0
+	If Isnumeric(request.parameter("searchmax")) Then
+		intMax = Cint(request.parameter("searchmax"))
+	End If
+
+	lngCount = 100
+	If Isnumeric(request.parameter("count")) Then
+		lngCount = Clng(request.parameter("count"))
+	End If
+
+	lngStart = 1
+	If Isnumeric(request.parameter("start")) Then
+		lngStart = Clng(request.parameter("start"))
+	End If
+
+ 	'now we get the view to search
+	Set dbSearch = session.GetDatabase("",strDb,False)
+	Set vwSearch = dbSearch.GetView(strView)
+
+ 	' check for RestrictToCategory because if one exists, we have to adjust the columnnumber attribute
+ 	' and we will need to tweak the strQuery to also search on the category
+	strRTC = request.parameter("RestrictToCategory")
+	If (strRTC <> "") Then
+		intRTCAdjustment = 1
+		Forall col In vwSearch.Columns
+			If col.isCategory Then 'in a RestrictToCategory view, the first category column is the one we are interested in
+				If col.isFormula Then
+					strRTCFormula = col.Formula
+				Else
+					' yes, this look odd since we are using col.Formula for the fieldname but that is what it needs to be
+					' since col.ItemName is the programatic name which does not always match the field name
+					' however, the col.Formula will match the field name if this is NOT a formula column
+					strRTCFormula = "FIELD " + col.Formula
+				End If
+				strQuery = |(| + strRTCFormula + |="| + strRTC + |") AND (| + strQuery + |)|
+				' now we exit the forall after we process the first category column
+				Exit Forall
+			End If
+		End Forall
+	Else
+		intRTCAdjustment = 0
+	End If
+
+ 	'now we run the search
+	lngResults = vwSearch.FTSearch(strQuery,intMax)
+	'Msgbox lngResults
+
+
+ 	'now we spit out the results
+	Print "<viewentries toplevelentries=""" & Cstr(lngResults) & """>"
+	Set colEntries = vwSearch.AllEntries
+
+ 	'set the starting point for the loop
+	If lngStart > lngResults Then lngStart = lngResults
+
+ 	'set the ending point for the loop
+	'Msgbox lngCount
+	If lngCount = -1 Then
+		lngEnd = lngResults 			' -1 means the user wants ALL of the results
+	Else
+		lngEnd = lngCount
+	End If
+	'Msgbox lngEnd
+
+	If lngEnd > lngResults Then lngEnd = lngResults	' make sure we don't go past the results
+
+	'Msgbox "SearchView start and end"
+	'Msgbox lngStart
+	'Msgbox lngEnd
+
+ 	'now loop through the appropriate subset of results and print out a viewentry tag for each one
+	i = lngStart
+	While i <= lngEnd
+		Set entryResult = colEntries.GetNthEntry(i)
+		If Not entryResult Is Nothing Then
+			intExcludedColCount = intRTCAdjustment
+			Set docResult = entryResult.Document
+			indentLevel = entryResult.ColumnIndentLevel
+			If indentLevel > 0 Then
+				responseString = | response="true"|
+			Else
+				responseString = ""
+			End If
+
+			Print |<viewentry position="| & Cstr(i) & |" unid="| & Cstr(docResult.universalID) & |" noteid="| & Cstr(docResult.NoteID) & |" siblings="| & Cstr(entryResult.SiblingCount) & |"| & responseString & |>|
+			x = 0
+
+			Dim value As Variant
+			Dim tmpValue As String
+
+			' we no longer use ColumnValues since it does not return all columns
+			' columns that return special text are not returned (like @docnumber)
+			' columns that have a constant are not returned
+			'Forall value In entryResult.ColumnValues
+			Forall col In vwSearch.Columns
+
+				value = "" ' give value something to start with
+
+				If col.IsCategory Then
+					value = "" 	'on  a search just send an empty string for each category column
+				Else
+
+					If col.isFormula Then
+						value = Evaluate(col.Formula, docResult)
+						'Msgbox Datatype(value)
+						'Msgbox col.Formula
+
+						' check for a @formula that returns special text which we can't support
+						If Datatype(value) = 8712 Then
+							If _
+							Instr(col.Formula, "@DocChildren") > 0 Or _
+							Instr(col.Formula, "@DocDescendants") > 0 Or _
+							Instr(col.Formula, "@DocLevel") > 0 Or _
+							Instr(col.Formula, "@DocNumber") > 0 Or _
+							Instr(col.Formula, "@DocParentNumber") > 0 Or _
+							Instr(col.Formula, "@DocSiblings") _
+							Then
+								value = ""
+							End If
+						End If
+
+					Elseif col.isField Then
+						' yes, we use col.Formula instead of col.ItemName since ItemName is the programatic name which does not always match the actual field name
+						' but col.Formula will match the field name as long as this is a field (col.isField)
+						value = docResult.GetItemValue(col.Formula)
+					End If
+
+					' take care of response only columns (indentLevel > 0 means this is a response row and therefore, we need to find the response column)
+					If indentLevel > 0 Then
+						If col.isResponse Then
+							indentLevelString = | indent="| & Cstr(indentLevel) & |"|
+						Else
+							value = ""  ' don't show a value for columns that are not response columns
+							indentLevelString = ""
+						End If
+					Else
+						If col.isResponse Then
+							value = ""  ' in this case indentLevel = 0 so we need to make sure we do not show anything for the response column
+						End If
+					End If
+
+					' take care of hiding the details for total columns
+					If col.isHideDetail Then
+						value = ""
+					End If
+				End If
+
+
+				' now take care of when the value is an array
+				If Isarray(value) Then
+
+					Dim sep As String, elementName As String
+
+					If Isdate(value(0)) Then
+						elementName = |datetime|
+					Elseif Isnumeric(value(0)) Then
+						elementName = |number|
+					Else
+						elementName = |text|
+					End If
+
+					'sep = |</| & elementName & |><| & elementName & |>|
+					'displayValue = Join(XMLEscape(Cstr(Fulltrim(value))), sep)
+
+					displayValue = ""
+					Forall v In value
+						If Isdate(v) Then
+							tmpValue = Format$(v, "yyyymmddThhmmss")
+						Else
+							tmpValue = Fulltrim(Cstr(v))
+						End If
+						displayValue = displayValue & |<| & elementName & |>| & XMLEscape(tmpValue) & |</| & elementName & |>|
+					End Forall
+
+					If Ubound(value) > 0 Then
+						' wrap array in a textlist, numberlist or datetimelist tag
+						displayValue = |<| & elementName & |list>| & displayValue & |</| & elementName & |list>|
+					End If
+
+				Else
+					If Isdate(value) Then
+						tmpValue = Format$(value, "yyyymmddThhmmss")
+						displayValue = |<datetime>| & XMLEscape(tmpValue) & |</datetime>|
+					Elseif Isnumeric(value) Then
+						displayValue = |<number>| & XMLEscape(Fulltrim(Cstr(value))) & |</number>|
+					Else
+						displayValue = |<text>| & XMLEscape(Fulltrim(Cstr(value))) & |</text>|
+					End If
+				End If
+
+				If Not col.isHidden Then
+					tmpString = ""
+					tmpString = tmpString + |<entrydata columnnumber="| & Cstr(x - intExcludedColCount) & |" name="| & vwSearch.Columns(x).itemName & |"| & indentLevelString & |>|
+					tmpString = tmpString + displayValue
+					tmpString = tmpString + |</entrydata>|
+					Print tmpString
+				Else
+					intExcludedColCount = intExcludedColCount + 1
+				End If
+				x = x + 1
+
+			End Forall
+
+			Print "</viewentry>"
+
+		End If
+		i = i + 1
+	Wend
+
+
+AtEnd:
+	Print "</viewentries>"
+
+	Exit Sub
+ErrorHandler:
+	Print "<error>" & "Error in SearchView: " & Error & "---at " & Erl & "</error>"
+	'Msgbox "<error>" & "Error in SearchView: " & Error & "---at " & Erl & "</error>"
+	Resume AtEnd
+
+End Sub
