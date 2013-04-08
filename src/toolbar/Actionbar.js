@@ -96,6 +96,7 @@ Ext.define('Extnd.toolbar.Actionbar', {
     actions             : null,
     useViewTitleFromDxl : false,
     convertFormulas     : true,
+    enableOverflow      : true,
 
     /* plugins call init */
     init: function (toolbar) {
@@ -119,7 +120,7 @@ Ext.define('Extnd.toolbar.Actionbar', {
 
     },
 
-    // private
+    // if not a plugin then initComponent will be called
     initComponent : function () {
         var me = this,
             vni;

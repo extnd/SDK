@@ -1,6 +1,12 @@
 /**
  * Represents the environment of the current script, providing access to environment variables, Address Books, information
  * about the current user, and information about the current Domino Server platform and release number.
+ *
+ * There are several ways to get the Session information:
+ *
+ *   - Include a call to /extnd.nsf/extnd/Session.js?OpenAgent&db=path/dbName.nsf
+ *   - Create a new instance of this class
+ *   - Use Ext.application()
  */
 Ext.define('Extnd.Session', {
 

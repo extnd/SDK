@@ -64,7 +64,7 @@ Ext.define('Extnd.UIWorkspace', {
                 prompt              : "Please make your selection(s) and click &lt;OK&gt;.",
                 column              : 0,
 
-                width               : (options.multipleSelection && !options.useCheckboxSelection) ? 600 : 500,
+                width               : (options.multipleSelection && !options.useCheckboxSelection) ? 700 : 600,
                 height              : 400,
                 constrainHeader     : true,
                 shadow              : true,

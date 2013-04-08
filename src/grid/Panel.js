@@ -49,14 +49,19 @@ Ext.define('Extnd.grid.Panel', {
 
     showActionbar                   : true,
     showPagingToolbar               : true,
+
     showSearch                      : true,
     showSearchPosition              : 'bottom',
+
     showCategoryComboBox            : false,
     showCategoryComboBoxPosition    : 'top',
     buildActionBarFromDXL           : true,
+
     editMode                        : true,
+
     multiExpand                     : false,
     multiExpandCount                : 40,
+
     notCategorizedText              : '(Not Categorized)',
     loadInitialData                 : true,
 
@@ -379,7 +384,7 @@ Ext.define('Extnd.grid.Panel', {
                 // could be for the checkbox selection model column czso go ahead and
                 // call Ext's onHeaderClick
                 return true;
-            } // eo column.resortToViewName
+            }
 
         } else {
             // ok, grid is directly in a boder layout's region so we can't
@@ -392,7 +397,7 @@ Ext.define('Extnd.grid.Panel', {
             // instead of directly in the region
             return true;
 
-        } // eo if (!grid.region)
+        }
     },
 
     /**
@@ -694,7 +699,7 @@ Ext.define('Extnd.grid.Panel', {
 
         // category combo plugin
         if (me.showCategoryComboBox) {
-            cp = new Extnd.toolbar.plugin.SingleCategoryCombo({
+            cp = Ext.create('Extnd.toolbar.plugin.SingleCategoryCombo', {
                 viewUrl : me.viewUrl,
                 value   : me.category,
                 count   : me.categoryComboBoxCount || -1
@@ -708,12 +713,12 @@ Ext.define('Extnd.grid.Panel', {
             } else {
                 me.bbarPlugins.push(cp);
             }
-        } // eo showCategoryComboBox plugin
+        }
 
 
         // search plugin
         if (me.showSearch) {
-            sp = Ext.create('Extnd.SearchPlugin', {});
+            sp = Ext.create('Extnd.toolbar.plugin.SearchField', {});
             if (me.showSearchPosition === 'top') {
                 me.tbarPlugins.push(sp);
             } else {
@@ -734,7 +739,7 @@ Ext.define('Extnd.grid.Panel', {
         // if a tbar was passed in, just use that and add the plugins to it
         if (this.tbar) {
             if (Ext.isArray(this.tbar)) {
-                this.tbar = new Extnd.Actionbar({
+                this.tbar = new Extnd.toolbar.Actionbar({
                     id          : tbId,
                     noteName    : '',
                     uiView      : this,
@@ -764,11 +769,11 @@ Ext.define('Extnd.grid.Panel', {
                     plugins     : this.tbarPlugins
                 });
             } else {
-                // if plugins are wanted but not the actionbar then create an Extnd.Actionbar
+                // if plugins are wanted but not the actionbar then create an Extnd.toolbar.Actionbar
                 // anyway but don't pass in a noteName so that the actions will not be created
                 // and then add the plugins to it
                 if (this.tbarPlugins.length > 0) {
-                    this.tbar = new Extnd.Actionbar({
+                    this.tbar = new Extnd.toolbar.Actionbar({
                         id          : tbId,
                         noteName    : '', //intentional
                         uiView      : this,
