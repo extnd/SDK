@@ -38,7 +38,8 @@
                 plugins: {
                     ptype: 'bufferedrenderer'
                 }
-            }]
+            }
+        ]
     });
 
 });
