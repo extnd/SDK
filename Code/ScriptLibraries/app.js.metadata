@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?><note class="filter" maintenanceversion="3.0" replicaid="86257B2E00176383" version="8.5" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="4b92" sequence="4" unid="F11B04113DBB08F586257B4F00646D21">
+<created><datetime dst="true">20130416T131655,37-05</datetime></created>
+<modified><datetime dst="true">20131023T160820,72-05</datetime></modified>
+<revised><datetime dst="true">20130416T134509,15-05</datetime></revised>
+<lastaccessed><datetime dst="true">20131023T160820,72-05</datetime></lastaccessed>
+<addedtofile><datetime dst="true">20131023T160820,72-05</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></updatedby>
+<revisions><datetime dst="true">20130416T132725,60-05</datetime><datetime dst="true">20130416T133842,31-05</datetime><datetime dst="true">20130416T134434,61-05</datetime></revisions>
+<wassignedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></wassignedby>
+<item name="$TITLE" sign="true"><text>app.js</text></item>
+<item name="$Flags"><text>h534Q</text></item>
+<item name="$PublicAccess" sign="true"><text>1</text></item>
+</note>

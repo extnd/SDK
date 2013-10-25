@@ -1,0 +1,303 @@
+'++LotusScript Development Environment:2:5:(Options):0:74
+Option Public
+Option Declare
+
+
+'++LotusScript Development Environment:2:5:(Forward):0:1
+Declare Class HttpRequest
+Declare Class ParameterValues
+
+'++LotusScript Development Environment:2:5:(Declarations):0:10
+Class HttpRequest
+	'##################################################################
+	'##																											 		##		
+	'##	A class to simplify fetching parameters from Post/Get-requests				##
+	'##	The class also supports fetching cookies from a request						##
+	'##																													##		
+	'##	Example of use:																						##	
+	'##		Dim request As New HttpRequest														##		
+	'##																													##		
+	'##		Dim action As String																				##	
+	'##		action = request.parameter( "action" )													##		
+	'##		'e.g. ?OpenAgent&action=hello&debug												##		
+	'##		If request.hasParameter( "debug" )  Then 											##	
+	'##			Print "Action: " + action																		##	
+	'##		End If																									##
+	'##																													##	
+	'##		'To get a cookie: cookieValue = request.cookie( "cookieName" )		##			
+	'##																													##		
+	'##		'To get a report of all CGI-variables/request-content							##		
+	'##		Print request.htmlReport (64k limited)													##	
+	'##		'To print a non-64k limited report															##	
+	'##		Call request.printHtmlReport																##
+	'##																													##	
+	'##	Made by Tommy Valand/DontPanic, http://dontpanic82.blogspot.com	##	
+	'##	Jack Ratcliff (10-June-2009) - Added parameterValues method				##		
+	'##################################################################
+	
+	Private session As NotesSession
+	Private context As NotesDocument
+	
+	
+	Private request As String
+	Private request_method As String
+	Private requestParameterList List As ParameterValues
+	Private cookieList List As String
+	Sub New
+		
+		On Error Goto handleErr
+		
+		Set session = New NotesSession		
+		Set context = session.DocumentContext		
+		
+		'Check that session has DocumentContext
+		If context Is Nothing Then Error 1001, "The session doesn't have DocumentContext (agent not run on the web?)"
+		
+		Me.request_method = context.GetItemValue( "request_method" )(0)
+		
+		'Check that context has request-method (agent run by URL)
+		If context.HasItem( "request_method" ) Then
+			'Get request-string
+			If method = "GET" Then
+				Me.request = context.GetItemValue( "query_string_decoded" )(0)				
+			Else	
+				' for POST get both the query_string_decoded and the request_content cgi vars
+				Me.request = context.GetItemValue( "query_string_decoded" )(0) + "&" + Me.requestContent()
+			End If
+		Else
+			Error 1001, "Couldn't get request method (agent not run on the web?)"
+		End If
+		
+		'Extract all parameters into a String List
+		Dim requestArr As Variant, parameterName As String	, parameterValue As String
+		
+		requestArr = Split( Me.request, "&" )
+		Forall parameter In requestArr
+			
+			parameterName = Strtoken( parameter, "=", 1 )
+			parameterValue = Replace( parameter, parameterName + "=", "" )
+			
+			If (Iselement(requestParameterList(parameterName))) Then
+				requestParameterList(parameterName).add(parameterValue)
+			Else
+				Dim pv As New ParameterValues(parameterValue)
+				Set requestParameterList(parameterName) = pv
+			End If
+			
+		End Forall
+		
+		
+		'Extract all cookies into a String List
+		Dim cookies As String, cookiesArr As Variant
+		cookies = context.GetItemValue( "HTTP_COOKIE" )(0)
+		cookiesArr = Split( cookies, "; " )
+		
+		Forall cookie In cookiesArr
+			Dim cookieName As String
+			cookieName = Strtoken( cookie, "=", 1 )			
+			cookieList( cookieName ) = Replace( cookie, cookieName + "=", "" )
+		End Forall
+		
+		Exit Sub
+		
+handleErr:
+		Error Err, "An error occured: " + Error$ + ", on line " & Erl
+		
+	End Sub
+	
+	'Check to see that a parameter exists. More or less equal to isset in PHP
+	Property Get hasParameter( Byval parameterName As String ) As Boolean
+		hasParameter = ( Iselement( Me.requestParameterList( parameterName  ) ) )
+	End Property
+	
+	'Returns the FIRST value of the parameter specified by name, or an empty string
+	Property Get parameter( Byval parameterName As String ) As String
+		If  Me.hasParameter( parameterName ) Then
+			parameter = Me.requestParameterList( parameterName ).parameterValues(0)
+		Else
+			parameter = ""
+		End If
+	End Property
+	
+		'Returns ALL values of the parameter specified by name, or an empty string
+	Property Get parameterValues( Byval parameterName As String ) As Variant
+		If  Me.hasParameter( parameterName ) Then
+			parameterValues = Me.requestParameterList( parameterName ).parameterValues
+		Else
+			parameterValues = ""
+		End If
+	End Property
+	
+	'Check to see if a cookie is set
+	Property Get hasCookie( Byval cookieName As String ) As Boolean
+		hasCookie = ( Iselement( Me.cookieList( cookieName ) ) )
+	End Property
+	
+	'Returns the value of the cookie specified by name, or an empty string
+	Property Get cookie( Byval cookieName As String )
+		If Me.hasCookie( cookieName ) Then cookie = Me.cookieList( cookieName )
+	End Property
+	
+	'Returns the request-string
+	Property Get content As String
+		content = Me.request
+	End Property
+	
+	'Returns the request-method
+	Property Get method As String
+		method = Me.request_method
+	End Property
+	
+	'Function to determine if requestContent is longer than 64k/combine the fields
+	Private Function requestContent() As String
+		If Me.context.hasItem( "request_content" ) Then
+			requestContent = Me.context.getItemValue( "request_content" )(0)
+			Exit Function
+		End If
+		
+		Dim requestContentFieldNames As Variant
+		requestContentFieldNames = Evaluate( |@Trim( @Word( @DocFields ; "REQUEST_CONTENT_" ; 2 ) )|, Me.context )
+		
+		Dim stringBuffer As NotesStream
+		Set stringBuffer = Me.session.CreateStream
+		
+		Forall requestContentFieldName In requestContentFieldNames			
+			Call stringBuffer.WriteText( context.GetItemValue( "REQUEST_CONTENT_" + requestContentFieldName )(0) )			
+		End Forall
+		
+		stringBuffer.Position = 0
+		requestContent = stringBuffer.ReadText
+	End Function
+	
+	' unescape function from John Smart's response on codestore.net
+	' http://www.codestore.net/store.nsf/cmnts/7E3F4A1C13D67AE986256BFF007121B8?OpenDocument
+	Public Function unescape(Byval s As String) As String
+		Dim iP As Integer
+		Dim sL As String
+		Dim sM As String
+		Dim sR As String
+		
+		iP = Instr(s,"%")
+		If iP <> 0 Then
+			sL = Left$(s,iP-1)
+			sM = Mid$(s,iP+1,2)
+			sR = Mid$(s, iP+3)
+			Unescape = sL & Chr(Cint("&h" & sM)) & Unescape(sR)
+		Else
+			Unescape = s
+		End If
+	End Function 
+	
+	'Prints full report - No 64k limit
+	Function printHtmlReport
+		On Error Goto handleErr
+		
+		Dim report As String
+		report = Me.htmlReport()
+		
+		Dim position As Long, increment As Long
+		position = 1
+		increment = 60000		
+		
+		Print |<h1>Content length: | & Format( Len( report ), "Standard" ) & | characters</h1>|
+		
+		If Len( report ) < increment Then
+			Print report
+		Else			
+			Print |<strong>Number of request_content fields: | & Join( Evaluate( |@Elements( @Trim( @Word( @DocFields ; "REQUEST_CONTENT_" ; 2 ) ) )|, Me.context ) ) & |</strong>|
+			While position < Len( report )
+				Print Mid( report, position, increment )
+				
+				position = position + increment
+			Wend
+			
+			Print Mid( report, position )			
+		End If
+		
+		Exit Function
+handleErr:
+		Error Err, "An error occured: " + Error$ + ", on line " & Erl
+	End Function
+	
+	Function htmlReport As String	
+		On Error Goto handleErr		
+		
+		Dim stringbuffer As NotesStream
+		Set stringbuffer = Me.session.CreateStream	
+		
+		Call stringbuffer.WriteText( |
+	<style>
+		* { font-family: arial; font-size: 12px; }
+		table { border-collapse: collapse; }
+		caption { background-color: #ddd; font-size: 16px; margin: 0; padding: 10px 0; font-weight: bold; }
+		tr { vertical-align: top; }
+		td {border: 1px solid #ccc; padding: 3px; }		
+		tfoot td { background-color: #669922; color: #fff; font-size: 14px; text-align: center; }		
+
+		#label { background-color: #eee; }
+	</style>| )
+		Call stringbuffer.WriteText( |
+	<table>
+		<colgroup id="label"/>
+		<colgroup id="value"/>
+		<caption>Request content</caption>| )
+		
+		
+		Call stringbuffer.WriteText( |<tbody>| )
+		
+		Forall item In context.Items
+			Call stringbuffer.WriteText( |<tr><td>| + item.name + |</td><td>| )
+			
+			Forall itemval In item.Values
+				Call stringbuffer.WriteText( itemval )
+			End Forall
+			
+			Call stringbuffer.WriteText( |</td></tr>| )
+		End Forall
+		
+		Call stringbuffer.WriteText( |	</tbody><tfoot><tr><td colspan="2">Routine created by 
+			<a href="http://dontpanic82.blogspot.com">Tommy Valand/DontPanic</a></td></tr></tfoot>
+		</table>| )	
+		
+		'Extract stream content to string
+		stringbuffer.Position = 0
+		htmlReport = stringbuffer.ReadText()	
+		Exit Function
+handleErr:
+		Print Error + ", on line " & Erl
+		Resume Next	
+	End Function
+	
+End Class
+
+
+
+Class ParameterValues
+	Private pValues() As String
+	Private isFirstValue As Boolean
+	
+	Sub New(value)
+		isFirstValue = True
+		Me.add(value)
+	End Sub
+	
+	Sub add(value)
+		
+		If Me.isFirstValue Then
+			Redim Preserve Me.pValues(0)
+			Me.pValues(0) = value
+			Me.isFirstValue = False
+		Else
+			Dim count As Integer
+			count = Ubound(Me.pValues)
+			Redim Preserve Me.pValues(count%+1)
+			Me.pValues(count%+1) = value			
+			count = Ubound(Me.pValues)		
+		End If
+	End Sub
+	
+	Property Get parameterValues() As Variant
+		parameterValues	 = Me.pValues
+	End Property
+	
+End Class

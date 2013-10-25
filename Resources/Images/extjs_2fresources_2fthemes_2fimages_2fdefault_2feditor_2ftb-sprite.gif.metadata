@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="3.0" replicaid="86257B2E00176383" version="8.5" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="396e" sequence="3" unid="0B2D264B44149A6885257B39006DDBBB">
+<created><datetime dst="true">20130325T155956,75-04</datetime></created>
+<modified><datetime dst="true">20130909T091844,42-05</datetime></modified>
+<revised><datetime dst="true">20130325T162118,09-04</datetime></revised>
+<lastaccessed><datetime dst="true">20130909T091844,42-05</datetime></lastaccessed>
+<addedtofile><datetime dst="true">20130909T091844,42-05</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Jack Ratcliff/O=BlueCuda</name></updatedby>
+<revisions><datetime dst="true">20130325T155957,28-04</datetime><datetime dst="true">20130325T155957,30-04</datetime></revisions>
+<item name="$TITLE"><textlist><text>extjs/resources/themes/images/default/editor/tb-sprite.gif</text></textlist></item>
+<item name="$Flags"><text>34CiQ</text></item>
+<item name="$ImagesColorize"><number>0</number></item>
+<item name="$ImagesHigh"><number>1</number></item>
+<item name="$ImagesWide"><number>1</number></item>
+<item name="$DesignerVersion"><text>6</text></item>
+<item name="$ImageNames"><textlist><text>tb-sprite.gif</text></textlist></item>
+
+
+<item name="$FileModDT"><datetime dst="true">20130325T162118,09-04</datetime></item>
+<item name="$MimeType"><text>image/gif</text></item></note>

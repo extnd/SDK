@@ -1,0 +1,550 @@
+'++LotusScript Development Environment:2:5:(Options):0:74
+Option Public
+Option Declare
+'++LotusScript Development Environment:2:5:(Forward):0:1
+Declare Function getAddressBooks(sess As NotesSession) As String
+Declare Function getDatabase(db As NotesDatabase, dbName As String) As String
+Declare Function getAgent(agent As NotesAgent) As String
+Declare Sub Initialize
+Declare Function getItems(doc As NotesDocument) As String
+Declare Function getDocument(doc As NotesDocument) As String
+Declare Function getItemValues(item As NotesItem) As String
+Declare Function getUserGroupNameList(session As NotesSession) As String
+Declare Function getUserNameList(session As NotesSession) As String
+Declare Function getAttachments(doc As NotesDocument) As String
+
+'++LotusScript Development Environment:2:5:(Declarations):0:10
+Const SEP = ", "
+Dim nl As String
+
+'++LotusScript Development Environment:2:1:getAddressBooks:1:8
+Function getAddressBooks(sess As NotesSession) As String
+	
+	On Error Goto erh
+	On Error 4060 Goto erhNoAccess
+	
+	Dim books As Variant
+	Dim isFirst As Boolean
+	Dim db As NotesDatabase
+	
+	
+	
+	' checking the server name for blank fixes an issue with running
+	' Extnd from a localhost in designer since a call to sess.AddressBooks
+	' takes 15-45 seconds!  
+	' TODO: need to find out how this affects DOLS
+	If sess.IsOnServer Then
+		books = sess.AddressBooks	
+	Else
+		Set books = Nothing
+	End If
+	
+	isFirst = True
+	
+	' start our javascript array
+	getAddressBooks = |[|
+	
+	' check to make sure we get back an array
+	' when run from a local workstation using Desinger's
+	' preview in web browser feature this will not return
+	' an array if the local names.nsf db does not allow
+	' the anonymous user to access
+	
+	If Isarray(books) Then
+		
+		Dim user As String
+		user = Lcase$(sess.EffectiveUserName)
+		
+		Forall b In books
+			
+			Set db = b
+			
+			' if anonymous access is granted to the address books you will get this far
+			' however, since the db is not opened not all properties are available 
+			' so we will open the db unless you are an anonymous user
+			' since anonymous users can not open a db in LotusScript
+			
+			If user <> "anonymous" Then 
+				Call db.Open("","")
+			End If
+			
+			If isFirst Then
+				getAddressBooks = getAddressBooks + getDatabase(db, db.FilePath) + nl
+				isFirst = False
+			Else
+				getAddressBooks = getAddressBooks + |, | + getDatabase(db, db.FilePath) + nl
+			End If
+		End Forall
+		
+	End If
+	
+out:
+	getAddressBooks = getAddressBooks + |]|	
+	Exit Function
+	
+erhNoAccess:
+	Resume out
+	
+erh:
+	'/* throw this error */
+	Error Err, _
+	"[" & Cstr(Getthreadinfo(1)) & " line " & Erl & "] " & Error$
+	
+End Function
+
+'++LotusScript Development Environment:2:1:getDatabase:1:8
+Function getDatabase(db As NotesDatabase, dbName As String) As String
+	
+	On Error Goto erh
+	
+	Dim isFirst As Boolean
+	Dim isOpen As Boolean
+	isOpen = False
+	
+	' make sure db is open
+	If db.CurrentAccessLevel >= 2 Then ' you must have Reader access to open
+		If db.IsOpen Then
+			isOpen = True
+		Else
+			isOpen = db.Open("","") ' try to open it if it isn't already open
+		End If		
+	Else
+		isOpen = False
+	End If
+	
+	' first, make sure dbName has all backslashes converted to forward slashes
+	dbName = Replace(dbName, "\", "/")
+	
+	' now, start building the JSON string
+	getDatabase = getDatabase + |{| + nl
+	getDatabase = getDatabase + | "acl" : {}| 
+	getDatabase = getDatabase + SEP + nl
+	
+	getDatabase = getDatabase + | "aclActivityLog" : [|
+	
+%REM
+	isFirst = True
+	Forall logEntry In db.ACLActivityLog
+		If isFirst Then
+			getDatabase = getDatabase + |"| + logEntry + |"|
+			isFirst = False
+		Else
+			getDatabase = getDatabase + |,| + nl + |"| + logEntry + |"|
+		End If
+	End Forall	
+%END REM
+	getDatabase = getDatabase + |]| + SEP + nl
+	
+	' currentAccessLevel
+	getDatabase = getDatabase + | "currentAccessLevel" : | + Cstr(db.CurrentAccessLevel)
+	getDatabase = getDatabase + SEP + nl
+	
+	' parent
+	'getDatabase = getDatabase + | "parent" : Extnd.Session |
+	'getDatabase = getDatabase + SEP + nl
+	
+	' server
+	getDatabase = getDatabase + | "server" : "| + db.Server + |"|
+	getDatabase = getDatabase + SEP + nl
+	
+	' fileName
+	getDatabase = getDatabase + | "fileName" : "| + db.FileName + |"|
+	getDatabase = getDatabase + SEP + nl
+	
+	' filePath (for localhost we couldn't use db.FilePath so we depend on the dbName passed to this function
+	'getDatabase = getDatabase + | "filePath" : "| + Replace(db.FilePath, "\", "\\") + |"|
+	getDatabase = getDatabase + | "filePath" : "| + Replace(dbName, "/", "\\") + |"|
+	getDatabase = getDatabase + SEP + nl
+	
+	' webFilePath
+	getDatabase = getDatabase + | "webFilePath" : "/| + dbName + |/"|
+	getDatabase = getDatabase + SEP + nl
+	
+	' title
+	getDatabase = getDatabase + | "title" : "| + db.Title + |"|
+	
+	' now for the properites that can only be accessed if the db is open
+	If isOpen Then
+		
+		' first add a separator for the last attribute listed before this if/then
+		getDatabase = getDatabase + SEP + nl
+		
+		
+		' fileFormat (db needs to be opened)
+		getDatabase = getDatabase + | "fileFormat" : | + Cstr(db.FileFormat)
+		getDatabase = getDatabase + SEP + nl
+		
+		' created (db must be opened)
+		getDatabase = getDatabase + | "created" : "| + db.Created + |"|
+		getDatabase = getDatabase + SEP + nl		
+		
+		' designTemplateName
+		getDatabase = getDatabase + | "designTemplateName" : "| + db.DesignTemplateName + |"|
+		getDatabase = getDatabase + SEP + nl
+		
+		' isDB2
+		Dim isDB2 As String
+		If (db.IsDB2) Then
+			isDB2 = "true"
+		Else
+			isDB2 = "false"
+		End If
+		getDatabase = getDatabase + | "isDB2" : | + isDB2
+		getDatabase = getDatabase + SEP + nl
+		
+		' httpURL
+		getDatabase = getDatabase + | "httpURL" : "| + db.HttpURL + |"|
+		getDatabase = getDatabase + SEP + nl
+		
+		' replicaID
+		getDatabase = getDatabase + | "replicaID" : "| + db.ReplicaID + |"|
+		getDatabase = getDatabase + SEP + nl
+		
+		' isDocumentLockingEnabled (db must be opened)
+		Dim isDocumentLockingEnabled As String
+		If (db.IsDocumentLockingEnabled) Then
+			isDocumentLockingEnabled = "true"
+		Else
+			isDocumentLockingEnabled = "false"
+		End If
+		getDatabase = getDatabase + | "isDocumentLockingEnabled" : | + isDocumentLockingEnabled
+		getDatabase = getDatabase + SEP + nl
+		
+		' isDesignLockingEnabled (db must be opened)
+		Dim isDesignLockingEnabled As String
+		If (db.IsDesignLockingEnabled) Then
+			isDesignLockingEnabled = "true"
+		Else
+			isDesignLockingEnabled = "false"
+		End If
+		getDatabase = getDatabase + | "isDesignLockingEnabled" : | + isDesignLockingEnabled
+		getDatabase = getDatabase + SEP + nl
+		
+		' isFTIndexed
+		Dim isFTIndexed As String
+		If (db.IsFTIndexed) Then
+			isFTIndexed = "true"
+		Else
+			isFTIndexed = "false"
+		End If
+		getDatabase = getDatabase + | "isFTIndexed" : | + isFTIndexed
+		getDatabase = getDatabase + SEP + nl
+		
+		' size
+		getDatabase = getDatabase + | "size" : | + Cstr(db.Size)
+		getDatabase = getDatabase + SEP + nl
+		
+		' sizeQuota
+		getDatabase = getDatabase + | "sizeQuota" : | + Cstr(db.SizeQuota)
+		getDatabase = getDatabase + SEP + nl
+		
+		' sizeWarning
+		getDatabase = getDatabase + | "sizeWarning" : | + Cstr(db.SizeWarning)
+		getDatabase = getDatabase + SEP + nl
+		
+		' percentUsed (db must be opened)
+		getDatabase = getDatabase + | "percentUsed" : | + Replace(Cstr(db.PercentUsed), ",", ".")
+		
+	End If
+	
+	' now close out the json
+	getDatabase = getDatabase + |}|
+	
+	Exit Function
+	
+erh:
+	'/* throw this error */
+	Error Err, _
+	"[" & Cstr(Getthreadinfo(1)) & " line " & Erl & "] " & Error$
+	
+End Function
+'++LotusScript Development Environment:2:1:getAgent:1:8
+Function getAgent(agent As NotesAgent) As String
+	
+	On Error Goto erh
+	
+	Dim isFirst As Boolean
+	
+	getAgent = getAgent + |{|
+	
+	' Comment	
+	getAgent = getAgent + | "comment" : "| + agent.Comment + |"|
+	getAgent = getAgent + SEP
+	
+	' CommonOwner
+	getAgent = getAgent + | "commonOwner" : "| + agent.CommonOwner + |"|
+	getAgent = getAgent + SEP
+	
+	' HasRunSinceModified
+	getAgent = getAgent + | "hasRunSinceModified" : |
+	If agent.HasRunSinceModified Then
+		getAgent = getAgent + |true|
+	Else
+		getAgent = getAgent + |false|		
+	End If
+	getAgent = getAgent + SEP
+	
+	' Name
+	getAgent = getAgent + | "name" : "| + agent.Name + |"|
+	
+	getAgent = getAgent + |}|
+	
+	Exit Function
+	
+erh:
+	'/* throw this error */
+	Error Err, _
+	"[" & Cstr(Getthreadinfo(1)) & " line " & Erl & "] " & Error$
+	
+End Function
+'++LotusScript Development Environment:2:2:Initialize:1:10
+Sub Initialize
+	
+	nl = Chr(13)
+	
+End Sub
+'++LotusScript Development Environment:2:1:getItems:1:8
+Function getItems(doc As NotesDocument) As String
+	
+	On Error Goto erh
+	
+	Dim items As Variant
+	Dim isFirst As Boolean
+	Dim item As NotesItem
+	
+	items = doc.Items
+	isFirst = True
+	
+	getItems = |[|
+	
+	Forall n In items
+		
+		Set item = n
+		
+		If isFirst Then
+			getItems = getItems + |{|
+			isFirst = False
+		Else
+			getItems = getItems + |, | + nl + |{|
+		End If
+		
+		getItems = getItems + |"name" : "| + n.Name + |"| + SEP
+		getItems = getItems + |"type" : | + Cstr(n.Type) + SEP
+		getItems = getItems + |"values" : | + getItemValues(item)
+		
+		getItems = getItems  + |}|
+		
+	End Forall
+	
+	getItems = getItems + |]|
+	
+	Exit Function
+	
+erh:
+	'/* throw this error */
+	Error Err, _
+	"[" & Cstr(Getthreadinfo(1)) & " line " & Erl & "] " & Error$
+	
+End Function
+'++LotusScript Development Environment:2:1:getDocument:1:8
+Function getDocument(doc As NotesDocument) As String
+	
+	On Error Goto erh
+	
+	getDocument = |{| + nl
+	
+	getDocument = getDocument + |   "created" : "| + Cstr(doc.Created) + |"| + SEP + nl
+	getDocument = getDocument + |   "lastAccessed" : "| + Cstr(doc.LastAccessed) + |"| + SEP +nl
+	getDocument = getDocument + |   "lastModified" : "| + Cstr(doc.LastModified) + |"| + SEP + nl
+	getDocument = getDocument + |   "noteID" : "| + doc.NoteID + |"| + SEP + nl
+	getDocument = getDocument + |   "universalID" : "| + doc.UniversalID + |"| + SEP + nl
+	getDocument = getDocument + |   "attachments" : | + getAttachments(doc)
+	' getItems could be a lot of data so we are no longer automatically including the items property
+	' instead, use the getItems() method on an Extnd.Document and an Ajax call will be made to
+	' then get the items data
+	'getDocument = getDocument + |"items" : | + getItems(doc)
+	
+	getDocument = getDocument + |}|
+	
+	Exit Function
+	
+erh:
+	'/* throw this error */
+	Error Err, _
+	"[" & Cstr(Getthreadinfo(1)) & " line " & Erl & "] " & Error$
+	
+End Function
+
+
+'++LotusScript Development Environment:2:1:getItemValues:1:8
+Function getItemValues(item As NotesItem) As String
+	
+	On Error Goto erh
+	
+	Dim isFirst As Boolean
+	isFirst = True
+	
+	getItemValues = |[|
+	
+%REM - for now we are commenting this out since quotes in values cause us problems
+	Forall v In item.Values
+		
+		If isFirst Then
+			getValues = getValues + |"| + Cstr(v) + |"|
+			isFirst = False
+		Else
+			getValues = getValues + |, | + |"| + Cstr(v) + |"|
+		End If
+		
+	End Forall
+
+%END REM
+	
+	getItemValues = getItemValues + |]|
+	
+	Exit Function
+	
+erh:
+	'/* throw this error */
+	Error Err, _
+	"[" & Cstr(Getthreadinfo(1)) & " line " & Erl & "] " & Error$
+	
+End Function
+'++LotusScript Development Environment:2:1:getUserGroupNameList:1:8
+Function getUserGroupNameList(session As NotesSession) As String
+	
+	On Error Goto erh
+	
+	Dim items As Variant
+	Dim isFirst As Boolean
+	
+	items = session.UserGroupNameList
+	isFirst = True
+	
+	getUserGroupNameList = |[|
+	
+	If Not Isempty(items) Then
+		Forall group In items
+			If isFirst Then
+				getUserGroupNameList = getUserGroupNameList + |{|
+				isFirst = False
+			Else
+				getUserGroupNameList = getUserGroupNameList + |, | + nl + |{|
+			End If
+			
+			getUserGroupNameList = getUserGroupNameList + |"abbreviated" : "| + group.Abbreviated + |"| + SEP
+			getUserGroupNameList = getUserGroupNameList + |"addr821" : "| + group.Addr821 + |"| + SEP
+			getUserGroupNameList = getUserGroupNameList + |"common" : "| + group.Common + |"|
+			
+			getUserGroupNameList = getUserGroupNameList + |}|
+			
+		End Forall
+	End If
+	
+	getUserGroupNameList = getUserGroupNameList + |]|
+	
+	Exit Function
+	
+erh:
+	'/* throw this error */
+	Error Err, _
+	"[" & Cstr(Getthreadinfo(1)) & " line " & Erl & "] " & Error$
+	
+End Function
+'++LotusScript Development Environment:2:1:getUserNameList:1:8
+Function getUserNameList(session As NotesSession) As String
+	
+	On Error Goto erh
+	
+	Dim items As Variant
+	Dim isFirst As Boolean
+	
+	'(0) is the primary and (1) is the alternate name
+	items = Evaluate(|@UserName(0):@UserName(1)|)
+	isFirst = True
+	
+	getUserNameList = |[|
+	
+	If Not Isempty(items) Then
+		
+		Forall group In items
+			If isFirst Then
+				getUserNameList = getUserNameList + |{|
+				isFirst = False
+			Else
+				getUserNameList = getUserNameList + |, | + nl + |{|
+			End If
+			
+			getUserNameList = getUserNameList + |"abbreviated" : "| + group+ |"| + SEP
+			getUserNameList = getUserNameList + |"addr821" : "| + group + |"| + SEP
+			getUserNameList = getUserNameList + |"common" : "| + group + |"|
+			
+			getUserNameList = getUserNameList + |}|
+			
+		End Forall
+	End If
+	
+	getUserNameList = getUserNameList + |]|
+	
+	Exit Function
+	
+erh:
+	'/* throw this error */
+	Error Err, _
+	"[" & Cstr(Getthreadinfo(1)) & " line " & Erl & "] " & Error$
+	
+End Function
+'++LotusScript Development Environment:2:1:getAttachments:1:8
+Function getAttachments(doc As NotesDocument) As String
+	
+	On Error Goto erh
+	Dim attNames As Variant
+	Dim attModifiedTimes As Variant
+	Dim attSizes As Variant
+	Dim size As String
+	Dim modified As String
+	Dim isFirst As Boolean
+	Dim idx As Integer
+	
+	attNames = Evaluate(|@AttachmentNames|, doc)
+	attModifiedTimes = Evaluate(|@AttachmentModifiedTimes|, doc)
+	attSizes = Evaluate(|@AttachmentLengths|, doc)
+	isFirst = True
+	idx = 0
+	
+	getAttachments = getAttachments + |[|
+	
+	Forall filename In attNames
+		
+		If (filename <> "") Then
+			
+			size = attSizes(idx)
+			modified = attModifiedTimes(idx)
+			idx = idx + 1
+			
+			If isFirst Then
+				getAttachments = getAttachments + nl + |      {|
+				isFirst = False
+			Else
+				getAttachments = getAttachments + |, | + nl + |      {|
+			End If
+			getAttachments = getAttachments + |"filename" : "| + filename + |"| + SEP
+			getAttachments = getAttachments + |"size" : "| + size + |"| + SEP
+			getAttachments = getAttachments + |"modified" : "| + modified + |"|
+			
+			getAttachments = getAttachments + |}|
+			
+		End If
+	End Forall
+	
+	
+	getAttachments = getAttachments + |   ]|
+	
+	Exit Function
+	
+erh:
+	'/* throw this error */
+	Error Err, _
+	"[" & Cstr(Getthreadinfo(1)) & " line " & Erl & "] " & Error$
+	
+End Function

@@ -1,0 +1,139 @@
+@import url('xnd-view-icons-nd7.css');
+
+/*----------------------------------------------------
+ * view styles
+ *----------------------------------------------------
+ */
+
+.xnd-resorttoview span {
+    background  : url("/icons/viewsort.gif") no-repeat scroll right bottom transparent;
+    padding     : 0 20 0 0;
+}
+td.xnd-view-category {
+   font-weight : bold;
+   overflow: visible;
+}
+td.xnd-view-category div.x-grid-cell-inner {
+    overflow: visible;
+}
+td.xnd-view-totals {
+   font-weight : bold;
+   text-align : right;
+}
+td.xnd-view-response {
+   z-index:2;
+   overflow: visible;
+}
+/* to allow for rows to grow in height */
+.x-grid-row td, .x-grid3-row td, .x-grid3-cell-inner {
+  white-space: normal;
+}
+/* Ext didn't have this class defined for some reason */
+.x-view-selected {
+  background-color: #316ac5 !important;
+  color: white;
+}
+
+/* Categorized Styles */
+.xnd-category-hd .xnd-category-cell {
+  background:transparent url(../images/group-expand-sprite.gif) no-repeat 3px -47px;
+  padding:0 0 0 17px;
+}
+
+.xnd-category-collapsed .xnd-category-hd .xnd-category-cell {
+  background-position: 3px 3px;
+}
+
+.xnd-category-collapsed .xnd-category-body {
+    display:none;
+}
+
+
+/*----------------------------------------------------
+ * Outline Styles
+ *----------------------------------------------------
+ */
+
+/* fix button padding for domino's larger buttons
+ * domino's icons are 21px + add 2px for padding
+ */
+.x-btn-text-icon .x-btn-center .x-btn-text {
+  padding-left:23px;
+}
+
+/* fix to allow outline icons to not have their
+ * width and height skewed
+ */
+.xnd-icon {
+  width: auto!important;
+  height: auto!important;
+}
+
+/* use this class to not display any icons
+ * next to the nodes/entries in a tree/outline
+ */
+.xnd-no-icon {
+  display: none;
+  background-image:url(../images/s.gif);
+}
+
+/*----------------------------------------------------
+ * Form and Document Styles
+ *----------------------------------------------------
+ */
+
+/* give form and page contents a little margin since they
+ * are loaded in a viewport that has 0 margin
+ */
+
+#xnd-form-ui {
+  margin: 5px;
+}
+
+/* hide form toolbar when printing */
+@media print {
+  #xnd-form-toolbar {
+    display: none;
+  }
+}
+
+/* TODO - need to find out why we had this set */
+.x-form-field-wrap {
+    /*height: 23px;*/
+}
+.ext-ie6 .x-form-field-wrap, .ext-ie7 .x-form-field-wrap {
+    height: 23px;
+}
+
+/* fix an IE + Domino issue with form triggers */
+.ext-ie6 .x-form-field-wrap .x-form-trigger, .ext-ie7 .x-form-field-wrap .x-form-trigger {
+    top: 1px;
+}
+
+.xnd-form-trigger {
+    border: 1px solid #B5B8C8;
+    height : 20px;
+    cursor:pointer;
+}
+
+/* need -1px shift to the left for the viewlink.gif */
+.xnd-form-picklist-trigger {
+    background : #C5D8C8 url(/icons/viewlink.gif) no-repeat scroll -1px 3px;
+}
+
+.xnd-form-names-trigger {
+    background : #C5D8C8 url(/icons/vwicn003.gif) no-repeat scroll 1px 3px;
+}
+
+.xnd-form-acl-trigger {
+    background : #C5D8C8 url(/icons/actn090.gif) no-repeat scroll 1px 3px;
+}
+
+.x-form-trigger-wrap-focus .xnd-form-time-trigger,
+.xnd-form-time-trigger {
+    background : #C5D8C8 url(/icons/vwicn064.gif) no-repeat scroll 1px 3px;
+}
+
+.x-form-field-wrap .x-form-trigger-over .xnd-form-time-trigger {
+    /*background-position: -17px 0;*/
+}

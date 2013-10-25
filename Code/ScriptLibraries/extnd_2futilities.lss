@@ -1,0 +1,382 @@
+'++LotusScript Development Environment:2:5:(Options):0:66
+Option Public
+
+'++LotusScript Development Environment:2:5:(Forward):0:1
+Declare Function URLDecode(inString As String) As String
+Declare Function encodeString( TextToEncode As String, FormatToEncode As String ) As String
+Declare Function GetParameter(strParamName As String, strQuery As String) As String
+Declare Function XMLEscape(strValue As String) As String
+Declare Function getDbFileNameFromString(strValue As String) As String
+
+'++LotusScript Development Environment:2:5:(Declarations):0:10
+
+
+'++LotusScript Development Environment:2:1:URLDecode:1:8
+Function URLDecode(inString As String) As String
+	Dim outString As String
+	Dim letter As String
+	Dim tmp As String
+	Dim dec As Integer
+	Dim i As Integer
+'Check for %, if found the next two characters are the ASCII character hex value 
+	For i = 1 To Len(inString)
+		letter = Mid$(instring, i, 1)
+		If (letter = "%") Then
+			tmp = Mid$(instring, i+1, 2)
+			Select Case Right$(tmp, 1)
+			Case "A"
+				dec = 10
+			Case "B"
+				dec = 11
+			Case "C"
+				dec = 12
+			Case "D"
+				dec = 13
+			Case "E"
+				dec = 14
+			Case "F"
+				dec = 15
+			Case Else 
+				dec = Cint(Right$(tmp, 1))
+			End Select
+			Select Case Left$(tmp, 1)
+			Case "A" 
+				dec = dec + 10 * 16
+			Case "B"
+				dec = dec + 11 * 16
+			Case "C" 
+				dec = dec + 12 * 16
+			Case "D"
+				dec = dec + 13 * 16
+			Case "E"
+				dec = dec + 14 * 16
+			Case "F"
+				dec = dec + 15 * 16
+			Case Else
+				dec = dec + Cint(Left$(tmp,1)) * 16 
+			End Select
+			outString = outString + Chr$(dec)
+			i = i + 2
+		Else
+			outString = outString + letter
+		End If 
+	Next
+	URLDecode = outString
+End Function
+'++LotusScript Development Environment:2:1:encodeString:1:8
+Function encodeString( TextToEncode As String, FormatToEncode As String ) As String
+	
+	Dim charList List As String
+	Dim charToSearch As String, charToReplace As String
+	Dim nPos As Integer, nPosOfChar As String
+	Dim result As String
+	
+	Select Case FormatToEncode
+		
+	Case "Octal"
+		
+		charList( "¢" ) = "\242"
+		charList( "£" ) = "\243" 
+		charList( "¥" ) = "\245"
+		charList( "¼" ) = "\274"
+		charList( "½" ) = "\275"
+		charList( "¾" ) = "\276"
+		charList( "¡" ) = "\241"
+		charList( "«" ) = "\253"
+		charList( "»" ) = "\273"
+		charList( "¿" ) = "\277"
+		charList( "À" ) = "\300"
+		charList( "Á" ) = "\301"
+		charList( "Â" ) = "	\302"
+		charList( "Ã" ) = "\303"
+		charList( "Ä" ) = "\304"
+		charList( "Å" ) = "\305"
+		charList( "Æ" ) = "\306"
+		charList( "Ç" ) = "\307"
+		charList( "È" ) = "\310"
+		charList( "É" ) = "\311"
+		charList( "Ê" ) = "\312"
+		charList( "Ë" ) = "\313"
+		charList( "Ì" ) = "\314"
+		charList( "Í" ) = "\315"
+		charList( "Î" ) = "\316"
+		charList( "Ï" ) = "\317"
+		charList( "Ð" ) = "\320"
+		charList( "Ñ" ) = "\3214"
+		charList( "Ò" ) = "\322"
+		charList( "Ó" ) = "\323"
+		charList( "Ô" ) = "\324"
+		charList( "Õ" ) = "\325"
+		charList( "Ö" ) = "\326"
+		charList(" Ø" ) = "\330"
+		charList( "Ù" ) = "\331"
+		charList( "Ú" ) = "\332"
+		charList( "Û" ) = "\333"
+		charList( "Ü" ) = "\334"
+		charList( "Ý" ) = "\335"
+		charList( "Þ" ) = "\336"
+		charList( "ß" ) = "\337"
+		charList( "à" ) = "\340"
+		charList( "á" ) = "\341"
+		charList( "â" ) = "\342"
+		charList( "ã" ) = "\343"
+		charList( "ä" ) = "\344"
+		charList( "å" ) = "\345"
+		charList( "æ" ) = "\346"
+		charList( "ç" ) = "\347"
+		charList( "è" ) = "\350"
+		charList( "é" ) = "\351"
+		charList( "ê" ) = "\352"
+		charList( "ë" ) = "\353"
+		charList( "ì" ) = "\354"
+		charList( "í" ) = "\355"
+		charList( "î" ) = "\356"
+		charList( "ï" ) = "\357"
+		charList( "ð" ) = "\360"
+		charList( "ñ" ) = "\361"
+		charList( "ò" ) = "\362"
+		charList( "ó" ) = "\363"
+		charList( "ô" ) = "\364"
+		charList( "õ" ) ="\365"
+		charList( "ö" ) = "\366"
+		charList( "ø" ) = "\370"
+		charList( "ù" ) = "\371"
+		charList( "ú" ) = "\372"
+		charList( "û" ) = "\373"
+		charList( "ü" ) = "\374"
+		charList( "ý" ) = "\375"
+		charList( "þ" ) = "\376"
+		charList( "ÿ" ) = "\377"
+		
+	Case "HTML"
+		
+		charList( "¢" ) = "&cent;"
+		charList( "£" ) = "&pound;"
+		charList( "¥" ) = "&yen;"
+		charList( "¼" ) = "&frac14;"
+		charList( "½" ) = "&frac12;"
+		charList( "¾" ) = "&frac34;"
+		charList( "¡" ) = "&iexcl;"
+		charList( "«" ) = "&laquo;"
+		charList( "»" ) = "&raquo;"
+		charList( "¿" ) = "&iquest;"
+		charList( "À" ) = "&Agrave;"
+		charList( "Á" ) = "&Aacute;"
+		charList( "Â" )= "&Acirc;"
+		charList( "Ã" ) = "&Atilde;"
+		charList( "Ä" ) = "&Auml;"
+		charList( "Å" ) = "&Aring;"
+		charList( "Æ" ) = "&AElig;"
+		charList( "Ç" ) = "&Ccedil;"
+		charList( "È" ) = "&Egrave;"
+		charList( "É" )= "&Eacute;"
+		charList( "Ê" ) = "&Ecirc;"
+		charList( "Ë" ) = "&Euml;" 
+		charList( "Ì" ) = "&Igrave;"
+		charList( "Í" ) = "&Iacute;"
+		charList( "Î" ) = "&Icirc;"
+		charList( "Ï") = "&Iuml;"
+		charList( "Ð" ) = "&ETH;"
+		charList( "Ñ" ) = "&Ntilde;"
+		charList( "Ò" ) = "&Ograve;"
+		charList( "Ó" ) = "&Oacute;"
+		charList( "Ô" ) = "&Ocirc;"
+		charList( "Õ" ) = "&Otilde;"
+		charList( "Ö" ) = "&Ouml;"
+		charList( "Ø" ) = "&Oslash;"
+		charList( "Ù" ) = "&Ugrave;"
+		charList( "Ú" ) = "&Uacute;"
+		charList( "Û" ) = "&Ucirc;"
+		charList( "Ü" ) = "&Uuml;"
+		charList( "Ý" ) = "&Yacute;"
+		charList( "Þ" ) = "&THORN;"
+		charList( "ß" ) = "&szlig;"
+		charList( "à" ) = "&agrave;"
+		charList( "á" ) = "&aacute;"
+		charList( "â" ) = "&acirc;"
+		charList( "ã" ) = "&atilde;"
+		charList( "ä" ) = "&auml;"
+		charList( "å" ) = "&aring;"
+		charList( "æ" ) = "&aelig;"
+		charList( "ç" ) = "&ccedil;"
+		charList( "è" ) = "&egrave;"
+		charList( "é" ) = "&eacute;"
+		charList( "ê" ) = "&ecirc;"
+		charList( "ë" ) = "&euml;"
+		charList( "ì" ) = "&igrave;"
+		charList( "í" ) = "&iacute;"
+		charList( "î" ) = "&icirc;"
+		charList( "ï" ) = "&iuml;"
+		charList( "ð" ) = "&eth;"
+		charList( "ñ" ) = "&ntilde;"
+		charList( "ò" ) = "&ograve;"
+		charList( "ó" ) = "&oacute;"
+		charList( "ô" ) = "&ocirc;"
+		charList( "õ" ) = "&otilde;"
+		charList( "ö" ) = "&ouml;"
+		charList( "ø" ) = "&oslash;"
+		charList( "ù" ) = "&ugrave;"
+		charList( "ú" ) = "&uacute;"
+		charList( "û" ) = "&ucirc;"
+		charList( "ü" ) = "&uuml;"
+		charList( "ý" ) = "&yacute;"
+		charList( "þ" ) = "&thorn;"
+		charList( "ÿ" ) = "&yuml;"
+		
+	Case "Hex", "Javascript"
+		
+		charList( "¢" ) = "A2"
+		charList( "£" ) = "A3"
+		charList( "¥" ) = "A5"
+		charList( "¼" ) = "BC"
+		charList( "½" ) = "BD"
+		charList( "¾" ) = "BE"
+		charList( "¡" ) = "A1"
+		charList( "«" ) = "AB"
+		charList( "» ") = "BB"
+		charList( "¿" ) = "BF"
+		charList( "À" ) = "C0"
+		charList( "Á" ) = "C1"
+		charList( "Â" ) = "C2"
+		charList( "Ã" ) = "C3"
+		charList( "Ä" ) = "C4"
+		charList( "Å" ) = "C5"
+		charList( "Æ" ) = "C6"
+		charList( "Ç" ) = "C7"
+		charList( "È" ) = "C8"
+		charList( "É" ) = "C9"
+		charList( "Ê" ) = "CA"
+		charList( "Ë ") = "CB"
+		charList( "Ì" ) = "CC"
+		charList( "Í" ) = "CD"
+		charList( "Î" ) = "CE"
+		charList( "Ï" ) = "CF"
+		charList( "Ð" ) = "D0"
+		charList( "Ñ" ) = "D1"
+		charList( "Ò" ) = "D2"
+		charList( "Ó" ) = "D3"
+		charList( "Ô" ) = "D4"
+		charList( "Õ" ) = "D5"
+		charList( "Ö" ) = "D6"
+		charList( "Ø" ) = "D8"
+		charList( "Ù" ) = "D9"
+		charList( "Ú" ) = "DA"
+		charList( "Û" ) = "DB"
+		charList( "Ü" ) = "DC"
+		charList( "Ý" ) = "DD"
+		charList( "Þ" ) = "DE"
+		charList( "ß" ) = "DF"
+		charList( "à" ) = "E0"
+		charList( "á" ) = "E1"
+		charList( "â" ) = "E2"
+		charList( "ã" ) = "E3"
+		charList( "ä" ) = "E4"
+		charList( "å" ) = "E5"
+		charList( "æ" ) = "E6"
+		charList( "ç") = "E7"
+		charList( "è" ) = "E8"
+		charList( "é" ) = "E9"
+		charList( "ê" ) = "EA"
+		charList( "ë" ) = "EB"
+		charList( "ì" ) = "EC"
+		charList( "í" ) = "ED"
+		charList( "î" ) = "EE"
+		charList( "ï" ) = "EF"
+		charList( "ð" ) = "F0"
+		charList( "ñ" ) = "F1"
+		charList( "ò" ) = "F2"
+		charList( "ó" ) = "F3"
+		charList( "ô" ) = "F4"
+		charList( "õ" ) = "F5"
+		charList( "ö" ) = "F6"
+		charList( "ø" ) = "F8"
+		charList( "ù" ) = "F9"
+		charList( "ú" ) = "FA"
+		charList( "û" ) = "FB"
+		charList( "ü" ) = "FC"
+		charList( "ý" ) = "FD"
+		charList( "þ" ) = "FE"
+		charList( "ÿ" ) = "FF"
+		
+	End Select
+	
+	result = TextToEncode
+	
+	Forall char In charList
+		
+		charToSearch = Listtag( char ) 
+		
+		If FormatToEncode = "Javascript" Then
+			charToReplace = "\u00" + char
+		Else
+			charToReplace = char
+		End If
+		
+		If Instr(result, charToSearch ) Then
+			nPos = 1
+			While Instr(nPos, result, charToSearch ) > 0 
+               'extract to the character to Search
+				nPosOfChar = Instr(nPos, result, charToSearch )
+               'replace with the replacement character
+				result = Left$(result, nPosOfChar -1 )+ charToReplace +Right$(result, (Len(result)-nPosOfChar))
+				nPos = nPosOfChar+1
+			Wend
+			
+		End If
+		
+	End Forall	
+	
+	encodeString = result	
+	
+	
+End Function
+'++LotusScript Development Environment:2:1:GetParameter:1:8
+Function GetParameter(strParamName As String, strQuery As String) As String
+	'this gets a parameter out of a querystring
+	Dim i As Integer
+	Dim s As String
+	Dim v As Variant
+	
+	GetParameter = ""
+	
+	i = Instr(Ucase(strQuery),"&" & Ucase(strParamName) & "=")
+	If i <> 0 Then
+		s = Strright(Mid(strQuery, i),"=")
+		If Instr(s, "&") Then
+			s = Strleft(s, "&")
+		End If
+		v = Evaluate("@UrlDecode(""Domino""; """ & s & """)")
+		GetParameter = Cstr(v(0))
+	End If
+End Function
+'++LotusScript Development Environment:2:1:XMLEscape:1:8
+Function XMLEscape(strValue As String) As String
+	'this escapes a string so it can be printed out to xml safely
+	strValue = Replace(strValue, "&" , "&amp;")
+	strValue = Replace(strValue, "<" , "&lt;")
+	strValue = Replace(strValue, ">" , "&gt;")
+	XMLEscape = strValue
+End Function
+'++LotusScript Development Environment:2:1:getDbFileNameFromString:1:8
+Function getDbFileNameFromString(strValue As String) As String
+	
+	getDbFileNameFromString = Replace(strValue, "\", "/")
+	
+	Dim firstChar As String
+	Dim lastChar As String
+	Dim strLength As Integer
+	
+	strLength = Len(getDbFileNameFromString)
+	firstChar = Mid$(getDbFileNameFromString,1,1)
+	lastChar = Mid$(getDbFileNameFromString,strLength,1)
+	
+	If firstChar = "/" Then
+		getDbFileNameFromString = Mid$(getDbFileNameFromString, 2, strLength)	
+		strLength = Len(getDbFileNameFromString)
+	End If
+	
+	If lastChar = "/" Then
+		getDbFileNameFromString = Mid$(getDbFileNameFromString, 1, strLength - 1)
+	End If
+	
+End Function

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="3.0" replicaid="86257B2E00176383" version="8.5" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="726" sequence="3" unid="F0CD65C414F2144985257B39006DC633">
+<created><datetime dst="true">20130325T155901,63-04</datetime></created>
+<modified><datetime dst="true">20130909T091749,86-05</datetime></modified>
+<revised><datetime dst="true">20130325T162041,50-04</datetime></revised>
+<lastaccessed><datetime dst="true">20130909T091749,86-05</datetime></lastaccessed>
+<addedtofile><datetime dst="true">20130909T091749,86-05</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Jack Ratcliff/O=BlueCuda</name></updatedby>
+<revisions><datetime dst="true">20130325T155901,69-04</datetime><datetime dst="true">20130325T155901,71-04</datetime></revisions>
+<item name="$TITLE"><textlist><text>extjs/resources/themes/images/access/grid/col-move-top.gif</text></textlist></item>
+<item name="$Flags"><text>34CiQ</text></item>
+<item name="$ImagesColorize"><number>0</number></item>
+<item name="$ImagesHigh"><number>1</number></item>
+<item name="$ImagesWide"><number>1</number></item>
+<item name="$DesignerVersion"><text>6</text></item>
+<item name="$ImageNames"><textlist><text>col-move-top.gif</text></textlist></item>
+
+
+<item name="$FileModDT"><datetime dst="true">20130325T162041,50-04</datetime></item>
+<item name="$MimeType"><text>image/gif</text></item></note>

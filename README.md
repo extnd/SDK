@@ -1,7 +1,7 @@
 Extnd
 =====
 
-Ext.nd - Ext for Notes/Domino
+Extnd - Web and Mobile application framework for Domino
 
 This repo has two main branches.
 

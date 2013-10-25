@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?><note class="filter" maintenanceversion="3.0" replicaid="86257B2E00176383" version="8.5" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="2152" sequence="18" unid="8850757E8B1261988625759A001425AA">
+<created><datetime dst="true">20090415T224003,62-05</datetime></created>
+<modified><datetime dst="true">20130909T091813,30-05</datetime></modified>
+<revised><datetime dst="true">20130401T222433,24-05</datetime></revised>
+<lastaccessed><datetime dst="true">20130909T091813,30-05</datetime></lastaccessed>
+<addedtofile><datetime dst="true">20130909T091813,30-05</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name><name>CN=Jack Ratcliff/O=BlueCuda</name><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></updatedby>
+<revisions><datetime dst="true">20090415T224005,17-05</datetime><datetime dst="true">20090415T224038,47-05</datetime><datetime dst="true">20090415T224049,39-05</datetime><datetime dst="true">20090415T224049,84-05</datetime><datetime dst="true">20090415T224050,26-05</datetime><datetime dst="true">20090704T114547,10-04</datetime><datetime dst="true">20130314T214327,19-05</datetime><datetime dst="true">20130317T231702,38-05</datetime><datetime dst="true">20130317T231702,54-05</datetime><datetime dst="true">20130317T231702,67-05</datetime><datetime dst="true">20130317T232208,42-05</datetime><datetime dst="true">20130319T200301,88-05</datetime><datetime dst="true">20130401T211606,24-05</datetime></revisions>
+<wassignedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></wassignedby>
+<item name="$Flags"><text>s34Q</text></item>
+<item name="$PublicAccess" sign="true"><text>1</text></item>
+
+
+<item name="$TITLE" sign="true"><text>extnd/HttpRequest_1</text></item>
+<item name="$DesignerVersion" sign="true"><text>7</text></item></note>

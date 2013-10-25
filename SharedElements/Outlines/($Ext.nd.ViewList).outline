@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE note SYSTEM 'xmlschemas/domino_8_5_3.dtd'>
+<note class='filter' xmlns='http://www.lotus.com/dxl' version='8.5' maintenanceversion='3.0'
+ replicaid='86257B2E00176383'>
+<noteinfo noteid='2e6' unid='595DB3C356AAA46D8525750B000BFE95' sequence='8'>
+<created><datetime>20081123T211100,69-05</datetime></created>
+<modified><datetime dst='true'>20130909T091744,58-05</datetime></modified>
+<revised><datetime dst='true'>20130315T004851,24-05</datetime></revised>
+<lastaccessed><datetime dst='true'>20130909T091744,58-05</datetime></lastaccessed>
+<addedtofile><datetime dst='true'>20130909T091744,58-05</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Jack Ratcliff/O=BlueCuda</name><name>CN=jratcliff/O=DDN</name><name
+>CN=Jack Ratcliff/O=BlueCuda</name><name>CN=Development Team/O=ExtND</name><name
+>CN=Jack Ratcliff/O=BlueCuda</name><name>CN=jratcliff/O=DDN</name><name>CN=Jack Ratcliff/O=BlueCuda</name><name
+>CN=ISO ADMIN/O=Bpna</name><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></updatedby>
+<revisions><datetime dst='true'>20070312T012856,22-04</datetime><datetime
+ dst='true'>20070411T232716,13-04</datetime><datetime dst='true'>20080709T164522,21-04</datetime><datetime
+>20100106T193121,51-06</datetime><datetime>20100117T144118,36-06</datetime><datetime
+ dst='true'>20100314T165654,21-04</datetime><datetime dst='true'>20101007T104409,59-05</datetime></revisions>
+<wassignedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></wassignedby>
+<item name='$SiteMapList' sign='true'>
+<rawitemdata type='1a'>
+AQYBAAEAAgBIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAACAEgAAAAAAAAACgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+/P8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEgAAAAEAAAACwAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAA/P8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==
+</rawitemdata></item>
+<item name='$TITLE'><text>($Ext.nd.ViewList)</text></item>
+<item name='$DesignerVersion' sign='true'><text>7</text></item>
+<item name='$Flags'><text>m</text></item></note>
+

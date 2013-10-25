@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="3.0" replicaid="86257B2E00176383" version="8.5" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="12e6" sequence="3" unid="C2C94B28302B4F2B85257B39006DF9E4">
+<created><datetime dst="true">20130325T160113,96-04</datetime></created>
+<modified><datetime dst="true">20130909T091804,90-05</datetime></modified>
+<revised><datetime dst="true">20130325T162206,99-04</datetime></revised>
+<lastaccessed><datetime dst="true">20130909T091804,90-05</datetime></lastaccessed>
+<addedtofile><datetime dst="true">20130909T091804,90-05</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Jack Ratcliff/O=BlueCuda</name></updatedby>
+<revisions><datetime dst="true">20130325T160114,02-04</datetime><datetime dst="true">20130325T160114,04-04</datetime></revisions>
+<item name="$TITLE"><textlist><text>extjs/resources/themes/images/gray/shared/warning.gif</text></textlist></item>
+<item name="$Flags"><text>34CiQ</text></item>
+<item name="$ImagesColorize"><number>0</number></item>
+<item name="$ImagesHigh"><number>1</number></item>
+<item name="$ImagesWide"><number>1</number></item>
+<item name="$DesignerVersion"><text>6</text></item>
+<item name="$ImageNames"><textlist><text>warning.gif</text></textlist></item>
+
+
+<item name="$FileModDT"><datetime dst="true">20130325T162206,99-04</datetime></item>
+<item name="$MimeType"><text>image/gif</text></item></note>

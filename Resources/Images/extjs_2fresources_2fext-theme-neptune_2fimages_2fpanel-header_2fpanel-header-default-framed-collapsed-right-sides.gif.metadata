@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="3.0" replicaid="86257B2E00176383" version="8.5" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="40e2" sequence="3" unid="2C9E02C3B78AAE8E85257B39006DB3B7">
+<created><datetime dst="true">20130325T155814,31-04</datetime></created>
+<modified><datetime dst="true">20130909T091853,96-05</datetime></modified>
+<revised><datetime dst="true">20130325T162015,02-04</datetime></revised>
+<lastaccessed><datetime dst="true">20130909T091853,96-05</datetime></lastaccessed>
+<addedtofile><datetime dst="true">20130909T091853,96-05</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Jack Ratcliff/O=BlueCuda</name></updatedby>
+<revisions><datetime dst="true">20130325T155814,36-04</datetime><datetime dst="true">20130325T155814,38-04</datetime></revisions>
+<item name="$TITLE"><textlist><text>extjs/resources/ext-theme-neptune/images/panel-header/panel-header-default-framed-collapsed-right-sides.gif</text></textlist></item>
+<item name="$Flags"><text>34CiQ</text></item>
+<item name="$ImagesColorize"><number>0</number></item>
+<item name="$ImagesHigh"><number>1</number></item>
+<item name="$ImagesWide"><number>1</number></item>
+<item name="$DesignerVersion"><text>6</text></item>
+<item name="$ImageNames"><textlist><text>panel-header-default-framed-collapsed-right-sides.gif</text></textlist></item>
+
+
+<item name="$FileModDT"><datetime dst="true">20130325T162015,02-04</datetime></item>
+<item name="$MimeType"><text>image/gif</text></item></note>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="3.0" replicaid="86257B2E00176383" version="8.5" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="38da" sequence="11" unid="B4813936382BC8ED85257B3000714C0B">
+<created><datetime dst="true">20130316T163730,35-04</datetime></created>
+<modified><datetime dst="true">20130909T091843,68-05</datetime></modified>
+<revised><datetime dst="true">20130403T104320,10-04</datetime></revised>
+<lastaccessed><datetime dst="true">20130909T091843,68-05</datetime></lastaccessed>
+<addedtofile><datetime dst="true">20130909T091843,68-05</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Jack Ratcliff/O=BlueCuda</name></updatedby>
+<revisions><datetime dst="true">20130316T163730,44-04</datetime><datetime dst="true">20130316T163730,46-04</datetime><datetime dst="true">20130403T000156,63-04</datetime><datetime dst="true">20130403T001510,15-04</datetime><datetime dst="true">20130403T001835,11-04</datetime><datetime dst="true">20130403T003843,49-04</datetime><datetime dst="true">20130403T005100,52-04</datetime><datetime dst="true">20130403T100448,79-04</datetime><datetime dst="true">20130403T102542,06-04</datetime><datetime dst="true">20130403T102933,58-04</datetime></revisions>
+<item name="$TITLE"><textlist><text>extnd/resources/images/group-expand-sprite.gif</text></textlist></item>
+<item name="$Flags"><text>34CiQ</text></item>
+<item name="$ImagesColorize"><number>0</number></item>
+<item name="$ImagesHigh"><number>1</number></item>
+<item name="$ImagesWide"><number>1</number></item>
+<item name="$DesignerVersion"><text>6</text></item>
+<item name="$ImageNames"><textlist><text>group-expand-sprite.gif</text></textlist></item>
+
+
+<item name="$FileModDT"><datetime dst="true">20130403T104320,10-04</datetime></item>
+<item name="$MimeType"><text>image/gif</text></item></note>

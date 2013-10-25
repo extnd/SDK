@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="3.0" replicaid="86257B2E00176383" version="8.5" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="5de" sequence="3" unid="F9E07BC4FA0E3EBD85257B39006DB0DE">
+<created><datetime dst="true">20130325T155807,02-04</datetime></created>
+<modified><datetime dst="true">20130909T091748,21-05</datetime></modified>
+<revised><datetime dst="true">20130325T162011,75-04</datetime></revised>
+<lastaccessed><datetime dst="true">20130909T091748,21-05</datetime></lastaccessed>
+<addedtofile><datetime dst="true">20130909T091748,21-05</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Jack Ratcliff/O=BlueCuda</name></updatedby>
+<revisions><datetime dst="true">20130325T155807,10-04</datetime><datetime dst="true">20130325T155807,12-04</datetime></revisions>
+<item name="$TITLE"><textlist><text>extjs/resources/ext-theme-neptune/images/grid-row-editor-buttons/null-corners.gif</text></textlist></item>
+<item name="$Flags"><text>34CiQ</text></item>
+<item name="$ImagesColorize"><number>0</number></item>
+<item name="$ImagesHigh"><number>1</number></item>
+<item name="$ImagesWide"><number>1</number></item>
+<item name="$DesignerVersion"><text>6</text></item>
+<item name="$ImageNames"><textlist><text>null-corners.gif</text></textlist></item>
+
+
+<item name="$FileModDT"><datetime dst="true">20130325T162011,75-04</datetime></item>
+<item name="$MimeType"><text>image/gif</text></item></note>

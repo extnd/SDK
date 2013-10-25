@@ -1,0 +1,88 @@
+'++LotusScript Development Environment:2:5:(Options):0:74
+Option Public
+Option Declare
+
+'++LotusScript Development Environment:2:5:(Forward):0:1
+Declare Class QSParser
+
+'++LotusScript Development Environment:2:5:(Declarations):0:10
+%REM
+  	Original Code from Joe Meineke
+	http://www-10.lotus.com/ldd/nd6forum.nsf/0/f7245a112eefb3b985256f1c00612f35?OpenDocument
+%END REM
+
+Class QSParser
+	
+'Private member vars
+	
+	session As NotesSession
+	doc As NotesDocument
+	strQS As String
+	vntQS As Variant
+	intCount As Integer
+	arrQSName() As String
+	arrQSValue() As String
+	
+' ---------------------------------------------------------------------
+	
+	Sub New
+		
+'Instantiate our objects, retrieve the querystring from the
+'context doc and call the parsing routine.
+		
+		Set session = New NotesSession
+		Set doc = session.DocumentContext
+		
+		strQS = doc.QUERY_STRING_DECODED(0)
+		
+		Call Me.parseQS
+		
+	End Sub
+	
+' ---------------------------------------------------------------------
+	
+	Private Sub parseQS
+		
+'Split the querystring into an array
+		vntQS = Split(strQS,"&")
+		
+'Loop throught the array and create name / value arrays. I am
+'starting the loop at one and not zero so that we ignore the 'openagent'
+'parameter in the querystring.
+		
+		For intCount = 1 To Ubound(vntQS)
+			
+			Redim Preserve arrQSName(intCount - 1)
+			Redim Preserve arrQSValue(intCount - 1)
+			
+'Store the name / value pair in seperate arrays using strtoken
+			arrQSName(intCount - 1) = Strtoken(vntQS(intCount),"=",1)
+			arrQSValue(intCount - 1) = Strtoken(vntQS(intCount),"=", 2)
+			
+		Next
+		
+	End Sub
+	
+' ---------------------------------------------------------------------
+	
+	Public Function getQSVal (strQSName As String) As String
+		
+'Given the Query String name, return it's associated value
+'by finding its index in the arrQSName array.
+		Dim vntIndex As Variant
+		
+		vntIndex = Arraygetindex(arrQSName, strQSName, 5)
+		
+		If Not(Isnull(vntIndex)) Then
+			getQSVal = arrQSValue(vntIndex)
+		End If
+		
+	End Function
+	
+' ---------------------------------------------------------------------
+	
+	Public Function getQS() As String
+		getQS = strQS	
+	End Function
+	
+End Class

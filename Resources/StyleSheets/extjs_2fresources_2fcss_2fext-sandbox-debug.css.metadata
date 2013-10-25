@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="3.0" replicaid="86257B2E00176383" version="8.5" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="2e2a" sequence="3" unid="75F7D5604E922B8D85257B39006CE0FE">
+<created><datetime dst="true">20130325T154914,86-04</datetime></created>
+<modified><datetime dst="true">20130909T091830,04-05</datetime></modified>
+<revised><datetime dst="true">20130325T161441,39-04</datetime></revised>
+<lastaccessed><datetime dst="true">20130909T091830,04-05</datetime></lastaccessed>
+<addedtofile><datetime dst="true">20130909T091830,04-05</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Jack Ratcliff/O=BlueCuda</name></updatedby>
+<revisions><datetime dst="true">20130325T154914,91-04</datetime><datetime dst="true">20130325T154914,93-04</datetime></revisions>
+<item name="$TITLE"><textlist><text>extjs/resources/css/ext-sandbox-debug.css</text></textlist></item>
+<item name="$Flags"><text>34C=Q</text></item>
+<item name="$DesignerVersion"><text>6</text></item>
+<item name="$FileNames"><textlist><text>ext-sandbox-debug.css</text></textlist></item>
+
+
+<item name="$FileModDT"><datetime dst="true">20130325T161441,39-04</datetime></item>
+<item name="$MimeType"><text>text/css</text></item></note>
