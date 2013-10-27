@@ -1,13 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?>
-<!DOCTYPE note SYSTEM 'xmlschemas/domino_8_5_3.dtd'>
-<note default='true' class='icon' xmlns='http://www.lotus.com/dxl' version='8.5'
- maintenanceversion='3.0' replicaid='86257B2E00176383'>
-<noteinfo noteid='122' unid='2EFFBAFFB83872F0852573F0006E15DD' sequence='0'>
+<note default='true' class='icon' xmlns='http://www.lotus.com/dxl' version='9.0'
+ replicaid='86257B2E00176383'>
+<noteinfo noteid='122' unid='2EFFBAFFB83872F0852573F0006E15DD' sequence='1'>
 <created><datetime>20080215T150225,57-05</datetime></created>
-<modified><datetime dst='true'>20130909T091731,53-05</datetime></modified>
+<modified><datetime dst='true'>20131026T105017,18-05</datetime></modified>
 <revised><datetime dst='true'>20130315T004848,95-05</datetime></revised>
-<lastaccessed><datetime dst='true'>20130909T091731,53-05</datetime></lastaccessed>
-<addedtofile><datetime dst='true'>20130909T091731,53-05</datetime></addedtofile></noteinfo>
+<lastaccessed><datetime dst='true'>20131026T105017,18-05</datetime></lastaccessed>
+<addedtofile><datetime dst='true'>20131026T105017,18-05</datetime></addedtofile></noteinfo>
 <updatedby><name>CN=jratcliff/O=DDN</name><name>CN=Jack Ratcliff/O=BlueCuda</name><name
 >CN=jratcliff/O=DDN</name><name>CN=Jack Ratcliff/O=BlueCuda</name><name>CN=ISO ADMIN/O=Bpna</name><name
 >CN=Jack Ratcliff/O=BlueCuda</name><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name><name
@@ -42,7 +41,7 @@ AAAAAAAAAA/wAAAAAAAAAAAAAA==
 <item name='$DefaultWebLaunchPage' sign='true'><text>main.html</text></item>
 <item name='$TITLE'><text>Extnd for Ext JS 4x
 #1Extnd4</text></item>
+<item name='$Flags'><text>JE76</text></item>
 <item name='$FlagsNoRefresh' sign='true'><text/></item>
-<item name='$Daos'><text>0</text></item>
-<item name='$Flags'><text>JE76</text></item></note>
+<item name='$Daos'><text>0</text></item></note>
 
