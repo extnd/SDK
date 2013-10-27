@@ -1,7 +1,7 @@
 Extnd
 =====
 
-Extnd - Web and Mobile application framework for Domino
+Extnd - Web and Mobile application framework for IBM Domino
 
 This repo has two main branches.
 

@@ -1,9 +1,9 @@
-Ext.nd - JavaScript Library
-Copyright (c) 2006-2013, Ext.nd, LLC
+Extnd - Web and Mobile application framework for IBM Domino
+Copyright (c) 2006-2013, Extnd, LLC
 All rights reserved.
 
 ------------------------------------------------------------------------------------------
-Ext.nd is licensed under the terms of the Open Source GPL 3.0 license.
+Extnd is licensed under the terms of the Open Source GPL 3.0 license.
 
 http://www.gnu.org/licenses/gpl.html
 
