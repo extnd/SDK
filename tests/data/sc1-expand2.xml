@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<viewentries timestamp="20130218T030602,49Z" toplevelentries="5">
+<viewentry position="1" noteid="80000004" children="11" descendants="11" siblings="5">
+<entrydata columnnumber="0" name="$4">
+<number>0.161764705882353</number></entrydata>
+<entrydata columnnumber="1" name="category" category="true">
+<text>Church</text></entrydata>
+</viewentry>
+<viewentry position="2" noteid="80000008" children="22" descendants="22" siblings="5">
+<entrydata columnnumber="0" name="$4">
+<number>0.323529411764706</number></entrydata>
+<entrydata columnnumber="1" name="category" category="true">
+<text>School</text></entrydata>
+</viewentry>
+<viewentry position="2.1" unid="844F0283AAAF2C32862575130054E329" noteid="BAA" siblings="22">
+<entrydata columnnumber="0" name="$4">
+<number>1</number></entrydata>
+<entrydata columnnumber="2" name="_date_created">
+<datetime>20081202T092711,77-06</datetime></entrydata>
+<entrydata columnnumber="3" name="createdBy">
+<text>Anonymous</text></entrydata>
+<entrydata columnnumber="4" name="categoryValue">
+<text>School</text></entrydata>
+</viewentry>
+<viewentry position="2.2" unid="4973B2D4CCE35B9B8625746B004ADEB6" noteid="C4A" siblings="22">
+<entrydata columnnumber="0" name="$4">
+<number>1</number></entrydata>
+<entrydata columnnumber="2" name="_date_created">
+<datetime dst="true">20080617T083746,78-05</datetime></entrydata>
+<entrydata columnnumber="3" name="createdBy">
+<text>Anonymous</text></entrydata>
+<entrydata columnnumber="4" name="categoryValue">
+<text>School</text></entrydata>
+</viewentry>
+<viewentry position="2.3" unid="A0BD8089AD48893C8625744A0010D579" noteid="C62" siblings="22">
+<entrydata columnnumber="0" name="$4">
+<number>1</number></entrydata>
+<entrydata columnnumber="2" name="_date_created">
+<datetime dst="true">20080514T220352,25-05</datetime></entrydata>
+<entrydata columnnumber="3" name="createdBy">
+<text>Anonymous</text></entrydata>
+<entrydata columnnumber="4" name="categoryValue">
+<text>School</text></entrydata>
+</viewentry>
+<viewentry position="2.4" unid="AFA1AAC806704FAA862574200042F8D7" noteid="CA6" siblings="22">
+<entrydata columnnumber="0" name="$4">
+<number>1</number></entrydata>
+<entrydata columnnumber="2" name="_date_created">
+<datetime dst="true">20080403T071130,79-05</datetime></entrydata>
+<entrydata columnnumber="3" name="createdBy">
+<text>Anonymous</text></entrydata>
+<entrydata columnnumber="4" name="categoryValue">
+<text>School</text></entrydata>
+</viewentry>
+<viewentry position="2.5" unid="FCCDD2AB8CCA2B588625741A0001D553" noteid="CBE" siblings="22">
+<entrydata columnnumber="0" name="$4">
+<number>1</number></entrydata>
+<entrydata columnnumber="2" name="_date_created">
+<datetime dst="true">20080327T192001,47-05</datetime></entrydata>
+<entrydata columnnumber="3" name="createdBy">
+<text>Anonymous</text></entrydata>
+<entrydata columnnumber="4" name="categoryValue">
+<text>School</text></entrydata>
+</viewentry>
+<viewentry position="2.6" unid="001728A7AE99EA138525728B006500A2" noteid="D16" siblings="22">
+<entrydata columnnumber="0" name="$4">
+<number>1</number></entrydata>
+<entrydata columnnumber="2" name="_date_created">
+<datetime>20070223T132312,98-05</datetime></entrydata>
+<entrydata columnnumber="3" name="createdBy">
+<text>JackAdmin Ratcliff</text></entrydata>
+<entrydata columnnumber="4" name="categoryValue">
+<text>School</text></entrydata>
+</viewentry>
+<viewentry position="2.7" unid="3770C802B06C199C8525728B0064CF8F" noteid="D72" siblings="22">
+<entrydata columnnumber="0" name="$4">
+<number>1</number></entrydata>
+<entrydata columnnumber="2" name="_date_created">
+<datetime>20070223T132107,35-05</datetime></entrydata>
+<entrydata columnnumber="3" name="createdBy">
+<text>JackAdmin Ratcliff</text></entrydata>
+<entrydata columnnumber="4" name="categoryValue">
+<text>School</text></entrydata>
+</viewentry>
+<viewentry position="2.8" unid="47420D9F7DDDFE128625744E0072CEEA" noteid="D8E" siblings="22">
+<entrydata columnnumber="0" name="$4">
+<number>1</number></entrydata>
+<entrydata columnnumber="2" name="_date_created">
+<datetime dst="true">20080519T155400,74-05</datetime></entrydata>
+<entrydata columnnumber="3" name="createdBy">
+<text>Anonymous</text></entrydata>
+<entrydata columnnumber="4" name="categoryValue">
+<text>School</text></entrydata>
+</viewentry>
+<viewentry position="2.9" unid="8D99F973DB18A7BD862573FA003B8D7E" noteid="DD2" siblings="22">
+<entrydata columnnumber="0" name="$4">
+<number>1</number></entrydata>
+<entrydata columnnumber="2" name="_date_created">
+<datetime>20080225T045028,46-06</datetime></entrydata>
+<entrydata columnnumber="3" name="createdBy">
+<text>Anonymous</text></entrydata>
+<entrydata columnnumber="4" name="categoryValue">
+<text>School</text></entrydata>
+</viewentry>
+<viewentry position="2.10" unid="011F169D49AEFA938525728B0064E986" noteid="DE2" siblings="22">
+<entrydata columnnumber="0" name="$4">
+<number>1</number></entrydata>
+<entrydata columnnumber="2" name="_date_created">
+<datetime>20070223T132213,82-05</datetime></entrydata>
+<entrydata columnnumber="3" name="createdBy">
+<text>JackAdmin Ratcliff</text></entrydata>
+<entrydata columnnumber="4" name="categoryValue">
+<text>School</text></entrydata>
+</viewentry>
+<viewentry position="2.11" unid="381F8050A65A3FD48525728B00650B30" noteid="DE6" siblings="22">
+<entrydata columnnumber="0" name="$4">
+<number>1</number></entrydata>
+<entrydata columnnumber="2" name="_date_created">
+<datetime>20070223T132340,00-05</datetime></entrydata>
+<entrydata columnnumber="3" name="createdBy">
+<text>JackAdmin Ratcliff</text></entrydata>
+<entrydata columnnumber="4" name="categoryValue">
+<text>School</text></entrydata>
+</viewentry>
+<viewentry position="2.12" unid="002A6CD8A8C3527E8525728B00651B74" noteid="DEE" siblings="22">
+<entrydata columnnumber="0" name="$4">
+<number>1</number></entrydata>
+<entrydata columnnumber="2" name="_date_created">
+<datetime>20070223T132421,64-05</datetime></entrydata>
+<entrydata columnnumber="3" name="createdBy">
+<text>JackAdmin Ratcliff</text></entrydata>
+<entrydata columnnumber="4" name="categoryValue">
+<text>School</text></entrydata>
+</viewentry>
+<viewentry position="2.13" unid="000D0F3975A5CD058525728B00650BB9" noteid="DF2" siblings="22">
+<entrydata columnnumber="0" name="$4">
+<number>1</number></entrydata>
+<entrydata columnnumber="2" name="_date_created">
+<datetime>20070223T132341,37-05</datetime></entrydata>
+<entrydata columnnumber="3" name="createdBy">
+<text>JackAdmin Ratcliff</text></entrydata>
+<entrydata columnnumber="4" name="categoryValue">
+<text>School</text></entrydata>
+</viewentry>
+<viewentry position="2.14" unid="0030CFDF934F6D3F862573E90071E5B2" noteid="DF6" siblings="22">
+<entrydata columnnumber="0" name="$4">
+<number>1</number></entrydata>
+<entrydata columnnumber="2" name="_date_created">
+<datetime>20080208T144403,70-06</datetime></entrydata>
+<entrydata columnnumber="3" name="createdBy">
+<text>JackAdmin Ratcliff</text></entrydata>
+<entrydata columnnumber="4" name="categoryValue">
+<text>School</text></entrydata>
+</viewentry>
+<viewentry position="2.15" unid="0035EF08F21EFB058525728B00651CF8" noteid="E02" siblings="22">
+<entrydata columnnumber="0" name="$4">
+<number>1</number></entrydata>
+<entrydata columnnumber="2" name="_date_created">
+<datetime>20070223T132425,52-05</datetime></entrydata>
+<entrydata columnnumber="3" name="createdBy">
+<text>JackAdmin Ratcliff</text></entrydata>
+<entrydata columnnumber="4" name="categoryValue">
+<text>School</text></entrydata>
+</viewentry>
+<viewentry position="2.16" unid="00994C9B7A434FA68525728B0064EAA9" noteid="E22" siblings="22">
+<entrydata columnnumber="0" name="$4">
+<number>1</number></entrydata>
+<entrydata columnnumber="2" name="_date_created">
+<datetime>20070223T132216,73-05</datetime></entrydata>
+<entrydata columnnumber="3" name="createdBy">
+<text>JackAdmin Ratcliff</text></entrydata>
+<entrydata columnnumber="4" name="categoryValue">
+<text>School</text></entrydata>
+</viewentry>
+<viewentry position="2.17" unid="00E4528F22A3828B8525728B00650978" noteid="E3A" siblings="22">
+<entrydata columnnumber="0" name="$4">
+<number>1</number></entrydata>
+<entrydata columnnumber="2" name="_date_created">
+<datetime>20070223T132335,60-05</datetime></entrydata>
+<entrydata columnnumber="3" name="createdBy">
+<text>JackAdmin Ratcliff</text></entrydata>
+<entrydata columnnumber="4" name="categoryValue">
+<text>School</text></entrydata>
+</viewentry>
+<viewentry position="2.18" unid="000D26300E0A789C8525728B006504BF" noteid="E5A" siblings="22">
+<entrydata columnnumber="0" name="$4">
+<number>1</number></entrydata>
+<entrydata columnnumber="2" name="_date_created">
+<datetime>20070223T132323,51-05</datetime></entrydata>
+<entrydata columnnumber="3" name="createdBy">
+<text>JackAdmin Ratcliff</text></entrydata>
+<entrydata columnnumber="4" name="categoryValue">
+<text>School</text></entrydata>
+</viewentry>
+<viewentry position="2.19" unid="006AB1F1C59B2B9885256C390075EF06" noteid="E66" siblings="22">
+<entrydata columnnumber="0" name="$4">
+<number>1</number></entrydata>
+<entrydata columnnumber="2" name="_date_created">
+<datetime dst="true">20020919T172809,02-04</datetime></entrydata>
+<entrydata columnnumber="3" name="createdBy">
+<text>JackAdmin Ratcliff</text></entrydata>
+<entrydata columnnumber="4" name="categoryValue">
+<text>School</text></entrydata>
+</viewentry>
+<viewentry position="2.20" unid="00D74F9EF8DB9FF08525728B0065149A" noteid="E72" siblings="22">
+<entrydata columnnumber="0" name="$4">
+<number>1</number></entrydata>
+<entrydata columnnumber="2" name="_date_created">
+<datetime>20070223T132404,10-05</datetime></entrydata>
+<entrydata columnnumber="3" name="createdBy">
+<text>JackAdmin Ratcliff</text></entrydata>
+<entrydata columnnumber="4" name="categoryValue">
+<text>School</text></entrydata>
+</viewentry>
+<viewentry position="2.21" unid="470903AE812E3F5C862574CE00646F42" noteid="EA6" siblings="22">
+<entrydata columnnumber="0" name="$4">
+<number>1</number></entrydata>
+<entrydata columnnumber="2" name="_date_created">
+<datetime dst="true">20080924T131700,82-05</datetime></entrydata>
+<entrydata columnnumber="3" name="createdBy">
+<text>Anonymous</text></entrydata>
+<entrydata columnnumber="4" name="categoryValue">
+<text>School</text></entrydata>
+</viewentry>
+<viewentry position="2.22" unid="3A6E2E87A4DC44B8852575FB0052096B" noteid="EDE" siblings="22">
+<entrydata columnnumber="0" name="$4">
+<number>1</number></entrydata>
+<entrydata columnnumber="2" name="_date_created">
+<datetime dst="true">20090722T105603,63-04</datetime></entrydata>
+<entrydata columnnumber="3" name="createdBy">
+<text>Anonymous</text></entrydata>
+<entrydata columnnumber="4" name="categoryValue">
+<text>School</text></entrydata>
+</viewentry>
+<viewentry position="3" noteid="8000000C" children="15" descendants="15" siblings="5">
+<entrydata columnnumber="0" name="$4">
+<number>0.220588235294118</number></entrydata>
+<entrydata columnnumber="1" name="category" category="true">
+<text>Sports</text></entrydata>
+</viewentry>
+<viewentry position="4" noteid="80000010" children="15" descendants="15" siblings="5">
+<entrydata columnnumber="0" name="$4">
+<number>0.220588235294118</number></entrydata>
+<entrydata columnnumber="1" name="category" category="true">
+<text>Taxes</text></entrydata>
+</viewentry>
+<viewentry position="5" noteid="80000014" children="5" descendants="5" siblings="5">
+<entrydata columnnumber="0" name="$4">
+<number>0.073529411764706</number></entrydata>
+<entrydata columnnumber="1" name="category" category="true">
+<text>Work</text></entrydata>
+</viewentry>
+<viewentry position="6" noteid="C0000000" siblings="5" categorytotal="true">
+<entrydata columnnumber="0" name="$4">
+<number>1</number></entrydata>
+<entrydata columnnumber="2" name="_date_created">
+<text/></entrydata>
+<entrydata columnnumber="3" name="createdBy">
+<text/></entrydata>
+<entrydata columnnumber="4" name="categoryValue">
+<text/></entrydata>
+</viewentry>
+</viewentries>

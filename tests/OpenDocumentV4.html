@@ -1,0 +1,223 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Domino Form Testing with ExtJS 4x</title>
+
+    <link rel="stylesheet" type="text/css" href="../extjs/resources/css/ext-all.css" />
+    <link rel="stylesheet" type="text/css" href="../resources/css/domino.css" />
+
+    <!-- Ext -->
+    <script type="text/javascript" src="../extjs/ext-dev.js"></script>
+
+    <!-- Extnd -->
+    <script type="text/javascript" src="../src/Extnd.js"></script>
+    <script type="text/javascript" src="../src/bootstrap.js"></script>
+
+
+    <!-- app code -->
+    <script type='text/javascript' src='/extnd/extnd_b4.nsf/extnd/3x/Session.js?OpenAgent&db=extnd/demo.nsf'></script>
+    <script type='text/javascript' src='/extnd/extnd_b4.nsf/extnd/3x/UIDocument.js?OpenAgent&db=extnd/demo.nsf&unid=844F0283AAAF2C32862575130054E329&editmode=false'></script>
+
+
+    <script language="JavaScript" type="text/javascript">
+        if (typeof Ext !== 'undefined') {
+
+            Ext.Loader.setConfig({
+                enabled         : true,
+                disableCaching  : false,
+                paths: {
+                    'Ext'   : '../extjs/src',
+                    'Extnd' : '../src',
+                }
+            });
+
+            Ext.Loader.require([
+                'Extnd.form.Panel'
+            ]);
+
+            // hardcode for now since the Session.js file hasn't been updated yet
+            Extnd.dbPath = 'extnd/demo.nsf';
+
+            Ext.onReady(function() {
+
+                var uidoc = new Extnd.form.Panel({
+                    autoScroll : true,
+                    createActionsFrom : 'document',
+                    standardSubmit : true // default is false
+                });
+                uidoc.render();
+
+                /*
+                 * If you want to access and do things with the form fields you must write your code
+                 * after the 'open' event has fired.  The 'open' event is equivalent to the
+                 * NotesUIDocument PostOpen/OnLoad events
+                 *
+                 */
+                uidoc.on('open', function(uidoc) {
+                    if (uidoc.editMode) {
+                        Ext.Msg.alert("Open Event Handler", "UIDocument open in edit mode.  When you change the 'category 2' field, you will see an alert.");
+                        var cat2 = uidoc.getForm().findField("cat2");
+                        if (cat2) {
+                            cat2.on("select", function(combo, record, index) {
+                                alert(record.data.text)
+                            }, this);
+                        }
+                    } else {
+                        Ext.Msg.alert("Open Event Handler", "UIDocument open in read mode.");
+                    }
+
+                }, this);
+
+            });
+        } else {
+            alert("Ext is not loaded on this page/form");
+        }
+
+    </script>
+
+<script language="JavaScript" type="text/javascript">
+<!--
+document._domino_target = "_self";
+function _doClick(v, o, t) {
+  var returnValue = false;
+  var url="/extnd/demo.nsf/sc1/844f0283aaaf2c32862575130054e329?OpenDocument&Click=" + v;
+  if (o.href != null) {
+    o.href = url;
+    returnValue = true;
+  } else {
+    if (t == null)
+      t = document._domino_target;
+    window.open(url, t);
+  }
+  return returnValue;
+}
+// -->
+</script>
+</head>
+<body text="#000000" bgcolor="#FFFFFF">
+
+<form action="">
+<table border="1" cellspacing="2" cellpadding="2">
+<tr valign="middle" bgcolor="#C0C0C0"><td><a onclick="this.getUIDocument().edit();
+return false;" href="">Edit\this.getUIDocument().edit();</a></td><td><a href="/extnd/demo.nsf/c921766077cab2f285256c3900751ae1/844f0283aaaf2c32862575130054e329?EditDocument" target="_self">Edit\@Command([EditDocument])</a></td><td><a href="" onclick="return _doClick('852572C00067FA3A.4cb999b0760de13385257331000b21b5/$V5ACTIONS/0.1B0', this, null)" target="_self">Edit\@Command([EditDocument];&quot;1&quot;)</a></td><td><a href="" onclick="return _doClick('852572C00067FA3A.4cb999b0760de13385257331000b21b5/$V5ACTIONS/0.20E', this, null)" target="_self">Edit\@Command([OpenDocument];&quot;1&quot;)</a></td><td><a onclick="var target = window.target;
+var activeTab = target.getActiveTab();
+target.remove(activeTab);
+return false;" href="">Close\window.target.remove</a></td><td><a onclick="this.getUIDocument().close();
+return false;" href="">Close\this.getUIDocument().close();</a></td><td><a href="" onclick="return _doClick('852572C00067FA3A.4cb999b0760de13385257331000b21b5/$V5ACTIONS/0.4BE', this, null)" target="_self">Close\@Command([FileCloseWindow])</a></td><td><a href="/extnd/demo.nsf/4cb999b0760de13385257331000b21b5?OpenForm" target="_self">New\@Command([Compose];&quot;CategoryTest1&quot;)</a></td><td><a onclick="this.openForm(&quot;CategoryTest1&quot;);
+return false;" href="">New\this.openForm(&quot;CategoryTest1&quot;);</a></td><td><a onclick="// let's assume that the tasks.nsf is in the same directory as demo.nsf
+var sess = Ext.nd.Session;
+var db = sess.currentDatabase;
+var thisWebFilePath = db.webFilePath;
+var thisFileName = db.fileName;
+
+// now repalce the demo.nsf with tasks.nsf
+var taskDbPath = thisWebFilePath.replace(thisFileName, 'Tasks.nsf');
+
+this.openForm({formName : 'Task', dbPath : taskDbPath})
+return false;" href="">New\this.openForm(cfg);</a></td><td><a href="/extnd/demo.nsf/6f920f0c5a72063b85256c3900754298?OpenForm&amp;ParentUNID=844F0283AAAF2C32862575130054E329" target="_self">Respond\@Command([Compose];&quot;Response&quot;) (will NOT work)</a></td><td><a onclick="this.openForm({
+    formName : 'Response',
+    isResponse : true
+});
+return false;" href="">Respond\this.openForm(cfg);</a></td><td><a onclick="alert(&quot;I am a shared action&quot;);
+return false;" href="">Alert (shared js action)</a></td><td><a href="" onclick="return _doClick('852572C00067FA3A.4cb999b0760de13385257331000b21b5/$V5ACTIONS/0.A80', this, null)" target="_self"><img border="0" src="/extnd/demo.nsf/images/printer.gif?OpenImageResource" alt="Print"> Print</a></td><td><a onclick="alert('you clicked on sub action 1')
+return false;" href="">Test\sub action 1</a></td><td><a onclick="alert('you clicked on sub action 2')
+return false;" href="">Test\sub action 2</a></td><td><a onclick="alert('you clicked on sub action 3.1')
+return false;" href="">Test\sub action 3.1</a></td><td><a onclick="alert('you clicked on sub action 3.2')
+return false;" href="">Test\sub action 3.2</a></td></tr>
+</table>
+<hr>
+<table style="margin: 10px;" cellspacing="10" border="0" cellspacing="0" cellpadding="0">
+<tr valign="top"><td width="128"><div align="right"><b>subject :</b><br>
+type = text</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178"></td><td width="107"><div align="right"><b>multi-text field:</b><br>
+type = text<br>
+allow multi = true<br>
+enter sep = cm, sm, nl  <br>
+display sep = nl</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"></td></tr>
+
+<tr valign="top"><td style="margin:10px;" width="128"><div align="right"><b>category 1:</b><br>
+type = dialog list<br>
+allow multi = false<br>
+allow new = false<br>
+choices = entered<br>
+refresh fields</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178">School</td><td width="107"><div align="right"><b>check box:</b><br>
+nbr cols = 1</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"></td></tr>
+
+<tr valign="top"><td width="128"><div align="right"><b>category 2:</b><br>
+type = dialog list<br>
+allow = multi true<br>
+allow new = false<br>
+choices = formula</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178">Home Work</td><td width="107"><div align="right"><b>radio box:</b><br>
+nbr cols = 1</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"></td></tr>
+
+<tr valign="top"><td width="128"><div align="right"><b>category 3:</b><br>
+type = dialog list<br>
+allow multi = false<br>
+allow new = true<br>
+choices = entered</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178"></td><td width="107"></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td></tr>
+
+<tr valign="top"><td width="128"><div align="right"><b>category 4:</b><br>
+type = dialog list<br>
+allow multi = false<br>
+allow new = true<br>
+choices = formula</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178"></td><td width="107"><div align="right"><b>Suggest:</b><br>
+<i>(type-ahead)</i></div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"></td></tr>
+
+<tr valign="top"><td width="128"><div align="right"><b>category 5:</b><br>
+type = dialog list<br>
+allow multi = true<br>
+allow new = true<br>
+choices = addressbook</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178"></td><td width="107"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td></tr>
+
+<tr valign="top"><td width="128"><div align="right"><b>a date field:</b></div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178">08/12/2027</td><td width="107"><div align="right"><b>Listbox:</b><br>
+type = listbox<br>
+allow multi = false<br>
+choices = entered</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148">choice a</td></tr>
+
+<tr valign="top"><td width="128"><div align="right"><b>a time field:</b></div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178"></td><td width="107"><div align="right">type = listbox<br>
+allow multi = true<br>
+choices = formula</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"></td></tr>
+
+<tr valign="top"><td width="128"><div align="right"><b>a number field:</b></div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178"></td><td width="107"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td></tr>
+
+<tr valign="top"><td width="128"><div align="right"><b>Reader(s):</b></div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178"></td><td width="107"><div align="right"><b>Combobox:</b><br>
+type = combobox<br>
+allow multi = false<br>
+choices = entered</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td style="margin:10px;" width="148">choices a</td></tr>
+
+<tr valign="top"><td width="128"><div align="right"><b>Address Dialogs</b><br>
+(use address dialog)</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178"></td><td width="107"><div align="right">type = combobox<br>
+allow multi = true<br>
+choices = formula</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"></td></tr>
+
+<tr valign="top"><td width="128"><div align="right">(use address dialog + allow multi-value)</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178"></td><td width="107"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td></tr>
+
+<tr valign="top"><td width="128"><div align="right">(use address dialog + allow values not in list)</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178"></td><td width="107"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td></tr>
+
+<tr valign="top"><td width="128"><div align="right">(use address dialog + allow multi-value + allow values not in list)</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178"></td><td width="107"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td></tr>
+
+<tr valign="top"><td width="128"><div align="right"><b>Names Field</b><br>
+choices = none</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178"></td><td width="107"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td></tr>
+
+<tr valign="top"><td width="128"><div align="right">choices = ACL</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178"></td><td width="107"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td></tr>
+
+<tr valign="top"><td width="128"><div align="right">choices = view</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178"></td><td width="107"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td></tr>
+
+<tr valign="top"><td width="128"><div align="right"><b>ACL Dialogs</b><br>
+(use ACL dialog)</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178"></td><td width="107"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td></tr>
+
+<tr valign="top"><td width="128"><div align="right">(use ACL dialog + allow multi-value)</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178"></td><td width="107"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td></tr>
+
+<tr valign="top"><td width="128"><div align="right">(use ACL dialog + allow values not in list)</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178"></td><td width="107"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td></tr>
+
+<tr valign="top"><td width="128"><div align="right">(use ACL dialog + allow multi-value + allow values not in list)</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178"></td><td width="107"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td></tr>
+
+<tr valign="top"><td width="128"><div align="right"><b>View Dialogs</b><br>
+(use view dialog)</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178"></td><td width="107"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td></tr>
+
+<tr valign="top"><td width="128"><div align="right">(use view dialog + allow multi values)</div></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="178"></td><td width="107"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="12"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td><td width="148"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td></tr>
+</table>
+Html Editor<br>
+</form>
+</body>
+</html>

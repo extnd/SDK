@@ -1,0 +1,12 @@
+Other Licenses:
+
+Ext.nd is built on top of the Ext JS application code which uses the GPL v3.0 license.
+
+Ext.nd's SearchView agent is based on the code developed by Jason Thomas.
+Ext.nd has been specifically granted permission to use this code by Mr. Thomas.
+
+Ext.nd's HttpRequest ScriptLibrary is based on the code developed by Tommy Valand.
+Ext.nd has been specifically granted permission to use this code by Mr. Valand.
+
+FamFamFam Silk Icons are used under the Creative Commons Attribution 3.0 License. The icons were designed by Mark James.
+To view a copy of this license, visit http://creativecommons.org/licenses/by/3.0/; or, (b) send a letter to Creative Commons, 171 2nd Street, Suite 300, San Francisco, California, 94105, USA.

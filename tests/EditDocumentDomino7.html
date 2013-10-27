@@ -1,0 +1,566 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<script language="JavaScript" src='https://www.XRampSSL.com/Secure/javascript/trustlogo.js'> </script><SCRIPT LANGUAGE="JavaScript"> function defaultFocus(){ form=document.forms[0];  form.ContactFirstName.focus();}   function validchars(getword){ invalidChars="/?.,:,;~" ;  if (getword=="") {  return false;} for (i=0; i<invalidChars.length; i++) {   badChar = invalidChars.charAt (i);   if (getword.indexOf(badChar,0) != -1) {  return false; } }return true}  ;  function validcharsNoSpace(getword){ invalidChars=" /?#.,:,;~" ;  if (getword=="") {  return false;} for (i=0; i<invalidChars.length; i++) {   badChar = invalidChars.charAt (i);   if (getword.indexOf(badChar,0) != -1) {  return false; } }return true}  ;function getCookie(){  var cookiename= "wareSourceLogin=";  var RetStr = ""; var offset = 0; var end = 0; if (document.cookie.length > 0) {  offset = document.cookie.indexOf(cookiename);  if (offset != -1) {  offset += cookiename.length;  end = document.cookie.indexOf(";", offset);  if (end ==-1)  end=document.cookie.length;  RetStr= unescape(document.cookie.substring(offset, end)); }  } return (RetStr)  }   ;     function SaveDoc() {    form=document.forms[0];   if ( validatefields()) {   if (form.Audience[0].checked==true) {audienceChoice=form.Audience[0].value} else if (form.Audience[1].checked==true) {audienceChoice=form.Audience[1].value} else if (form.Audience[2].checked==true) {audienceChoice=form.Audience[2].value} else if (form.Audience[3].checked==true) {audienceChoice=form.Audience[3].value}  setCookie(form.ContactEmail.value + '~' + form.Password.value + '~' + audienceChoice);  form.submit()}  };     function OpenCertDetails() 	{ 	thewindow = window.open('https://seal.godaddy.com/getSeal?sealID=xsrR3LCQLVyjYPic3OFMO7NuZ2chM5aCgmQGV0KaYhDihxouPcj6r', 'anew', config='height=400,width=450,toolbar=no,menubar=no,scrollbars=yes,resizable=no,location=no,directories=no,status=yes'); 	}     function setCookie(keyparam) {  var getDays=365; cookieString='wareSourceLogin=' + keyparam; var newExpDate=new Date(); var expTime=getDays*24*60*60*1000; newExpDate.setTime(newExpDate.getTime() + expTime); cookieString+='; expires=' + newExpDate.toGMTString(); cookieString+='; path=/'; document.cookie=cookieString; alert('Thank you for registering!  Your email address and password (only) will be saved to a cookie on your computer.  This allows you to access all of our pages and download content without stopping for registration each time. If you forget your password, you can register again at any time.') };        function Cancel(){  getHost=location.host; getHREF="http://" + getHost + "/kurchak/ka1.nsf/viewforms/Section-Home?open";  top.location=getHREF}           function XvalidEmail(email){   invalidChars=" /:,;~"; if (email=="") {  return false;} for (i=0; i<invalidChars.length; i++) {   badChar = invalidChars.charAt (i);   if (email.indexOf(badChar,0) != -1) {  return false; } } atPos = email.indexOf("@", 1); if ( atPos == -1) { return false;} if(email.indexOf("@", atPos+1) != -1) { return false; } periodPos = email.indexOf (".", atPos); if (periodPos == -1) { return false;}  if (periodPos +3  > email.length) {  return false;}  return true;}             function validatefields() { form=document.forms[0];    if ( form.ContactFirstName.value==""|| !validchars(form.ContactFirstName.value)) { alert('Please enter your first name. Invalid characters are /?.,:,;~'); form.ContactFirstName.focus(); return false;}   if ( form.ContactLastName.value==""|| !validchars(form.ContactLastName.value)) { alert('Please enter your last name. Invalid characters are /?.,:,;~'); form.ContactLastName.focus(); return false;}  if ( form.ContactSalutation.selectedIndex==0) { alert('Please pick a Saluation.'); form.ContactSalutation.focus(); return false;}  if ( form.Password.value==""|| !validcharsNoSpace(form.Password.value) ) { alert('Please enter a memorable password. Invalid characters are space, #, and /?.,:,;~'); form.Password.focus(); return false;}   if ( form.Password.value.length < 8) { alert('Password must be more than 8 characters.'); form.Password.focus(); return false;}   if ( form.CompanyName.value=="") { alert('Please enter your company name.'); form.CompanyName.focus(); return false;}   if ( form.ContactAddress.value=="") { alert('Please enter your address.'); form.ContactAddress.focus(); return false;}    if ( form.ContactCity.value=="") { alert('Please enter your city.'); form.ContactCity.focus(); return false};   stateChoice=form.ContactState.selectedIndex;   if(form.Region[0].checked==true && stateChoice==0 ) { alert('Please enter your state.'); form.ContactState.focus(); return false;} if(form.Region[0].checked==true && form.ContactZIP.value=="") { alert('Please enter your zipcode.'); form.ContactZIP.focus(); return false;}   provinceChoice=form.ContactProvince.selectedIndex;   if(form.Region[1].checked==true && provinceChoice==0 ) { alert('Please enter your province.'); form.ContactProvince.focus(); return false;}  if(form.Region[1].checked==true && form.ContactPostCan.value=="") { alert('Please enter your postal code.'); form.ContactPostCan.focus(); return false;} countryChoice=form.ContactCountry.selectedIndex;   if(form.Region[2].checked==true && (countryChoice==0 || countryChoice==1) && form.OtherCountry.value==""){ alert('Please select your country or select "Other" and enter your "other" country name.'); form.ContactCountry.focus(); return false;}    if(form.Region[2].checked==true && form.ContactPostInt.value=="") { alert('Please enter your postal code.'); form.ContactPostInt.focus(); return false;}   if ( form.ContactPhone.value=="") { alert('Please enter your phone number.'); form.ContactPhone.focus(); return false;}   if (!validEmail(form.ContactEmail.value))  { form.ContactEmail.focus(); return false;} return true; }function clearCookie(keyparam) {  var getDays=-1; cookieString='wareSourceLogin=' + keyparam; var newExpDate=new Date(); var expTime=getDays*24*60*60*1000; newExpDate.setTime(newExpDate.getTime() + expTime); cookieString+='; expires=' + newExpDate.toGMTString(); cookieString+='; path=/'; document.cookie=cookieString; alert('Cleared Cookie.  You may need to restart your Browser to fully purge the cookie.') };   </SCRIPT><title>wareSource Site Registration on 02/13/2013 11:58:29 AM</title>
+<script language="JavaScript" type="text/javascript">
+<!-- 
+document._domino_target = "_self";
+function _doClick(v, o, t, h) {
+  var form = document._SiteRegistration;
+  if (form.onsubmit) {
+     var retVal = form.onsubmit();
+     if (typeof retVal == "boolean" && retVal == false)
+       return false;
+  }
+  var target = document._domino_target;
+  if (o.href != null) {
+    if (o.target != null)
+       target = o.target;
+  } else {
+    if (t != null)
+      target = t;
+  }
+  form.target = target;
+  form.__Click.value = v;
+  if (h != null)
+    form.action += h;
+  form.submit();
+  return false;
+}
+// -->
+</script>
+
+<script language="JavaScript" type="text/javascript">
+<!-- 
+<!-- adapted from http://javascript.internet.com, Sandeep V. Tamhankar -->function validEmail(emailStr) {/* The following pattern is used to check if the entered e-mail address   fits the user@domain format.  It also is used to separate the username   from the domain. */var emailPat=/^(.+)@(.+)$//* The following string represents the pattern for matching all special   characters.  We don't want to allow special characters in the address.    These characters include ( ) < > @ , ; : \ " . [ ]    */var specialChars="\\(\\)<>@,;:\\\\\\\"\\.\\[\\]"/* The following string represents the range of characters allowed in a    username or domainname.  It really states which chars aren't allowed. */var validChars="\[^\\s" + specialChars + "\]"/* The following pattern applies if the "user" is a quoted string (in   which case, there are no rules about which characters are allowed   and which aren't; anything goes).  E.g. "jiminy cricket"@disney.com   is a legal e-mail address. */var quotedUser="(\"[^\"]*\")"/* The following pattern applies for domains that are IP addresses,   rather than symbolic names.  E.g. joe@[123.124.233.4] is a legal   e-mail address. NOTE: The square brackets are required. */var ipDomainPat=/^\[(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})\]$//* The following string represents an atom (basically a series of   non-special characters.) */var atom=validChars + '+'/* The following string represents one word in the typical username.   For example, in john.doe@somewhere.com, john and doe are words.   Basically, a word is either an atom or quoted string. */var word="(" + atom + "|" + quotedUser + ")"// The following pattern describes the structure of the uservar userPat=new RegExp("^" + word + "(\\." + word + ")*$")/* The following pattern describes the structure of a normal symbolic   domain, as opposed to ipDomainPat, shown above. */var domainPat=new RegExp("^" + atom + "(\\." + atom +")*$")/* Finally, let's start trying to figure out if the supplied address is   valid. *//* Begin with the coarse pattern to simply break up user@domain into   different pieces that are easy to analyze. */var matchArray=emailStr.match(emailPat)if (matchArray==null) {  /* Too many/few @'s or something; basically, this address doesn't     even fit the general mould of a valid e-mail address. */	alert("Email address seems incorrect (check @ and .'s)")	return false}var user=matchArray[1]var domain=matchArray[2]// See if "user" is valid if (user.match(userPat)==null) {    // user is not valid    alert("The email username doesn't seem to be valid.")    return false}/* if the e-mail address is at an IP address (as opposed to a symbolic   host name) make sure the IP address is valid. */var IPArray=domain.match(ipDomainPat)if (IPArray!=null) {    // this is an IP address	  for (var i=1;i<=4;i++) {	    if (IPArray[i]>255) {	        alert("Email address destination IP address is invalid!")		return false	    }    }    return true}// Domain is symbolic namevar domainArray=domain.match(domainPat)if (domainArray==null) {	alert("The email address domain name doesn't seem to be valid.")    return false}/* domain name seems valid, but now make sure that it ends in a   three-letter word (like com, edu, gov) or a two-letter word,   representing country (uk, nl), and that there's a hostname preceding    the domain or country. *//* Now we need to break up the domain to get a count of how many atoms   it consists of. */var atomPat=new RegExp(atom,"g")var domArr=domain.match(atomPat)var len=domArr.lengthif (domArr[domArr.length-1].length<2 ||     domArr[domArr.length-1].length>3) {   // the address must end in a two letter or three letter word.   alert("The email address must end in a three-letter domain, or two letter country.")   return false}// Make sure there's a host name preceding the domain.if (len<2) {   var errStr="This email address is missing a hostname!"   alert(errStr)   return false}// KRK don't allow empty email or spaces or tildas (will mess up database storage system)invalidChars=" /:,;~"; if (emailStr=="") {  	alert("You forgot to enter a valid email address.")	return false;} for (i=0; i<invalidChars.length; i++) {  	badChar = invalidChars.charAt (i);   	if (emailStr.indexOf(badChar,0) != -1) 	{  		alert('Spaces and tildas are not allowed in the email address.')		return false; 	} } // If we've gotten this far, everything's valid!return true;}
+
+// -->
+</script>
+<link rel="stylesheet" type="text/css" href="/kurchak/ka1.nsf/wrsrc.css?OpenCssResource">
+</head>
+<body text="#000000" bgcolor="#EFEFEF" onLoad="  onecookie=getCookie();  form=document.forms[0];  if (onecookie!='' && form.ContactEmail.value.length==0){ cookieArray=onecookie.split('~'); form=document.forms[0]; form.ContactEmail.value=cookieArray[0] ;  form.Password.value=cookieArray[1]  } ">
+
+<form method="post" action="/kurchak/ka1.nsf/$defaultForm?OpenForm&amp;Seq=1" name="_SiteRegistration">
+<input type="hidden" name="__Click" value="0"><input type=hidden name="GetParameters" value = "Open"><font face="Arial, Helvetica, sans-serif" size="-1">
+<table width="100%" cellpadding=0 cellspacing=0 border=0 >
+    <tr>
+      <td><img src='/kurchak/ka1.nsf/2highspacer.gif'></td>
+      <td><img src='/kurchak/ka1.nsf/2highspacer.gif'></td>
+     <td><img src='/kurchak/ka1.nsf/2highspacer.gif'></td>
+    </tr>
+    <tr>
+      <td colspan=3 valign="middle" bgcolor="White">&nbsp;<a href="http://www.waresource.com/kurchak/ka1.nsf/viewforms/Section-Home">
+<font face='Verdana,Arial,Helvetica,sans-serif' size='+2' color='black'>wareSource.com</a></font><br><img src='/kurchak/ka1.nsf/2highspacer.gif'>
+     </td>    
+        </tr>
+    <tr>
+      <td colspan=3 bgcolor="#2B6EBB" height="6">&nbsp;</td>
+    </tr>
+</table><p><b><font size="4" color="#008080">Secure Registration Form</font></b>
+<p><b>	</b><br>
+<font size="2" color="#800000">Before you can access protected areas of our site, please provide us with a little information about yourself so we can display pages that better meet your needs. </font><a href="/kurchak/ka1.nsf/dc17d8e6e24030e58525669e00690430/98343937afba88c4852566e1004fed11?OpenDocument"><font size="2">Why do we make you register?</font></a><font size="2" color="#800000"> </font><a href="/kurchak/ka1.nsf/60d891d35d5ea04c8525669e00690435/f62063f939a7654185256b56006907df?OpenDocument"><font size="2">What is our Privacy Policy?</font></a><font size="2" color="#800000"> Fields in </font><b><font size="2" color="#800000">*BOLD</font></b><font size="2" color="#800000"> are required to continue. Thank you for visiting wareSource!</font><br>
+<br>
+<b><font size="2" color="#800000">If you do NOT want to register, you can view most of our site, but can't download files. </font></b><font size="2" color="#800000">If you have problems with this form, </font><font size=-1><script language=javascript>
+<!--
+var linktext = "send us an email";
+var email1 = "info";
+var email2 = "waresource.com";
+var subject1 = "RE:";
+document.write("<a href=" + "mail" + "to:" + email1 + "@" + email2 + "?subject=" + subject1 + 
+">" +  linktext + "</a>")
+//-->
+</script>.</font><br>
+<br>
+<br>
+<font color="#800000"><p></font>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr valign="top"><td width="1%"><img width="114" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+<div align="right"><b><font size="2" face="Arial">*E-mail Address:</font></b></div></td><td width="100%"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+<font face="Arial">
+<input name="ContactEmail" value="" size = 40></font></td></tr>
+
+<tr valign="top"><td width="1%"><img width="114" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+<div align="right"><b><font size="2" face="Arial">*Password:</font></b></div></td><td width="100%"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+<font face="Arial">
+<input name="Password" value="" type="password"></font><b><font face="Arial">  </font></b><font size="2" color="#800000" face="Arial">(Must be &gt;= 8 chars)</font><br>
+<a href="" onclick="return _doClick('85256D8F0053B7B0.96f5db23a0f78bc0852570a800503e41/$Body/0.76E', this, null)"><font size="1" color="#0000FF" face="Verdana">I forgot my password</font></a></td></tr>
+
+<tr valign="top"><td width="1%"><img width="114" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+</td><td width="100%"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+&nbsp;</td></tr>
+
+<tr valign="top"><td width="1%"><img width="114" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+</td><td width="100%"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+<font size="2" color="#800000" face="Arial">If you have registered before, you can click the </font><b><font size="2" color="#800000" face="Arial">Look up</font></b><font size="2" color="#800000" face="Arial"> button below to retrieve the following fields using your email address and password as keys. </font><br><br>
+
+<input type="button" value="Look up my previous registration data" onclick="return _doClick('85256D8F0053B7B0.96f5db23a0f78bc0852570a800503e41/$Body/0.A92', this, null)"><br>
+<br>
+<font size="2" color="#800000" face="Arial"> Then you can edit any field to make changes to your profile.</font></td></tr>
+
+<tr valign="top"><td width="1%"><img width="114" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+</td><td width="100%"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+&nbsp;</td></tr>
+
+<tr valign="top"><td width="1%"><img width="114" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+<div align="right"><b><font size="2" face="Arial">*First Name:</font></b></div></td><td width="100%"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+<font face="Arial">
+<input name="ContactFirstName" value=""></font><font face="Arial">  *</font><b><font size="2" face="Arial">Salutation:</font></b><font face="Arial"> </font><font size="2" face="Arial">
+<input name="%%Surrogate_ContactSalutation" type="hidden" value="1">
+<select name="ContactSalutation">
+<option>Pick
+<option>Ms.
+<option>Mr.
+<option>Mrs.
+<option>Dr.</select>
+</font></td></tr>
+
+<tr valign="top"><td width="1%"><img width="114" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+<div align="right"><b><font size="2" face="Arial">*Last Name:</font></b></div></td><td width="100%"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+<font face="Arial">
+<input name="ContactLastName" value=""></font></td></tr>
+
+<tr valign="top"><td width="1%"><img width="114" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+<div align="right"><font size="2" face="Arial">Title:</font></div></td><td width="100%"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+<font face="Arial">
+<input name="ContactTitle" value="" size = 30></font><font face="Arial">  </font></td></tr>
+
+<tr valign="top"><td width="1%"><img width="114" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+<div align="right"><font size="2" face="Arial">Division:</font></div></td><td width="100%"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+<font face="Arial">
+<input name="ContactDivision" value="" size = 30></font></td></tr>
+
+<tr valign="top"><td width="1%"><img width="114" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+<div align="right"><b><font size="2" face="Arial">*Company Name:</font></b></div></td><td width="100%"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+<font face="Arial">
+<input name="CompanyName" value="" size = 30></font></td></tr>
+
+<tr valign="top"><td width="1%"><img width="114" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+<div align="right"><b><font size="2" face="Arial">*Street Address:</font></b></div></td><td width="100%"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+<font face="Arial">
+<input name="ContactAddress" value="" size = 30></font></td></tr>
+
+<tr valign="top"><td width="1%"><img width="114" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+</td><td width="100%"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+<font face="Arial">
+<input name="ContactAddress2" value="" size = 30></font></td></tr>
+
+<tr valign="top"><td width="1%"><img width="114" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+<div align="right"><b><font size="2" face="Arial">*City:</font></b></div></td><td width="100%"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+<font face="Arial">
+<input name="ContactCity" value="" size = 30></font></td></tr>
+
+<tr valign="top"><td width="1%"><img width="114" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+*<b><font size="2" face="Arial">
+<input name="%%Surrogate_Region" type="hidden" value="1"><label>
+<input type="radio" name="Region" value="USA" checked>USA&gt;&gt;&gt;</label><br>
+<label>
+<input type="radio" name="Region" value="Canada">Canada&gt;&gt;&gt;</label><br>
+<label>
+<input type="radio" name="Region" value="International">International&gt;&gt;&gt;</label></font></b></td><td width="100%"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr valign="top"><td width="16%" bgcolor="#FFFFCC"><div align="right"><b><font size="2" face="Arial">USA State:</font></b></div></td><td width="84%" bgcolor="#FFFFCC" colspan="2"><font size="2" face="Arial">
+<input name="%%Surrogate_ContactState" type="hidden" value="1">
+<select name="ContactState">
+<option selected>--
+<option>AA
+<option>AE
+<option>AK
+<option>AL
+<option>AP
+<option>AR
+<option>AZ
+<option>CA
+<option>CO
+<option>CT
+<option>DC
+<option>DE
+<option>FL
+<option>GA
+<option>HI
+<option>IA
+<option>ID
+<option>IL
+<option>IN
+<option>KS
+<option>KY
+<option>LA
+<option>MA
+<option>MD
+<option>ME
+<option>MI
+<option>MN
+<option>MO
+<option>MS
+<option>MT
+<option>NC
+<option>ND
+<option>NE
+<option>NH
+<option>NJ
+<option>NM
+<option>NV
+<option>NY
+<option>OH
+<option>OK
+<option>OR
+<option>PA
+<option>PR
+<option>RI
+<option>SC
+<option>SD
+<option>TN
+<option>TX
+<option>UT
+<option>VA
+<option>VT
+<option>WA
+<option>WI
+<option>WV
+<option>WY</select>
+</font><font size="2" face="Arial"> </font><b><font size="2" face="Arial">  Zipcode: </font></b><font size="2" face="Arial">
+<input name="ContactZIP" value="" size="10" ></font><font size="2" face="Arial"> </font></td></tr>
+
+<tr valign="top"><td width="16%"><div align="right"><b><font size="2" face="Arial">Can. Province:</font></b></div></td><td width="84%" colspan="2"><font size="2" face="Arial">
+<input name="%%Surrogate_ContactProvince" type="hidden" value="1">
+<select name="ContactProvince">
+<option selected>--
+<option>ALBERTA
+<option>BRITISH COLUMBIA
+<option>MANITOBA
+<option>NEW BRUNSWICK
+<option>NEWFOUNDLAND
+<option>NORTHWEST TERRITORIES
+<option>NOVA SCOTIA
+<option>ONTARIO
+<option>PRINCE EDWARD ISLAND
+<option>QUEBEC
+<option>SASKATCHEWAN
+<option>YUKON</select>
+</font><font size="2" face="Arial">  </font><b><font size="2" face="Arial">Postcode: </font></b><font size="2" face="Arial">
+<input name="ContactPostCan" value="" size="10" ></font></td></tr>
+
+<tr valign="top"><td width="16%" bgcolor="#FFFFCC"><div align="right"><b><font size="2" face="Arial">Intl. State:</font></b></div></td><td width="84%" bgcolor="#FFFFCC" colspan="2"><font size="2" face="Arial">
+<input name="OtherState" value=""></font><font size="2" face="Arial"> (if applicable to International)</font></td></tr>
+
+<tr valign="top"><td width="16%" bgcolor="#FFFFCC"><div align="right"><b><font size="2" face="Arial">Intl. Country:</font></b></div></td><td width="84%" bgcolor="#FFFFCC" colspan="2"><font size="2" face="Arial">
+<input name="%%Surrogate_ContactCountry" type="hidden" value="1">
+<select name="ContactCountry">
+<option selected>--
+<option>Other (enter below)
+<option>Albania
+<option>Algeria
+<option>American Samoa
+<option>Andorra
+<option>Angola
+<option>Anguilla
+<option>Antigua and Barbuda
+<option>Argentina
+<option>Armenia
+<option>Aruba
+<option>Australia
+<option>Austria
+<option>Azerbaijan
+<option>Azores
+<option>Bahamas
+<option>Bahrain
+<option>Bangladesh
+<option>Barbados
+<option>Belarus
+<option>Belgium
+<option>Belize
+<option>Benin
+<option>Bermuda
+<option>Bhutan
+<option>Bolivia
+<option>Bosnia and Herzegovina
+<option>Botswana
+<option>Brazil
+<option>British Virgin Islands
+<option>Brunei
+<option>Bulgaria
+<option>Burkina Fasa
+<option>Burundi
+<option>Cambodia
+<option>Cameroon
+<option>Cape Verde
+<option>Cayman Islands
+<option>Central Africa Republic
+<option>Chad
+<option>Chile
+<option>China
+<option>Colombia
+<option>Comoros
+<option>Congo
+<option>Cook Islands
+<option>Corsica
+<option>Costa Rica
+<option>Cote D`Ivoire
+<option>Croatia
+<option>Cyprus
+<option>Czech Republic
+<option>Denmark
+<option>Djibouti
+<option>Dominica
+<option>Dominican Republic
+<option>Ecuador
+<option>Egypt
+<option>El Salvador
+<option>Equatorial Guinea
+<option>Eritrea
+<option>Estonia
+<option>Ethiopia
+<option>Faroe Islands
+<option>Fiji
+<option>Finland
+<option>France
+<option>French Guiana
+<option>French Polynesia
+<option>Gabon
+<option>Gambia
+<option>Georgia
+<option>Germany
+<option>Ghana
+<option>Gibraltar
+<option>Greece
+<option>Greenland
+<option>Grenada
+<option>Guadeloupe
+<option>Guam
+<option>Guatemala
+<option>Guinea
+<option>Guinea Bissau
+<option>Guyana
+<option>Haiti
+<option>Honduras
+<option>Hong Kong
+<option>Hungary
+<option>Iceland
+<option>India
+<option>Indonesia
+<option>Iran
+<option>Ireland
+<option>Israel
+<option>Italy
+<option>Jamaica
+<option>Japan
+<option>Jordan
+<option>Kazakhstan
+<option>Kenya
+<option>Kiribati
+<option>Kuwait
+<option>Kyrgyzstan
+<option>Laos
+<option>Latvia
+<option>Lebanon
+<option>Lesotho
+<option>Liberia
+<option>Liechtenstein
+<option>Lithuania
+<option>Luxembourg
+<option>Macau
+<option>Macedonia
+<option>Madagascar
+<option>Madeira Islands
+<option>Malawi
+<option>Malaysia
+<option>Maldives
+<option>Mali
+<option>Malta
+<option>Marshall Islands
+<option>Martinique
+<option>Mauritania
+<option>Mauritius
+<option>Mexico
+<option>Micronesia
+<option>Moldova
+<option>Monaco
+<option>Mongolia
+<option>Montserrat
+<option>Morocco
+<option>Mozambique
+<option>Myanmar
+<option>Namibia
+<option>Nauru
+<option>Nepal
+<option>Netherlands
+<option>Netherlands Antilles
+<option>New Caledonia
+<option>New Zealand
+<option>Nicaragua
+<option>Niger
+<option>Nigeria
+<option>Norway
+<option>Oman
+<option>Pakistan
+<option>Palau
+<option>Panama
+<option>Papua New Guinea
+<option>Paraguay
+<option>Peru
+<option>Philippines
+<option>Pitcairn Island
+<option>Poland
+<option>Portugal
+<option>Qatar
+<option>Reunion Island
+<option>Romania
+<option>Rowanda
+<option>Russia
+<option>Saint Helena
+<option>Saint Kitts Nevis Anguilla
+<option>Saint Lucia
+<option>Saint Pierre and Miquelon
+<option>Saint Vincent and the Grenadines
+<option>Saipan
+<option>San Marino
+<option>Sao Tome and Principe
+<option>Saudi Arabia
+<option>Senegal
+<option>Serbia-Montenegro
+<option>Seychelles
+<option>Sierra Leone
+<option>Singapore
+<option>Slovakia
+<option>Slovenia
+<option>Solomon Islands
+<option>Somalia
+<option>South Africa
+<option>South Korea
+<option>Spain
+<option>Sri Lanka
+<option>Sudan
+<option>Suriname
+<option>Swaziland
+<option>Sweden
+<option>Switzerland
+<option>Syria
+<option>Taiwan
+<option>Tajikistan
+<option>Tanzania
+<option>Thailand
+<option>Togo
+<option>Tonga
+<option>Trinidad and Tobago
+<option>Tristan da Cunha
+<option>Tunisia
+<option>Turkey
+<option>Turks and Caicos Island
+<option>Tuvalu
+<option>Uganda
+<option>Ukraine
+<option>United Arab Emirates
+<option>United Kingdom
+<option>Uruguay
+<option>Uzbekistan
+<option>Vanuatu
+<option>Vatican City
+<option>Venezuela
+<option>Vietnam
+<option>Virgin Islands
+<option>Wallis and Futuna
+<option>Western Samoa
+<option>Yemen
+<option>Zaire
+<option>Zambia
+<option>Zimbabwe</select>
+</font><b><font size="2" face="Arial"> </font></b> <b><font size="2" face="Arial">Postcode: </font></b><font size="2" face="Arial">
+<input name="ContactPostInt" value="" size="10" ></font><br>
+<font size="2" face="Arial">
+<input name="OtherCountry" value=""></font> <font size="1" face="Arial">(IF &quot;Other&quot; country)</font></td></tr>
+</table>
+</td></tr>
+</table>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr valign="top"><td width="1%"><img width="116" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+<div align="right"><b><font size="2" face="Arial">*Phone Number:</font></b></div></td><td width="100%"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+<font face="Arial">
+<input name="ContactPhone" value="" size = 30></font></td></tr>
+
+<tr valign="top"><td width="1%"><img width="116" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+<div align="right"><font size="2" face="Arial">FAX Number:</font></div></td><td width="100%"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+<font face="Arial">
+<input name="ContactFAX" value="" size = 30></font></td></tr>
+
+<tr valign="top"><td width="1%"><img width="116" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+</td><td width="100%"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+&nbsp;</td></tr>
+
+<tr valign="top"><td width="1%"><img width="116" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+<div align="right"><b><font size="2" face="Arial">*Why you are here:</font></b></div></td><td width="100%"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+<font size="2" face="Arial">
+<input name="%%Surrogate_Audience" type="hidden" value="1"><label>
+<input type="radio" name="Audience" value="L" checked>I am just looking around</label><br>
+<label>
+<input type="radio" name="Audience" value="S">I am here looking for software</label><br>
+<label>
+<input type="radio" name="Audience" value="I">I am interested in course materials for MYSELF</label><br>
+<label>
+<input type="radio" name="Audience" value="T">I represent a training company/training department/publisher/school</label></font></td></tr>
+
+<tr valign="top"><td width="1%"><img width="116" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+</td><td width="100%"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""><br>
+&nbsp;</td></tr>
+</table>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr valign="top"><td width="23%"><div align="right"><font size="2" face="Arial">How did you hear about our web site?</font></div></td><td width="77%"><font face="Arial">
+<input name="Lead" value="" size = 40></font></td></tr>
+
+<tr valign="top"><td width="23%"><div align="right"><font size="2" face="Arial">Comments:</font></div></td><td width="77%">
+<textarea name="Body" wrap=virtual cols=55 rows=5></textarea>
+</td></tr>
+</table>
+<br>
+<b><font size="2" color="#800000">Privacy Policy: </font></b><font size="2" color="#800000">By registering at this site, you are agreeing to all license agreements and agree to pay for any and all uses of the material beyond evaluation purposes unless the material is marked as &quot;Free&quot;. You also agree to receive a follow-up fax, phone, or e-mail from us to see if we can be of further service.  In addition to keeping a record of your login, we also record when you go to a download (except for free downloads) or to a demo.  We keep your information private and do NOT give or sell this information to any other organizations that do not represent us or our products.</font><br>
+<br>
+<font size="2" color="#800000">I </font><font size="2" color="#800000">
+<input name="%%Surrogate_OptIn" type="hidden" value="1">
+<select name="OptIn">
+<option value="1" selected>WANT
+<option value="0">do NOT want</select>
+</font><font size="2" color="#800000"> to be notified via e-mail if you publish a new version of any course or product that I download.  E-mail us at help@waresource.com if you want to opt out of update e-mails for your previous downloads. </font><b><font size="2" color="#800000">Note:</font></b><font size="2" color="#800000"> This setting is NOT recalled from your profile, so be sure to set it every time you register! </font><b><font size="2" color="#800000">Another Note:</font></b><font size="2" color="#800000"> If you enter a bad email address and email bounces back from you, your records are deleted, and you must register again.</font><br>
+<br>
+<font size="2" color="#FF0000">Your browser must allow a cookies to be set, or you will not be able to access any more pages at this site.  The cookie stores only your email address, password, and user type.  If you change computers, you must re-register (but if you use the same email + password, you can retrieve your record from our database).</font><br>
+<br>
+<table border=0 cell spacing=6 cell padding=6><tr><td><input type="button" value="I agree to these terms." onClick="SaveDoc()" </td><td><input type="button" value="I do not agree to these terms." onClick="Cancel()"></td><td><input type="button" value="Clear the wareSource Cookie" onClick="clearCookie('x');Cancel()"></td></tr></table><br>
+<span id="siteseal"><script type="text/javascript" src="https://seal.godaddy.com/getSeal?sealID=xsrR3LCQLVyjYPic3OFMO7NuZ2chM5aCgmQGV0KaYhDihxouPcj6r"></script></span>
+<p><hr><table border=0 width="100%" cellspacing=0 cellpadding=0>
+<tr>
+
+<td width="10%" align=center><font size=-2 face="Verdana,Arial,Helvetica,sans-serif"><a 
+Href="/kurchak/ka1.nsf/viewforms/Section-About" class="zn" >Contact Us</a></font></td>
+
+<td width="10%" align=center>
+<font size=-2 face="Verdana,Arial,Helvetica,sans-serif"><script TYPE="text/javascript">
+<!--
+var linktext = "Email Us!";
+var email1 = "info";
+var email2 = "waresource.com";
+var subject1 = "RE:";
+document.write("<a href=" + "mail" + "to:" + email1 + "@" + email2 + "?subject=" + subject1.replace(/(<([^>]+)>)/ig,"") + " class='zn'>" +  linktext + "</a>")
+//-->
+</script>
+</font></td>
+
+<td width="20%" align=center>
+<font size=-2 face="Verdana,Arial,Helvetica,sans-serif"><script TYPE="text/javascript">
+<!--
+var linktext = "Problems with this page?";
+var email1 = "help";
+var email2 = "waresource.com";
+var subject1 = "PROBLEMS_WITH_(SiteRegistration)_85392B4574C5087985257B11005D3EE1";
+document.write("<a href=" + "mail" + "to:" + email1 + "@" + email2 + "?subject=" + subject1.replace(/(<([^>]+)>)/ig,"") + " class='zn'>" + linktext + "</a>")
+//-->
+</script>
+</font></td>
+
+<td width="10%" align=center><font size=-2 face="Verdana,Arial,Helvetica,sans-serif"><a 
+Href="/kurchak/ka1.nsf/viewforms/Section-PrivacyPolicy" class="zn">Privacy Policy</a></font></td>
+
+<td width="15%" align=center><font size=-2 face="Verdana,Arial,Helvetica,sans-serif"><a 
+Href="/kurchak/ka1.nsf/viewforms/Section-Copyright"  class="zn">©2013 wareSource</a></font></td></tr></table><br>
+</form>
+</body>
+</html>

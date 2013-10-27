@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<viewdesign rowlines="9" direction="0" spacing="0" columns="14" totalscolor="#808080" extendlastcolumn="false">
+<column columnnumber="0" width="66" name="NbrInView" title="Total column" resize="true" align="2" format="2" totals="true" listseparator="comma">
+<cfont style="r" size="10" color="#000000" face="Helvetica" />
+<hfont style="b" size="9" color="#000000" face="Helvetica" />
+<numberformat digits="0" format="general" /><datetimeformat show="datetime" date="yearmonthday" time="hourminutesecond" zone="never" /></column>
+<column columnnumber="1" width="66" name="PercentOfAll" title="Total column" resize="true" align="2" format="2" totals="true" listseparator="comma">
+<cfont style="r" size="10" color="#000000" face="Helvetica" />
+<hfont style="b" size="9" color="#000000" face="Helvetica" />
+<numberformat digits="0" format="general" /><datetimeformat show="datetime" date="yearmonthday" time="hourminutesecond" zone="never" /></column>
+<column columnnumber="2" width="42" name="Icons" title="icons" resize="true" align="2" format="2" icon="true" listseparator="newline">
+<cfont style="r" size="10" color="#000000" face="Helvetica" />
+<hfont style="b" size="9" color="#000000" face="Helvetica" />
+<numberformat digits="0" format="general" /><datetimeformat show="datetime" date="yearmonthday" time="hourminutesecond" zone="never" /></column>
+<column columnnumber="3" width="136" name="cat1" title="category 1 (sort = asc only)" sort="true" sortdescending="true" resortascending="true" resize="true" format="2" listseparator="none">
+<cfont style="r" size="10" color="#000000" face="Helvetica" />
+<hfont style="b" size="9" color="#000000" face="Helvetica" />
+<numberformat digits="0" format="general" /><datetimeformat show="datetime" date="yearmonthday" time="hourminutesecond" zone="never" /></column>
+<column columnnumber="4" width="136" name="cat2" title="category 2 (sort = both)" sort="true" resortdescending="true" resortascending="true" resize="true" format="2" listseparator="none">
+<cfont style="r" size="10" color="#000000" face="Helvetica" />
+<hfont style="b" size="9" color="#000000" face="Helvetica" />
+<numberformat digits="0" format="general" /><datetimeformat show="datetime" date="yearmonthday" time="hourminutesecond" zone="never" /></column>
+<column columnnumber="5" width="214" name="subject" title="subject (sort = change view) " resorttoview="true" resortviewunid="4F9EE8D893B3380785256C3900751AE0" resize="true" format="2" listseparator="none">
+<cfont style="r" size="10" color="#000000" face="Helvetica" />
+<hfont style="b" size="9" color="#000000" face="Helvetica" />
+<numberformat digits="0" format="general" /><datetimeformat show="datetime" date="yearmonthday" time="hourminutesecond" zone="never" /></column>
+<column columnnumber="6" width="160" name="$1" title="date created (sort = desc only)" resortdescending="true" resize="true" format="2" listseparator="none">
+<cfont style="r" size="10" color="#000000" face="Helvetica" />
+<hfont style="b" size="9" color="#000000" face="Helvetica" />
+<numberformat digits="0" format="general" /><datetimeformat show="datetime" date="yearmonthday" time="hourminutesecond" zone="never" year4digit="true" /></column>
+<column columnnumber="7" width="104" name="$13" title="Currency Test" resortdescending="true" resortascending="true" resize="true" format="2" listseparator="none">
+<cfont style="r" size="10" color="#000000" face="Helvetica" />
+<hfont style="b" size="9" color="#000000" face="Helvetica" />
+<numberformat digits="2" format="currency" /><datetimeformat show="datetime" date="yearmonthday" time="hourminutesecond" zone="never" /></column>
+<column columnnumber="8" width="104" name="$7" title="Created" resortdescending="true" resortascending="true" resize="true" format="2" listseparator="none">
+<cfont style="r" size="10" color="#000000" face="Helvetica" />
+<hfont style="b" size="9" color="#000000" face="Helvetica" />
+<numberformat digits="0" format="general" /><datetimeformat show="datetime" date="yearmonthday" time="hourminutesecond" zone="never" /></column>
+<column columnnumber="9" width="122" name="_readers" title="Readers" resortascending="true" resize="true" format="2" listseparator="comma">
+<cfont style="r" size="10" color="#000000" face="Helvetica" />
+<hfont style="b" size="9" color="#000000" face="Helvetica" />
+<numberformat digits="0" format="general" /><datetimeformat show="datetime" date="yearmonthday" time="hourminutesecond" zone="never" /></column>
+<column columnnumber="10" width="136" name="" title="left aligned (space)" sort="true" resortdescending="true" resortascending="true" resize="true" format="2" listseparator="space">
+<cfont style="r" size="10" color="#000000" face="Helvetica" />
+<hfont style="b" size="9" color="#000000" face="Helvetica" />
+<numberformat digits="0" format="general" /><datetimeformat show="datetime" date="yearmonthday" time="hourminutesecond" zone="never" /></column>
+<column columnnumber="11" width="136" name="cnl" title="center aligned (newline)" sort="true" resortdescending="true" resortascending="true" resize="true" align="2" headeralign="2" format="2" listseparator="newline">
+<cfont style="r" size="10" color="#000000" face="Helvetica" />
+<hfont style="b" size="9" color="#000000" face="Helvetica" />
+<numberformat digits="0" format="general" /><datetimeformat show="datetime" date="yearmonthday" time="hourminutesecond" zone="never" /></column>
+<column columnnumber="12" width="136" name="" title="right aligned (comma)" sort="true" resortdescending="true" resortascending="true" resize="true" align="1" headeralign="1" format="2" listseparator="comma">
+<cfont style="r" size="10" color="#000000" face="Helvetica" />
+<hfont style="b" size="9" color="#000000" face="Helvetica" />
+<numberformat digits="0" format="general" /><datetimeformat show="datetime" date="yearmonthday" time="hourminutesecond" zone="never" /></column>
+<column columnnumber="13" width="136" name="$11" title="right aligned (semicolon)" sort="true" resortdescending="true" resortascending="true" resize="true" align="1" headeralign="1" format="2" listseparator="semicolon">
+<cfont style="r" size="10" color="#000000" face="Helvetica" />
+<hfont style="b" size="9" color="#000000" face="Helvetica" />
+<numberformat digits="0" format="general" /><datetimeformat show="datetime" date="yearmonthday" time="hourminutesecond" zone="never" /></column>
+</viewdesign>

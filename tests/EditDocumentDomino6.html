@@ -1,0 +1,246 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html>
+<head>
+<title>THE VIEW - Search the Knowledgebase</title><LINK REL="SHORTCUT ICON" HREF="/eview/volr6.nsf/view.jpg">
+<!-- core -->
+<script src="/eview/volr6.nsf/issueJSON?openPage" type="text/javascript"></script>
+<script type="text/javascript" src="/eview/volr6.nsf/jquery-1.2.6.min.js"></script>
+<script type="text/javascript" src="/eview/volr6.nsf/jquery.ui.acc.dlg.packed.js"></script>
+<!-- cluetip -->
+<script src="/eview/volr6.nsf/jquery.hoverIntent.js" type="text/javascript"></script>
+<script src="/eview/volr6.nsf/jquery.cluetip.js" type="text/javascript"></script>
+<script type="text/javascript" src="/eview/volr6.nsf/jquery.nyroModal-1.2.8.pack.js"></script>
+<script src="/eview/volr6.nsf/jquery.cookie.packed.js" type="text/javascript"></script>
+<!-- curvy corners -->
+<script src="/eview/volr6.nsf/jquery.curvycorners.packed.js" type="text/javascript"></script>
+
+<!-- autocomplete -->
+<script src="/eview/volr6.nsf/jquery.autocomplete.pack.js" type="text/javascript"></script><link rel="stylesheet" href="/eview/volr6.nsf/jquery.autocomplete.css" type="text/css"/>
+<!-- autocomplete -->
+<script src="/eview/volr6.nsf/jquery.autocomplete.pack.js" type="text/javascript"></script><link rel="stylesheet" href="/eview/volr6.nsf/jquery.autocomplete.css" type="text/css"/>
+
+<!-- yahoo -->
+<!-- 
+<script type="text/javascript" src="/eview/volr6.nsf/yahoo-dom-event.js"></script>
+<script type="text/javascript" src="/eview/volr6.nsf/container_core-min.js"></script>
+<script type="text/javascript" src="/eview/volr6.nsf/utilities.js"></script>
+<script type="text/javascript" src="/eview/volr6.nsf/container-min.js"></script>
+<script type="text/javascript" src="/eview/volr6.nsf/button.js"></script>
+<script type="text/javascript" src="/eview/volr6.nsf/element-beta.js"></script>
+-->
+<style>@import url(/eview/volr6.nsf/nyroModal.css);</style>
+<style>@import url(/eview/volr6.nsf/jquery.dialog.view1.css);</style> 
+<style type="text/css">
+/*margin and padding on body element
+  can introduce errors in determining
+  element position and are not recommended.
+ */
+body {
+		 margin:0 auto;
+		 padding:0;
+		text-align:center;
+}
+div#contentpane {
+	clear:both; 
+	float:left; 
+	text-align:left; 
+	position: absolute;
+	left:10px;
+	top:19px;
+	width:750px; 
+	height:10px;
+	overflow:auto;
+}
+div#contentpane td {
+	padding: 3px;
+}
+div#contentpane a {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: normal;
+	font-style: normal
+	line-height: 125%;
+	text-decoration: underline;
+	cursor: pointer;
+	color: #024075;
+}
+.liarticle-bold, .liarticle-italic {
+	margin-left:5px;
+}
+div#contentpane .liarticle-bold {
+	margin-top:5px;
+	list-style-type: none;
+	list-style-image: none;
+	text-decoration:underline;
+	color: #024075;
+}
+.inset-yellow {
+	position:relative; 
+	left:0px;
+	top:35px;
+	width:600px; 
+	height:160px;
+	padding: 0;
+	margin: 0;
+	background-color: #f7f7cb;
+	min-height: 100px;
+	border: solid #aaa 1px;
+	background: #f7f7cb;
+	background-image: url(/eview/volr6.nsf/bluegradient25.jpg);
+	background-repeat: repeat-x;
+}
+</style><script>var dbPath = "/eview/volr6.nsf";</script>
+<script language="JavaScript" type="text/javascript">
+<!-- 
+var formName = "search";var dlgOptions = {	autoOpen: false,	buttons: {		"Ok": function(){			jQuery(this).dialog('close')		}	},	height: 200,	width: 350,	modal: true,	overlay: {		opacity: 0.5,		background: "black"	},	title: "THE VIEW"};var dlgSimpleOptions = {	autoOpen: false,	height: 64,	width: 238,	modal: true,	resizable: false,	draggable: false,	overlay: {		opacity: 0.5,		background: "black"	},	title: "Please wait"};$(function(){		jQuery('#autocomplete').autocomplete(			'search?openpage',			{				max: 50,				autoFill: false,				scrollHeight: 220,				highlight: false			}		).result(function(event, item) {		  self.location = dbPath + "/0/" + item[1] + "?opendocument";		});	jQuery("#results-box").corner({		tl: {			radius: 6		},		tr: {			radius: 6		},		bl: {			radius: 6		},		br: {			radius: 6		},		antiAlias: true,		autoPad: false	});	jQuery("#dlg").dialog(dlgOptions).html("Special message.");	jQuery("#menu").load(db_path + "menu_markup", function(){		jQuery('#accordion').accordion({			active: true,			header: 'a.accordion_toggle',			navigation: false,			event: 'click',			fillSpace: true,			alwaysOpen: true		});		loadNavContents();		loadMenuData();		addAccordionNavListeners();		jQuery('#accordion').accordion("activate", 2);		jQuery.fn.nyroModal.settings.processHandler = function(settings){			var from = settings.from;			jQuery.nyroModalSettings({				type: 'swf',				width: 600, // default Width If null, will be calculate automatically				height: 400, // default Height If null, will be calculate automatically				url: '../viewhomepagejan08.swf'			});		};		jQuery('.special_link').each(function(index, domEle){			jQuery(domEle).bind("click", {				url: jQuery(domEle).attr('url')			}, click_handler)		});	});	function click_handler(event){		self.location = dbPath + "/" + event.data.url;	}	jQuery('a.liarticle-bold').cluetip({		cluetipClass: 'jtip',		dropShadow: true,		sticky: false,		ajaxCache: false,		arrows: false,		width: 400,		positionBy: 'bottomTop',		topOffset: 15,		leftOffset: 15	});});function goToMarket(){	self.location = dbPath + "/containerPage?openForm&target=ExhibitorJump-openPage"}function goToAnthologies(){	self.location = dbPath + "/containerPage?openForm&target=pgTechGuides-openform"}$(document).ready(	function() {  	})
+// -->
+</script>
+
+<script language="JavaScript" type="text/javascript">
+<!-- 
+function doLogin(){	f = document.forms['viewlogin'];	valid = true;	p = f.Password.value;	u = f.UserName.value;	if (p == "" & u == "") {		alert("Please enter both a user name and a password.");		f.UserName.focus();		valid = false;	}	else 		if (u == "") {			alert("Please enter a user name.");			f.UserName.focus();			valid = false;		}		else 			if (p == "") {				alert("Please enter a password.");				f.UserName.focus();				valid = false;			}	if (valid) {		f.submit();		frm = frames['hiddenLogin'].document.forms[0];		frm.UserName.value = f.UserName.value;		frm.Password.value = f.Password.value;		//frm.submit();		document.getElementById("panelbutton").click();	}}function doLogout(){		document.getElementById("panelbutton").click();}// dbPath var dbPath;h = self.location.hostname;p = self.location.pathname;p = p.substring(0, p.indexOf(".nsf") + 4)dbPath = self.location.protocol + "//" + h + p;function oW(u){	hWin = window.open(u, "newWin");}var dlgOptionsSearch = {				autoOpen: false,				buttons: {"Ok": function(){jQuery(this).dialog('close')} },				height: 125,				width: 250,				modal: true,				overlay: {         				opacity: 0.5,         				background: "black"     				},				title: "Search"			};function doSearch(){	v = jQuery('input[@name="Query"]').val();	if (v == "") {		jQuery("#dlg").dialog(dlgOptionsSearch).html("Enter a search term.").dialog('open');	}	else {		document.forms['search'].submit();	}}
+
+// -->
+</script>
+</head>
+<body text="#000000" bgcolor="#FFFFFF" link="#0000FF" alink="#0000FF" vlink="#A2A2A2">
+
+<form method="post" action="/eview/volr6.nsf/be80582ce3e0923d85256f2500683f07?CreateDocument" name="_DominoForm"></form>
+<div id="content"></div>
+<!-- 
+<input type="submit" value=""> --><style type="text/css">
+@import url(/eview/volr6.nsf/s-accordion.css?OpenCssResource);
+</style>
+<script>var loggedin=false;var db_path="/eview/volr6.nsf/";var formName = "search"</script>
+<div id="page-container" style="position: absolute; z-index: 1; width: 987px; min-height:400px;position:relative;margin:0 auto; text-align:left;"><a name="top"></a>
+<script language="JavaScript" type="text/javascript" src="/eview/volr6.nsf/pageScripts?OpenJavascriptLibrary">
+</script>
+<style type="text/css">
+@import url(/eview/volr6.nsf/view.css?OpenCssResource);
+</style>
+<style type="text/css">
+@import url(/eview/volr6.nsf/reset-fonts-grids.css?OpenCssResource);
+</style>
+<style type="text/css">
+@import url(/eview/volr6.nsf/jquery.cluetip.css?OpenCssResource);
+</style>
+
+<script>
+var dbPath = "/eview/volr6.nsf"; var dbPath2 = "/eview/volr6.nsf";
+var loggedin =false;
+</script><div id="bannergraphicbox" style="position: absolute; top: 4px; left: 8px; z-index: 0; width: 950px; height: 61px; text-align:left;margin-left:0px"><div id="Layer" style="position: absolute; top: 0px; left: 0px; z-index: 0; width: 488px; height: 61px; ">
+<map name="n62706.$Body.0.3E98">
+<area shape="rect" coords="7,5,688,61" id="HotspotRectangle57" href="http://www.eview.com" target="_self" alt=""></map>
+<img src="/eview/volr6.nsf/519e6f7547a71c5785257ad800378fad/$Body/0.C86?OpenElement&amp;FieldElemFormat=gif" width="950" height="61" usemap="#n62706.$Body.0.3E98" border="0"></div></div><div id="formbox" style="position: absolute; top: 67px; left: -1px; z-index: 0; width: 880px; height: 28px; z-index:255"><div id="loginbox" style="position: absolute; top: 0px; left: 0px; z-index: 2; width: 519px; height: 28px; "></div><div id="searchbox" style="position: absolute; top: 0px; left: 519px; z-index: 255; width: 360px; height: 28px; z-index:255"></div></div>
+
+
+<script type="text/javascript">
+
+var test = "utmcmd=(none)"
+
+if (theuser= "1=memberlevel=anonymous=1"){
+theuser= "anonymous"
+}
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-7665722-1']);
+  _gaq.push(['_setDomainName', 'eview.com']);
+  _gaq.push(['_setAllowLinker', true]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+<script>
+try {
+_gaq.push(['_trackPageview']);
+_gaq.push(['_setCustomVar', 
+      1,                   
+'Items Removed',     
+'Yes'              
+]);  
+} 
+catch(err) {}
+</script>
+<br>
+</form><script>var dbPath2 = "/eview/volr6.nsf";</script><script src="/eview/volr6.nsf/issueJSON?openPage" type="text/javascript"></script>
+<script language="JavaScript" type="text/javascript" src="/eview/volr6.nsf/pageScripts?OpenJavascriptLibrary">
+</script>
+<style type="text/css">
+@import url(/eview/volr6.nsf/s-accordion.css?OpenCssResource);
+</style>
+<div id="navDiv" class="leftcolumn" style="position: absolute; top: 95px; left: -1px; z-index: 0; width: 210px; height: 100%; padding-top:0px; border-right: solid 1px #ccc; border-left: solid 1px #ccc; height: 100%; min-height: 1090px;"><div id="menu" style="margin-bottom: 10px; height:100%"></div>
+<div id="dlg" style="clear:both;text-align:left"></div>
+</div>
+<div id="container_1" style="position: absolute; top: 1px; left: 868px; z-index: 100; width: 47px; height: 23px; text-align:left"></div><div id="Layer" style="position: absolute; top: 100px; left: 220px; z-index: 0; width: 767px; height: 550px; "><form method="post" action="/eview/volr6.nsf/be80582ce3e0923d85256f2500683f07?CreateDocument" name="QueryForm"><br>
+<b><font size="2" face="Arial">Enter word or phrase you want to search for:</font></b><div style="text-align:left">
+<p><font size="2" face="Arial">
+<input name="Query" value="" size=94 class="ac_input"></font><font size="2" color="#000080" face="Arial">  </font></div>
+<p><font size="2" face="Arial">(</font><font size="2" face="Arial">To find articles with matching terms in their titles and categories, use the search box in the top menu bar to enter your terms and inspect the dropdown list.</font><font size="2" face="Arial"> For a full-text search of all content, use query syntax and click Go. For multi-word searches, use the word &quot;and&quot; between the words. For example: Javascript and Domino.</font><font size="2" face="Arial">)</font><br>
+<br>
+
+<input type="button" onclick="document.forms['QueryForm'].submit()" value="Search"><br>
+<br>
+<br>
+
+<table id="search" style="padding: 3px" border="0" cellspacing="0" cellpadding="0">
+<tr valign="top"><td class="arialFamilyBold" width="588" bgcolor="#FFFFFF" colspan="2"><b><font size="2" face="Arial"> </font></b><font size="2" face="Arial">Optional Search Options:</font></td></tr>
+
+<tr valign="top"><td width="144"><b><font size="2" color="#FFFFCC" face="Arial">.</font></b></td><td width="444"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt=""></td></tr>
+
+<tr valign="top"><td width="144"><font size="2" face="Arial">Limit search results to: </font></td><td width="444"><font size="2" face="Arial">
+<input name="%%Surrogate_MaxResults" type="hidden" value="1">
+<select name="MaxResults">
+<option value="0" selected>All
+<option>10
+<option>50
+<option>100
+<option>200</select>
+</font><font size="2" face="Arial"> </font><br>
+<font size="2" color="#FFFFCC" face="Arial">.</font></td></tr>
+
+<tr valign="top"><td width="144"><font size="2" face="Arial">Sort search results by: </font></td><td style="line-spacing: 130%" width="444"><font size="2" face="Arial">
+<input name="%%Surrogate_Sort" type="hidden" value="1">
+<input type="radio" name="Sort" value="1" checked>Relevance<br>
+
+<input type="radio" name="Sort" value="2">Newest first (by date)<br>
+
+<input type="radio" name="Sort" value="3">Oldest first (by date)</font><br>
+<font size="2" color="#FFFFCC" face="Arial">.</font></td></tr>
+
+<tr valign="top"><td width="144"><font size="2" face="Arial">Word options:</font></td><td style="line-spacing: 130%" width="444"><font size="2" face="Arial">
+<input name="%%Surrogate_ExactMatch" type="hidden" value="1">
+<input type="checkbox" name="ExactMatch" value="1">Find exact word matches only</font><br>
+<font size="2" face="Arial">
+<input name="%%Surrogate_UseThesaurus" type="hidden" value="1">
+<input type="checkbox" name="UseThesaurus" value="1">Find word variations as defined by thesaurus</font></td></tr>
+</table>
+</form>
+<div id="results-box" class="inset-yellow">
+<div style="width:600px; height:15px; top:0; margin-left:10px; color:#fff"><font size="2" face="Arial">Other Searches</font></div>
+<div style="padding:10px">
+<div class="arialFamily" style="margin-top:0">
+<div class="arialFamilyBlueBold" style="margin-bottom: 0px"><a href="/eview/volr6.nsf/Author?OpenView" class="arialFamilyBlueBold" style="text-decoration:underline">Browse by author</a></div>
+<div class="liarticle-plain">Select articles written by the industry's top experts</div>
+<div class="arialFamilyBlueBold" style="margin:7px 0 0px 0"><a href="/eview/volr6.nsf/Topic?OpenView" class="arialFamilyBlueBold" style="text-decoration: underline">Browse by category</a></div>
+<div class="liarticle-plain">Choose from over 300 of the most important Notes/Domino topics</div>
+<div class="arialFamilyBlueBold" style="margin:7px 0 0px 0"><a href="/eview/volr6.nsf/Issue?OpenView" class="arialFamilyBlueBold" style="text-decoration:underline">Browse by publication date</a></div>
+<div class="liarticle-plain">Get access to over a decade's worth of tips, tricks, and advice published in THE VIEW</div>
+</div>
+</div>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-7665722-1");
+pageTracker._trackPageview("Search_The_Knowledgebase");
+} catch(err) {}</script></div></div></form>
+</body>
+</html>
