@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='utf-8'?>
+<note class='form' xmlns='http://www.lotus.com/dxl' version='9.0' replicaid='86257B2E00176383'>
+<noteinfo noteid='438e' unid='D1EA819631B3DB8A8525750B000BB26F' sequence='21'>
+<created><datetime>20081123T210745,75-05</datetime></created>
+<modified><datetime dst='true'>20131027T204250,48-05</datetime></modified>
+<revised><datetime dst='true'>20131027T204249,31-05</datetime></revised>
+<lastaccessed><datetime dst='true'>20131027T204250,48-05</datetime></lastaccessed>
+<addedtofile><datetime dst='true'>20131026T105232,11-05</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Jack Ratcliff/O=BlueCuda</name><name>CN=Development Team/O=ExtND</name><name
+>CN=Jack Ratcliff/O=BlueCuda</name><name>CN=jratcliff/O=DDN</name><name>CN=Jack Ratcliff/O=BlueCuda</name><name
+>CN=ISO ADMIN/O=Bpna</name><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></updatedby>
+<revisions><datetime dst='true'>20131026T180251,71-05</datetime><datetime
+ dst='true'>20131026T180251,73-05</datetime><datetime dst='true'>20131027T113557,36-05</datetime><datetime
+ dst='true'>20131027T113557,38-05</datetime><datetime dst='true'>20131027T204249,29-05</datetime></revisions>
+<wassignedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></wassignedby>
+<item name='$HTMLCode' sign='true'>
+<rawitemdata type='1'>
++f8gAAAAAAAPAAQAJAEAAAAAAAAAAAAAAAAAAAAAAADc/zYB+f8kASBOAAAAAAAAAAB2YXIgRGVt
+b0FwcCA9IGZ1bmN0aW9uKCkgew0NCXJldHVybiB7DQkNCQlpbml0IDogZnVuY3Rpb24oKXsNDQkJ
+CXRoaXMudWkgPSBuZXcgRXh0Lm5kLkRvbWlub1VJKHsNCQkJCXVpT3V0bGluZSA6IHtvdXRsaW5l
+TmFtZTogIkFuT3V0bGluZU5hbWUifSwNCQkJCXVpVmlldyA6IHt2aWV3TmFtZTogIkFWaWV3TmFt
+ZSIsIHZpZXdUaXRsZTogIlRoZVZpZXdUaXRsZSJ9DQkJCX0pOwkNCQ0JCX0gLy8gaW5pdA0JfSAv
+LyByZXR1cm4NfSgpOw0NRXh0Lm9uUmVhZHkoRGVtb0FwcC5pbml0LCBEZW1vQXBwLCB0cnVlKTsA
+X/8QAAIADwAHAAAAAAAAAA==
+</rawitemdata></item>
+<item name='$TITLE'><text>Ext.nd.SampleMain.html</text></item>
+<item name='$Info' sign='true'>
+<rawitemdata type='1'>
+hhgBAIAAAAAAgAAAAQABAP///wAQAAAA
+</rawitemdata></item>
+<item name='$WindowTitle' sign='true'><formula>@DbTitle</formula></item>
+<item name='$HTMLHeadTag' sign='true'><formula>thisWebDbName := @WebDbName;
+extndDbWebPath := "/" + @WebDbName +"/";
+extUrl := extndDbWebPath + "ext/3x/";
+extndUrl := extndDbWebPath + "extnd/3x/";
+mode := @If(@UrlQueryString("debug") = "true"; "-debug"; "");
+
+"&lt;!-- Ext JS library --&gt;" + @NewLine +
+"&lt;script type='text/javascript' src='" + extUrl + "adapter/ext/ext-base.js'&gt;&lt;/script&gt;" + @NewLine +
+"&lt;script type='text/javascript' src='" + extUrl + "ext-all" + mode + ".js'&gt;&lt;/script&gt;" + @NewLine +
+
+"&lt;!-- Ext.nd JS library --&gt;" + @NewLine +
+"&lt;script type='text/javascript' src='" + extndUrl + "extnd-all" + mode + ".js'&gt;&lt;/script&gt;" + @NewLine +
+"&lt;script type='text/javascript' src='" + extndUrl + "Session.js?OpenAgent&amp;db=" + thisWebDbName + "'&gt;&lt;/script&gt;" + @NewLine +
+
+"&lt;!-- Ext and Ext.nd CSS --&gt;" + @NewLine +
+"&lt;link rel='stylesheet' type='text/css' href='" + extUrl + "resources/css/ext-all.css' /&gt;" + @NewLine +
+"&lt;link rel='stylesheet' type='text/css' href='" + extndUrl + "resources/css/domino.css' /&gt;"+ @NewLine</formula></item>
+<item name='$Flags'><text>C34WQ</text></item>
+<item name='$DesignerVersion' sign='true'><text>7</text></item>
+<item name='$$ScriptName' summary='false' sign='true'><text>Ext.nd.SampleMain.html</text></item>
+<item name='$Body' sign='true'>
+<rawitemdata type='1'>
+gQKC/1oAAQAAAAAAAAAAAKAFAACgBQgA0AKgBXAIQAsQDuAQsBOAFgAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAABAAAAAJSEoAUKAKAFCgAAAGQAAQAAAAQAAACDBAEAhf8IAAEAAAo=
+</rawitemdata></item></note>
+

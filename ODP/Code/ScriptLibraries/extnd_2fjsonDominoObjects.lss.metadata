@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?><note class="filter" replicaid="86257B2E00176383" version="9.0" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="3e16" sequence="53" unid="2FF65BFB9726ABE88625759A001425AB">
+<created><datetime dst="true">20090415T224003,63-05</datetime></created>
+<modified><datetime dst="true">20131027T204314,32-05</datetime></modified>
+<revised><datetime dst="true">20131027T204312,47-05</datetime></revised>
+<lastaccessed><datetime dst="true">20131027T204314,32-05</datetime></lastaccessed>
+<addedtofile><datetime dst="true">20131026T105225,35-05</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></updatedby>
+<revisions><datetime dst="true">20130314T214327,28-05</datetime><datetime dst="true">20130317T231711,92-05</datetime><datetime dst="true">20130317T231712,08-05</datetime><datetime dst="true">20130317T231712,23-05</datetime><datetime dst="true">20130317T232208,51-05</datetime><datetime dst="true">20130319T190147,74-05</datetime><datetime dst="true">20130319T200301,98-05</datetime><datetime dst="true">20131026T180306,17-05</datetime><datetime dst="true">20131026T180306,19-05</datetime><datetime dst="true">20131026T180308,21-05</datetime><datetime dst="true">20131026T180308,23-05</datetime><datetime dst="true">20131027T145943,44-05</datetime><datetime dst="true">20131027T145943,46-05</datetime><datetime dst="true">20131027T145953,61-05</datetime><datetime dst="true">20131027T145953,63-05</datetime><datetime dst="true">20131027T204310,31-05</datetime><datetime dst="true">20131027T204310,33-05</datetime><datetime dst="true">20131027T204312,45-05</datetime></revisions>
+<wassignedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></wassignedby>
+<item name="$DesignerVersion" sign="true"><text>7</text></item>
+<item name="$TITLE" sign="true"><text>extnd/jsonDominoObjects</text></item>
+<item name="$Flags"><text>s34Q</text></item>
+<item name="$PublicAccess" sign="true"><text>1</text></item>
+
+</note>
