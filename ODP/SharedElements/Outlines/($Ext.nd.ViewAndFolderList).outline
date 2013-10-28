@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='utf-8'?>
+<note class='filter' xmlns='http://www.lotus.com/dxl' version='9.0' replicaid='86257B2E00176383'>
+<noteinfo noteid='3e1a' unid='313BB8CAD4C874A88525750B000BFE94' sequence='14'>
+<created><datetime>20081123T211100,68-05</datetime></created>
+<modified><datetime dst='true'>20131027T204239,66-05</datetime></modified>
+<revised><datetime dst='true'>20131027T204238,53-05</datetime></revised>
+<lastaccessed><datetime dst='true'>20131027T204239,66-05</datetime></lastaccessed>
+<addedtofile><datetime dst='true'>20131026T105225,37-05</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Jack Ratcliff/O=BlueCuda</name><name>CN=jratcliff/O=DDN</name><name
+>CN=Jack Ratcliff/O=BlueCuda</name><name>CN=Development Team/O=ExtND</name><name
+>CN=Jack Ratcliff/O=BlueCuda</name><name>CN=jratcliff/O=DDN</name><name>CN=Jack Ratcliff/O=BlueCuda</name><name
+>CN=ISO ADMIN/O=Bpna</name><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></updatedby>
+<revisions><datetime dst='true'>20070312T012852,54-04</datetime><datetime
+ dst='true'>20070411T232705,41-04</datetime><datetime dst='true'>20080709T164521,24-04</datetime><datetime
+>20100106T193115,54-06</datetime><datetime>20100117T144118,28-06</datetime><datetime
+ dst='true'>20100314T165644,78-04</datetime><datetime dst='true'>20101007T104409,52-05</datetime><datetime
+ dst='true'>20130315T004851,17-05</datetime><datetime dst='true'>20131026T180241,21-05</datetime><datetime
+ dst='true'>20131026T180241,23-05</datetime><datetime dst='true'>20131027T113546,71-05</datetime><datetime
+ dst='true'>20131027T113546,73-05</datetime><datetime dst='true'>20131027T204238,51-05</datetime></revisions>
+<wassignedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></wassignedby>
+<item name='$SiteMapList' sign='true'>
+<rawitemdata type='1a'>
+AQYBAAEABABIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAEAEgAAAAAAAAACgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+/P8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEgAAAAEAAAACwAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAA/P8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEgAAAAAAAAA
+DAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/f8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAEgAAAAEAAAADQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/f8AAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==
+</rawitemdata></item>
+<item name='$TITLE'><text>($Ext.nd.ViewAndFolderList)</text></item>
+<item name='$DesignerVersion' sign='true'><text>7</text></item>
+<item name='$Flags'><text>m</text></item></note>
+
