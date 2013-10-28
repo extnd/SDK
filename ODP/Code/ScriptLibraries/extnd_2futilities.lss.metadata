@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?><note class="filter" replicaid="86257B2E00176383" version="9.0" xmlns="http://www.lotus.com/dxl">
-<noteinfo noteid="3e82" sequence="32" unid="29832EFF014647138625759A001425AE">
+<noteinfo noteid="3e82" sequence="36" unid="29832EFF014647138625759A001425AE">
 <created><datetime dst="true">20090415T224003,66-05</datetime></created>
-<modified><datetime dst="true">20131027T204308,96-05</datetime></modified>
-<revised><datetime dst="true">20131027T204307,31-05</datetime></revised>
-<lastaccessed><datetime dst="true">20131027T204308,96-05</datetime></lastaccessed>
+<modified><datetime dst="true">20131027T231825,48-05</datetime></modified>
+<revised><datetime dst="true">20131027T231823,91-05</datetime></revised>
+<lastaccessed><datetime dst="true">20131027T231825,48-05</datetime></lastaccessed>
 <addedtofile><datetime dst="true">20131026T105225,87-05</datetime></addedtofile></noteinfo>
 <updatedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></updatedby>
-<revisions><datetime dst="true">20131026T180301,14-05</datetime><datetime dst="true">20131026T180301,16-05</datetime><datetime dst="true">20131026T180303,25-05</datetime><datetime dst="true">20131026T180303,27-05</datetime><datetime dst="true">20131027T145944,62-05</datetime><datetime dst="true">20131027T145944,64-05</datetime><datetime dst="true">20131027T145955,56-05</datetime><datetime dst="true">20131027T145955,58-05</datetime><datetime dst="true">20131027T204305,16-05</datetime><datetime dst="true">20131027T204305,18-05</datetime><datetime dst="true">20131027T204307,28-05</datetime></revisions>
+<revisions><datetime dst="true">20131026T180301,14-05</datetime><datetime dst="true">20131026T180301,16-05</datetime><datetime dst="true">20131026T180303,25-05</datetime><datetime dst="true">20131026T180303,27-05</datetime><datetime dst="true">20131027T145944,62-05</datetime><datetime dst="true">20131027T145944,64-05</datetime><datetime dst="true">20131027T145955,56-05</datetime><datetime dst="true">20131027T145955,58-05</datetime><datetime dst="true">20131027T204305,16-05</datetime><datetime dst="true">20131027T204305,18-05</datetime><datetime dst="true">20131027T204307,28-05</datetime><datetime dst="true">20131027T204307,31-05</datetime><datetime dst="true">20131027T231821,81-05</datetime><datetime dst="true">20131027T231821,83-05</datetime><datetime dst="true">20131027T231823,89-05</datetime></revisions>
 <wassignedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></wassignedby>
 <item name="$Flags"><text>s34Q</text></item>
 <item name="$PublicAccess" sign="true"><text>1</text></item>

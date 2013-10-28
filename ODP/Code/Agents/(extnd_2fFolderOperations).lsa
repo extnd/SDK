@@ -1,15 +1,16 @@
 <?xml version='1.0' encoding='utf-8'?>
 <note class='filter' xmlns='http://www.lotus.com/dxl' version='9.0' replicaid='86257B2E00176383'>
-<noteinfo noteid='1043e' unid='BCB3E312BDE854D486257C11001ADD19' sequence='5'>
+<noteinfo noteid='1043e' unid='BCB3E312BDE854D486257C11001ADD19' sequence='7'>
 <created><datetime dst='true'>20131026T235325,37-05</datetime></created>
-<modified><datetime dst='true'>20131027T204406,40-05</datetime></modified>
-<revised><datetime dst='true'>20131027T204404,59-05</datetime></revised>
-<lastaccessed><datetime dst='true'>20131027T204406,40-05</datetime></lastaccessed>
+<modified><datetime dst='true'>20131027T231920,50-05</datetime></modified>
+<revised><datetime dst='true'>20131027T231918,65-05</datetime></revised>
+<lastaccessed><datetime dst='true'>20131027T231920,50-05</datetime></lastaccessed>
 <addedtofile><datetime dst='true'>20131026T235326,06-05</datetime></addedtofile></noteinfo>
 <updatedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></updatedby>
 <revisions><datetime dst='true'>20131026T235326,05-05</datetime><datetime
  dst='true'>20131027T152718,75-05</datetime><datetime dst='true'>20131027T152718,77-05</datetime><datetime
- dst='true'>20131027T204404,57-05</datetime></revisions>
+ dst='true'>20131027T204404,57-05</datetime><datetime dst='true'>20131027T204404,59-05</datetime><datetime
+ dst='true'>20131027T231918,63-05</datetime></revisions>
 <wassignedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></wassignedby>
 <item name='$TITLE' sign='true'><text>(extnd/FolderOperations)</text></item>
 <item name='$AssistType' sign='true'><number>65413</number></item>
@@ -118,7 +119,7 @@ aW5mbygxKSAmICIgbGluZSAiICYgRXJsICYgfCB8ICYgRXJyb3IkICYgfCJ8CQpFbmQgU3ViAA==
 <item name='$DesignerVersion'><text>7</text></item>
 <item name='$AssistRunInfo' summary='true'>
 <rawitemdata type='3'>
-BgAAAgAACAC6BgEAAAAAAAUAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+BgAAAgAACACOBwEAAAAAAAUAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAbrkXADJ7JYaDYxcALnslhgAAAAAAAAAAAAAAAAAAAAAAAAAAqqqqqqqq
 qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
 qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq

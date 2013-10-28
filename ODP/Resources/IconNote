@@ -1,19 +1,20 @@
 <?xml version='1.0' encoding='utf-8'?>
 <note default='true' class='icon' xmlns='http://www.lotus.com/dxl' version='9.0'
  replicaid='86257B2E00176383'>
-<noteinfo noteid='122' unid='2EFFBAFFB83872F0852573F0006E15DD' sequence='3'>
+<noteinfo noteid='122' unid='2EFFBAFFB83872F0852573F0006E15DD' sequence='7'>
 <created><datetime>20080215T150225,57-05</datetime></created>
-<modified><datetime dst='true'>20131027T113609,43-05</datetime></modified>
-<revised><datetime dst='true'>20131027T113608,14-05</datetime></revised>
-<lastaccessed><datetime dst='true'>20131027T113609,43-05</datetime></lastaccessed>
+<modified><datetime dst='true'>20131027T231951,58-05</datetime></modified>
+<revised><datetime dst='true'>20131027T231951,57-05</datetime></revised>
+<lastaccessed><datetime dst='true'>20131027T231951,58-05</datetime></lastaccessed>
 <addedtofile><datetime dst='true'>20131026T105017,18-05</datetime></addedtofile></noteinfo>
 <updatedby><name>CN=jratcliff/O=DDN</name><name>CN=Jack Ratcliff/O=BlueCuda</name><name
 >CN=jratcliff/O=DDN</name><name>CN=Jack Ratcliff/O=BlueCuda</name><name>CN=ISO ADMIN/O=Bpna</name><name
 >CN=Jack Ratcliff/O=BlueCuda</name><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name><name
 >CN=Jack Ratcliff/O=BlueCuda</name><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></updatedby>
 <revisions><datetime dst='true'>20130315T004848,95-05</datetime><datetime
- dst='true'>20131027T113608,12-05</datetime></revisions>
-<wassignedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></wassignedby>
+ dst='true'>20131027T113608,12-05</datetime><datetime dst='true'>20131027T113608,14-05</datetime><datetime
+ dst='true'>20131027T231950,22-05</datetime><datetime dst='true'>20131027T231950,24-05</datetime><datetime
+ dst='true'>20131027T231951,52-05</datetime></revisions>
 <item name='IconBitmap' summary='true' sign='true'>
 <rawitemdata type='6'>
 AiAgAQAA/////////////////////8BISA/PEkhPwxPIT8ARwA/CQeMPw/P/z///////////////
@@ -29,10 +30,10 @@ AAAAAAAP3d4AAAAA3d3wAAAAAAAAAA3dAAAAD93QAAAAAAAAAAAP3eAAAP3d8AAAAAAAAAAAD93d
 7/7d3QAAAAAAAAAAAA7d3d3d3d3wAAAAAAAAAAAA7/3d3e//AAAAAAAAAAAAAAAA/d8AAAAAAAAA
 AAAAAAAAAA/wAAAAAAAAAAAAAA==
 </rawitemdata></item>
-<item name='$DefaultWebLaunchPage' sign='true'><text>main.html</text></item>
+<item name='$Daos'><text>0</text></item>
+<item name='$DefaultWebLaunchPage'><text>main.html</text></item>
 <item name='$TITLE'><text>Extnd for Ext JS 4x
 #1Extnd4</text></item>
-<item name='$Flags'><text>JE76</text></item>
-<item name='$FlagsNoRefresh' sign='true'><text/></item>
-<item name='$Daos'><text>0</text></item></note>
+<item name='$Flags'><text>J76E</text></item>
+<item name='$FlagsNoRefresh'><text>rv</text></item></note>
 

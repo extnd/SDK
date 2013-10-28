@@ -1,15 +1,16 @@
 <?xml version='1.0' encoding='utf-8'?>
 <note class='filter' xmlns='http://www.lotus.com/dxl' version='9.0' replicaid='86257B2E00176383'>
-<noteinfo noteid='10466' unid='79F6085D32441B3986257C11001ADD1E' sequence='5'>
+<noteinfo noteid='10466' unid='79F6085D32441B3986257C11001ADD1E' sequence='7'>
 <created><datetime dst='true'>20131026T235325,42-05</datetime></created>
-<modified><datetime dst='true'>20131027T204348,78-05</datetime></modified>
-<revised><datetime dst='true'>20131027T204347,04-05</datetime></revised>
-<lastaccessed><datetime dst='true'>20131027T204348,78-05</datetime></lastaccessed>
+<modified><datetime dst='true'>20131027T231903,23-05</datetime></modified>
+<revised><datetime dst='true'>20131027T231901,47-05</datetime></revised>
+<lastaccessed><datetime dst='true'>20131027T231903,23-05</datetime></lastaccessed>
 <addedtofile><datetime dst='true'>20131026T235326,67-05</datetime></addedtofile></noteinfo>
 <updatedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></updatedby>
 <revisions><datetime dst='true'>20131026T235326,66-05</datetime><datetime
  dst='true'>20131027T152701,59-05</datetime><datetime dst='true'>20131027T152701,61-05</datetime><datetime
- dst='true'>20131027T204347,02-05</datetime></revisions>
+ dst='true'>20131027T204347,02-05</datetime><datetime dst='true'>20131027T204347,04-05</datetime><datetime
+ dst='true'>20131027T231901,45-05</datetime></revisions>
 <wassignedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></wassignedby>
 <item name='$TITLE' sign='true'><text>(extnd/UIDocument.js)</text></item>
 <item name='$AssistType' sign='true'><number>65413</number></item>
@@ -98,7 +99,7 @@ IFN1YgA=
 <item name='$DesignerVersion'><text>7</text></item>
 <item name='$AssistRunInfo' summary='true'>
 <rawitemdata type='3'>
-BgAAAgAACABqBgEAAAAAAAUAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+BgAAAgAACAA+BwEAAAAAAAUAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAc/cXADJ7JYaDYxcALnslhgAAAAAAAAAAAAAAAAAAAAAAAAAAqqqqqqqq
 qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
 qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
