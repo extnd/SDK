@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='utf-8'?>
+<view xmlns='http://www.lotus.com/dxl' version='9.0' replicaid='86257C2900079A5C'
+ showinmenu='true' publicaccess='false' noviewformat='true'>
+<noteinfo noteid='116' unid='7578D7647E02680286257C2900079A5F' sequence='1'>
+<created><datetime>20131119T192302,71-06</datetime></created>
+<modified><datetime>20131119T192302,73-06</datetime></modified>
+<revised><datetime>20131119T192302,72-06</datetime></revised>
+<lastaccessed><datetime>20131119T192302,73-06</datetime></lastaccessed>
+<addedtofile><datetime>20131119T192302,73-06</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></updatedby><code
+ event='selection'><formula>SELECT @All</formula></code>
+<item name='$FormulaClass'><text>1</text></item></view>
+

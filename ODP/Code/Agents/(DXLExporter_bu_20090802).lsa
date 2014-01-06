@@ -1,0 +1,1447 @@
+<?xml version='1.0' encoding='utf-8'?>
+<agent name='(DXLExporter_bu_20090802)' xmlns='http://www.lotus.com/dxl' version='9.0'
+ replicaid='86257C2900079A5C' hide='v3' publicaccess='true' designerversion='8.5.3'
+ comment='this should run as the agent signer' restrictions='fulladminunrestricted'>
+<noteinfo noteid='a16' unid='398324115DD32CE386257C290007333D' sequence='5'>
+<created><datetime>20131119T191838,69-06</datetime></created>
+<modified><datetime>20131225T220508,32-06</datetime></modified>
+<revised><datetime>20131225T220508,31-06</datetime></revised>
+<lastaccessed><datetime>20131225T220508,32-06</datetime></lastaccessed>
+<addedtofile><datetime>20131119T192327,75-06</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></updatedby>
+<wassignedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></wassignedby>
+<designchange><datetime>20131225T220508,27-06</datetime></designchange>
+<trigger type='agentlist'/>
+<documentset type='runonce'/><code event='options'><lotusscript>Option Public
+Option Explicit
+
+
+Use "QueryStringParser"
+Use "utilities"
+Use "jsonDominoObjects"
+
+</lotusscript></code><code event='declarations'><lotusscript>Dim session As NotesSession
+Dim db As NotesDatabase
+Dim thisDb As NotesDatabase
+Dim docCtxt As NotesDocument
+
+Dim nc As NotesNoteCollection
+Dim noteDocument As NotesDocument
+Dim noteForm As NotesForm
+Dim noteView As NotesView
+Dim noteOutline As NotesOutline
+Dim noteID As String
+Dim stream As NotesStream
+Dim exporter As NotesDXLExporter
+
+Dim TempDir As String
+Dim FileName As String
+
+Dim sType As String  ' document, form, view, outline, etc.
+Dim sName As String ' the name of the form, view, outline, etc.
+Dim sMode As String
+Dim sDebug As String
+Dim bDebug As Boolean
+Dim sFetch As String
+Dim sOutputFormat As String 'json or xml
+Dim sXSL As String
+Dim sDesignUnid As String
+Dim sDocUnid As String
+Dim dbName As String
+Dim useDisk As String
+Dim outBuff As String
+
+%REM
+	sax experiment
+%END REM
+Dim isPostOpenEvent As Boolean
+Dim isPostOpenCode As Boolean
+Dim isCode As Boolean
+
+
+
+
+
+</lotusscript></code><code event='initialize'><lotusscript>Sub Initialize
+	
+	On Error Goto ErrHandler
+	
+	Set session = New NotesSession
+	Set thisDb = session.CurrentDatabase
+	
+	Call parseQueryStrings()
+	
+	' get the db and note collection
+	Set db = session.GetDatabase("",dbName,False)
+	Set nc = db.CreateNoteCollection(False)
+	Call nc.BuildCollection
+	
+	Set stream = session.CreateStream
+	
+	' this was an old hack that shouldn't be needed now
+	If useDisk = "true" Then
+		TempDir$ = Environ("Temp")
+		FileName$ = TempDir$ + "\" + sType + sName + sDesignUnid + sDocUnid + ".xml"
+		stream.Open(FileName$)   
+	End If
+	
+	
+	Set exporter = session.CreateDXLExporter()
+	
+	If bDebug Then Msgbox "type = " + sType
+	Select Case sType
+		
+	Case "document" :
+		Call exportDocument()
+		
+	Case "form" :
+		Call exportForm()
+		
+	Case "page" :
+		Call exportPage()
+		
+	Case "formnew"
+		Call exportFormHideWhenTest()
+		
+	Case "view" :
+		Call exportView()
+		
+	Case "outline" :
+		Call exportOutline()
+		
+	Case Else :
+		' do nothing
+		
+	End Select
+	
+	
+	
+	
+	
+	' done with the stream so close it
+	stream.Close
+	
+	' if we created a file on dis then delete it
+	If useDisk = "true" Then
+		Kill FileName$       
+	End If
+	
+	Exit Sub
+	
+	
+ErrHandler:
+	Call sendError(Erl, Err, Error)
+	
+	Exit Sub
+	
+End Sub
+
+</lotusscript></code><code event='exportFormHideWhenTest'><lotusscript>Sub exportFormHideWhenTest
+	
+	On Error Goto ErrHandler
+	
+	If bDebug Then
+		Msgbox "hidewhen test"
+		Msgbox "EffectiveUserName before = " + session.EffectiveUserName		
+	End If
+	
+	Dim a As NotesAgent
+	Dim thisDb As NotesDatabase
+	Dim paramid As String
+	Dim doc As NotesDocument
+	
+	Set thisDb = session.CurrentDatabase
+	Set a = thisDb.GetAgent("extnd/beta2/evaluateHidewhens")
+	Set doc = New NotesDocument(thisDb)
+	Call doc.AppendItemValue("$PublicAccess","1") ' for anonymous users
+	
+	Call doc.Save(True, False)
+	paramid = doc.NoteID
+	If bDebug Then Msgbox paramid
+	
+	Call a.Run(paramid)
+		' Delete in-memory document, it does not contain up-to-date info    
+	Delete doc
+	
+	' now get the updated doc
+	Set doc = thisDb.GetDocumentByID(paramid)
+	If bDebug Then
+		Msgbox "EffectiveUserName after = " + doc.effectiveUserName(0)
+		Msgbox "commonUserName after = " + doc.commonUserName(0)
+		Msgbox "UserName after = " + doc.userName(0)		
+	End If
+	
+	Exit Sub
+	
+ErrHandler:
+	'/* throw this error */
+	Error Err, | [ | &amp; | Routine: | &amp; Getthreadinfo(1) &amp; |, line: | &amp; Erl &amp;	| ] | &amp; Error$
+	
+End Sub
+
+</lotusscript></code><code event='SAXEndElement'><lotusscript>Sub SAXEndElement (Source As NotesSAXParser, Byval ElementName As String)
+	
+	On Error Goto ErrHandler
+	
+ REM Terminate the element
+	Source.Output("&amp;lt;/" &amp; ElementName &amp; "&amp;gt;" &amp; Chr(10))
+	
+	If ElementName = "lotusscript"  And isPostOpenEvent  Then
+		isPostOpenCode = False
+		isPostOpenEvent = False
+	Elseif elementName = "code" Then
+		isCode = False
+	End If
+	
+	Exit Sub
+	
+ErrHandler:
+	'/* throw this error */
+	Error Err, | [ | &amp; | Routine: | &amp; Getthreadinfo(1) &amp; |, line: | &amp; Erl &amp;	| ] | &amp; Error$
+	
+End Sub 
+
+</lotusscript></code><code event='exportDocumentFieldValues'><lotusscript
+>Sub exportDocumentFieldValues
+	
+	On Error Goto ErrHandler
+	
+	Exit Sub
+	
+ErrHandler:
+	'/* throw this error */
+	Error Err, | [ | &amp; | Routine: | &amp; Getthreadinfo(1) &amp; |, line: | &amp; Erl &amp;	| ] | &amp; Error$
+	
+End Sub
+
+</lotusscript></code><code event='getXSLIdentityTemplate'><lotusscript>Function getXSLIdentityTemplate As NotesStream
+	
+	On Error Goto ErrHandler
+	
+	Dim stream As NotesStream
+	Dim session As New NotesSession
+	Set stream = session.CreateStream()
+	Call stream.WriteText({&lt;?xml version='1.0' encoding='UTF-8'?&gt;
+&lt;xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"&gt;
+
+  &lt;xsl:template match="node()|@*"&gt;
+	&lt;!-- Copy the current node --&gt;
+    &lt;xsl:copy&gt;
+      &lt;!-- Including any attributes it has and any child nodes --&gt;
+      &lt;xsl:apply-templates select="@*|node()"/&gt;
+	&lt;/xsl:copy&gt;
+  &lt;/xsl:template&gt;
+&lt;/xsl:stylesheet&gt;
+	})
+	
+	
+	Set getXSLIdentityTemplate = stream
+	
+	Exit Function
+	
+ErrHandler:
+	'/* throw this error */
+	Error Err, | [ | &amp; | Routine: | &amp; Getthreadinfo(1) &amp; |, line: | &amp; Erl &amp;	| ] | &amp; Error$
+	
+End Function
+
+</lotusscript></code><code event='SAXCharacters'><lotusscript>Sub SAXCharacters (Source As Notessaxparser, Byval Characters As String, Count As Long)
+	
+	On Error Goto ErrHandler
+	
+	If  isCode Then
+		Source.Output("&amp;lt;![CDATA[")    
+	End If  
+	
+	If (isPostOpenCode)  Then
+   REM insert code into this place
+		Dim header As String
+		Dim pos As Integer
+		Dim newchar As String
+		
+		header = "Notesuidatabase"
+		pos = Instr(Characters,header)
+		
+		If (pos = 1) Then
+     REM at the begining 
+		Else    
+     REM found the patten, and insert the code
+			newchar = Left(Characters, pos+16)        
+			newchar = newchar + Chr(13) + "Msgbox" + Chr(34) + "Welcome"+ Chr(34) + Chr(13)
+			newchar = newchar + Mid(Characters, pos+ 17)      
+		End If    
+		Source.Output(newchar)
+	Else 
+		Source.Output(Characters) 
+	End If
+	
+	If  isCode Then
+		Source.Output("]]&amp;gt;")    
+	End If
+	
+	Exit Sub
+	
+ErrHandler:
+	'/* throw this error */
+	Error Err, | [ | &amp; | Routine: | &amp; Getthreadinfo(1) &amp; |, line: | &amp; Erl &amp;	| ] | &amp; Error$
+	
+	
+End Sub
+
+</lotusscript></code><code event='addSubformFieldsAndActionbarXML'><lotusscript
+>Function addSubformFieldsAndActionbarXML(exporter As NotesDXLExporter, transformer As NotesXSLTransformer) As NotesDOMParser
+	
+	On Error Goto ErrHandler
+	
+	
+	If bDebug Then Msgbox "checking for subforms"
+	
+	' now take this transformed form and check for subform nodes in it
+	Dim domParser As NotesDOMParser
+	Dim docNode As NotesDOMDocumentNode
+	Dim rootElement As NotesDOMElementNode
+	Dim dpOutStream As NotesStream
+	Dim subformList As NotesDOMNodeList  
+	
+	'Let stream.Position = 0
+	Set session = New NotesSession
+	'Set dpOutStream = session.CreateStream
+	'Set domParser=session.CreateDOMParser(exporter, dpOutStream)
+	Set domParser=session.CreateDOMParser(transformer, stream)
+	domParser.AddXMLDeclNode = False
+	'domParser.Process
+	
+	Call exporter.process()
+	
+	Set docNode = domParser.Document
+	Set rootElement = domParser.Document.DocumentElement
+	Set subformList = rootElement.GetElementsByTagName ("subformref")
+	If bDebug Then Msgbox "nbr of subforms = " &amp; subformList.NumberOfEntries
+	
+	' now process each subform 
+	' TODO: make this a recursive function so subforms within subforms also get processed
+	Dim sfNode As NotesDOMNode
+	Dim sfCount As Integer
+	Dim attrs As NotesDOMNamedNodeMap
+	Dim sfName As NotesDOMAttributeNode
+	
+	sfCount = subformList.NumberOfEntries
+	Dim i As Integer
+	For i = 1 To sfCount
+		Set sfNode = subformList.GetItem(i)		
+		Set attrs = sfNode.Attributes
+		If attrs.NumberOfEntries &gt; 0 Then
+			' since the subformref element only has one attributed named 'name'
+			' however, for computed subforms, you will NOT have a 'name' attribute
+			' and thus why we have to first check the numberOfEntries
+			Set sfName = attrs.GetItem(1) 
+			If bDebug Then Msgbox "subform name = " &amp; sfName.AttributeValue			
+		End If
+		
+%REM
+		nc.SelectForms = True
+		nc.SelectSubforms = True 
+		nc.SelectionFormula = |@IsMember(@lowercase($TITLE); @lowercase("| + sName + |"))| +| &amp; | + |!@Contains($Flags; "w")| 
+		'nc.SelectionFormula = |(@IsMember(@lowercase($TITLE); @lowercase("| + sName + |") : "sfactions"))| +| &amp; | + |!@Contains($Flags; "w")| 
+		'nc.SelectionFormula =  |!@Contains($Flags; "w")|
+		If bDebug Then Msgbox nc.SelectionFormula
+		
+		Call nc.BuildCollection
+		If bDebug Then Msgbox nc.Count
+	
+%END REM
+'%REM
+		' now append to the sfNode
+		Dim newChild As NotesDOMNode
+		Dim newAttribute As NotesDOMNode
+		'Set newChild = docNode.CreateElementNode("action")
+		Set newChild = sfNode.Clone(True)
+		'Set newAttribute = docNode.CreateAttributeNode("title")
+		'newAttribute.NodeValue = "programatically created"
+		Call sfNode.AppendChild(newChild)
+		'Call newChild.AppendChild(newAttribute)
+'%END REM
+		
+		
+	Next
+	
+	Set addSubformFieldsAndActionbarXML = domParser
+	
+	
+	Exit Function
+	
+ErrHandler:
+	'/* throw this error */
+	Error Err, | [ | &amp; | Routine: | &amp; Getthreadinfo(1) &amp; |, line: | &amp; Erl &amp;	| ] | &amp; Error$
+	
+	
+End Function
+
+</lotusscript></code><code event='exportForm'><lotusscript>Sub exportForm()
+	
+	On Error Goto ErrHandler
+	
+	If bDebug Then
+		Msgbox "exportForm start"
+		Msgbox "outputformat = " + sOutputFormat
+		Msgbox "name = " + sName	
+	End If
+	
+	' if we don't have a form name we might have the design unid of the form
+	If (sName = "") Then
+		If (sDesignUnid &lt;&gt; "") Then
+			Set noteDocument = db.GetDocumentByUNID(sDesignUnid)
+			sName = noteDocument.GetItemValue("form")
+			Set noteForm = db.GetForm(sName)
+			Call nc.Add(noteForm)
+			
+			' check NotesCollection to be sure we found something otherwise nothing will work
+			If nc.Count = 0 Then
+				'/* throw this error */
+				Error 9999, "exportForm routine did not find any forms/pages to export for sDesignUnid = " &amp; sDesignUnid
+			End If
+			
+		Elseif (sDocUnid &lt;&gt; "") Then
+			Set noteDocument = db.GetDocumentByUNID(sDocUnid)
+			sName = noteDocument.GetItemValue("form")
+			Set noteForm = db.GetForm(sName)
+			Call nc.Add(noteForm)
+			
+			' check NotesCollection to be sure we found something otherwise nothing will work
+			If nc.Count = 0 Then
+				'/* throw this error */
+				Error 9999, "exportForm routine did not find any forms/pages to export for sDocUnid = " &amp; sDocUnid
+			End If
+			
+		Else
+			
+			'/* throw this error */
+			Error 9999, "exportForm routine did not find any forms/pages because sName, sDesignUnid, and sDocUnid were all blank"
+			
+		End If		
+	Else
+		
+		'Set noteForm = db.GetForm(sName)
+		
+		' do NOT include any forms ($Flags) that contain the "w" flag since that means
+		' this form is set to hide from the web
+		nc.SelectPages = True
+		nc.SelectForms = True
+		nc.SelectSubforms = True 
+		Dim sFormula As String
+		sFormula = |@IsMember(@lowercase("| + sName + |"); @lowercase($TITLE))| +| &amp; | + |!@Contains($Flags; "w")| 
+		nc.SelectionFormula = sFormula
+		If bDebug Then Msgbox nc.SelectionFormula
+		
+		Call nc.BuildCollection
+		
+		' check NotesCollection to be sure we found something otherwise nothing will work
+		If nc.Count = 0 Then
+		'/* throw this error */
+			Error 9999, "exportForm routine did not find any forms/pages to export with formula = " + sFormula
+		End If
+	End If
+	
+	
+	' setup the exporter that gets the DXL
+	Set exporter = session.CreateDXLExporter()
+	exporter.OutputDOCTYPE = False
+	
+	Call exporter.SetInput(nc)
+	
+	
+	' setup the xsl and transformer
+	Dim xslt As NotesStream
+	Dim transformer As NotesXSLTransformer	
+	Set transformer = session.CreateXSLTransformer()
+	
+	If (sOutputFormat = "json") Then
+		Set xslt = getXSLFormFieldsAndActionbarJSON()
+	Else
+		If (sXSL = "identity") Then
+			If bDebug Then Msgbox "using xsl identity"
+			Set xslt = getXSLIdentityTemplate()		
+		Elseif (sXSL = "hello") Then
+			If bDebug Then Msgbox "using xsl hello worldy"
+			Set xslt = getXSLHelloWorld()	
+		Else
+			If bDebug Then Msgbox "using xsl FormFieldsAndActionbar"
+			Set xslt = getXSLFormFieldsAndActionbarXML(sMode, sFetch)		
+			
+			'TODO - is it possible to pull out the xsl from this agent and store as a file resource
+			' and then be able to read in that file resource here?
+			'Print thisDb.FilePath + "/extnd/2x/resources/xsl/FormActionsAndFields.xsl"
+			'xslt.Open(thisDb.FilePath + "/extnd/2x/resources/xsl/FormActionsAndFields.xsl")
+			
+		End If		
+	End If
+	
+	' set the transformers input to the dxlexporter's output
+	Call transformer.SetInput(exporter)
+	
+	
+	' set the xsl stylesheet
+	Call transformer.SetStylesheet(xslt)
+	
+	
+	' add in the subform fields and actions
+	Dim domParser As NotesDOMParser
+	'Call exporter.setOutput(transformer)
+	Set domParser = addSubformFieldsAndActionbarXML(exporter, transformer)
+	
+	
+	
+	' send the results to the browser
+	
+	' first, make sure we send the correct content type
+	If (sOutputFormat = "json") Then
+		If bDebug Then Msgbox "send back json"
+		Print {Content-type: application/json}
+	Else
+		If bDebug Then Msgbox "send back xml"
+		Print {Content-type:text/xml;charset=utf-8}   
+	End If
+	
+	' second, serialize the domparser so the xml is sent to the output stream
+	Call domParser.Serialize()
+	
+	' finally, go the the beginning of the stream and Print the contents of the ReadText() method call
+	If bDebug Then Msgbox "stream bytes = " &amp; stream.Bytes
+	Let stream.Position = 0
+	Print stream.ReadText()
+	
+	If bDebug Then Msgbox "exportForm end"
+	
+Out:
+	Exit Sub
+	
+ErrHandler:
+	
+	If bDebug Then
+		If Err = 4604 Then
+			Print "error 4604"
+			Print transformer.Log
+			
+		Elseif Err = 4602 Then
+			Print "error 4602"
+			Print transformer.Log
+		End If
+	Else		
+		
+		'/* throw this error */
+		Error Err, | [ | &amp; | Routine: | &amp; Getthreadinfo(1) &amp; |, line: | &amp; Erl &amp;	| ] | &amp; Error$
+		
+		
+		
+	End If
+	
+	Resume Next
+	
+End Sub
+
+
+</lotusscript></code><code event='getXSLHelloWorld'><lotusscript>Function getXSLHelloWorld As NotesStream
+	
+	On Error Goto ErrHandler
+	
+	Dim stream As NotesStream
+	Dim session As New NotesSession
+	Set stream = session.CreateStream()
+	Call stream.WriteText({&lt;?xml version='1.0' encoding='UTF-8'?&gt;
+&lt;xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"&gt;
+
+	&lt;xsl:output method='xml'/&gt;
+
+	&lt;xsl:template match="/"&gt;
+		&lt;msg&gt;Hello World&lt;/msg&gt;
+	&lt;/xsl:template&gt;
+
+&lt;/xsl:stylesheet&gt;
+})
+	
+	
+	Set getXSLHelloWorld = stream
+	
+	Exit Function
+	
+ErrHandler:
+	'/* throw this error */
+	Error Err, | [ | &amp; | Routine: | &amp; Getthreadinfo(1) &amp; |, line: | &amp; Erl &amp;	| ] | &amp; Error$
+	
+End Function
+
+</lotusscript></code><code event='exportFormFieldDefinitions'><lotusscript
+>Sub exportFormFieldDefinitions
+	
+	On Error Goto ErrHandler
+	
+	Exit Sub
+	
+ErrHandler:
+	'/* throw this error */
+	Error Err, | [ | &amp; | Routine: | &amp; Getthreadinfo(1) &amp; |, line: | &amp; Erl &amp;	| ] | &amp; Error$
+	
+End Sub
+
+</lotusscript></code><code event='sendError'><lotusscript>Function sendError(ErrorLine As Integer, ErrorNumber As Integer, ErrorMessage As String) As String
+	
+	On Error Goto ErrHandler
+	
+	If (sOutputFormat = "json")  Then
+		Print {content-type:application/json}
+		Print "{	error : {"
+		Print "		line : " + Cstr(ErrorLine)
+		Print "		number : " + Cstr(ErrorNumber)
+		Print "		message : '" + ErrorMessage +  "'"
+		Print "	}"
+		Print "}"
+	Else
+		Print {content-type:text/xml;charset=utf-8}
+		Print "&lt;?xml version='1.0' encoding='utf-8'?&gt;"
+		Print "&lt;error&gt;"
+		Print "&lt;line&gt;" + Cstr(ErrorLine) + "&lt;/line&gt;"
+		Print "&lt;number&gt;" + Cstr(ErrorNumber) + "&lt;/number&gt;"
+		Print "&lt;message&gt;&lt;![CDATA[" + ErrorMessage +  "]]&gt;&lt;/message&gt;"	
+		Print"&lt;/error&gt;"		
+	End If
+	
+	Exit Function
+	
+ErrHandler:
+	'/* throw this error */
+	Error Err, | [ | &amp; | Routine: | &amp; Getthreadinfo(1) &amp; |, line: | &amp; Erl &amp;	| ] | &amp; Error$
+	
+End Function
+
+</lotusscript></code><code event='exportPage'><lotusscript>Sub exportPage()
+	On Error Goto ErrHandler
+	
+	If bDebug Then
+		Msgbox "exportPage start"
+		Msgbox "outputformat = " + sOutputFormat
+		Msgbox "name = " + sName	
+	End If
+	
+	nc.SelectPages = True
+	Dim sFormula As String
+	sFormula = |@IsMember(@lowercase("| + sName + |"); @lowercase($TITLE))| +| &amp; | + |!@Contains($Flags; "w")| 
+	nc.SelectionFormula = sFormula
+	If bDebug Then Msgbox nc.SelectionFormula
+	
+	Call nc.BuildCollection
+	
+		' check NotesCollection to be sure we found something otherwise nothing will work
+	If nc.Count = 0 Then
+		'/* throw this error */
+		Error 9999, "exportPage routine did not find any pages to export with formula = " + sFormula
+	End If
+	
+	
+	' setup the exporter that gets the DXL
+	Set exporter = session.CreateDXLExporter()
+	exporter.OutputDOCTYPE = False
+	Call exporter.SetInput(nc)
+	
+	
+	' setup the xsl and transformer
+	Dim xslt As NotesStream
+	Dim transformer As NotesXSLTransformer	
+	Set transformer = session.CreateXSLTransformer()
+	
+	If (sOutputFormat = "json") Then
+		Set xslt = getXSLFormFieldsAndActionbarJSON()
+	Else
+		If (sXSL = "identity") Then
+			If bDebug Then Msgbox "using xsl identity"
+			Set xslt = getXSLIdentityTemplate()		
+		Elseif (sXSL = "hello") Then
+			If bDebug Then Msgbox "using xsl hello worldy"
+			Set xslt = getXSLHelloWorld()	
+		Else
+			If bDebug Then Msgbox "using xsl FormFieldsAndActionbar"
+			Set xslt = getXSLFormFieldsAndActionbarXML(sMode, sFetch)		
+			
+			'TODO - is it possible to pull out the xsl from this agent and store as a file resource
+			' and then be able to read in that file resource here?
+			'Print thisDb.FilePath + "/extnd/2x/resources/xsl/FormActionsAndFields.xsl"
+			'xslt.Open(thisDb.FilePath + "/extnd/2x/resources/xsl/FormActionsAndFields.xsl")
+			
+		End If		
+	End If
+	
+	' set the transformer's input, output, stylesheet and then call transform
+	Call transformer.SetInput(exporter)
+	Call transformer.SetOutput(stream)
+	Call transformer.SetStylesheet(xslt)
+	Call exporter.setOutput(transformer)
+	Call exporter.process()
+	
+	' send the results to the browser
+	
+	' first, make sure we send the correct content type
+	If (sOutputFormat = "json") Then
+		If bDebug Then Msgbox "send back json"
+		Print {Content-type: application/json}
+	Else
+		If bDebug Then Msgbox "send back xml"
+		Print {Content-type:text/xml;charset=utf-8}   
+	End If
+	
+	' finally, go the the beginning of the stream and Print the contents of the ReadText() method call
+	If bDebug Then Msgbox "stream bytes = " &amp; stream.Bytes
+	Let stream.Position = 0
+	Print stream.ReadText()
+	
+	If bDebug Then Msgbox "exportPage end"
+	
+	
+	Exit Sub
+	
+ErrHandler:
+	
+	If bDebug Then
+		If Err = 4604 Then
+			Print "error 4604"
+			Print transformer.Log
+			
+		Elseif Err = 4602 Then
+			Print "error 4602"
+			Print transformer.Log
+		End If
+	Else		
+		
+		'/* throw this error */
+		Error Err, | [ | &amp; | Routine: | &amp; Getthreadinfo(1) &amp; |, line: | &amp; Erl &amp;	| ] | &amp; Error$
+		
+	End If
+	
+End Sub
+
+</lotusscript></code><code event='exportViewActionbar'><lotusscript>Sub exportViewActionbar
+	
+	On Error Goto ErrHandler
+	
+	Exit Sub
+	
+ErrHandler:
+	'/* throw this error */
+	Error Err, | [ | &amp; | Routine: | &amp; Getthreadinfo(1) &amp; |, line: | &amp; Erl &amp;	| ] | &amp; Error$
+	
+	
+End Sub
+
+</lotusscript></code><code event='SAXStartElement'><lotusscript>Sub SAXStartElement (Source As NotesSAXParser, Byval strElementName As String, Attributes As NotesSaxAttributeList)  
+	
+	On Error Goto ErrHandler
+	
+	Dim i As Integer  
+	Dim strAttrName As String
+	Dim strAttrValue As String
+	
+ REM Open Element
+	Source.Output("&amp;lt;" &amp; strElementName) 
+	If Attributes.Length &gt; 0 Then
+		For i = 1 To Attributes.Length
+     REM Get the name and value of the attribute
+			strAttrName = Attributes.GetName(i)
+			strAttrValue = Attributes.GetValue(i)     
+     REM Check whether current element is code
+			If strElementName = "code" Then
+				isCode = True
+				If  strAttrName = "event" Then          
+					If strAttrValue = "postopen" Then
+           REM found postopen event
+						isPostOpenEvent = True           
+					End If
+				End If                  
+			End If                
+              REM Write the attribute
+			Source.Output(| | &amp; strAttrName &amp; |="| &amp; strAttrValue &amp; |"|) 
+		Next        
+	End If
+	
+	If strElementName = "lotusscript"  And isPostOpenEvent  Then
+   REM found postopen code
+		isPostOpenCode = True
+	End If
+	
+    REM Close the element tag here
+	Source.Output("&amp;gt;")  
+	
+	Exit Sub
+	
+ErrHandler:
+	'/* throw this error */
+	Error Err, | [ | &amp; | Routine: | &amp; Getthreadinfo(1) &amp; |, line: | &amp; Erl &amp;	| ] | &amp; Error$
+	
+End Sub
+
+</lotusscript></code><code event='exportFormActionbar'><lotusscript>Sub exportFormActionbar
+	
+	On Error Goto ErrHandler
+	
+	Exit Sub
+	
+ErrHandler:
+	'/* throw this error */
+	Error Err, | [ | &amp; | Routine: | &amp; Getthreadinfo(1) &amp; |, line: | &amp; Erl &amp;	| ] | &amp; Error$
+	
+	
+End Sub
+
+</lotusscript></code><code event='getXSLFormFieldsAndActionbarJSON'><lotusscript
+>Function getXSLFormFieldsAndActionbarJSON () As NotesStream
+	
+	On Error Goto ErrHandler
+	
+	Dim stream As NotesStream
+	Dim session As New NotesSession
+	Set stream = session.CreateStream()
+	Call stream.WriteText(|&lt;?xml version='1.0' encoding='UTF-8'?&gt;
+&lt;xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='1.0' xmlns:dxl='http://www.lotus.com/dxl'&gt;
+  &lt;xsl:output method='text'/&gt;
+  &lt;xsl:template match='/'&gt;
+	{
+      	actionbar : &lt;xsl:call-template name="getActionbar"/&gt;,
+		fields : &lt;xsl:call-template name="getFields"/&gt;
+	} 
+  &lt;/xsl:template&gt;
+
+	&lt;xsl:template name="getActionbar"&gt;
+
+
+		&lt;xsl:for-each select="//dxl:action"&gt;
+
+
+			&lt;xsl:variable name="javascript"&gt;
+				&lt;xsl:call-template name="replace-string"&gt;
+					&lt;xsl:with-param name="text" select="dxl:code[@event='onClick']/dxl:javascript"/&gt;
+					&lt;xsl:with-param name="replace" select='a' /&gt;
+					&lt;xsl:with-param name="with" select='b' /&gt;
+				&lt;/xsl:call-template&gt;
+			&lt;/xsl:variable&gt;
+
+			{
+				'title' : '&lt;xsl:value-of select='@title'/&gt;',
+				'hide' : '&lt;xsl:value-of select='@hide'/&gt;',
+				'imageRef' : '&lt;xsl:value-of select='dxl:imageref/@name'/&gt;',
+				'showinbar' : '&lt;xsl:value-of select='@showinbar'/&gt;',
+				'iconOnly' : '&lt;xsl:value-of select='@onlyiconinbar'/&gt;',
+				'icon' : '&lt;xsl:value-of select='@icon'/&gt;',
+				'syscmd' : '&lt;xsl:value-of select='@systemcommand'/&gt;',
+				'javascript' : "&lt;xsl:value-of select='$javascript'/&gt;"
+			}
+		&lt;/xsl:for-each&gt;
+	&lt;/xsl:template&gt;
+
+  &lt;xsl:template name="getFields"&gt;
+    [
+    &lt;xsl:for-each select='//dxl:field'&gt;
+      &lt;xsl:sort select='@name' /&gt;
+
+      &lt;xsl:if test='position()&amp;gt;1'&gt;,&lt;/xsl:if&gt;
+      {
+      'name':'&lt;xsl:value-of select='@name'/&gt;',
+      'type':'&lt;xsl:value-of select='@type'/&gt;',
+  
+      &lt;xsl:if test='@htmlid'&gt;
+          'htmlid':'&lt;xsl:value-of select='@htmlid'/&gt;',
+      &lt;/xsl:if&gt;
+
+      &lt;xsl:if test='@htmlstyle'&gt;
+          'htmlstyle':'&lt;xsl:value-of select='@htmlstyle'/&gt;',
+      &lt;/xsl:if&gt;
+
+      &lt;xsl:if test='@htmlid'&gt;
+          'htmlclass':'&lt;xsl:value-of select='@htmlclass'/&gt;',
+      &lt;/xsl:if&gt;
+
+      &lt;xsl:if test='@allowmultivalues'&gt;
+      	'allowmultivalues':'&lt;xsl:value-of select='@allowmutlivalues'/&gt;',
+      	'listinputseparators':'&lt;xsl:value-of select='@listinputseparators'/&gt;',
+      	'listdisplayseparators':'&lt;xsl:value-of select='@listdisplayseparators'/&gt;',
+       &lt;/xsl:if&gt;
+
+       &lt;xsl:if test='@type="datetime"'&gt;
+          &lt;xsl:for-each select='dxl:datetimeformat'&gt;
+            'timetype':'&lt;xsl:value-of select='@show' /&gt;',
+          &lt;/xsl:for-each&gt;
+      &lt;/xsl:if&gt;
+      
+       &lt;xsl:if test='@type="names"'&gt;
+            'choicesdialog':'&lt;xsl:value-of select='@choicedialog'/&gt;',
+             &lt;xsl:if test='@choicesdialog="view"'&gt;
+                 'viewdatabase':'&lt;xsl:value-of select='@viewdatabase'/&gt;',
+                 'view':'&lt;xsl:value-of select='@view'/&gt;',
+                 'viewcolumn':'&lt;xsl:value-of select='@viewcolumn'/&gt;',
+             &lt;/xsl:if&gt;
+      &lt;/xsl:if&gt;
+
+      &lt;xsl:if test='@type="keyword"'&gt;
+        &lt;xsl:for-each select='dxl:keywords'&gt;
+          'ui':'&lt;xsl:value-of select='@ui' /&gt;',
+        &lt;/xsl:for-each&gt;
+      &lt;/xsl:if&gt;
+
+      'description':'&lt;xsl:value-of select='@description'/&gt;',
+      'kind':'&lt;xsl:value-of select='@kind'/&gt;'
+      }
+    &lt;/xsl:for-each&gt;
+    ]
+  &lt;/xsl:template&gt;
+
+
+&lt;xsl:template name="replace-string"&gt;
+    &lt;xsl:param name="text"/&gt;
+    &lt;xsl:param name="replace"/&gt;
+    &lt;xsl:param name="with"/&gt;
+    &lt;xsl:choose&gt;
+      &lt;xsl:when test="contains($text,$replace)"&gt;
+        &lt;xsl:value-of select="substring-before($text,$replace)"/&gt;
+        &lt;xsl:value-of select="$with"/&gt;
+        &lt;xsl:call-template name="replace-string"&gt;
+          &lt;xsl:with-param name="text" select="substring-after($text,$replace)"/&gt;
+          &lt;xsl:with-param name="replace" select="$replace"/&gt;
+          &lt;xsl:with-param name="with" select="$with"/&gt;
+        &lt;/xsl:call-template&gt;
+      &lt;/xsl:when&gt;
+      &lt;xsl:otherwise&gt;
+        &lt;xsl:value-of select="$text"/&gt;
+      &lt;/xsl:otherwise&gt;
+    &lt;/xsl:choose&gt;
+  &lt;/xsl:template&gt;
+
+
+&lt;/xsl:stylesheet&gt;
+|)
+	Set getXSLFormFieldsAndActionbarJSON = stream
+	
+	Exit Function
+	
+ErrHandler:
+	'/* throw this error */
+	Error Err, | [ | &amp; | Routine: | &amp; Getthreadinfo(1) &amp; |, line: | &amp; Erl &amp;	| ] | &amp; Error$
+	
+End Function
+
+</lotusscript></code><code event='parseQueryStrings'><lotusscript>Sub parseQueryStrings
+	
+	On Error Goto ErrHandler
+	
+	' parse query string for params
+	Dim objQS As New QSParser
+	sType = objQS.GetQSVal("type")
+	sName = objQS.GetQSVal("name")
+	
+	
+	sDebug = objQS.GetQSVal("debug")
+	If (sDebug = "true") Then
+		bDebug = True
+	Else
+		bDebug = False
+	End If
+	
+	' what mode are we in?	 default to edit mode since that gets more data
+	' but to optimize things, you should really pass to the agent what
+	' mode you are really in
+	sMode = objQS.GetQSVal("mode")
+	If (sMode = "") Then
+		sMode = "edit"
+	End If
+	
+	' what data to fetch?	
+	sFetch = objQS.GetQSVal("fetch")
+	If (sFetch = "" ) Then
+		sFetch = "all"
+	End If
+	
+	sXSL = objQS.GetQSVal("xsl")
+	sOutputFormat = objQS.GetQSVal("outputformat")
+	sDesignUnid = objQS.GetQSVal("designunid")
+	sDocUnid = objQS.GetQSVal("docunid")
+	useDisk = objQS.GetQSVal("useDisk")
+	dbName = getDbFileNameFromString(objQS.GetQSVal("db"))
+	
+	Exit Sub
+	
+ErrHandler:
+	'/* throw this error */
+	Error Err, | [ | &amp; | Routine: | &amp; Getthreadinfo(1) &amp; |, line: | &amp; Erl &amp;	| ] | &amp; Error$
+	
+End Sub
+
+</lotusscript></code><code event='exportOutline'><lotusscript>Sub exportOutline
+	
+	On Error Goto ErrHandler
+	
+	Set noteOutline = db.GetOutline(sName)
+	Call nc.Add(noteOutline)
+	noteID = nc.GetFirstNoteId
+	Set noteDocument = db.GetDocumentByID(noteID)
+	Call exporter.SetInput(noteDocument)
+	
+	Print {content-type:text/xml;charset=utf-8}   
+	exporter.OutputDOCTYPE = False
+	Call exporter.SetOutput(stream)
+	Call exporter.Process
+	outBuff = exporter.Export(noteDocument)
+	Print outBuff
+	
+	Exit Sub
+	
+ErrHandler:
+	'/* throw this error */
+	Error Err, | [ | &amp; | Routine: | &amp; Getthreadinfo(1) &amp; |, line: | &amp; Erl &amp;	| ] | &amp; Error$
+	
+End Sub
+
+</lotusscript></code><code event='exportDocument'><lotusscript>Sub exportDocument
+	
+	On Error Goto ErrHandler
+	
+	Set noteDocument = db.GetDocumentByUNID(sDocUnid)
+	Call exporter.SetInput(noteDocument)
+	
+	Print {content-type:text/xml;charset=utf-8}   
+	exporter.OutputDOCTYPE = False
+	Call exporter.SetOutput(stream)
+	Call exporter.Process
+	outBuff = exporter.Export(noteDocument)
+	Print outBuff
+	
+	Exit Sub
+	
+ErrHandler:
+	'/* throw this error */
+	Error Err, | [ | &amp; | Routine: | &amp; Getthreadinfo(1) &amp; |, line: | &amp; Erl &amp;	| ] | &amp; Error$
+	
+	
+End Sub
+
+</lotusscript></code><code event='ExportViaSax'><lotusscript>Sub ExportViaSax
+	
+	On Error Goto ErrHandler
+	
+	Dim session As New NotesSession
+	Dim db As NotesDatabase
+	Dim streamIn As NotesStream 
+	Dim streamOut As NotesStream
+	Dim dxlExporter As NotesDXLExporter 
+	Dim dxlImporter As NotesDXLImporter
+	Dim saxParser As NotesSAXParser 
+	
+ REM get current database
+	Set db = session.CurrentDatabase
+	
+ REM Create DXL exporter
+	Set dxlExporter = session.CreateDXLExporter
+	
+ REM Create the stream that will store the DXL
+	Set streamIn = session.CreateStream 
+	Call streamIn.Truncate
+	Set streamOut = session.CreateStream
+	Call streamOut.Truncate
+	
+ REM Create note collection
+	Dim nc As NotesNoteCollection
+	nc.SelectForms = True
+	nc.SelectSubforms = True 
+	nc.SelectionFormula = |@IsMember(@lowercase($TITLE); @lowercase("| + sName + |"))| +| &amp; | + |!@Contains($Flags; "w")| 
+	'nc.SelectionFormula = |(@IsMember(@lowercase($TITLE); @lowercase("| + sName + |") : "sfactions"))| +| &amp; | + |!@Contains($Flags; "w")| 
+	'nc.SelectionFormula =  |!@Contains($Flags; "w")|
+	If bDebug Then Msgbox nc.SelectionFormula
+	Call nc.BuildCollection
+	
+	
+	
+ REM Export note collection as DXL  
+	Set dxlExporter = session.CreateDXLExporter(nc)
+	dxlExporter.OutputDOCTYPE = True
+	
+	
+ REM Create the SAX Parser, the results of the parse will be pushed into stream (streamIn)
+	Set saxParser = session.CreateSAXParser(dxlExporter, stream)
+	On Event SAX_Characters From saxParser Call SAXCharacters
+	On Event SAX_EndElement From saxParser Call SAXEndElement
+	On Event SAX_StartDocument From saxParser Call SAXStartDocument
+	On Event SAX_StartElement From saxParser Call SAXStartElement
+	
+ REM Initiate parsing, by doing this the SAX events are called
+ REM It is in there that the DXL is rewritten and the PostOpen() method was modified.
+	Call dxlExporter.Process()  
+	
+	
+	' send the stream to the browser
+	If (sOutputFormat = "json") Then
+		Print {Content-type: application/json}
+	Else
+		Print {content-type:text/xml;charset=utf-8}   
+	End If
+	
+	'stream.WriteText(outputString$)
+	Let stream.Position = 0
+	Print stream.ReadText()
+	
+	Exit Sub
+	
+ErrHandler:
+	'/* throw this error */
+	Error Err, | [ | &amp; | Routine: | &amp; Getthreadinfo(1) &amp; |, line: | &amp; Erl &amp;	| ] | &amp; Error$
+	
+End Sub
+
+</lotusscript></code><code event='oldgetXSLFormFieldsAndActionbarXML'><lotusscript
+>Function oldgetXSLFormFieldsAndActionbarXML() As NotesStream
+	
+	On Error Goto ErrHandler
+	
+	Dim session As New NotesSession
+	Set stream = session.CreateStream()
+	Call stream.WriteText({&lt;?xml version='1.0' encoding='UTF-8'?&gt;
+&lt;xsl:stylesheet 
+	xmlns:xsl='http://www.w3.org/1999/XSL/Transform' 
+	xmlns:dxl='http://www.lotus.com/dxl'
+	xmlns='http://www.lotus.com/dxl'
+	version='1.0' &gt;
+
+	&lt;xsl:output method='xml'/&gt;
+
+
+	&lt;xsl:template match='/'&gt;
+		&lt;form&gt;
+			&lt;!-- get actionbar with fields --&gt;
+			&lt;xsl:apply-templates select='//dxl:actionbar'/&gt;
+			&lt;!-- get fields --&gt;
+			&lt;fields&gt;
+				&lt;xsl:apply-templates select='//dxl:field'/&gt;
+			&lt;/fields&gt;
+		&lt;/form&gt; 
+	&lt;/xsl:template&gt;
+
+	&lt;xsl:template name="getActionbar"&gt;
+
+		&lt;xsl:for-each select="//dxl:action"&gt;
+
+			&lt;action&gt;
+				&lt;title&gt;&lt;xsl:value-of select='@title'/&gt;&lt;/title&gt;
+				&lt;hide&gt;&lt;xsl:value-of select='@hide'/&gt;&lt;/hide&gt;
+				&lt;imageRef&gt;&lt;xsl:value-of select='dxl:imageref/@name'/&gt;&lt;/imageRef&gt;
+				&lt;showinbar&gt;&lt;xsl:value-of select='@showinbar'/&gt;&lt;/showinbar&gt;
+				&lt;iconOnly&gt;&lt;xsl:value-of select='@onlyiconinbar'/&gt;&lt;/iconOnly&gt;
+				&lt;icon&gt;&lt;xsl:value-of select='@icon'/&gt;&lt;/icon&gt;
+				&lt;syscmd&gt;&lt;xsl:value-of select='@systemcommand'/&gt;&lt;/syscmd&gt;
+				&lt;javascript&gt;&lt;xsl:value-of select='dxl:code[@event="onClick"]/dxl:javascript'/&gt;&lt;/javascript&gt;
+			&lt;/action&gt;
+
+		&lt;/xsl:for-each&gt;
+
+	&lt;/xsl:template&gt;
+
+
+	&lt;xsl:template name="getFields"&gt;
+
+		&lt;xsl:for-each select='//dxl:field'&gt;
+			&lt;xsl:sort select='@name' /&gt;
+
+			&lt;field&gt;
+
+				&lt;name&gt;&lt;xsl:value-of select='@name'/&gt;&lt;/name&gt;
+				&lt;type&gt;&lt;xsl:value-of select='@type'/&gt;&lt;/type&gt;
+  				&lt;xsl:if test='@htmlid'&gt;
+					&lt;htmlid&gt;&lt;xsl:value-of select='@htmlid'/&gt;&lt;/htmlid&gt;
+				&lt;/xsl:if&gt;
+				&lt;xsl:if test='@htmlstyle'&gt;
+					&lt;htmlstyle&gt;&lt;xsl:value-of select='@htmlstyle'/&gt;&lt;/htmlstyle&gt;
+				&lt;/xsl:if&gt;
+				&lt;xsl:if test='@htmlid'&gt;
+					&lt;htmlclass&gt;&lt;xsl:value-of select='@htmlclass'/&gt;&lt;/htmlclass&gt;
+				&lt;/xsl:if&gt;
+				&lt;xsl:if test='@allowmultivalues'&gt;
+					&lt;allowmultivalues&gt;&lt;xsl:value-of select='@allowmutlivalues'/&gt;&lt;/allowmultivalues&gt;
+					&lt;listinputseparators&gt;&lt;xsl:value-of select='@listinputseparators'/&gt;&lt;/listinputseparators&gt;
+					&lt;listdisplayseparators&gt;&lt;xsl:value-of select='@listdisplayseparators'/&gt;&lt;/listdisplayseparators&gt;
+				&lt;/xsl:if&gt;
+				&lt;xsl:if test='@type="datetime"'&gt;
+					&lt;xsl:for-each select='dxl:datetimeformat'&gt;
+						&lt;timetype&gt;&lt;xsl:value-of select='@show' /&gt;&lt;/timetype&gt;
+					&lt;/xsl:for-each&gt;
+				&lt;/xsl:if&gt;
+      			&lt;xsl:if test='@type="names"'&gt;
+					&lt;choicesdialog&gt;&lt;xsl:value-of select='@choicedialog'/&gt;&lt;/choicesdialog&gt;
+					&lt;xsl:if test='@choicesdialog="view"'&gt;
+						&lt;viewdatabase&gt;&lt;xsl:value-of select='@viewdatabase'/&gt;&lt;/viewdatabase&gt;
+						&lt;view&gt;&lt;xsl:value-of select='@view'/&gt;&lt;/view&gt;
+						&lt;viewcolumn&gt;&lt;xsl:value-of select='@viewcolumn'/&gt;&lt;/viewcolumn&gt;
+					&lt;/xsl:if&gt;
+				&lt;/xsl:if&gt;
+				&lt;xsl:if test='@type="keyword"'&gt;
+					&lt;xsl:for-each select='dxl:keywords'&gt;
+						&lt;ui&gt;&lt;xsl:value-of select='@ui' /&gt;&lt;/ui&gt;
+					&lt;/xsl:for-each&gt;
+				&lt;/xsl:if&gt;
+				&lt;description&gt;&lt;xsl:value-of select='@description'/&gt;&lt;/description&gt;
+				&lt;kind&gt;&lt;xsl:value-of select='@kind'/&gt;&lt;/kind&gt;
+	
+			&lt;/field&gt;
+
+		&lt;/xsl:for-each&gt;
+		
+	&lt;/xsl:template&gt;
+
+
+	&lt;xsl:template match="lotusscript"&gt;
+		&lt;/xsl:text&gt;removed&lt;/xsl:text&gt;
+	&lt;/xsl:template&gt;
+
+	&lt;xsl:template match="node()|@*"&gt;
+		&lt;!-- Copy the current node --&gt;
+		&lt;xsl:copy&gt;
+		&lt;!-- Including any attributes it has and any child nodes --&gt;
+			&lt;xsl:apply-templates select="@*|node()"/&gt;
+		&lt;/xsl:copy&gt;
+	&lt;/xsl:template&gt;
+
+
+
+&lt;/xsl:stylesheet&gt;
+})
+	Set oldgetXSLFormFieldsAndActionbarXML = stream
+	
+	Exit Function
+	
+ErrHandler:
+	'/* throw this error */
+	Error Err, | [ | &amp; | Routine: | &amp; Getthreadinfo(1) &amp; |, line: | &amp; Erl &amp;	| ] | &amp; Error$
+	
+End Function
+
+
+</lotusscript></code><code event='SAXStartDocument'><lotusscript>Sub SAXStartDocument (Source As Notessaxparser)
+	
+	On Error Goto ErrHandler
+	
+REM Write DXL header
+	Source.Output("&amp;lt;?xml version='1.0'?&amp;gt;" &amp; Chr(10))  
+	
+	Exit Sub
+	
+ErrHandler:
+	'/* throw this error */
+	Error Err, | [ | &amp; | Routine: | &amp; Getthreadinfo(1) &amp; |, line: | &amp; Erl &amp;	| ] | &amp; Error$
+	
+End Sub
+
+</lotusscript></code><code event='exportView'><lotusscript>Sub exportView
+	
+	On Error Goto ErrHandler
+	
+	Set noteView = GetView(db, sName)
+	Call nc.Add(noteView)
+	noteID = nc.GetFirstNoteId
+	Set noteDocument = db.GetDocumentByID(noteID)
+	Call exporter.SetInput(noteDocument)
+	
+	Print {content-type:text/xml;charset=utf-8}   
+	exporter.OutputDOCTYPE = False
+	
+	Call exporter.SetOutput(stream)
+	Call exporter.Process
+	outBuff = exporter.Export(noteDocument)
+	Print outBuff
+	
+	Exit Sub
+	
+ErrHandler:
+	'/* throw this error */
+	Error Err, | [ | &amp; | Routine: | &amp; Getthreadinfo(1) &amp; |, line: | &amp; Erl &amp;	| ] | &amp; Error$
+	
+End Sub
+
+
+</lotusscript></code><code event='getXSLFormFieldsAndActionbarXML'><lotusscript
+>Function getXSLFormFieldsAndActionbarXML(mode As String, fetch As String) As NotesStream
+	
+	On Error Goto ErrHandler
+	
+	If bDebug Then Msgbox "getXSLFormFieldAndActionbarXML start"
+	
+	Dim stream As NotesStream
+	Dim session As New NotesSession
+	Set stream = session.CreateStream()
+	Call stream.WriteText({&lt;?xml version='1.0' encoding='UTF-8'?&gt;
+&lt;xsl:stylesheet 
+	xmlns:xsl='http://www.w3.org/1999/XSL/Transform' 
+	xmlns:dxl='http://www.lotus.com/dxl'
+	xmlns='http://www.lotus.com/dxl'
+	exclude-result-prefixes="dxl"
+	version='1.0' &gt;
+
+	&lt;xsl:output method='xml'/&gt;
+	&lt;xsl:param name="mode" select="'} + mode + {'"/&gt;
+	&lt;!-- fetch = actions, fields, both --&gt;
+	&lt;xsl:param name="fetch" select="'} + fetch + {'"/&gt;
+
+	&lt;xsl:template match='/'&gt;
+		&lt;xsl:apply-templates select="//dxl:form | //dxl:subform | //dxl:page"/&gt;
+	&lt;/xsl:template&gt;
+
+	&lt;!-- template just for the form --&gt;
+	&lt;xsl:template match="dxl:form | dxl:subform | dxl:page"&gt;
+
+		&lt;!-- Copy the current form node --&gt;
+		&lt;xsl:copy&gt;
+
+			&lt;!-- get all attributes of the form node --&gt;
+			&lt;xsl:apply-templates select="@*"/&gt;
+
+			&lt;!-- now get the actions --&gt;
+			&lt;xsl:if test="$fetch != 'fields'"&gt;
+				&lt;xsl:apply-templates select='//dxl:actionbar'/&gt;
+			&lt;/xsl:if&gt;
+
+			&lt;!-- and fields that we wrap in our own fields node since each field is spread out in the rich text of the form --&gt;
+			&lt;xsl:if test="$fetch != 'actions' and $mode = 'edit'"&gt;
+				&lt;fields&gt;
+					&lt;xsl:apply-templates select='//dxl:field'/&gt;
+				&lt;/fields&gt;
+			&lt;/xsl:if&gt;
+
+			&lt;subforms&gt;
+				&lt;xsl:apply-templates select='//dxl:subformref'/&gt;
+			&lt;/subforms&gt;
+		&lt;/xsl:copy&gt;
+	
+	&lt;/xsl:template&gt;
+
+	
+	&lt;!-- identity template to get all nodes and attributes --&gt;
+	&lt;xsl:template match="node()|@*"&gt;
+		&lt;!-- Copy the current node --&gt;
+		&lt;xsl:copy&gt;
+			&lt;!-- Including any attributes it has and any child nodes --&gt;
+			&lt;xsl:apply-templates select="@*|node()"/&gt;
+		&lt;/xsl:copy&gt;
+	&lt;/xsl:template&gt;
+	
+	
+	&lt;!-- template to strip out all lotuscript since we can't process that code in a browser anyway --&gt;
+	&lt;xsl:template match="dxl:lotusscript"&gt;
+	&lt;/xsl:template&gt;
+	
+	&lt;!-- template to strip out all keyword formulas since the server already evaluated them and sent them in the form's html --&gt;
+	&lt;xsl:template match="dxl:keywords/dxl:formulaz"&gt;
+	&lt;/xsl:template&gt;
+	
+	&lt;!-- template to strip out default value formulas since the server already evaluated them and sent them in the form's html --&gt;
+	&lt;xsl:template match="dxl:code[@event='defaultvalue']"&gt;
+	&lt;/xsl:template&gt;
+	
+	&lt;!-- template to strip out hidewhen formulas since this will need to be done serverside --&gt;
+	&lt;!--
+	&lt;xsl:template match="dxl:code[@event='hidewhen']"&gt;
+	&lt;/xsl:template&gt;
+	--&gt;
+
+	&lt;!-- template to strip out computed fields --&gt;
+	&lt;xsl:template match="dxl:field[@kind='computed']"&gt;
+	&lt;/xsl:template&gt;
+	
+	
+&lt;/xsl:stylesheet&gt;})
+	
+	If bDebug Then Msgbox "getXSLFormFieldAndActionbarXML end"
+	
+	Set getXSLFormFieldsAndActionbarXML = stream
+	
+	Exit Function
+	
+ErrHandler:
+	'/* throw this error */
+	Error Err, | [ | &amp; | Routine: | &amp; Getthreadinfo(1) &amp; |, line: | &amp; Erl &amp;	| ] | &amp; Error$
+	
+End Function
+
+
+</lotusscript></code><code event='getXSLViewActionbarXML'><lotusscript>Function getXSLViewActionbarXML As NotesStream
+	
+	On Error Goto ErrHandler
+	
+	Dim stream As NotesStream
+	Dim session As New NotesSession
+	Set stream = session.CreateStream()
+	Call stream.WriteText({&lt;?xml version='1.0' encoding='UTF-8'?&gt;
+&lt;xsl:stylesheet 
+	xmlns:xsl='http://www.w3.org/1999/XSL/Transform' 
+	xmlns:dxl='http://www.lotus.com/dxl'
+	xmlns='http://www.lotus.com/dxl'
+	version='1.0' &gt;
+
+	&lt;xsl:output method='xml'/&gt;
+
+	&lt;xsl:template match='/'&gt;
+		&lt;form&gt;
+			&lt;!-- get actionbar with actions --&gt;
+			&lt;xsl:apply-templates select='//dxl:actionbar'/&gt;
+		&lt;/form&gt; 
+	&lt;/xsl:template&gt;
+
+	&lt;xsl:template match="lotusscript"&gt;
+		&lt;xsl:text&gt;removed&lt;/xsl:text&gt;
+	&lt;/xsl:template&gt;
+
+	&lt;xsl:template match="node()|@*"&gt;
+		&lt;!-- Copy the current node --&gt;
+		&lt;xsl:copy&gt;
+		&lt;!-- Including any attributes it has and any child nodes --&gt;
+			&lt;xsl:apply-templates select="@*|node()"/&gt;
+		&lt;/xsl:copy&gt;
+	&lt;/xsl:template&gt;
+
+
+
+&lt;/xsl:stylesheet&gt;
+})
+	Set getXSLViewActionbarXML = stream
+	
+	Exit Function
+	
+ErrHandler:
+	'/* throw this error */
+	Error Err, | [ | &amp; | Routine: | &amp; Getthreadinfo(1) &amp; |, line: | &amp; Erl &amp;	| ] | &amp; Error$
+	
+End Function
+
+</lotusscript></code><code event='GetView'><lotusscript>Function GetView(db As NotesDatabase, strView As String) As NotesView
+	
+	On Error Goto ErrHandler
+	
+	Dim view As NotesView
+	Dim doc As NotesDocument
+	Dim strTitle As String
+	
+	Set view = db.GetView(strView)
+	If view Is Nothing Then
+		Set doc = db.GetDocumentByUNID(strView)
+		If Not doc Is Nothing Then
+			strTitle = doc.GetItemValue("$TITLE")(0)
+			If Instr(strTitle, "|") &gt; 0 Then
+				strTitle = Trim$(Strright(strTitle, "|"))
+			End If
+			Set view = db.GetView(strTitle)
+		End If
+	End If
+	
+	Set GetView = view
+	
+	Exit Function
+	
+ErrHandler:
+	'/* throw this error */
+	Error Err, | [ | &amp; | Routine: | &amp; Getthreadinfo(1) &amp; |, line: | &amp; Erl &amp;	| ] | &amp; Error$
+	
+	
+End Function</lotusscript></code>
+<rundata processeddocs='0' exitcode='0'>
+<agentmodified><datetime>20131225T220507,65-06</datetime></agentmodified></rundata>
+<item name='$POID'><datetime dst='true'>20070622T132314,13-04</datetime></item></agent>
+

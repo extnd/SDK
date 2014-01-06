@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><note class="filter" replicaid="86257C2900079A5C" version="9.0" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="9a2" sequence="4" unid="32A5B18AD483312A86257C29000745D4">
+<created><datetime>20131119T191926,28-06</datetime></created>
+<modified><datetime>20131225T215941,96-06</datetime></modified>
+<revised><datetime>20131225T215941,95-06</datetime></revised>
+<lastaccessed><datetime>20131225T215941,96-06</datetime></lastaccessed>
+<addedtofile><datetime>20131119T192327,03-06</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></updatedby>
+<wassignedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></wassignedby>
+<item name="$Flags"><text>s34Q</text></item>
+<item name="$PublicAccess" sign="true"><text>1</text></item>
+
+
+<item name="$TITLE" sign="true"><text>jsonDominoObjects</text></item>
+<item name="$DesignerVersion" sign="true"><text>8.5.3</text></item></note>

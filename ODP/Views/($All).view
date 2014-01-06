@@ -1,62 +1,32 @@
 <?xml version='1.0' encoding='utf-8'?>
-<note default='true' class='view' xmlns='http://www.lotus.com/dxl' version='9.0'
- replicaid='86257B2E00176383'>
-<noteinfo noteid='433e' unid='33FFA13847712AEA8525750B000BCB0E' sequence='22'>
+<view name='($All)' xmlns='http://www.lotus.com/dxl' version='9.0' replicaid='86257C2900079A5C'
+ showinmenu='false' publicaccess='false' designerversion='7' default='true'
+ unreadmarks='none' onopengoto='lastopened' onrefresh='displayindicator' headers='beveled'
+ opencollapsed='false' showresponsehierarchy='true' showmargin='true' shrinkrows='false'
+ extendlastcolumn='false' showhierarchies='false' unreadcolor='black' rowlinecount='1'
+ headerlinecount='1' rowspacing='1' bgcolor='white' totalscolor='black' headerbgcolor='white'
+ boldunreadrows='false' evaluateactions='false' allownewdocuments='false'
+ allowcustomizations='false' hidemarginborder='false' marginwidth='0px' marginbgcolor='white'
+ uniquekeys='false'>
+<noteinfo noteid='98a' unid='33FFA13847712AEA8525750B000BCB0E' sequence='2'>
 <created><datetime>20081123T210848,78-05</datetime></created>
-<modified><datetime dst='true'>20131027T231758,62-05</datetime></modified>
-<revised><datetime dst='true'>20131027T231757,32-05</datetime></revised>
-<lastaccessed><datetime dst='true'>20131027T231758,62-05</datetime></lastaccessed>
-<addedtofile><datetime dst='true'>20131026T105231,70-05</datetime></addedtofile></noteinfo>
-<updatedby><name>CN=jratcliff/O=DDN</name><name>CN=Development Team/O=ExtND</name><name
->CN=Jack Ratcliff/O=BlueCuda</name><name>CN=jratcliff/O=DDN</name><name>CN=Jack Ratcliff/O=BlueCuda</name><name
->CN=ISO ADMIN/O=Bpna</name><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></updatedby>
-<revisions><datetime dst='true'>20070312T011759,91-04</datetime><datetime
- dst='true'>20080709T164521,13-04</datetime><datetime dst='true'>20090710T214815,83-04</datetime><datetime
- dst='true'>20091001T133531,14-04</datetime><datetime>20100117T144118,20-06</datetime><datetime
- dst='true'>20100314T165751,63-04</datetime><datetime dst='true'>20130314T214357,66-05</datetime><datetime
- dst='true'>20130317T232333,70-05</datetime><datetime dst='true'>20130319T200422,78-05</datetime><datetime
- dst='true'>20131026T180234,65-05</datetime><datetime dst='true'>20131026T180234,67-05</datetime><datetime
- dst='true'>20131027T113540,00-05</datetime><datetime dst='true'>20131027T113540,02-05</datetime><datetime
- dst='true'>20131027T204231,52-05</datetime><datetime dst='true'>20131027T204231,54-05</datetime><datetime
- dst='true'>20131027T231757,30-05</datetime></revisions>
-<wassignedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></wassignedby>
-<item name='$FormulaClass' sign='true'><text>1</text></item>
-<item name='$TITLE' sign='true'><text>($All)</text></item>
-<item name='$Index' sign='true'><text/></item>
-<item name='$Formula' summary='true' sign='true'><formula compiled='true'>
-KAAFABoAFQACAAkABAAkQ29uZmxpY3QkUkVGAAQABAAAAAgAZgADAA==
-</formula></item>
-<item name='$Collation' summary='true'>
-<rawitemdata type='2'>
-BgAAAABE
-</rawitemdata></item>
-<item name='$ViewFormat' summary='true' sign='true'>
-<rawitemdata type='5'>
-AQABAAEACAAAAFZDAAACAAEACgAKAFAAAQAACgAAAAAAAAAAAAICAAAAJDAjCgAAAAgAkgADAAEF
-AQAEAH9BMP8mAAEAAAABAQAJAQAACgEBDgoAAAEArSsBAAEAAQAAAAAAAAAAAFdDAQEACQAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAP//AAAAAAAAAAAAAAAAAABCABAAAAABAP///wAFAP///wABAAAA
-AAAAAAAAAAAAAAEA////AAEA////AAAAAQAAAAAAAQAAAAAAAQAAAAAAAAAIAAAAAAABAA==
-</rawitemdata></item>
-<item name='$Comment' sign='true'><text/></item>
-<item name='$DesignerVersion' sign='true'><text>7</text></item>
-<item name='$V5ACTIONS' sign='true'>
-<rawitemdata type='1'>
-vRwjAAAAAQABAAAAAQAAAAAAAAAAAAAACAACAHn/bAABANTQyAABAAAAAAAJAAAAAAABANTQyAAA
-AB8AAAAAAAAAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAPz/OgAAAAAAAQAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAEAAAAAAAAAAAAAAAAAAAC+/yYAAAAFAAAAnQEAAAsAAAAAAAAAQ2F0ZWdvcmlfemUA
-AQBOfL7/KAAAAAUAAACdAQAADgAAAAAAAABfRWRpdCBEb2N1bWVudAIAAgq+/ygAAAAFAAAAnQEA
-AA4AAAAAAAAAX1NlbmQgRG9jdW1lbnQDAAMKvv8iAAAABQAAAJ0BAAAIAAAAAAAAAF9Gb3J3YXJk
-BAAECr7/LAAAAAUAAACdAQAAEgAAAAAAAABfTW92ZSBUbyBGb2xkZXIuLi4FAD18vv8uAAAABQAA
-AJ0BAAATAAAAAAAAAF9SZW1vdmUgRnJvbSBGb2xkZXIABgA+fA==
-</rawitemdata></item>
-<item name='$ACTIONS' sign='true'>
-<rawitemdata type='1'>
-vRwjAAAAAQABAAAAAQAAAAAAAAAAAAAACAACAL7/JgAAAAUAAACdAQAACwAAAAAAAABDYXRlZ29y
-aV96ZQABAE58vv8oAAAABQAAAJ0BAAAOAAAAAAAAAF9FZGl0IERvY3VtZW50AgACCr7/KAAAAAUA
-AACdAQAADgAAAAAAAABfU2VuZCBEb2N1bWVudAMAAwq+/yIAAAAFAAAAnQEAAAgAAAAAAAAAX0Zv
-cndhcmQEAAQKvv8sAAAABQAAAJ0BAAASAAAAAAAAAF9Nb3ZlIFRvIEZvbGRlci4uLgUAPXy+/y4A
-AAAFAAAAnQEAABMAAAAAAAAAX1JlbW92ZSBGcm9tIEZvbGRlcgAGAD58
-</rawitemdata></item>
-<item name='$Flags'><text>Y</text></item></note>
+<modified><datetime>20131119T192326,79-06</datetime></modified>
+<revised><datetime>20131119T192326,78-06</datetime></revised>
+<lastaccessed><datetime>20131119T192326,79-06</datetime></lastaccessed>
+<addedtofile><datetime>20131119T192326,77-06</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></updatedby>
+<wassignedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></wassignedby><code
+ event='selection'><formula>SELECT @All</formula></code>
+<actionbar bgcolor='#d4d0c8' bordercolor='black'>
+<actionbuttonstyle bgcolor='#d4d0c8'/><font color='system'/><border style='solid'
+ width='0px 0px 1px'/>
+<action title='Categori_ze' showinbar='false' systemcommand='categorize'/>
+<action title='_Edit Document' showinbar='false' systemcommand='edit'/>
+<action title='_Send Document' showinbar='false' systemcommand='send'/>
+<action title='_Forward' showinbar='false' systemcommand='forward'/>
+<action title='_Move To Folder...' showinbar='false' systemcommand='movetofolder'/>
+<action title='_Remove From Folder' showinbar='false' systemcommand='removefromfolder'/></actionbar>
+<column hidedetailrows='false' itemname='$0' width='10' resizable='true' separatemultiplevalues='false'
+ sortnoaccent='true' sortnocase='true' showaslinks='false'><columnheader title='#'><font
+ size='9pt' style='bold'/></columnheader><code event='value'><formula>@DocNumber</formula></code></column></view>
 

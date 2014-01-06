@@ -1,0 +1,194 @@
+<?xml version='1.0' encoding='utf-8'?>
+<agent name='(FolderOperations)' xmlns='http://www.lotus.com/dxl' version='9.0'
+ replicaid='86257C2900079A5C' hide='v3' runaswebuser='true' publicaccess='false'
+ designerversion='8.5.3' restrictions='unrestricted'>
+<noteinfo noteid='9fe' unid='916861C7C664222786257C2900073341' sequence='5'>
+<created><datetime>20131119T191838,73-06</datetime></created>
+<modified><datetime>20131225T220600,90-06</datetime></modified>
+<revised><datetime>20131225T220600,89-06</datetime></revised>
+<lastaccessed><datetime>20131225T220600,90-06</datetime></lastaccessed>
+<addedtofile><datetime>20131119T192327,63-06</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></updatedby>
+<wassignedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></wassignedby>
+<designchange><datetime>20131225T220600,88-06</datetime></designchange>
+<trigger type='agentlist'/>
+<documentset type='runonce'/><code event='options'><lotusscript>Option Public
+Option Explicit
+
+Use "HttpRequest"
+Use "jsonDominoObjects"
+
+
+</lotusscript></code><code event='declarations'><lotusscript>Dim doc As NotesDocument
+Dim unid As Variant
+
+</lotusscript></code><code event='initialize'><lotusscript>Sub Initialize
+	On Error Goto erh
+	
+	' Notes stuff
+	Dim session As New NotesSession 
+	Dim db As NotesDatabase
+	Dim folder As NotesView
+	Dim fromFolder As NotesView
+	Dim docContext As NotesDocument
+	Dim doc As NotesDocument
+	
+	' Params
+	Dim query As String
+	Dim dbName As String
+	Dim operation As String
+	Dim folderName As String
+	Dim fromFolderName As String
+	
+	' parse query string for params
+	Dim request As New HttpRequest()
+	dbName = request.parameter("db")
+	operation = request.parameter("operation")
+	folderName = request.parameter("folder")	
+	fromFolderName = request.parameter("fromFolder")
+	
+	' get the db
+	If (dbName = "") Then
+		Set db = session.CurrentDatabase
+	Else 
+		Set db = session.GetDatabase("",dbName,False)
+	End If
+	
+	' get the operation
+	If (operation = "") Then
+		operation = "putinfolder"
+	Else
+		operation = Lcase$(operation)
+	End If
+	
+	' get the unids
+	Dim arUnids As Variant
+	Set docContext = session.DocumentContext
+	arUnids = Split(docContext.Request_Content(0), "&amp;")
+	
+	Select Case operation
+	Case "putinfolder"
+		Call PutInFolder(db, arUnids, folderName, fromFolderName)
+	Case "createfolder"
+		Call CreateFolder(db, folderName)	
+	End Select
+	
+	
+	' send data back to the requestor, in the proper format
+	Print |Status: 200 OK|
+	Print |Content-Type:application/json|
+	Print |Cache-Control: private|
+	Print ||
+	Print | { |
+	Print |	success: true|
+	Print | } |	
+	
+	Exit Sub
+	
+	' If we error, send back a json error object
+	' still plays nicely with the ScriptTagProxy call
+erh:
+	Dim msg As String
+	If Err = 4005 Then
+		msg = "You are not authorized to drag documents onto this folder."
+	Else
+		msg = Error
+	End If
+	
+	Print |Status: 500 Internal Server Error|
+	Print |Content-Type:application/json|
+	Print |Cache-Control: private|
+	Print ||
+	Print | { |
+	Print |	success: false, |
+	Print | { error: { line: "Error | &amp; Err &amp; | on line | &amp; Erl &amp; |", msg: "| &amp; msg &amp; |"}}|
+	Print | } |	
+	
+	Exit Sub
+	
+End Sub
+
+</lotusscript></code><code event='PutInFolder'><lotusscript>Sub PutInFolder(db As NotesDatabase, arUnids As Variant, folderName As String, fromFolderName  As String)
+	On Error Goto erh
+	
+	Dim doc As NotesDocument
+	Dim folder As NotesView
+	Dim fromFolder As NotesView
+	
+	' get the folders
+	Set folder = GetView(db, folderName)
+	If fromFolderName = "" Then
+		Set fromFolder = Nothing
+	Else
+		Set fromFolder = GetView(db, fromFolderName)
+	End If
+	
+	Dim unid As Variant
+	If Ubound(arUnids) &gt; 0 Then
+		Forall u In arUnids
+			unid = Split(u,"=")
+			If (unid(0) = "unid") Then
+				 'Msgbox "looking for unid = " + unid(1)
+				Set doc = db.GetDocumentByUNID(unid(1))
+				If Not doc Is Nothing Then
+					Call doc.RemoveFromFolder(fromFolder.Name)
+					Call doc.PutInFolder(folder.Name)					
+				End If
+			End If
+		End Forall		
+	End If
+	
+	Exit Sub
+	
+erh:
+	'/* throw this error */
+	Error Err, _
+	|"| &amp; Getthreadinfo(1) &amp; " line " &amp; Erl &amp; | | &amp; Error$ &amp; |"|
+	
+End Sub
+
+</lotusscript></code><code event='CreateFolder'><lotusscript>Sub CreateFolder(db As NotesDatabase, folderName As String)
+	On Error Goto erh
+	
+	Call db.EnableFolder(folderName)
+	
+	Exit Sub
+	
+erh:
+	'/* throw this error */
+	Error Err, _
+	|"| &amp; Getthreadinfo(1) &amp; " line " &amp; Erl &amp; | | &amp; Error$ &amp; |"|	
+End Sub
+
+</lotusscript></code><code event='GetView'><lotusscript>Function GetView(db As NotesDatabase, strView As String) As NotesView
+	On Error Goto erh
+	
+	
+	Dim view As NotesView
+	Dim doc As NotesDocument
+	Dim strTitle As String
+	
+	Set view = db.GetView(strView)
+	If view Is Nothing Then
+		Set doc = db.GetDocumentByUNID(strView)
+		If Not doc Is Nothing Then
+			strTitle = doc.GetItemValue("$TITLE")(0)
+			If Instr(strTitle, "|") &gt; 0 Then
+				strTitle = Trim$(Strright(strTitle, "|"))
+			End If
+			Set view = db.GetView(strTitle)
+		End If
+	End If
+	
+	Set GetView = view
+	Exit Function
+	
+erh:
+	'/* throw this error */
+	Error Err, _
+	|"| &amp; Getthreadinfo(1) &amp; " line " &amp; Erl &amp; | | &amp; Error$ &amp; |"|
+	
+End Function</lotusscript></code>
+<rundata processeddocs='0' exitcode='0'>
+<agentmodified><datetime>20131225T220600,44-06</datetime></agentmodified></rundata></agent>
+

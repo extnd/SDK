@@ -1,71 +1,20 @@
 <?xml version='1.0' encoding='utf-8'?>
-<note class='filter' xmlns='http://www.lotus.com/dxl' version='9.0' replicaid='86257B2E00176383'>
-<noteinfo noteid='40e2' unid='9241073EBE69352485257565005C76BD' sequence='14'>
-<created><datetime>20090222T114957,09-05</datetime></created>
-<modified><datetime dst='true'>20131027T231854,89-05</datetime></modified>
-<revised><datetime dst='true'>20131027T231853,29-05</datetime></revised>
-<lastaccessed><datetime dst='true'>20131027T231854,89-05</datetime></lastaccessed>
-<addedtofile><datetime dst='true'>20131026T105228,79-05</datetime></addedtofile></noteinfo>
+<agent name='Extnd\Edit Extnd Profile Doc' alias='Ext.nd.AgentEditProfile'
+ xmlns='http://www.lotus.com/dxl' version='9.0' replicaid='86257C2900079A5C'
+ hide='v3' runaswebuser='true' publicaccess='false' designerversion='7'>
+<noteinfo noteid='9be' unid='EE56513033FF1EEA86257C2900073348' sequence='2'>
+<created><datetime>20131119T191838,80-06</datetime></created>
+<modified><datetime>20131119T192327,33-06</datetime></modified>
+<revised><datetime>20131119T192327,32-06</datetime></revised>
+<lastaccessed><datetime>20131119T192327,33-06</datetime></lastaccessed>
+<addedtofile><datetime>20131119T192327,31-06</datetime></addedtofile></noteinfo>
 <updatedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></updatedby>
-<revisions><datetime>20090222T115012,99-05</datetime><datetime>20100117T144118,69-06</datetime><datetime
- dst='true'>20100314T165716,47-04</datetime><datetime dst='true'>20130314T214958,06-05</datetime><datetime
- dst='true'>20131026T180332,72-05</datetime><datetime dst='true'>20131026T180332,76-05</datetime><datetime
- dst='true'>20131027T204338,52-05</datetime><datetime dst='true'>20131027T204338,54-05</datetime><datetime
- dst='true'>20131027T231853,27-05</datetime></revisions>
 <wassignedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></wassignedby>
-<item name='$POID'><datetime>20041229T120619,52-05</datetime></item>
-<item name='$AssistType' sign='true'><number>65412</number></item>
-<item name='$AssistLastRun' sign='true'>
-<rawitemdata type='400'>
-AAAAAAAAAAA=
-</rawitemdata></item>
-<item name='$AssistDocCount' sign='true'><number>0</number></item>
-<item name='$FlagsExt' sign='true'><text/></item>
-<item name='$AssistFlags' sign='true'><text>Eu</text></item>
-<item name='$AssistTrigger' sign='true'><text>4</text></item>
-<item name='$AssistInfo' sign='true'>
-<rawitemdata type='11'>
-AQAEAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-</rawitemdata></item>
-<item name='$AssistQuery' sign='true'>
-<rawitemdata type='f'>
-gQYAAAAA
-</rawitemdata></item>
-<item name='$AssistAction' sign='true'>
-<rawitemdata type='10'>
-gQKE/0YAAAAAADwAPAAKAAQAAAAoAAIAIicAAAAAAAABAA4ARXh0Lm5kLlByb2ZpbGX7AEUB7QMD
-AAcADgAHAAkyUzNTNFMA
-</rawitemdata></item>
-<item name='$AssistAction_Ex' sign='true'>
-<rawitemdata type='14'>
-gQI=
-</rawitemdata></item>
-<item name='$Restricted' sign='true'><number>1</number></item>
-<item name='$Flags'><text>f3u</text></item>
-<item name='$AssistRunInfo' summary='true'>
-<rawitemdata type='3'>
-BgAAAgAACAAOBwEAAAAAAAUAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAISAPAC97JYaDYxcALnslhgAAAAAAAAAAAAAAAAAAAAAAAAAAqqqqqqqq
-qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
-qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
-qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
-qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
-qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
-qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
-qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
-qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
-qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
-qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
-qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
-qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
-qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
-qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
-qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
-qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
-qqqqqqqqqqqqqqqqqqqqqqqq
-</rawitemdata></item>
-<item name='$TITLE' sign='true'><text>Extnd\Edit Extnd Profile Doc|Ext.nd.AgentEditProfile</text></item>
-<item name='$DesignerVersion' sign='true'><text>7</text></item>
-<item name='$AssistVersion'><datetime dst='true'>20130314T214958,00-05</datetime></item></note>
+<designchange><datetime dst='true'>20130314T214958,00-05</datetime></designchange>
+<trigger type='actionsmenu'/>
+<documentset type='runonce'/><code event='action'>
+<simpleaction action='runformula'><formula>SELECT @Command( [EditProfileDocument] ; "Ext.nd.Profile";@ServerName)</formula></simpleaction></code>
+<rundata processeddocs='0' exitcode='0'>
+<agentmodified><datetime dst='true'>20130314T214512,65-05</datetime></agentmodified></rundata>
+<item name='$POID'><datetime>20041229T120619,52-05</datetime></item></agent>
 

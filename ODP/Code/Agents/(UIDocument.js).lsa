@@ -1,0 +1,155 @@
+<?xml version='1.0' encoding='utf-8'?>
+<agent name='(UIDocument.js)' xmlns='http://www.lotus.com/dxl' version='9.0'
+ replicaid='86257C2900079A5C' hide='v3' runaswebuser='true' publicaccess='false'
+ designerversion='8.5.3' restrictions='unrestricted'>
+<noteinfo noteid='9d6' unid='1F6C60E5073E809186257C2900073346' sequence='7'>
+<created><datetime>20131119T191838,78-06</datetime></created>
+<modified><datetime>20140103T153311,22-06</datetime></modified>
+<revised><datetime>20140103T153311,21-06</datetime></revised>
+<lastaccessed><datetime>20140103T153311,22-06</datetime></lastaccessed>
+<addedtofile><datetime>20131119T192327,43-06</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Jack Ratcliff/O=BlueCuda</name></updatedby>
+<wassignedby><name>CN=Jack Ratcliff/O=BlueCuda</name></wassignedby>
+<designchange><datetime>20140103T153311,21-06</datetime></designchange>
+<trigger type='agentlist'/>
+<documentset type='runonce'/><code event='options'><lotusscript>Option Public
+Option Explicit
+
+Use "HttpRequest"
+Use "jsonDominoObjects"
+
+</lotusscript></code><code event='initialize'><lotusscript>Sub Initialize
+	On Error Goto processError
+	
+	' Notes stuff
+	Dim session As New NotesSession 
+	Dim db As NotesDatabase
+	Dim doc As NotesDocument
+	
+	' Params
+	Dim query As String, dbName As String, editMode As String, unid As String, isNewDoc As String
+	
+	' Temp stuff
+	Dim fields As Variant
+	Dim jsonText As String
+	Dim nl As String
+	
+	nl = Chr(13)
+	
+	' parse query string for params
+	Dim request As New HttpRequest()
+	query = request.parameter("query")
+	dbName = request.parameter("db")
+	editMode = request.parameter("editmode")
+	unid = request.parameter("unid")
+	
+	
+	
+	
+	Dim context As NotesDocument
+	Set context = session.DocumentContext		
+	'Msgbox context.GetItemValue("request_method")(0)
+	'Msgbox context.GetItemValue("http_referer")(0)
+	
+	
+	
+	' get db
+	If (dbName = "") Then
+		Set db = session.CurrentDatabase
+	Else 
+		Set db = session.GetDatabase("",dbName,False)
+	End If
+	
+	' get doc
+	If unid  = "" Then
+		isNewDoc = "true"
+	Else
+		isNewDoc = "false"
+		Set doc = db.GetDocumentByUNID(unid)
+	End If
+	
+	
+	' open json
+	
+	jsonText = jsonText + |Extnd.currentUIDocument = {|
+	jsonText = jsonText + nl
+	
+	' EditMode
+	jsonText = jsonText + |"editMode" : | + editMode 
+	jsonText = jsonText + SEP + nl	
+	
+	' IsNewDoc
+	jsonText = jsonText + |"isNewDoc" : | + isNewDoc 
+	
+	If (Not doc Is Nothing) Then
+		
+		' first add our separator and newline to finish off the above property
+		jsonText = jsonText + SEP  + nl	
+		
+		' formName
+		jsonText = jsonText + |"formName" : '| + doc.GetItemValue("form")(0) + |'| 
+		jsonText = jsonText  + SEP + nl	
+		
+		' Document 
+		jsonText = jsonText + |"document" : | + getDocument(doc) 
+		jsonText = jsonText + nl	
+		
+	End If
+	
+	' close Ext.nd.UIDocument
+	jsonText = jsonText + |}| 
+	
+	' close Ext.onReady(function(){
+	'jsonText = jsonText + |});|
+	
+	
+	' send data back to the requestor, in the proper format
+	Print |Status: 200 OK|
+	Print |Content-Type:text/javascript|
+	'Print |Cache-Control: private|
+	Print |Cache-Control: no-cache|
+	Print ||
+	
+	Print jsonText
+	
+	Exit Sub
+	
+	' If we error, send back a json error object
+	' still plays nicely with the ScriptTagProxy call
+processError:
+	Dim mysess As New notessession
+	Dim msg As String
+	Dim query_string As String
+	query_string = context.GetItemValue( "query_string_decoded" )(0)
+	
+	msg = ""
+	msg = msg + "Error: " &amp; Cstr(Err) &amp; "; "
+	msg = msg + "Database: " &amp; mySess.CurrentDatabase.FileName &amp; "; " 
+	msg = msg + "Agent: " &amp; mySess.CurrentAgent.Name &amp; "; "
+	msg = msg + "Module: " &amp; Cstr(Getthreadinfo(1)) &amp; " line " &amp; Cstr(Erl) &amp; "; "
+	msg = msg + Error$
+	
+	Msgbox msg
+	
+	Print |Status: 500 Internal Server Error|
+	Print |Content-Type:application/json|
+	'Print |Cache-Control: private|
+	Print |Cache-Control: no-cache|
+	Print ||
+	
+	' old way
+	'Print |{|error: { query: "| &amp; query &amp; |", line: "Error | &amp; Err &amp; | on line | &amp; Erl &amp; |", msg: "| &amp; Error &amp; |"}}|
+	
+	' new way	
+	Print | { |
+	Print |	error: {| 
+	Print |		query_string: '| &amp; query_string &amp; |',|
+	Print |		msg: '| + msg + |'|
+	Print | } |
+	
+	Exit Sub
+	
+End Sub</lotusscript></code>
+<rundata processeddocs='0' exitcode='0'>
+<agentmodified><datetime>20140103T153311,11-06</datetime></agentmodified></rundata></agent>
+

@@ -1,0 +1,167 @@
+<?xml version='1.0' encoding='utf-8'?>
+<view name='($SoftDeletions)' alias='($SoftDeletions)' xmlns='http://www.lotus.com/dxl'
+ version='9.0' replicaid='86257C2900079A5C' showinmenu='true' deleteddocs='true'
+ useapplet='true' publicaccess='false' designerversion='8.5.3' language='en'
+ unreadmarks='standard' onopengoto='lastopened' onrefresh='displayindicator'
+ headers='simple' opencollapsed='false' showresponsehierarchy='false' showmargin='true'
+ shrinkrows='true' extendlastcolumn='true' showhierarchies='false' unreadcolor='black'
+ rowlinecount='9' headerlinecount='1' rowspacing='1.5' bgcolor='white' altrowcolor='#f7f7f7'
+ totalscolor='blue' headerbgcolor='#f2f4f5' boldunreadrows='false' evaluateactions='false'
+ allownewdocuments='false' allowcustomizations='true' hidemarginborder='false'
+ marginwidth='0px' marginbgcolor='white' showswitcher='true' uniquekeys='false'>
+<noteinfo noteid='986' unid='B795476C06CFE70D852573C6005A651B' sequence='2'>
+<created><datetime>20080104T112721,23-05</datetime></created>
+<modified><datetime>20131119T192326,75-06</datetime></modified>
+<revised><datetime>20131119T192326,74-06</datetime></revised>
+<lastaccessed><datetime>20131119T192326,75-06</datetime></lastaccessed>
+<addedtofile><datetime>20131119T192326,73-06</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></updatedby>
+<wassignedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></wassignedby>
+<globals><code event='options'><lotusscript>Option Public
+Option Explicit
+
+
+</lotusscript></code></globals><code event='selection'><formula>SELECT @All</formula></code><code
+ event='form'><formula>@If(!@IsNewDoc; "(SoftDeleteForm)"; form)</formula></code><code
+ event='queryaddtofolder'><lotusscript>Sub Queryaddtofolder(Source As Notesuiview, Target As Variant, Continue As Variant)
+	Msgbox |You cannot drag and drop out of Trash with Soft Deletes enabled. 
+Please use Restore instead.| ,, "Error"
+	
+	continue = False
+End Sub</lotusscript></code>
+<actionbar showdefaultrightclickitems='false' bgcolor='#e9ecf1' bordercolor='black'><actionbarstyle
+ height='4.7500ex' repeat='tile'><font size='9pt' name='multilingual'/><imageref
+ name='actionbargradient.gif'/></actionbarstyle>
+<actionbuttonstyle margintype='fixed' margin='5' showdropdown='true' bgcolor='none'/><font
+ size='9pt' name='multilingual' color='#004080'/><border style='solid' width='0px 0px 1px'
+ color='#919fbd'/>
+<action title='Restore' showinrightbuttonmenu='true' hide='web'><code event='click'><formula
+>@Command([ToolsRunMacro];"(Restore Document)")</formula></code></action>
+<action title='Restore All' hide='web'><code event='click'><formula>@Command([ToolsRunMacro];"(Restore All)")</formula></code></action>
+<action title='Delete' hide='web' onlyiconinbar='true'><imageref><code event='value'><formula
+>@If( @TextToNumber(@Version) &lt; 368 ; "noSoftDelete.gif";
+@HasFeature("$ActionBarWithoutIcons")  &amp; @TextToNumber(@Version) &gt;= 368  ;  "nosoftdeletegrey.png" ;
+"noSoftDelete.gif")</formula></code></imageref><code event='click'><formula
+>@If(form = ""; @Return(""); "");
+@Command([MoveToTrash])</formula></code></action>
+<action title='Empty Trash' hide='web'><code event='click'><formula>@Command([ToolsRunMacro];"(Empty Trash)")</formula></code></action>
+<sharedactionref id='49'>
+<action title='Chat ' hide='preview edit previewedit' onlyiconinbar='true'><imageref
+><code event='value'><formula>@If( @TextToNumber(@Version) &lt; 368; "chat_oldtheme.gif";
+@HasFeature("$ActionBarWithoutIcons")  &amp; @TextToNumber(@Version) &gt;= 368  ;   "chat_grey.png" ;
+"chat.png")</formula></code></imageref><code event='click'><formula>@Command([SendInstantMessage]; SametimeLogin)</formula></code><code
+ event='hidewhen'><formula>ecl := @If(@IsError(@IsUsingJavaElement);0;@IsUsingJavaElement; 1; 0);
+ecl = 1  | @IsNewDoc</formula></code><code event='label'><formula>"Chat"</formula></code></action></sharedactionref>
+<sharedactionref id='56'>
+<action title='rt click - Menu Separator' showinmenu='false' showinbar='false'
+ showinrightbuttonmenu='true' hide='preview read edit previewedit web mobile'
+ displaytype='menuseparator'/></sharedactionref>
+<action title='rt click - Open in New Window' showinmenu='false' showinbar='false'
+ showinrightbuttonmenu='true' hide='web' systemcommand='openinnewwindow'><code
+ event='label'><formula>"_Open in New Window"</formula></code></action>
+<action title='rt click - Print...' showinmenu='false' showinbar='false' showinrightbuttonmenu='true'
+ hide='web' systemcommand='print'><imageref><code event='value'><formula>@If( @HasFeature("$ActionBarWithoutIcons") ; "print_grey.png" ; "print.png")</formula></code></imageref><code
+ event='label'><formula>"_Print..." + @Char(9) + "Ctrl+P"</formula></code></action>
+<sharedactionref id='56'>
+<action title='rt click - Menu Separator' showinmenu='false' showinbar='false'
+ showinrightbuttonmenu='true' hide='preview read edit previewedit web mobile'
+ displaytype='menuseparator'/></sharedactionref>
+<action title='rt click - Delete' showinmenu='false' showinbar='false' showinrightbuttonmenu='true'
+ hide='web' systemcommand='delete'><imageref><code event='value'><formula
+>@If( @HasFeature("$ActionBarWithoutIcons") ; "nosoftdeletegrey.png" ; "noSoftDelete.gif")</formula></code></imageref><code
+ event='label'><formula>"_Delete" + @Char(9) + "Del"</formula></code></action></actionbar>
+<column sort='ascending' hidedetailrows='false' itemname='$116' width='1'
+ resizable='true' separatemultiplevalues='false' sortnoaccent='true' sortnocase='true'
+ showaslinks='false' hidden='true'><font size='9pt'/><columnheader><font size='9pt'
+ name='multilingual'/></columnheader><code event='value'><formula>@Created</formula></code></column>
+<column align='center' hidedetailrows='false' listseparator='space' itemname='$108'
+ width='1.8750' resizable='true' separatemultiplevalues='false' sortnoaccent='true'
+ sortnocase='true' showaslinks='false' editable='true' hidecolumntitle='true'
+ hideinr5='true' showasicons='true' extattrs='$MaskSelectionColor=true,$ShowGradientColor=true,$ShowGray=true'><columnheader
+ title='Type icons'><font size='9pt' name='multilingual'/></columnheader><datetimeformat
+ legacy='true' show='date' date='yearmonthday' time='hourminutesecond' zone='never'/><numberformat
+ legacy='true' format='general' varying='true' digits='1' punctuated='true'
+ parens='false' percent='true' bytes='false'/><code event='value'><formula
+>"col12notebook.gif"</formula></code><code event='hidewhen'><formula>REM { Test if this is version 6.1 of Notes and 6.1 of the template};
+OkToShow := @If(@Version &lt; @Text(192);  0; @HasFeature("650Lic"); 1; 0);
+OkToShow != 1 | @IsError(OkToShow)</formula></code></column>
+<column hidedetailrows='false' listseparator='space' itemname='$vv' width='1.5000'
+ resizable='true' separatemultiplevalues='false' sortnoaccent='true' sortnocase='true'
+ showaslinks='false' hidecolumntitle='true' hidden='true' showasicons='true'
+ viewisnarrow='wrapsecondrow' extattrs='$MaskSelectionColor=true,$ShowGradientColor=true,$ShowGray=true,$UnhideWhenWrapped=true'><columnheader
+ title='hiddenForVertifcalView'><font size='9pt'/></columnheader><datetimeformat
+ show='datetime' date='yearmonthday' fourdigityearfor21stcentury='true' time='hourminutesecond'
+ zone='never' dateformat='weekdaymonthdayyear' dayformat='twodigitday' monthformat='twodigitmonth'
+ yearformat='fourdigityear' weekdayformat='shortname' dateseparator1=' ' dateseparator2='/'
+ dateseparator3='/' timeseparator=':' preference='usersetting'/><numberformat
+ format='general' varying='true' punctuated='false' parens='false' percent='false'
+ bytes='false' decimalsym='.' thousandssep=',' currencysymtype='custom' currencysym='$'
+ usecustomsym='false'/><code event='value'><formula>0</formula></code></column>
+<column resort='both' hidedetailrows='false' itemname='$52' width='18' resizable='true'
+ separatemultiplevalues='false' sortnoaccent='true' sortnocase='true' showaslinks='false'
+ extwindowwidth='true' extattrs='$ExpandNoResize=true'><font size='9pt'/><columnheader
+ title='Subject '><font size='9pt' name='multilingual'/></columnheader><datetimeformat
+ legacy='true' show='date' date='yearmonthday' time='hourminutesecond' zone='never'/><numberformat
+ legacy='true' format='general' digits='2' punctuated='false' parens='false'
+ percent='false' bytes='false'/><code event='value'><formula>NoTItle  := "Untitled";
+
+@If(Subject != "";Subject;NoTitle)</formula></code></column>
+<column hidedetailrows='false' listseparator='comma' itemname='$ThreadsEmbed'
+ width='8' resizable='true' separatemultiplevalues='false' sortnoaccent='true'
+ sortnocase='true' showaslinks='false' viewisnarrow='hide'><font size='9pt'/><columnheader
+ title='Folder'><font size='9pt' name='multilingual'/></columnheader><code
+ event='value'><formula>@WhichFolders</formula></code><code event='hidewhen'><formula
+>@Version &lt; @Text(300) | !@ClientType="Notes"</formula></code></column>
+<column resort='both' hidedetailrows='false' listseparator='comma' itemname='DiaryDate'
+ width='7' resizable='true' separatemultiplevalues='false' sortnoaccent='true'
+ sortnocase='true' showaslinks='false' viewisnarrow='hide' extattrs='$DateColumn=true'><font
+ size='9pt'/><columnheader title='Entry Date'><font size='9pt' name='multilingual'/></columnheader><datetimeformat
+ legacy='true' show='datetime' date='yearmonthday' time='hourminute' zone='never'/><numberformat
+ legacy='true' format='general' digits='2' punctuated='false' parens='false'
+ percent='false' bytes='false'/></column>
+<column resort='ascending' hidedetailrows='false' listseparator='semicolon'
+ itemname='$39' width='16' resizable='true' separatemultiplevalues='false'
+ sortnoaccent='false' sortnocase='true' showaslinks='false' extwindowwidth='true'
+ viewisnarrow='wrapsecondrow' tileviewer='hide' linenumber='2'><font size='9pt'/><columnheader
+ title='Category'><font size='9pt' name='multilingual'/></columnheader><code
+ event='value'><formula>@Implode(Categories; "; ")</formula></code></column>
+<column resort='descending' hidedetailrows='false' itemname='$107' width='12'
+ resizable='true' separatemultiplevalues='false' sortnoaccent='false' sortnocase='true'
+ showaslinks='false'><font size='9pt'/><columnheader title='Deleted'><font
+ size='9pt' name='multilingual'/></columnheader><datetimeformat show='datetime'
+ date='yearmonthday' fourdigityearfor21stcentury='true' time='hourminute'
+ zone='never' dateformat='weekdaymonthdayyear' dayformat='twodigitday' monthformat='twodigitmonth'
+ yearformat='fourdigityear' weekdayformat='shortname' dateseparator1=' ' dateseparator2='/'
+ dateseparator3='/' timeseparator=':' preference='usersetting'/><numberformat
+ format='general' punctuated='false' parens='false' percent='false' bytes='false'/><code
+ event='value'><formula>@Modified</formula></code></column>
+<column align='center' resort='descending' resort2='descending' resort2column='5'
+ hidedetailrows='false' itemname='$97' width='1.2500' resizable='false' separatemultiplevalues='false'
+ sortnoaccent='true' sortnocase='true' showaslinks='false' hidecolumntitle='true'
+ showasicons='true' deferindexcreation='true' viewisnarrow='wrapsecondrow'
+ extattrs='$TypeHeaderIcon=index:colicon1:4'><font size='9pt'/><columnheader
+ title='Attachment icons'><font size='9pt' name='multilingual'/></columnheader><code
+ event='value'><formula>@If(@Attachments; 5; 0)</formula></code></column>
+<item name='$HTMLDocumentStyles' summary='true' sign='true'>
+<rawitemdata type='1'>
+0ggBAAAA/wDSCAEA/wAAANIIAQCAAIAA
+</rawitemdata></item>
+<item name='DEBUG_SIG' sign='true'><text>1</text></item>
+<item name='(Globals)($SoftDeletions)|($SoftDeletio' sign='true'>
+<rawitemdata type='14'>
+AQAAAkxTT0IDABQIZW4AAAQAAAADAAAAAAAEAMQAAAAAAAAAAAAAAAAAAABgAP//VAB0AP////8A
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAEABQBMb3R1cyBQcm9kdWN0AAAAVjAuMAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAwAAAAAAAAAEAAAAxAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA
+AAMAAABXMzJJQAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAwDIAAAAAACQACcAKABHAEwATwBCAEEATABTACkAKAAkAFMATwBGAFQARABFAEwARQBUAEkA
+TwBOAFMAKQB8ACgAJABTAE8ARgBUAEQARQBMAEUAVABJAE8AAACoAAMATgBFAFcAAAC8AAYARABF
+AEwARQBUAEUAAAAAAP//CgBJAE4ASQBUAEkAQQBMAEkAWgBFAAAAAAD//wkAVABFAFIATQBJAE4A
+QQBUAEUAAAD//wYATwBCAEoARQBDAFQAAAAAAP//AAAAAAAABQAIAAAAAACB/bynBAAHAAAAAAAd
+AAACAAAAEQAQAAAAAAD//wEAAwAGAAAACAAKAAAAAw==
+</rawitemdata></item></view>
+

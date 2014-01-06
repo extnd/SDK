@@ -1,0 +1,250 @@
+<?xml version='1.0' encoding='utf-8'?>
+<agent name='(Session.js)' xmlns='http://www.lotus.com/dxl' version='9.0'
+ replicaid='86257C2900079A5C' hide='v3' runaswebuser='true' publicaccess='true'
+ designerversion='8.5.3' restrictions='unrestricted'>
+<noteinfo noteid='9ee' unid='0EE534CBF027D21286257C2900073343' sequence='7'>
+<created><datetime>20131119T191838,75-06</datetime></created>
+<modified><datetime>20140102T220303,09-06</datetime></modified>
+<revised><datetime>20140102T220303,08-06</datetime></revised>
+<lastaccessed><datetime>20140102T220303,09-06</datetime></lastaccessed>
+<addedtofile><datetime>20131119T192327,55-06</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Jack Ratcliff/O=BlueCuda</name></updatedby>
+<wassignedby><name>CN=Jack Ratcliff/O=BlueCuda</name></wassignedby>
+<designchange><datetime>20140102T220303,07-06</datetime></designchange>
+<trigger type='agentlist'/>
+<documentset type='runonce'/><code event='options'><lotusscript>Option Public
+Option Explicit
+
+Use "HttpRequest"
+Use "jsonDominoObjects"
+
+</lotusscript></code><code event='initialize'><lotusscript>Sub Initialize
+	On Error Goto processError
+	
+	' Notes stuff
+	Dim session As New NotesSession 
+	Dim db As NotesDatabase
+	Dim docContext As NotesDocument
+	Set docContext = session.DocumentContext
+	
+	' Params
+	Dim dbName As String
+	
+	' Temp stuff
+	Dim fields As Variant
+	Dim jsonText As String
+	Dim nl As String
+	
+	nl = Chr(13)
+	
+	' parse query string for params
+	Dim request As New HttpRequest()	
+	dbName = request.parameter("db")
+	
+	If (dbName = "") Then
+		Set db = session.CurrentDatabase
+		dbName = db.FilePath
+	Else 
+		Set db = session.GetDatabase("",dbName,False)
+	End If
+	
+	
+	'start Ext.apply for Extnd object
+	jsonText = |Ext.apply(Extnd, {|
+	
+	' Extnd and Ext urls
+	jsonText = jsonText + getUrlPaths(docContext) + nl
+	
+	' Extnd DateTime formats from server
+	jsonText = jsonText + getDateTimeFormats() + |,| + nl
+	
+	' end Ext.apply for Extnd object
+	jsonText = jsonText + |});| + nl
+	
+	
+	
+	
+	' start Ext.apply for Extnd.session
+	jsonText = jsonText + |Ext.apply(Extnd.session, {|
+	jsonText = jsonText + nl
+	
+	
+	' AddressBooks	
+	jsonText = jsonText + | "addressBooks" : | + getAddressBooks(session)
+	jsonText = jsonText + SEP + nl
+	
+	
+	' CommonUserName returns the common name of the server when called from the web so we evaluate the @name macro
+	Dim commonName As Variant
+	commonName = Evaluate(|@name([cn];@username)|)
+	jsonText = jsonText + | "commonUserName" : "| + commonName(0) + |"|
+	jsonText = jsonText + SEP + nl
+	
+	' AbbreviatedUserName
+	Dim abbreviatedUserName As Variant
+	abbreviatedUserName = Evaluate(|@name([abbreviate];@username)|)
+	jsonText = jsonText + | "abbreviatedUserName" : "| + abbreviatedUserName(0) + |"|
+	jsonText = jsonText + SEP + nl
+	
+	' EffectiveUserName
+	jsonText = jsonText + | "effectiveUserName" : "| + session.EffectiveUserName + |"|
+	jsonText = jsonText + SEP + nl
+	
+	' CurrentDatabase
+	jsonText = jsonText + |"currentDatabase" : | + getDatabase(db, dbName) 
+	jsonText = jsonText  + SEP + nl	
+	
+    '  NotesBuildVersion
+	jsonText = jsonText + | "notesBuildVersion" : | + Cstr(session.NotesBuildVersion)
+	jsonText = jsonText + SEP + nl
+	
+    '  NotesVersion
+	jsonText = jsonText + | "notesVersion" : "| + Trim$(session.NotesVersion) + |"|
+	jsonText = jsonText + SEP + nl
+	
+    '  Platform
+	jsonText = jsonText + | "platform" : "| + session.Platform + |"|
+	jsonText = jsonText + SEP + nl
+	
+    '  ServerName
+	Dim serverName As Variant
+	serverName = Evaluate(|@servername|)
+	jsonText = jsonText + | "serverName" : "| + serverName(0) + |"|
+	jsonText = jsonText + SEP + nl
+	
+	'  UserGroupNameList
+	jsonText = jsonText + | "userGroupNameList" : | + getUserGroupNameList(session)
+	jsonText = jsonText + SEP + nl
+	
+	'  UserName
+	Dim userName As Variant
+	userName = Evaluate(|@username|)
+	jsonText = jsonText + | "userName" : "| + userName(0) + |"|
+	jsonText = jsonText + SEP + nl
+	
+	'  UserNameList
+	jsonText = jsonText + | "userNameList" : | + getUserNameList(session)
+	jsonText = jsonText + SEP + nl
+	
+	'  UserRoles
+	Dim userRoles As Variant
+	Dim doc As NotesDocument
+	Set doc = db.CreateDocument
+	If Not doc Is Nothing Then
+		userRoles = Evaluate(|@Implode("\"" + @userroles + "\"";",")|,doc)
+		jsonText = jsonText + | "userRoles" : [| + userRoles(0) + |]|
+		'jsonText = jsonText + SEP + nl	
+	Else
+		jsonText = jsonText + |[]| ' empty array
+	End If
+	
+	' any server environment variables we need to know about
+	jsonText = jsonText + SEP + nl
+	jsonText = jsonText + | "environmentVariables" : {|
+	jsonText = jsonText + |		"DominoDisableFileUploadChecks" : "| + session.GetEnvironmentString("DominoDisableFileUploadChecks", True) + |"|
+	jsonText = jsonText + |}|
+	
+Finished:
+	
+	' close out the Ext.apply(Extnd.session, {...});
+	jsonText = jsonText + nl
+	jsonText = jsonText + |});| + nl
+	
+	' now call the Extnd.init() method
+	'jsonText = jsonText + |Extnd.init();|
+	
+	
+	
+	
+	' send data back to the requestor, in the proper format
+	Print |Status: 200 OK|
+	Print |Content-Type:text/javascript|
+	'Print |Cache-Control: private|
+	Print |Cache-Control: no-cache|
+	Print ||
+	
+	Print jsonText
+	
+	Exit Sub
+	
+	' If we error, send back a json error object
+	' still plays nicely with the ScriptTagProxy call
+processError:
+	
+	Select Case Err
+	Case 4182
+		Resume Next
+	Case Else
+		Print |Status: 500 Internal Server Error|
+		Print |Content-Type:application/json|
+		Print |Cache-Control: private|
+		Print ||
+		Print |{error: { db: "| &amp; dbName &amp; |", line: "Error | &amp; Err &amp; | on line | &amp; Erl &amp; _
+		|", msg: "| &amp; Error &amp; |"}}|
+		
+		Exit Sub
+		
+	End Select
+End Sub
+
+</lotusscript></code><code event='getUrlPaths'><lotusscript>Function getUrlPaths(docContext As NotesDocument) As String
+	
+	On Error Goto ErrHandler
+	
+	Dim tmp As Variant
+	Dim extndUrl, extjsUrl, jsonText As String
+	
+	tmp = Split(docContext.PATH_INFO(0),"Session.js")
+	extndUrl = tmp(0)
+	extjsUrl = Replace(extndUrl, ".nsf/extnd/", ".nsf/extjs/") ' this only works when the .nsf extension is used for the Extnd db
+	
+	jsonText = ""
+	jsonText = jsonText + |extjsUrl: "|  + extjsUrl + |",|
+	jsonText = jsonText + |extndUrl: "| + extndUrl + |",|
+	
+	getUrlPaths = jsonText
+	
+	
+	Exit Function
+	
+ErrHandler:
+	'/* throw this error */
+	Error Err, | [ | &amp; | Routine: | &amp; Getthreadinfo(1) &amp; |, line: | &amp; Erl &amp;	| ] | &amp; Error$
+	
+End Function
+
+
+</lotusscript></code><code event='getDateTimeFormats'><lotusscript>Function getDateTimeFormats() As String
+	
+	On Error Goto ErrHandler
+	
+	Dim jsonText, dateFormat, timeFormat, dateTimeFormat As String
+	jsonText = ""
+	
+	' this returns the Server's Date Format from LotusScript thanks to Jake Howlett
+	' http://codestore.net/store.nsf/unid/BLOG-20081015?OpenDocument
+	
+	dateFormat = Replace(Cstr(Datenumber(1948, 12, 31)),Split("31/12/1948", "/"),Split("d/m/Y", "/"))
+	timeFormat = "h:i:s A"
+	
+	jsonText = jsonText +  |dateTimeFormats: {|
+	jsonText = jsonText + |"dateFormat" : '| + dateFormat + |',|
+	jsonText = jsonText + |"timeFormat" : '| + timeFormat + |',|
+	jsonText = jsonText + |"dateTimeFormat" : '| + dateFormat + | | + timeFormat + |',|
+	' when domino/notes isn't told in a view what to show for a datetime column, it appears to default to just the date
+	jsonText = jsonText + |"show" : 'date'|
+	jsonText = jsonText + |}|
+	
+	getDateTimeFormats = jsonText
+	
+	
+	Exit Function
+	
+ErrHandler:
+	'/* throw this error */
+	Error Err, | [ | &amp; | Routine: | &amp; Getthreadinfo(1) &amp; |, line: | &amp; Erl &amp;	| ] | &amp; Error$
+	
+End Function</lotusscript></code>
+<rundata processeddocs='0' exitcode='0'>
+<agentmodified><datetime>20140102T220303,03-06</datetime></agentmodified></rundata></agent>
+

@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='utf-8'?>
+<agent name='(Database)' xmlns='http://www.lotus.com/dxl' version='9.0' replicaid='86257C2900079A5C'
+ hide='v3' runaswebuser='true' publicaccess='true' designerversion='8.5.3'
+ restrictions='unrestricted'>
+<noteinfo noteid='a0e' unid='C0429016D02B7E6B86257C290007333C' sequence='5'>
+<created><datetime>20131119T191838,68-06</datetime></created>
+<modified><datetime>20131225T220448,89-06</datetime></modified>
+<revised><datetime>20131225T220448,88-06</datetime></revised>
+<lastaccessed><datetime>20131225T220448,89-06</datetime></lastaccessed>
+<addedtofile><datetime>20131119T192327,71-06</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></updatedby>
+<wassignedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></wassignedby>
+<designchange><datetime>20131225T220448,86-06</datetime></designchange>
+<trigger type='agentlist'/>
+<documentset type='runonce'/><code event='options'><lotusscript>Option Public
+Option Explicit
+
+Use "HttpRequest"
+Use "jsonDominoObjects"
+
+</lotusscript></code><code event='initialize'><lotusscript>Sub Initialize
+	On Error Goto processError
+	
+	' Notes stuff
+	Dim session As New NotesSession 
+	Dim db As NotesDatabase
+	
+	' Params
+	Dim dbName As String
+	
+	' Temp stuff
+	Dim fields As Variant
+	Dim jsonText As String
+	Dim nl As String
+	
+	nl = Chr(13)
+	
+	' Get params, set some defaults if not passed in
+	Dim request As New HttpRequest()
+	dbName = request.parameter("db")
+	
+	If (dbName = "") Then
+		Set db = session.CurrentDatabase
+		dbName = db.FilePath
+	Else 
+		Set db = session.GetDatabase("",dbName,False)
+	End If
+	
+	jsonText = jsonText + getDatabase(db, dbName) 
+	
+	
+	' send data back to the requestor, in the proper format
+	Print |Status: 200 OK|
+	Print |Content-Type:application/json|
+	Print |Cache-Control: private|
+	Print ||
+	
+	Print jsonText
+	
+	Exit Sub
+	
+	' If we error, send back a json error object
+	' still plays nicely with the ScriptTagProxy call
+processError:
+	Print |Status: 500 Internal Server Error|
+	Print |Content-Type:application/json|
+	Print |Cache-Control: private|
+	Print ||
+	Print |{error: { db: "| &amp; dbName &amp; |", line: "Error | &amp; Err &amp; | on line | &amp; Erl &amp; _
+	|", msg: "| &amp; Error &amp; |"}}|
+	
+	Exit Sub
+	
+End Sub</lotusscript></code>
+<rundata processeddocs='0' exitcode='0'>
+<agentmodified><datetime>20131225T220448,24-06</datetime></agentmodified></rundata></agent>
+

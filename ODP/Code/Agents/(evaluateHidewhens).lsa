@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='utf-8'?>
+<agent name='(evaluateHidewhens)' xmlns='http://www.lotus.com/dxl' version='9.0'
+ replicaid='86257C2900079A5C' hide='v3' runaswebuser='true' publicaccess='true'
+ designerversion='8.5.3' comment='do not use yet - this should run as the web user'
+ restrictions='unrestricted'>
+<noteinfo noteid='9ce' unid='0ACB6C507BEC96AD86257C2900073340' sequence='3'>
+<created><datetime>20131119T191838,72-06</datetime></created>
+<modified><datetime>20131225T215801,00-06</datetime></modified>
+<revised><datetime>20131225T215800,99-06</datetime></revised>
+<lastaccessed><datetime>20131225T215801,00-06</datetime></lastaccessed>
+<addedtofile><datetime>20131119T192327,39-06</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></updatedby>
+<wassignedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></wassignedby>
+<designchange><datetime>20131225T215800,98-06</datetime></designchange>
+<trigger type='agentlist'/>
+<documentset type='runonce'/><code event='options'><lotusscript>Option Public
+
+</lotusscript></code><code event='initialize'><lotusscript>Sub Initialize
+	
+	Msgbox "Inside evaluateHidewhens agent"
+	
+	Dim s As New NotesSession
+	Dim agent As NotesAgent
+	Set agent = s.CurrentAgent
+	Dim db As NotesDatabase
+	Dim doc As NotesDocument
+	Set db = s.CurrentDatabase
+	
+	Msgbox "s.EffectiveUserName = " + s.EffectiveUserName
+	Msgbox "s.CommonUserName = " +  s.CommonUserName
+	Msgbox "s.UserName = " + s.UserName
+	
+	Msgbox "get the agents parameter doc"
+  	' Get document used for passing data
+	Set doc = db.GetDocumentByID(agent.ParameterDocID)
+	
+	' add EffectiveUserName to doc and check to see 
+	' what it is in the DXLExporter agent
+	doc.EffectiveUserName = s.EffectiveUserName
+	doc.commonUserName = s.CommonUserName
+	doc.userName = s.UserName
+	
+	Msgbox "save param doc"
+	' make sure to save the doc with the data
+	Call doc.Save(True,False)
+	Print "done saving"
+	
+	
+	
+End Sub</lotusscript></code>
+<rundata processeddocs='0' exitcode='0'>
+<agentmodified><datetime dst='true'>20090704T125829,07-04</datetime></agentmodified></rundata></agent>
+

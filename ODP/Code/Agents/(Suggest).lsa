@@ -1,0 +1,493 @@
+<?xml version='1.0' encoding='utf-8'?>
+<agent name='(Suggest)' xmlns='http://www.lotus.com/dxl' version='9.0' replicaid='86257C2900079A5C'
+ hide='v3' runaswebuser='true' publicaccess='false' designerversion='8.5.3'
+ restrictions='unrestricted'>
+<noteinfo noteid='9de' unid='BE27CB5C67222F8486257C2900073345' sequence='3'>
+<created><datetime>20131119T191838,77-06</datetime></created>
+<modified><datetime>20131225T215841,00-06</datetime></modified>
+<revised><datetime>20131225T215840,99-06</datetime></revised>
+<lastaccessed><datetime>20131225T215841,00-06</datetime></lastaccessed>
+<addedtofile><datetime>20131119T192327,47-06</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></updatedby>
+<wassignedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></wassignedby>
+<designchange><datetime>20131225T215840,95-06</datetime></designchange>
+<trigger type='agentlist'/>
+<documentset type='runonce'/><code event='options'><lotusscript>Option Public
+Option Explicit
+
+
+
+</lotusscript></code><code event='initialize'><lotusscript>Sub Initialize
+	
+	On Error Goto processError
+	
+	' Notes stuff
+	Dim session As New NotesSession 
+	Dim db As NotesDatabase
+	Dim dc As NotesDocumentCollection
+	Dim view As NotesView
+	Dim qdoc As NotesDocument
+	Dim doc As NotesDocument
+	Dim item As NotesItem
+	
+	' Params
+	Dim query As String, queryDecode As String
+	Dim viewName As String
+	Dim maxCountParam As String
+	Dim count As Integer, maxCount As Integer
+	Dim callback As String
+	Dim dbName As String
+	Dim unique As String
+	
+	' Temp stuff
+	Dim fields As Variant
+	Dim arr1 As String
+	Dim sep As String, sep2 As String
+	Dim value As String
+	
+	Dim valArray() As String
+	Dim uniqArray As Variant
+	
+	' Get params, set some defaults if not passed in
+	Set qdoc = session.DocumentContext
+	queryDecode = UrlDecode (qdoc.request_content(0) )
+	query = Strright( queryDecode, "query=")
+	
+	dbName = Strleft( Strright( queryDecode, "db=" ), "&amp;")
+	If (dbName = "") Then
+		Set db = session.CurrentDatabase
+	Else 
+		Set db = session.GetDatabase("",dbName,False)
+	End If
+	
+	viewName = Strleft( Strright( queryDecode, "view="  ), "&amp;" )
+	Set view = db.GetView(viewName)
+	
+	unique = Strleft( Strright( queryDecode, "unique=" ), "&amp;")
+	
+	maxCountParam =  Strleft( Strright( queryDecode, "count=" ), "&amp;")
+	If maxCountParam = "" Then
+		maxCount = 10
+	Else
+		maxCount = Cint(maxCountParam)
+	End If
+	
+	callback = Strleft( Strright( queryDecode, "callback="), "&amp;")
+	fields = Split( Strleft( Strright( queryDecode, "fields="  ), "&amp;" ), "," )
+	
+	' Do the search
+	Set dc = view.GetAllDocumentsByKey(query, False)
+	
+	' Loop through results and build json string
+	If Not( dc Is Nothing ) Then
+		If dc.Count &gt; 0 Then
+			
+			If unique = "1" Then
+				Set doc = dc.GetFirstDocument
+				Do Until doc Is Nothing 
+					Redim Preserve valArray(count) As String
+					valArray(count) = doc.GetItemValue( Cstr(fields(0)) )(0)
+					
+					Set doc = dc.GetNextDocument(doc)
+					count = count + 1
+				Loop
+				
+				uniqArray = Arrayunique(valArray,0)
+				count = 0
+				Forall tmpVal In uniqArray
+					If count = maxCount Then
+						Exit Forall
+					End If
+					arr1 = arr1 &amp; sep &amp; |{| &amp; fields(0) &amp; |: "| &amp; encodeString( Cstr(tmpVal), "Javascript" ) &amp; |"}|
+					sep = ","
+					count = count + 1
+				End Forall
+				
+			Else ' if unique != "1"
+				Set doc = dc.GetFirstDocument
+				Do Until ((doc Is Nothing) Or (count = maxCount))
+					arr1 = arr1 &amp; sep &amp; |{|
+					sep2 = ""
+					Forall fld In fields
+						Set item = doc.GetFirstItem( fld )
+						
+						If Not( item Is Nothing ) Then
+							value =  doc.GetItemValue( fld )(0) 	
+							arr1 = arr1 &amp; sep2 &amp; fld &amp; |: "| &amp; encodeString( value, "Javascript" ) &amp; |"|
+						End If
+						
+						sep2 = ","
+					End Forall
+					
+					sep = ","
+					arr1 = arr1 &amp; |}|
+nextDoc:
+					Set doc = dc.GetNextDocument(doc)
+					
+					count = count + 1
+				Loop
+			End If ' if unique = 1
+		End If ' if dc.Count &gt; 1
+	End If' if not dc is nothing
+	
+	
+	' send data back to the requestor, in the proper format
+	' If a callback was passedin (using Ext.data.ScriptTagProxy) then return everything wrapped in javascript
+	Print |Status: 200 OK|
+	Print |Content-Type:application/json|
+	If (callback &lt;&gt; "") Then
+		Print |Content-Type:text/javascript|
+	Else
+		Print |Content-Type:application/json|
+	End If
+	Print |Cache-Control: private|
+	Print ||
+	
+	If (callback &lt;&gt; "") Then
+		Print callback + |(|
+	End If
+	Print |{root: [ | &amp; arr1 &amp; | ] }|
+	If (callback &lt;&gt; "") Then
+		Print |);|
+	End If
+	
+	Exit Sub
+	
+	' If we error, send back a json error object
+	' still plays nicely with the ScriptTagProxy call
+processError:
+	Print |Status: 500 Internal Server Error|
+	Print |Content-Type:application/json|
+	Print |Cache-Control: private|
+	Print ||
+	If (callback &lt;&gt; "") Then
+		Print callback + |(|
+	End If
+	Print |{error: { query: "| &amp; query &amp; |", line: "Error | &amp; Err &amp; | on line | &amp; Erl &amp; _
+	|", msg: "| &amp; Error &amp; |"}}|
+	If (callback &lt;&gt; "") Then
+		Print |);|
+	End If
+	Exit Sub
+	
+End Sub
+</lotusscript></code><code event='URLDecode'><lotusscript>Function URLDecode(inString As String) As String
+	Dim outString As String
+	Dim letter As String
+	Dim tmp As String
+	Dim dec As Integer
+	Dim i As Integer
+'Check for %, if found the next two characters are the ASCII character hex value 
+	For i = 1 To Len(inString)
+		letter = Mid$(instring, i, 1)
+		If (letter = "%") Then
+			tmp = Mid$(instring, i+1, 2)
+			Select Case Right$(tmp, 1)
+			Case "A"
+				dec = 10
+			Case "B"
+				dec = 11
+			Case "C"
+				dec = 12
+			Case "D"
+				dec = 13
+			Case "E"
+				dec = 14
+			Case "F"
+				dec = 15
+			Case Else 
+				dec = Cint(Right$(tmp, 1))
+			End Select
+			Select Case Left$(tmp, 1)
+			Case "A" 
+				dec = dec + 10 * 16
+			Case "B"
+				dec = dec + 11 * 16
+			Case "C" 
+				dec = dec + 12 * 16
+			Case "D"
+				dec = dec + 13 * 16
+			Case "E"
+				dec = dec + 14 * 16
+			Case "F"
+				dec = dec + 15 * 16
+			Case Else
+				dec = dec + Cint(Left$(tmp,1)) * 16 
+			End Select
+			outString = outString + Chr$(dec)
+			i = i + 2
+		Else
+			outString = outString + letter
+		End If 
+	Next
+	URLDecode = outString
+End Function
+</lotusscript></code><code event='encodeString'><lotusscript>Function encodeString( TextToEncode As String, FormatToEncode As String ) As String
+	
+	Dim charList List As String
+	Dim charToSearch As String, charToReplace As String
+	Dim nPos As Integer, nPosOfChar As String
+	Dim result As String
+	
+	Select Case FormatToEncode
+		
+	Case "Octal"
+		
+		charList( "¢" ) = "\242"
+		charList( "£" ) = "\243" 
+		charList( "¥" ) = "\245"
+		charList( "¼" ) = "\274"
+		charList( "½" ) = "\275"
+		charList( "¾" ) = "\276"
+		charList( "¡" ) = "\241"
+		charList( "«" ) = "\253"
+		charList( "»" ) = "\273"
+		charList( "¿" ) = "\277"
+		charList( "À" ) = "\300"
+		charList( "Á" ) = "\301"
+		charList( "Â" ) = "	\302"
+		charList( "Ã" ) = "\303"
+		charList( "Ä" ) = "\304"
+		charList( "Å" ) = "\305"
+		charList( "Æ" ) = "\306"
+		charList( "Ç" ) = "\307"
+		charList( "È" ) = "\310"
+		charList( "É" ) = "\311"
+		charList( "Ê" ) = "\312"
+		charList( "Ë" ) = "\313"
+		charList( "Ì" ) = "\314"
+		charList( "Í" ) = "\315"
+		charList( "Î" ) = "\316"
+		charList( "Ï" ) = "\317"
+		charList( "Ð" ) = "\320"
+		charList( "Ñ" ) = "\3214"
+		charList( "Ò" ) = "\322"
+		charList( "Ó" ) = "\323"
+		charList( "Ô" ) = "\324"
+		charList( "Õ" ) = "\325"
+		charList( "Ö" ) = "\326"
+		charList(" Ø" ) = "\330"
+		charList( "Ù" ) = "\331"
+		charList( "Ú" ) = "\332"
+		charList( "Û" ) = "\333"
+		charList( "Ü" ) = "\334"
+		charList( "Ý" ) = "\335"
+		charList( "Þ" ) = "\336"
+		charList( "ß" ) = "\337"
+		charList( "à" ) = "\340"
+		charList( "á" ) = "\341"
+		charList( "â" ) = "\342"
+		charList( "ã" ) = "\343"
+		charList( "ä" ) = "\344"
+		charList( "å" ) = "\345"
+		charList( "æ" ) = "\346"
+		charList( "ç" ) = "\347"
+		charList( "è" ) = "\350"
+		charList( "é" ) = "\351"
+		charList( "ê" ) = "\352"
+		charList( "ë" ) = "\353"
+		charList( "ì" ) = "\354"
+		charList( "í" ) = "\355"
+		charList( "î" ) = "\356"
+		charList( "ï" ) = "\357"
+		charList( "ð" ) = "\360"
+		charList( "ñ" ) = "\361"
+		charList( "ò" ) = "\362"
+		charList( "ó" ) = "\363"
+		charList( "ô" ) = "\364"
+		charList( "õ" ) ="\365"
+		charList( "ö" ) = "\366"
+		charList( "ø" ) = "\370"
+		charList( "ù" ) = "\371"
+		charList( "ú" ) = "\372"
+		charList( "û" ) = "\373"
+		charList( "ü" ) = "\374"
+		charList( "ý" ) = "\375"
+		charList( "þ" ) = "\376"
+		charList( "ÿ" ) = "\377"
+		
+	Case "HTML"
+		
+		charList( "¢" ) = "&amp;cent;"
+		charList( "£" ) = "&amp;pound;"
+		charList( "¥" ) = "&amp;yen;"
+		charList( "¼" ) = "&amp;frac14;"
+		charList( "½" ) = "&amp;frac12;"
+		charList( "¾" ) = "&amp;frac34;"
+		charList( "¡" ) = "&amp;iexcl;"
+		charList( "«" ) = "&amp;laquo;"
+		charList( "»" ) = "&amp;raquo;"
+		charList( "¿" ) = "&amp;iquest;"
+		charList( "À" ) = "&amp;Agrave;"
+		charList( "Á" ) = "&amp;Aacute;"
+		charList( "Â" )= "&amp;Acirc;"
+		charList( "Ã" ) = "&amp;Atilde;"
+		charList( "Ä" ) = "&amp;Auml;"
+		charList( "Å" ) = "&amp;Aring;"
+		charList( "Æ" ) = "&amp;AElig;"
+		charList( "Ç" ) = "&amp;Ccedil;"
+		charList( "È" ) = "&amp;Egrave;"
+		charList( "É" )= "&amp;Eacute;"
+		charList( "Ê" ) = "&amp;Ecirc;"
+		charList( "Ë" ) = "&amp;Euml;" 
+		charList( "Ì" ) = "&amp;Igrave;"
+		charList( "Í" ) = "&amp;Iacute;"
+		charList( "Î" ) = "&amp;Icirc;"
+		charList( "Ï") = "&amp;Iuml;"
+		charList( "Ð" ) = "&amp;ETH;"
+		charList( "Ñ" ) = "&amp;Ntilde;"
+		charList( "Ò" ) = "&amp;Ograve;"
+		charList( "Ó" ) = "&amp;Oacute;"
+		charList( "Ô" ) = "&amp;Ocirc;"
+		charList( "Õ" ) = "&amp;Otilde;"
+		charList( "Ö" ) = "&amp;Ouml;"
+		charList( "Ø" ) = "&amp;Oslash;"
+		charList( "Ù" ) = "&amp;Ugrave;"
+		charList( "Ú" ) = "&amp;Uacute;"
+		charList( "Û" ) = "&amp;Ucirc;"
+		charList( "Ü" ) = "&amp;Uuml;"
+		charList( "Ý" ) = "&amp;Yacute;"
+		charList( "Þ" ) = "&amp;THORN;"
+		charList( "ß" ) = "&amp;szlig;"
+		charList( "à" ) = "&amp;agrave;"
+		charList( "á" ) = "&amp;aacute;"
+		charList( "â" ) = "&amp;acirc;"
+		charList( "ã" ) = "&amp;atilde;"
+		charList( "ä" ) = "&amp;auml;"
+		charList( "å" ) = "&amp;aring;"
+		charList( "æ" ) = "&amp;aelig;"
+		charList( "ç" ) = "&amp;ccedil;"
+		charList( "è" ) = "&amp;egrave;"
+		charList( "é" ) = "&amp;eacute;"
+		charList( "ê" ) = "&amp;ecirc;"
+		charList( "ë" ) = "&amp;euml;"
+		charList( "ì" ) = "&amp;igrave;"
+		charList( "í" ) = "&amp;iacute;"
+		charList( "î" ) = "&amp;icirc;"
+		charList( "ï" ) = "&amp;iuml;"
+		charList( "ð" ) = "&amp;eth;"
+		charList( "ñ" ) = "&amp;ntilde;"
+		charList( "ò" ) = "&amp;ograve;"
+		charList( "ó" ) = "&amp;oacute;"
+		charList( "ô" ) = "&amp;ocirc;"
+		charList( "õ" ) = "&amp;otilde;"
+		charList( "ö" ) = "&amp;ouml;"
+		charList( "ø" ) = "&amp;oslash;"
+		charList( "ù" ) = "&amp;ugrave;"
+		charList( "ú" ) = "&amp;uacute;"
+		charList( "û" ) = "&amp;ucirc;"
+		charList( "ü" ) = "&amp;uuml;"
+		charList( "ý" ) = "&amp;yacute;"
+		charList( "þ" ) = "&amp;thorn;"
+		charList( "ÿ" ) = "&amp;yuml;"
+		
+	Case "Hex", "Javascript"
+		
+		charList( "¢" ) = "A2"
+		charList( "£" ) = "A3"
+		charList( "¥" ) = "A5"
+		charList( "¼" ) = "BC"
+		charList( "½" ) = "BD"
+		charList( "¾" ) = "BE"
+		charList( "¡" ) = "A1"
+		charList( "«" ) = "AB"
+		charList( "» ") = "BB"
+		charList( "¿" ) = "BF"
+		charList( "À" ) = "C0"
+		charList( "Á" ) = "C1"
+		charList( "Â" ) = "C2"
+		charList( "Ã" ) = "C3"
+		charList( "Ä" ) = "C4"
+		charList( "Å" ) = "C5"
+		charList( "Æ" ) = "C6"
+		charList( "Ç" ) = "C7"
+		charList( "È" ) = "C8"
+		charList( "É" ) = "C9"
+		charList( "Ê" ) = "CA"
+		charList( "Ë ") = "CB"
+		charList( "Ì" ) = "CC"
+		charList( "Í" ) = "CD"
+		charList( "Î" ) = "CE"
+		charList( "Ï" ) = "CF"
+		charList( "Ð" ) = "D0"
+		charList( "Ñ" ) = "D1"
+		charList( "Ò" ) = "D2"
+		charList( "Ó" ) = "D3"
+		charList( "Ô" ) = "D4"
+		charList( "Õ" ) = "D5"
+		charList( "Ö" ) = "D6"
+		charList( "Ø" ) = "D8"
+		charList( "Ù" ) = "D9"
+		charList( "Ú" ) = "DA"
+		charList( "Û" ) = "DB"
+		charList( "Ü" ) = "DC"
+		charList( "Ý" ) = "DD"
+		charList( "Þ" ) = "DE"
+		charList( "ß" ) = "DF"
+		charList( "à" ) = "E0"
+		charList( "á" ) = "E1"
+		charList( "â" ) = "E2"
+		charList( "ã" ) = "E3"
+		charList( "ä" ) = "E4"
+		charList( "å" ) = "E5"
+		charList( "æ" ) = "E6"
+		charList( "ç") = "E7"
+		charList( "è" ) = "E8"
+		charList( "é" ) = "E9"
+		charList( "ê" ) = "EA"
+		charList( "ë" ) = "EB"
+		charList( "ì" ) = "EC"
+		charList( "í" ) = "ED"
+		charList( "î" ) = "EE"
+		charList( "ï" ) = "EF"
+		charList( "ð" ) = "F0"
+		charList( "ñ" ) = "F1"
+		charList( "ò" ) = "F2"
+		charList( "ó" ) = "F3"
+		charList( "ô" ) = "F4"
+		charList( "õ" ) = "F5"
+		charList( "ö" ) = "F6"
+		charList( "ø" ) = "F8"
+		charList( "ù" ) = "F9"
+		charList( "ú" ) = "FA"
+		charList( "û" ) = "FB"
+		charList( "ü" ) = "FC"
+		charList( "ý" ) = "FD"
+		charList( "þ" ) = "FE"
+		charList( "ÿ" ) = "FF"
+		
+	End Select
+	
+	result = TextToEncode
+	
+	Forall char In charList
+		
+		charToSearch = Listtag( char ) 
+		
+		If FormatToEncode = "Javascript" Then
+			charToReplace = "\u00" + char
+		Else
+			charToReplace = char
+		End If
+		
+		If Instr(result, charToSearch ) Then
+			nPos = 1
+			While Instr(nPos, result, charToSearch ) &gt; 0 
+               'extract to the character to Search
+				nPosOfChar = Instr(nPos, result, charToSearch )
+               'replace with the replacement character
+				result = Left$(result, nPosOfChar -1 )+ charToReplace +Right$(result, (Len(result)-nPosOfChar))
+				nPos = nPosOfChar+1
+			Wend
+			
+		End If
+		
+	End Forall	
+	
+	encodeString = result	
+	
+	
+End Function</lotusscript></code>
+<rundata processeddocs='0' exitcode='0'>
+<agentmodified><datetime dst='true'>20101007T104522,35-05</datetime></agentmodified></rundata></agent>
+

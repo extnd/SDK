@@ -1,0 +1,294 @@
+<?xml version='1.0' encoding='utf-8'?>
+<agent name='(Evaluate)' xmlns='http://www.lotus.com/dxl' version='9.0' replicaid='86257C2900079A5C'
+ hide='v3' publicaccess='false' designerversion='8.5.3'>
+<noteinfo noteid='a06' unid='0D9815EB35C7506E86257C290007333F' sequence='5'>
+<created><datetime>20131119T191838,71-06</datetime></created>
+<modified><datetime>20131225T220543,02-06</datetime></modified>
+<revised><datetime>20131225T220543,01-06</datetime></revised>
+<lastaccessed><datetime>20131225T220543,02-06</datetime></lastaccessed>
+<addedtofile><datetime>20131119T192327,67-06</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></updatedby>
+<wassignedby><name>CN=Jack Ratcliff/OU=A55DE6/O=Prominic</name></wassignedby>
+<designchange><datetime>20131225T220542,99-06</datetime></designchange>
+<trigger type='agentlist'/>
+<documentset type='runonce'/><code event='options'><lotusscript>Option Public
+Option Explicit
+
+Use "HttpRequest"
+Use "utilities"
+
+</lotusscript></code><code event='declarations'><lotusscript>Dim session As NotesSession
+Dim thisDb As NotesDatabase
+Dim dbTarget As NotesDatabase
+Dim docCtxt As NotesDocument
+
+Dim sOutputFormat As String 'json or xml
+Dim sConvertResultToArray As String
+Dim bConvertResultToArray As Boolean
+Dim macro As String	
+Dim macroCheck As String
+Dim sDebug As String
+Dim bDebug As Boolean
+
+Dim sDocUnid As String
+Dim dbName As String
+Dim formName As String
+
+</lotusscript></code><code event='initialize'><lotusscript>Sub Initialize
+	On Error Goto ErrHandler
+	
+	Set session = New NotesSession
+	Set thisDb = session.CurrentDatabase
+	
+	Dim docCtxt As NotesDocument
+	Dim docTarget As NotesDocument
+	
+	
+	Dim results As Variant
+	Dim resultsTest As Variant
+	
+	Dim isFirst As Boolean
+	
+	Call parseRequestContent()
+	
+	' first see if we have a target db since we first need that
+	' before we can get the target doc
+	If (dbName &lt;&gt; "") Then
+		
+		Set dbTarget = session.GetDatabase("",dbName,False)
+		If (Not dbTarget Is Nothing) Then
+			If bDebug Then Msgbox "got db"
+			' we have a target db so lets see if we have a target doc			
+			If (sDocUnid &lt;&gt; "") Then
+				Set docTarget = dbTarget.GetDocumentByUNID(sDocUnid)
+				If (Not docTarget Is Nothing) Then
+					If bDebug Then Msgbox "got doc"
+					' we have a target doc so evaluate in that context		
+					resultsTest = Evaluate(macroCheck$)
+					If resultsTest(0) = "1" Then
+						results = Evaluate(macro$, docTarget)						
+					Else
+						results = resultsTest
+					End If
+					
+				Else
+					If bDebug Then Msgbox "did not get doc"
+					' can't find target doc so just try the evaluate without a context object
+					resultsTest = Evaluate(macroCheck$)
+					If resultsTest(0) = "1" Then
+						results = Evaluate(macro$)
+					Else
+						results = resultsTest
+					End If						
+				End If
+			Else
+				' no doc unid passed in so just try the evaluate without a context object
+				If bDebug Then 
+					Msgbox "no unid"
+					Msgbox "trying evaluate with form"
+				End If
+				Set docTarget = getDocumentFromFormName(formName)
+				If (Not docTarget Is Nothing) Then
+					If bDebug Then Msgbox "got NotesDocument version of form!!"					
+					' can't find target doc so try getting the form and evaluate with that
+					resultsTest = Evaluate(macroCheck$)
+					If resultsTest(0) = "1" Then
+						results = Evaluate(macro$, docTarget)
+					Else
+						results = resultsTest
+					End If
+				Else
+					If bDebug Then Msgbox "getting doc from form did not work"					
+					resultsTest = Evaluate(macroCheck$)
+					If resultsTest(0) = "1" Then
+						results = Evaluate(macro$)		
+					Else
+						results = resultsTest
+					End If
+				End If
+			End If
+		Else
+			If bDebug Then Msgbox "could not find db"
+			' we couldn't find a target db based on the name passed in
+			' so just try the evaluate without a context
+			resultsTest = Evaluate(macroCheck$)
+			If resultsTest(0) = "1" Then
+				results = Evaluate(macro$)		
+			Else
+				results = resultsTest
+			End If
+		End If
+	Else
+		' no dbName so therefore we can't even get a db or doc target
+		If bDebug Then Msgbox "no dbname"
+		resultsTest = Evaluate(macroCheck$)
+		If resultsTest(0) = "1" Then
+			results = Evaluate(macro$)		
+		Else
+			results = resultsTest
+		End If
+	End If
+	
+	
+	If (sOutputFormat = "json") Then
+		
+		isFirst = True
+		Print {Content-type: application/json}
+		
+		Print |[|
+		If Isarray(results) Then
+			Forall r In results
+				
+				If (isFirst) Then
+					If bConvertResultToArray Then
+						Print |["| + r + |"]|
+					Else
+						Print |"| + r + |"|					
+					End If
+					isFirst = False
+				Else
+				' need to add the commas if not the first record
+					If bConvertResultToArray Then
+						Print |,["| + r + |"]|
+					Else
+						Print |,"| + r + |"|					
+					End If
+				End If
+				
+			End Forall
+			
+		' not an array
+		Else
+			Print |["| + results + |"]|	
+		End If
+		
+		Print |]|
+		
+	Else
+		
+		Print {Content-type:text/xml;charset=utf-8}   
+		
+		Print |&lt;results&gt;|
+		Forall r In results
+			Print |&lt;data&gt;| + r + |&lt;/data&gt;|		
+		End Forall
+		Print |&lt;/results&gt;|
+		
+	End If
+	
+	
+	
+	
+	Exit Sub
+	
+	
+ErrHandler:
+	Call sendError(Erl, Err, Error$)
+	
+	Exit Sub	
+	
+	
+End Sub
+
+</lotusscript></code><code event='sendError'><lotusscript>Function sendError(ErrorLine As Integer, ErrorNumber As Integer, ErrorMessage As String) As String
+	
+	Print |Status: 500 Internal Server Error|
+	
+	If (sOutputFormat = "json")  Then
+		Print {content-type:application/json}
+		Print "{	error : {"
+		Print "		line : " + Cstr(ErrorLine)
+		Print "		number : " + Cstr(ErrorNumber)
+		Print "		message : '" + ErrorMessage +  "'"
+		Print "	}"
+		Print "}"
+	Else
+		Print {content-type:text/xml;charset=utf-8}
+		Print "&lt;?xml version='1.0' encoding='utf-8'?&gt;"
+		Print "&lt;error&gt;"
+		Print "&lt;line&gt;" + Cstr(ErrorLine) + "&lt;/line&gt;"
+		Print "&lt;number&gt;" + Cstr(ErrorNumber) + "&lt;/number&gt;"
+		Print "&lt;message&gt;" + ErrorMessage +  "&lt;/message&gt;"
+		Print"&lt;/error&gt;"		
+	End If
+	
+End Function
+
+</lotusscript></code><code event='getDocumentFromFormName'><lotusscript>Function getDocumentFromFormName(sName As String) As NotesDocument
+	
+	On Error Goto ErrHandler
+	
+	Dim nc As NotesNoteCollection
+	Set nc = dbTarget.CreateNoteCollection(False)
+	
+	nc.SelectForms = True
+	nc.SelectPages = True
+	
+	nc.SelectionFormula = |@IsMember(@lowercase("| + sName + |"); @lowercase($TITLE))| +| &amp; | + |!@Contains($Flags; "w")| 
+	Call nc.BuildCollection
+	
+	Dim noteID As String
+	noteID = nc.GetFirstNoteId
+	If noteID = "" Then
+		Set getDocumentFromFormName = Nothing
+	Else
+		Set getDocumentFromFormName = dbTarget.GetDocumentByID(noteID)	
+	End If
+	
+	
+	
+	Exit Function
+	
+	
+ErrHandler:
+	Call sendError(Erl, Err, Error$)
+	
+	Exit Function
+	
+End Function
+
+</lotusscript></code><code event='parseRequestContent'><lotusscript>Sub parseRequestContent
+	
+	
+	On Error Goto erh
+	
+	' parse request content
+	Dim request As New HttpRequest
+	
+	
+	sOutputFormat = request.parameter("outputformat")
+	macro = request.unescape(request.parameter("formula"))
+	macroCheck = |@CheckFormulaSyntax({| + macro + |})|
+	sDocUnid = request.parameter("unid")	
+	formName = request.parameter("form")	
+	sConvertResultToArray = request.parameter("convertresulttoarray")
+	
+	sDebug = request.parameter("debug")
+	If (sDebug = "true") Then
+		bDebug = True
+	Else
+		bDebug = False
+	End If
+	
+	' needed so our 1-dim array will work with Ext which needs an array of arrays	
+	If (sConvertResultToArray = "true") Then
+		bConvertResultToArray = True
+	Else
+		bConvertResultToArray = False
+	End If
+	
+	dbName = getDbFileNameFromString(request.unescape(request.parameter("db")))
+	
+	Exit Sub
+	
+	
+erh:
+	'/* throw this error */
+	Error Err, _
+	|"| &amp; Getthreadinfo(1) &amp; " line " &amp; Erl &amp; | | &amp; Error$ &amp; |"|
+	Exit Sub
+	
+End Sub</lotusscript></code>
+<rundata processeddocs='0' exitcode='0'>
+<agentmodified><datetime>20131225T220542,33-06</datetime></agentmodified></rundata></agent>
+
